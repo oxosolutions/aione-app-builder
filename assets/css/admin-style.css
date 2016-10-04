@@ -1,0 +1,182 @@
+
+
+#acf-field-group-wrap .acf-columns-2 {
+    margin-right: 0;
+}
+
+.acf-columns-2 .acf-column-2 {
+    display: none;
+}
+
+	
+#oxo_admin_options > li {
+    border: 1px solid #e8e8e8;
+}
+#oxo_admin_options_sub li{
+	display:block;
+	height:0;
+	overflow:hidden;
+	margin: 3px -1px 4px 74px !important;
+	-webkit-transition: all .4s cubic-bezier(0.33,1.6,0.66,1);
+	-moz-transition: all .4s cubic-bezier(0.33,1.6,0.66,1);
+	transition: all .4s cubic-bezier(0.33,1.6,0.66,1);		
+}
+#oxo_admin_options > li.active #oxo_admin_options_sub li{
+	height:auto;
+	border: 1px dashed #d1d1d1;
+    
+}
+#oxo_admin_options > li ul {
+	display: none;
+}
+#oxo_admin_options > li.active ul {
+	display: block;
+}
+a.arrow-down { 
+    background: #a0ce4e;
+    border-radius: 50%;
+    color: #fff;
+    display: block;
+    float: right;
+    font-size: 10px;
+    font-weight: bold;
+    margin: 12px 6px 0;
+    padding: 2px;
+    text-align: center;
+    width: 14px;
+	cursor: pointer;
+}
+	.input-field, .name-field {
+		float: left;
+	}
+	/* ===== custom Button ====== */
+	.custom-radio{
+    margin-top:15px !important;
+    float:left !important;
+    display:none !important;
+}
+.name-field {
+    color: #868686;
+    font-size: 13px;
+    padding: 11px 0;
+}
+.switch {
+    display:block;
+    background: #a0ce4e;
+    border-radius: 20px;
+    font-family:"Helvetica Neue",Helvetica,"Myriad Pro","Lucida Grande",sans-serif;
+    box-shadow: 0 2px 1px 0 rgba(255,255,255,0.5),inset 0 1px 3px 0 rgba(0,0,0,0.2);
+    width: 55px;
+    height: 20px;
+    margin: 10px ;
+    padding:0;
+    overflow: hidden;
+    transition: all .25s linear;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    }
+.switch .handle {
+    width: 15px;
+    height: 15px;
+    display: block;
+    float: left;
+    border-radius: 50%;
+    margin:2px 0 0 2px;
+    background: #FFFFFF;
+    box-shadow: 0 0 4px 0 rgba(0,0,0,0.2),0px 4px 23px 0 rgba(0,0,0,0.08),-2px 4px 4px 0 rgba(0,0,0,0.1);
+    transition: all .4s cubic-bezier(0.33,1.6,0.66,1);
+}
+.switch .handle:before {
+    content: "OFF";
+    font-size: 12px;
+    line-height: 21px;
+    font-weight: 400;
+    width:30px;
+    color: #FFFFFF;
+    display: block;
+    text-align:center;
+    float: left;
+    margin:-2px 0 0 -30px;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+.switch .handle:after {
+    content: "ON";
+    font-size: 12px;
+    line-height: 21px;
+    font-weight: 400;
+    color: #FFFFFF;
+    width:30px;
+    display: block;
+    text-align:center;
+    float: left;
+    margin:-2px 0 0 17px;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+.custom-radio:checked + .switch {
+    background: #e74c3c;
+}
+.custom-radio:checked + .switch .handle {
+    margin:2px 0 0 39px;
+}
+	/* ===== custom Button ====== */
+
+
+	/* test */
+	h2.nav-tab-wrapper, h3.nav-tab-wrapper{
+		  margin-bottom: 0;
+		  margin-top: 25px;
+		  padding-left: 0;
+		  width: 98.1%;
+		  border-bottom: 1px solid #1570a6;
+	}
+	.wrap.welcome-panel .update-plugins, .wrap.welcome-panel .awaiting-mod {
+	/*	display: none; */  
+	}
+	h2 .nav-tab{
+		padding: 6px 20px;
+	}
+	.nav-tab{
+		border: 1px solid #1570a6;
+		margin: 0px 6px -1px 0;
+		background: #138dc5;
+		color: #ffffff;
+	}
+	.nav-tab:hover {
+		border: 1px solid #e5e5e5;
+		border-bottom: 1px solid #FFFFFF;
+	}
+  
+	.nav-tab-active, .nav-tab-active:hover {
+	  border: 1px solid #e5e5e5;
+	  border-bottom: 1px solid #FFFFFF;
+	  background: #FFFFFF;
+	  color:#666666;
+	}
+	#aione_page_target .welcome-panel {
+		padding: 20px 1.5% 30px 1.5%;
+		width: 95%;
+		float: left;
+		margin-top: 0px;
+		border-top:none;
+	}
+	#aione_page_target .welcome-panel.right {
+		margin-left:1.6%;
+	}
+	#aione_page_target .welcome-panel h1{
+		font-weight: 100;
+		border-bottom: 1px solid #b8b8b8;
+		margin: 0 0 10px 0;
+		padding: 0 0 10px 0;
+		text-align:center;
+	}
+	#aione_page_target .welcome-panel p{
+		text-align:center;
+	}
+	.top-button-options {
+		float: right;
+	}  
