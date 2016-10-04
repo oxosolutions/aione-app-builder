@@ -3,7 +3,7 @@
 Plugin Name: Aione App Builder
 Plugin URI: http://oxosolutions.com/products/wordpress-plugins/aione-app-builder
 Description: Aione App Builder
-Version: 1.0.1.24
+Version: 1.0.1.25
 Author: OXO Solutions
 Author URI: http://oxosolutions.com/
 GitHub Plugin URI: https://github.com/oxosolutions/aione-app-builder
@@ -30,7 +30,8 @@ if (file_exists(dirname( __FILE__ ) .'/classes/aione-app-builder-main.php')){
 		</div>
 		<?php
 	}
-	
+/*	
 if (file_exists(dirname( __FILE__ ) .'/classes/class-aione-app-builder-main-update.php')){
 	require_once( dirname( __FILE__ ) .'/classes/class-aione-app-builder-main-update.php' );
 }
+*/
