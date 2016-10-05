@@ -857,7 +857,7 @@ class Aione_App_Builder {
 								}
 								// foreach
 								
-								$output .= 'Thank you for registering for the Ending the Epidemic Dashboard for New York State!  By registering, you will have the option of receiving future updates on new reports, resources and important changes made to the Dashboard.  As a registered user, you will be able to customize your experience based on your interests and connect with other users.  Stay tuned for updates as we transition to Version 2.0 of the Dashboard which will feature a more interactive and dynamic version of the site, incorporating additional ETE-priority metrics.';
+								$output .= 'Thank you for registering.';
 						
 								//wp_redirect($redirect_url);
 								/*
@@ -874,7 +874,7 @@ class Aione_App_Builder {
 							$output .= aione_show_errors($errors);
 						}
 					} else {
-						$output .= aione_user_registration_form();
+						$output .= $this->aione_user_registration_form();
 					}
 				} else {
 					$output .= __('User registration is not enabled!');
