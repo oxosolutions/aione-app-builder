@@ -887,7 +887,7 @@ class Aione_App_Builder {
 
 	public function aione_user_registration_form( ) {
 			$html_before_fields = '
-			<div style="width:100%;padding:10px;">By signing up, users will ultimately be able to customize their dashboard experience and connect with other users that share similar interests. Users will also have the option of receiving future updates on new reports, resources and important changes made to the Dashboard.</div>
+			
 			<form id="aione-registration-form" class="aione-form register form acf-form" action="'.get_permalink().'" method="post">
 				<div class="postbox acf_postbox no_box">
 				
