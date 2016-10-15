@@ -3,7 +3,7 @@
 Plugin Name: Aione App Builder
 Plugin URI: http://oxosolutions.com/products/wordpress-plugins/aione-app-builder
 Description: Aione App Builder
-Version: 1.0.1.27
+Version: 1.0.1.28
 Author: OXO Solutions
 Author URI: http://oxosolutions.com/
 GitHub Plugin URI: https://github.com/oxosolutions/aione-app-builder

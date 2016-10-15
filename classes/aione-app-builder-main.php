@@ -53,6 +53,7 @@ class Aione_App_Builder {
 		add_shortcode( 'faq', array($this, 'aione_faq_shortcode') );
 		add_shortcode( 'aione-change-password', array($this, 'aione_change_password_shortcode') );
 		add_shortcode( 'aione-register', array($this, 'aione_register_shortcode') );
+		add_shortcode( 'users', array($this, 'aione_users_shortcode') );
 		
 		// End Add Shotcodes 
 		add_action( 'admin_menu', array($this, 'remove_admin_menus_app_builder'), 9999 );
@@ -263,8 +264,9 @@ class Aione_App_Builder {
 		$login = (isset($_GET['login']) ? $_GET['login'] : null);
 		$errors = array();
 		if(isset($login) && $login == 'failed' ){
-			$errors[] = 'Invalid username or password';
-			$output .= aione_show_errors($errors);
+			//$errors[] = 'Invalid username or password';
+			//$output .= $this->aione_show_errors($errors);
+			$output .=  '<div style="color:#cc0000;text-align:center;padding:10px">Invalid username or password</div>';
 		}
 
 		$args = array(
@@ -778,6 +780,7 @@ class Aione_App_Builder {
 				if($registration_enabled) {
 					$errors = array();
 					// load from post
+
 					if( isset($_POST['action']) && $_POST['action'] == 'add_new' && !empty($_POST['fields'])){
 						$user_login		= $_POST["aione_user_login"];
 						$user_email		= $_POST["aione_user_email"];
@@ -840,22 +843,56 @@ class Aione_App_Builder {
 									'user_login'		=> $user_login,
 									'user_pass'	 		=> $user_pass,
 									'user_email'		=> $user_email,
-									'first_name'		=> $user_first,
-									'last_name'			=> $user_last,
+									'first_name'		=> $_POST['fields']['field_57f47fcbcc4cd'],
+									'last_name'			=> $_POST['fields']['field_57f47fe856c68'],
 									'user_registered'		=> date('Y-m-d H:i:s'),
 									'role'			=> $user_role
 								)
 							);
 							if(is_int($new_user_id)) {
+								$temp_user_id = "user_".$new_user_id;
+								update_field( 'register_roll_number', $_POST['fields']['field_57f498eab3f0b'], $temp_user_id );
+								update_field( 'register_first_name', $_POST['fields']['field_57f47fcbcc4cd'], $temp_user_id );
+								update_field( 'register_last_name', $_POST['fields']['field_57f47fe856c68'], $temp_user_id );
+								update_field( 'register_fathers_name', $_POST['fields']['field_57f47ff9585a8'], $temp_user_id );
+								update_field( 'register_phone_number', $_POST['fields']['field_57f4801090006'], $temp_user_id );
+								update_field( 'register_college', $_POST['fields']['field_57f480d22b08b'], $temp_user_id );
+								update_field( 'register_course', $_POST['fields']['field_57f480371e05e'], $temp_user_id );
+								update_field( 'register_semester', $_POST['fields']['field_57f480afa35c0'], $temp_user_id );
+								update_field( 'register_batch', $_POST['fields']['field_57f480e72b08c'], $temp_user_id );
 								
+								/*
+								echo '<div class="aionetest" style="display:none"><pre>';
+								print_r($_POST);
+								echo '</pre></div>';
+								
+								*/
+								/*
+								update_user_meta( $new_user_id, 'register_roll_number', $_POST['field_57f498eab3f0b'] );
+								update_user_meta( $new_user_id, 'register_first_name', $_POST['field_57f47fcbcc4cd'] );
+								update_user_meta( $new_user_id, 'register_last_name', $_POST['field_57f47fe856c68'] );
+								update_user_meta( $new_user_id, 'register_fathers_name', $_POST['field_57f47ff9585a8'] );
+								update_user_meta( $new_user_id, 'register_phone_number', $_POST['field_57f4801090006'] );
+								update_user_meta( $new_user_id, 'register_college', $_POST['field_57f480d22b08b'] );
+								update_user_meta( $new_user_id, 'register_course', $_POST['field_57f480371e05e'] );
+								update_user_meta( $new_user_id, 'register_semester', $_POST['field_57f480afa35c0'] );
+								update_user_meta( $new_user_id, 'register_batch', $_POST['field_57f480e72b08c'] );
+*/
+								
+						
+								
+								
+								
+								/*
 								// loop through and save $_POST data
 								foreach( $_POST['fields'] as $k => $v ){
 									// get field
 									$f = apply_filters('acf/load_field', false, $k );
 									// update field
-									do_action('acf/update_value', $v, $post_id, $f );
+									do_action('acf/update_value', $v, $new_user_id, $f );
 								}
 								// foreach
+								*/
 								
 								$output .= 'Thank you for registering.';
 						
@@ -871,7 +908,11 @@ class Aione_App_Builder {
 								$errors[] = 'Some error occurred. Please contact Administrator.';
 							}
 						} else {
-							$output .= aione_show_errors($errors);
+							foreach($errors as $error){
+								$output .=  '<div style="color:#cc0000;text-align:center;padding:10px">'.$error.'</div>';
+							}
+							//$output .= $this->aione_show_errors($errors);
+							$output .= $this->aione_user_registration_form();
 						}
 					} else {
 						$output .= $this->aione_user_registration_form();
@@ -894,6 +935,7 @@ class Aione_App_Builder {
 				<div class="aione_form_field field field_type-text">
 					<p class="label"><label for="aione_user_login">Enter Username<span class="required">*</span></label></p>
 					<div class="acf-input-wrap"><input name="aione_user_login" id="aione_user_login" class="textbox large required" type="text" placeholder="Username" value=""/></div>
+					<p class="label"><label for="aione_user_login">Only lowercase letters, numbers, underscore are accepted</label></p>
 				</div>
 				<div class="aione_form_field field field_type-text">
 					<p class="label"><label for="aione_user_email">Your Email Address<span class="required">*</span></label></p>
@@ -940,6 +982,21 @@ class Aione_App_Builder {
 			$output .= ob_get_contents();
 			ob_end_clean();
 			return $output;
+		} // END aione_user_registration_form()
+		
+		
+		public function aione_users_shortcode( ) {
+			$output = "";
+			$blogusers = get_users( 'blog_id=1&role=subscriber' );
+			$count = 1;
+			// Array of WP_User objects.
+			foreach ( $blogusers as $user ) {
+				$output .= '<br><span>'.$count.'. ' . esc_html( $user->user_login ) . '</span>';
+				$count++;
+			}
+			
+			return $output;
+			
 		} // END aione_user_registration_form()
 
 
