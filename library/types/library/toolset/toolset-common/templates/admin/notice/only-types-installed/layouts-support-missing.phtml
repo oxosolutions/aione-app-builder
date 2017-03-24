@@ -1,0 +1,19 @@
+<?php
+/**
+ * Template File
+ * This file is only build for classes which implements Toolset_Admin_Notice_Interface
+ *
+ * @var Toolset_Admin_Notice_Interface $this
+ *
+ * @since 2.3.0 First release
+ */
+?>
+	<p>
+		<?php _e( 'Toolset Types lets you add custom post types, custom fields and taxonomies.', 'wpv-views' ); ?>
+	</p>
+<?php
+echo Toolset_Admin_Notices_Manager::tpl_button_primary(
+    __( 'Getting started guide', 'wpv-views' ),
+	Types_Helper_Url::get_url( 'getting-started-types', 'notice-dismissible' ),
+	true
+);

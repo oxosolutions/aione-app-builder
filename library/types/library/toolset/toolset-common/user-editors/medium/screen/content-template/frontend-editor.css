@@ -1,0 +1,16 @@
+#wpv-ct-preview-post {
+    width: 170px;
+    display: inline;
+	font-size:13px;
+}
+
+/*.fl-builder-actions .fl-builder-button.fl-builder-discard-button,*/
+.fl-builder-actions .fl-builder-button.fl-builder-draft-button {
+    display: none !important;
+}
+
+.fl-builder-bar {
+	z-index: 100010;
+}
+
+

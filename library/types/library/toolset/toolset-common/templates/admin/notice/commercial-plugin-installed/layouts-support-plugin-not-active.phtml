@@ -1,0 +1,44 @@
+<?php
+/**
+ * Template File
+ * This file is only build for classes which implements Toolset_Admin_Notice_Interface
+ *
+ * @var Toolset_Admin_Notice_Interface $this
+ *
+ * @since 2.3.0 First release
+ */
+
+$condition = new Toolset_Condition_Theme_Layouts_Support_Plugin_Not_Active();
+if( ! $integration_plugin = $condition->get_plugin() ) {
+	// shouldn't happen, expect this messages is used without applying the condition to the notice
+	return;
+}
+
+if( ! array_key_exists( 'Name', $integration_plugin )
+	|| ! array_key_exists( 'Path', $integration_plugin )
+) {
+	// missing data
+	return;
+}
+?>
+	<p>
+		<?php printf(
+			__( 'You\'re almost ready. Please first activate %s. Then, you will be able to conveniently' .
+                ' edit this theme with Toolset.', 'wpv-views' ),
+			esc_attr( $integration_plugin['Name'] )
+        );
+		?>
+	</p>
+
+<?php
+$url_plugin_activation = wp_nonce_url(
+    admin_url( 'plugins.php?action=activate&plugin='. $integration_plugin['Path'] ) ,
+    'activate-plugin_' . $integration_plugin['Path']
+);
+echo Toolset_Admin_Notices_Manager::tpl_button_primary(
+	sprintf(
+		__( 'Activate %s', 'wpv-views' ),
+		esc_attr( $integration_plugin['Name'] )
+	),
+	$url_plugin_activation
+);

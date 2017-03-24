@@ -1,0 +1,25 @@
+<?php
+/**
+ * Template File
+ * This file is only build for classes which implements Toolset_Admin_Notice_Interface
+ *
+ * @var Toolset_Admin_Notice_Interface $this
+ *
+ * @since 2.3.0 First release
+ */
+?>
+	<p>
+		<?php _e( 'To use Toolset in the most convenient way, we suggest always installing Types, Views and Layouts ' .
+                  'plugins. For advanced functionality, check out the rest of Toolset plugins.', 'wpv-views' ); ?>
+	</p>
+<?php
+echo Toolset_Admin_Notices_Manager::tpl_button_primary(
+    __( 'Download Toolset plugins', 'wpv-views' ),
+	'https://wp-types.com/account/downloads/' .
+    '?utm_source=typesplugin' .
+    '&utm_campaign=types' .
+    '&utm_medium=toolset-introduction-message' .
+    '&utm_term=install-missing-toolset-plugins' .
+    '&utm_content=insta-types-views-layouts',
+	true
+);

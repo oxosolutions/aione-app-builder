@@ -1,0 +1,77 @@
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+ 
+h2.nav-tab-wrapper, h3.nav-tab-wrapper {
+    margin-bottom: 0;
+    margin-top: 25px;
+    padding-left: 0;
+    width: 98.1%;
+    border-bottom: 1px solid #1570a6;
+}
+h2 .nav-tab{
+	padding: 6px 20px;
+}
+.nav-tab{
+	border: 1px solid #1570a6;
+	margin: 0px 6px -1px 0;
+	background: #138dc5;
+	color: #ffffff;
+}
+.nav-tab:hover {
+	border: 1px solid #e5e5e5;
+	border-bottom: 1px solid #FFFFFF;
+}
+
+.nav-tab-active, .nav-tab-active:hover {
+  border: 1px solid #e5e5e5;
+  border-bottom: 1px solid #FFFFFF;
+  background: #FFFFFF;
+  color:#666666;
+}
+#aione_app_builder_page_target .welcome-panel {
+	padding: 20px 1.5% 30px 1.5%;
+	width: 95%;
+	float: left;
+	margin-top: 0px;
+	border-top:none;
+}
+#aione_app_builder_page_target .welcome-panel.right {
+	margin-left:1.6%;
+}
+#aione_app_builder_page_target .welcome-panel h1{
+	font-weight: 100;
+	border-bottom: 1px solid #b8b8b8;
+	margin: 0 0 10px 0;
+	padding: 0 0 10px 0;
+	text-align:center;
+}
+#aione_app_builder_page_target .welcome-panel p{
+	text-align:center;
+}
+
+
+.acf-columns-2 {
+	margin-right:0px !important;
+}
+
+.acf-columns-2 .acf-column-2 {
+	display:none;
+}
+	
+
+/**
+ * Custom Post Typle
+ * Types Plugin
+ * Hide View Generator
+ */
+ 
+
+.toolset_page_wpcf-edit-type #types-information-table{
+	display:none;
+}
+
+#types-information-table{
+	display:none;
+}
