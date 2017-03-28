@@ -949,7 +949,7 @@ class Aione_App_Builder_Shortcode {
 		$output = "";
 		if ( !empty( $display ) ) {
 			if($display == "all") { 
-			 $displayItems = get_field_objects(); echo "<pre>";print_r($displayItems);echo "</pre>";
+			 $displayItems = get_field_objects(); //echo "<pre>";print_r($displayItems);echo "</pre>";
 				if( $displayItems ){
 					foreach( $displayItems as $field )
 					{
