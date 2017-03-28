@@ -1,0 +1,10 @@
+#html, #css, #js{
+    width:100%;
+    min-height: 230px;
+    display:none;
+}
+
+#preview{
+    width:100%;
+    min-height: 300px;
+}
