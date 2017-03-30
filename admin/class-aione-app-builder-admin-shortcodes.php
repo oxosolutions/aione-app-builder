@@ -163,6 +163,10 @@ class Aione_App_Builder_Admin_Shortcodes {
 						<td></td>
 						<td>[aione-custom-fields display = 'all' label = true value = true seprator = ":"]</td>
 					</tr>
+					<tr>
+						<td></td>
+						<td>[aione-compare-button removetext="" comparetext=""]</td>
+					</tr>
 					</tbody>
 				</table>
 			</div>
