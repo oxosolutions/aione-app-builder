@@ -7,7 +7,7 @@
  * @version 1.0.0
  * @since 	0.1.0
  */
-class Page_Template_Plugin {
+class Aione_Page_Template_Plugin {
     /**
      * Plugin version, used for cache-busting of style and script file references.
      *
@@ -49,7 +49,7 @@ class Page_Template_Plugin {
 	 */
 	public static function get_instance() {
 		if( null == self::$instance ) {
-			self::$instance = new Page_Template_Plugin();
+			self::$instance = new Aione_Page_Template_Plugin();
 		} // end if
 		return self::$instance;
 	} // end getInstance
