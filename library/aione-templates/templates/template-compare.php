@@ -20,7 +20,8 @@
 				foreach( $displayItems as $field ) {
 					$specifications[$field['label']] = $field['name'];
 				}
-				echo "<table>";
+				echo "<div class='compare-table-outer-div' id='compare_table_outer_div'>";
+				echo "<table class='compare-table' id='compare_table'>";
 				echo "<th>Specification</th>";
 				foreach($array as $post_id) {
 					$post = get_post($post_id);
@@ -36,11 +37,10 @@
 					echo "</tr>";	
 				}
 				echo "</table>";
+				echo "</div>";
 				//echo "<pre>";print_r($displayItems);echo "</pre>";
 				
-				echo "<style>
-					th,tr,td {border:1px solid;}
-				</style>";
+				
 			} else {
 				echo "No Phone is added to compare list.";
 			}
