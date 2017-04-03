@@ -31,8 +31,22 @@
 					echo "<tr>";
 					echo "<td>".$specifications_key."</td>";
 					foreach($array as $post_id){
-						$value = get_field($specifications_value, $post_id);
-						echo "<td>".$value."</td>";
+						$value = get_field_object($specifications_value, $post_id);
+						$field_type = $value['type'];
+						if($field_type == "checkbox"){
+							$field_label = $value['label'] ;
+							$field_value = $value['value'] ;
+							$field_value = implode(", ",$field_value);
+							echo "<td>".$field_value."</td>";
+						} elseif($field_type == "image"){
+							$field_value = $value['value']['url'] ;
+							echo "<td><img src='".$field_value."'></td>";
+						}else {
+							$field_label = $value['label'] ;
+							$field_value = $value['value'] ;
+							echo "<td>".$field_value."</td>";
+						}
+						
 					}
 					echo "</tr>";	
 				}
