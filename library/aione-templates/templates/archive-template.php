@@ -33,6 +33,7 @@
 					'posts_per_page'   => 10,
 					'post_type'        => $post_type,
 					'post_status'      => 'publish',
+					//'category_name' => 'uncategorized',
 					'paged' => ( get_query_var('paged') ? get_query_var('paged') : 1),
 				);
 				/*$posts_array = get_posts( $args );

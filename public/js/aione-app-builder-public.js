@@ -31,6 +31,16 @@
 	 $( document ).ready(function() {
 	    var compareLink = $('a.compare_link');
 	    var removeLink = $('a.remove_link');
+
+		$(".remove-button").hide();
+		var sessionData = $("#hidden_session").text();
+		if(sessionData.length>0){
+			 var sessionJsondata = JSON.parse(sessionData);
+			$.each(sessionJsondata, function( index, value ) {
+			  $("#remove-post-"+value).show();
+			  $("#compare-post-"+value).hide();
+			});
+		}			
 	    compareLink.on('click', function(e) {
 			e.preventDefault();
 		   var postID = $(this).attr('id');
@@ -46,6 +56,16 @@
 	            data: details,  // data format
 	            success:function(data) {
 	                console.log(data);
+					
+	                var jsondata = JSON.parse(data);
+					
+					$("#compare-post-"+postID).hide();
+					$("#remove-post-"+postID).show();
+					if(jsondata.length>3){
+						$(".compare_link").addClass("disabled");
+					} else {
+						$(".compare_link").removeClass("disabled");
+					}
 	            },
 	            error: function(error) {
 	                console.log(error);
@@ -68,6 +88,15 @@
 	            data: details,  // data format
 	            success:function(data) {
 	                console.log(data);
+					
+					$("#compare-post-"+postID).show();
+					$("#remove-post-"+postID).hide();
+					 var jsondata = JSON.parse(data);
+					 if(jsondata.length>3){
+						$(".compare_link").addClass("disabled");
+					} else {
+						$(".compare_link").removeClass("disabled");
+					}
 	            },
 	            error: function(error) {
 	                console.log(error);

@@ -20,7 +20,7 @@ if ( ! defined( 'WPINC' ) ) {
 } // end if
 
 require_once( plugin_dir_path( __FILE__ ) . 'class-aione-templates.php' );
-add_action( 'plugins_loaded', array( 'Page_Template_Plugin', 'get_instance' ) );
+add_action( 'plugins_loaded', array( 'Aione_Page_Template_Plugin', 'get_instance' ) );
 
  
  
