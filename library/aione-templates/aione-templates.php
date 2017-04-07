@@ -3,7 +3,7 @@
  * Plugin Name:       Aione Templates
  * Plugin URI:        https://oxosolutions.com/products/wordpress-plugins/aione-templates
  * Description:       Aione Page Templates
- * Version:           1.0.1.1
+ * Version:           1.0.1.2
  * Author:            SGS Sandhu
  * Author URI:        http://sgssandhu.com
  * Text Domain:       aione_templates

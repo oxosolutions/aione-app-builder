@@ -65,7 +65,20 @@ class Page_Template_Plugin {
 		// Grab the translations for the plugin
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
 		// Add a filter to the page attributes metabox to inject our template into the page template cache.
-		add_filter('page_attributes_dropdown_pages_args', array( $this, 'register_project_templates' ) );
+		//add_filter('page_attributes_dropdown_pages_args', array( $this, 'register_project_templates' ) );
+		
+ if ( version_compare( floatval($GLOBALS['wp_version']), '4.7', '<' ) ) { // 4.6 and older
+		            add_filter(
+		                'page_attributes_dropdown_pages_args',
+		                array( $this, 'register_project_templates' )
+		            );
+		      } else { // Add a filter to the wp 4.7 version attributes metabox
+		            add_filter(
+		                'theme_page_templates', array( $this, 'add_new_template' )
+		            );
+		      }
+
+
 		// Add a filter to the save post in order to inject out template into the page cache
 		add_filter('wp_insert_post_data', array( $this, 'register_project_templates' ) );
 		// Add a filter to the template include in order to determine if the page has our template assigned and return it's path
@@ -76,6 +89,8 @@ class Page_Template_Plugin {
 		$this->templates = array(
 			'template-single.php' => __( 'Single Template', $this->plugin_slug ),
 			'archive-template.php' => __( 'Archive Template', $this->plugin_slug ),
+			'template-compare.php' => __( 'Compare Template', $this->plugin_slug ),
+			'template-blank.php' => __( 'Blank Template', $this->plugin_slug ),
 		);
 		// adding support for theme templates to be merged and shown in dropdown
 		$templates = wp_get_theme()->get_page_templates();
@@ -172,4 +187,12 @@ class Page_Template_Plugin {
 	public function get_locale() {
 		return $this->plugin_slug;
 	} // end get_locale
+	/**
+     * Adds our template to the page dropdown for v4.7+
+     *
+     **/
+    public function add_new_template( $posts_templates ) {
+        $posts_templates = array_merge( $posts_templates, $this->templates );
+        return $posts_templates;
+    }
 } // end class

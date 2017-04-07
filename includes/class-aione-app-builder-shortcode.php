@@ -69,7 +69,14 @@ class Aione_App_Builder_Shortcode {
 		$this->plugin_name = 'aione_app_builder';
 		$this->version = '1.0.0';
 
-		
+		add_action('wp_head', array($this,'compareData_ajaxurl'));
+		add_action('init', array($this,'register_my_session'));
+		add_action( 'wp_ajax_compareAction', array($this, 'compareCallback') );
+        add_action( 'wp_ajax_nopriv_compareAction', array($this, 'compareCallback') );
+		add_action( 'wp_ajax_removeAction', array($this, 'removeCallback') );
+        add_action( 'wp_ajax_nopriv_removeAction', array($this, 'removeCallback') );
+        
+
 		/**
 		*
 		*Shortcode page Functionality
@@ -100,7 +107,21 @@ class Aione_App_Builder_Shortcode {
 		add_shortcode( 'aione-post-author', array($this, 'aione_app_builder_template_author_shortcode') );
 		add_shortcode( 'aione-post-date', array($this, 'aione_app_builder_template_date_shortcode') );
 		add_shortcode( 'aione-custom-fields', array($this, 'aione_app_builder_template_cf_shortcode') );
+		add_shortcode( 'aione-compare-button', array($this, 'aione_app_builder_template_compare_button_shortcode') );
     }
+
+    function compareData_ajaxurl() {
+		echo '<script type="text/javascript">
+	           var ajaxurl = "' . admin_url('admin-ajax.php') . '";
+	         </script>';
+	}
+	function register_my_session(){
+	  if( !session_id() ){
+		session_start();
+		$_SESSION['compare_ids'] = array();
+	  }
+	}
+	
 	public function aione_app_builder_login_link_shortcode( $atts ) {
 		extract( shortcode_atts(
 				array(
@@ -1003,6 +1024,42 @@ class Aione_App_Builder_Shortcode {
 		return $output;
 	} 
 	
+	public function aione_app_builder_template_compare_button_shortcode( $attr, $content = null ) {
+		global $post;
+		$defaults = array(
+			'comparetext' => 'Add To Compare',
+			'removetext' => 'Remove From Compare List',
+		);
+		extract( shortcode_atts( $defaults, $attr ) );
+		if(isset($_SESSION['compare_ids']) && in_array($post->ID,$_SESSION['compare_ids'])){
+			$output = "<div class='remove-button' id='remove-post-".$post->ID."'><a class='remove_link' id='".$post->ID."' href='#'>".$removetext."</a></div> ";
+		} else {
+			$output = "<div class='compare-button' id='compare-post-".$post->ID."'><a class='compare_link' id='".$post->ID."' href='#'>".$comparetext."</a></div> ";
+		}
+		
+		return $output;
+	}
 	
+	public function compareCallback() {
+		$post_id = $_REQUEST['postID'];
+		if(isset($_SESSION['compare_ids'])){
+			array_push($_SESSION['compare_ids'],$post_id);
+		} else {
+			array_push($_SESSION['compare_ids'],$post_id);	
+		}
+        print_r($_SESSION['compare_ids']);
+        wp_die();
+    }
+	public function removeCallback() {
+		$post_id = $_REQUEST['postID'];
+		if(isset($_SESSION['compare_ids'])){
+			$_SESSION['compare_ids'] = array_diff($_SESSION['compare_ids'], array($post_id));
+		} 
+		
+        print_r($_SESSION['compare_ids']);
+        wp_die();
+    }
+	
+
 		
 }

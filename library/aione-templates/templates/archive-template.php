@@ -28,12 +28,14 @@
 						}
 					}
 				}
+				
 				 $args = array(
-					'posts_per_page'   => -1,
+					'posts_per_page'   => 10,
 					'post_type'        => $post_type,
-					'post_status'      => 'publish'
+					'post_status'      => 'publish',
+					'paged' => ( get_query_var('paged') ? get_query_var('paged') : 1),
 				);
-				$posts_array = get_posts( $args );
+				/*$posts_array = get_posts( $args );
 				if($posts_array){
 					foreach($posts_array as $post_object){
 						$data = do_shortcode( $template_post->post_content );
@@ -44,7 +46,7 @@
 						//echo $data;
 						//echo "<hr>";
 					}
-				} 
+				} */
 				$loop = new WP_Query( $args );
 				if( $loop->have_posts() ):
 							
@@ -58,6 +60,24 @@
 						echo "<hr>";
 					endwhile;
 					
+					global $wp_query;
+
+					$big = 999999999; // need an unlikely integer
+					$translated = __( 'Page', 'mytextdomain' ); // Supply translatable string
+					echo '<div class="pagenav">';
+					echo paginate_links( array(
+						'base' => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+						'format' => '?paged=%#%',
+						'current' => max( 1, get_query_var('paged') ),
+						'total' => $wp_query->max_num_pages,
+							'before_page_number' => '<span class="screen-reader-text">'.$translated.' </span>'
+					) );
+					echo '</div>';
+
+					?>
+					
+					
+					<?php
 				endif;
 				
 			?>

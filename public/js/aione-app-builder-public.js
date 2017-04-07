@@ -28,5 +28,55 @@
 	 * Although scripts in the WordPress core, Plugins and Themes may be
 	 * practising this, we should strive to set a better example in our own work.
 	 */
+	 $( document ).ready(function() {
+	    var compareLink = $('a.compare_link');
+	    var removeLink = $('a.remove_link');
+	    compareLink.on('click', function(e) {
+			e.preventDefault();
+		   var postID = $(this).attr('id');
+	       var details = {
+	            'action': 'compareAction',
+				'postID': postID
+	        };
+
+	        $.ajax({
+	            //url: 'http://192.168.0.101/aione/wp-admin/admin-ajax.php',
+	            url: ajaxurl,
+	            type: 'POST',
+	            data: details,  // data format
+	            success:function(data) {
+	                console.log(data);
+	            },
+	            error: function(error) {
+	                console.log(error);
+	            }
+	        });   
+	    });
+		
+		removeLink.on('click', function(e) {
+			e.preventDefault();
+		   var postID = $(this).attr('id');
+	       var details = {
+	            'action': 'removeAction',
+				'postID': postID
+	        };
+
+	        $.ajax({
+	            //url: 'http://192.168.0.101/aione/wp-admin/admin-ajax.php',
+	            url: ajaxurl,
+	            type: 'POST',
+	            data: details,  // data format
+	            success:function(data) {
+	                console.log(data);
+	            },
+	            error: function(error) {
+	                console.log(error);
+	            }
+	        });   
+	    });
+		
+	});
+
+	 
 
 })( jQuery );

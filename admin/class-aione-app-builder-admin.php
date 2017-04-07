@@ -68,6 +68,9 @@ class Aione_App_Builder_Admin {
 		if(!class_exists('Members_Plugin')){
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'library/members/members.php';
 		}
+		if(!class_exists('Page_Template_Plugin')){
+			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'library/aione-templates/aione-templates.php';
+		}
 		
 		
 	}
@@ -306,7 +309,7 @@ class Aione_App_Builder_Admin {
 			unset($_POST['set-view-submit']);
 			$settings = $_POST;
 			$settings_serailized = serialize($settings);
-			echo "<pre>";print_r($settings);echo "</pre>";
+			//echo "<pre>";print_r($settings);echo "</pre>";
 			
 			if ( get_option( $option_name ) !== false ) {
 				update_option( $option_name, $settings_serailized );
@@ -326,6 +329,7 @@ class Aione_App_Builder_Admin {
 
 		$post_types = get_post_types( $args, $name, $operator );
 		//echo "<pre>";print_r($post_types);echo "</pre>";
+		
 		
 		$cpts_raw = ! isset( $_GET['toolset-dashboard-simulate-no-custom-post-types'] )
 					? get_option( WPCF_OPTION_NAME_CUSTOM_TYPES, array() )
