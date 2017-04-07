@@ -108,7 +108,8 @@ class Aione_App_Builder_Shortcode {
 		add_shortcode( 'aione-post-date', array($this, 'aione_app_builder_template_date_shortcode') );
 		add_shortcode( 'aione-custom-fields', array($this, 'aione_app_builder_template_cf_shortcode') );
 		add_shortcode( 'aione-compare-button', array($this, 'aione_app_builder_template_compare_button_shortcode') );
-
+		add_shortcode( 'aione-search-filter', array($this, 'aione_app_builder_template_search_filter_shortcode') );
+		
     }
 
     function compareData_ajaxurl() {
@@ -119,9 +120,6 @@ class Aione_App_Builder_Shortcode {
 	function register_my_session(){
 	  if( !session_id() ){
 		session_start();
-
-		$_SESSION['compare_ids'] = array();
-
 	  }
 	}
 	
@@ -977,8 +975,8 @@ class Aione_App_Builder_Shortcode {
 				if( $displayItems ){
 					foreach( $displayItems as $field )
 					{
-						$field_type = $field['type'];
-						if($field_type == "text" || $field_type == "textarea" || $field_type == "number" || $field_type == "email" || $field_type == "password" || $field_type == "true_false"){
+						$field_type = $field['type']; 
+						if( $field_type == "textarea" || $field_type == "number" || $field_type == "email" || $field_type == "password" || $field_type == "true_false"){
 							$field_label = $field['label'] ;
 							$field_value = $field['value'] ;
 							if($label == true && $value == true) {
@@ -1003,6 +1001,15 @@ class Aione_App_Builder_Shortcode {
 							$field_value = $field['value'] ;
 							$field_value = implode(", ",$field_value);
 							$output .= "<div id='".$field['id']."'>".$field_label." ".$seprator." ".$field_value."</div>";
+						} else {
+							$field_label = $field['label'] ;
+							$field_value = $field['value'] ;
+							if($label == true && $value == true) {
+								$output .= "<div id='".$field['id']."'>".$field_label." ".$seprator." ".$field_value."</div>";
+							} else {
+								if($label == true && $value == false) {$output .= $field_label;}
+								if($label == false && $value == true) {$output .= $field_value;}
+							}
 						}
 						
 					}
@@ -1024,7 +1031,7 @@ class Aione_App_Builder_Shortcode {
 			
 			
 		}
-		return $output; 
+		return $output;
 	} 
 	
 	public function aione_app_builder_template_compare_button_shortcode( $attr, $content = null ) {
@@ -1034,36 +1041,6 @@ class Aione_App_Builder_Shortcode {
 			'removetext' => 'Remove From Compare List',
 		);
 		extract( shortcode_atts( $defaults, $attr ) );
-		if(isset($_SESSION['compare_ids']) && in_array($post->ID,$_SESSION['compare_ids'])){
-			$output = "<div class='remove-button' id='remove-post-".$post->ID."'><a class='remove_link' id='".$post->ID."' href='#'>".$removetext."</a></div> ";
-		} else {
-			$output = "<div class='compare-button' id='compare-post-".$post->ID."'><a class='compare_link' id='".$post->ID."' href='#'>".$comparetext."</a></div> ";
-		}
-		
-		return $output;
-	}
-	
-	public function compareCallback() {
-		$post_id = $_REQUEST['postID'];
-		if(isset($_SESSION['compare_ids'])){
-			array_push($_SESSION['compare_ids'],$post_id);
-		} else {
-			array_push($_SESSION['compare_ids'],$post_id);	
-		}
-        print_r($_SESSION['compare_ids']);
-        wp_die();
-    }
-	public function removeCallback() {
-		$post_id = $_REQUEST['postID'];
-		if(isset($_SESSION['compare_ids'])){
-			$_SESSION['compare_ids'] = array_diff($_SESSION['compare_ids'], array($post_id));
-		} 
-		
-        print_r($_SESSION['compare_ids']);
-        wp_die();
-    }
-	
-
 		$output = "";
 		//if(isset($_SESSION['compare_ids']) && in_array($post->ID,$_SESSION['compare_ids'])){
 			$output .= "<div class='remove-button' id='remove-post-".$post->ID."'><a class='remove_link' id='".$post->ID."' href='#'>".$removetext."</a></div> ";
@@ -1117,5 +1094,46 @@ class Aione_App_Builder_Shortcode {
 		echo json_encode($_SESSION['compare_ids']);
         wp_die();
     }
+	
+	public function aione_app_builder_template_search_filter_shortcode( $attr, $content = null ) {
+		global $post;
+		$defaults = array(
+			'filter' => '',
+		);
+		extract( shortcode_atts( $defaults, $attr ) );
+		$output = "";
+		
+		$output .= '<div class="search-filter-container">';
+		$output .= '<form class="searchform" method="get" action="">';
+		$output .= '<input type="hidden" name="aione_search_filter" value="aione_search_filter">';	
+		if($filter){
+			$filter_by = explode(",",$filter);
+			foreach($filter_by as $filter_by_key => $filter_by_value){
+				$field_array = get_field_object($filter_by_value);
+				//echo "<pre>";print_r($field_array);echo "</pre>";
+				$output .= '<div class="" id="">';
+				$output .= '<label>'.$field_array['label'].'</label>';
+				if($field_array['type'] == 'select'){
+					
+					$output .= '<select name="' . $field_array['name'] . '">';
+					$output .= '<option value=""></option>';
+					foreach( $field_array['choices'] as $k => $v )
+						{
+							$output .= '<option value="' . $k . '">' . $v . '</option>';
+						}
+					$output .= '</select>';
+				} else {
+					$output .= '<input type="text" name="' . $field_array['name'] . '" value="">';	
+				}
+				$output .= '</div>';
+			}
+		} 
+		$output .= '<input type="submit" name="aione-search-filter-submit" value="search">';
+		$output .= '</form>';
+		$output .= '</div>';
+		
+		return $output;
+	}	
+	
 	
 }
