@@ -1098,16 +1098,40 @@ class Aione_App_Builder_Shortcode {
 	public function aione_app_builder_template_search_filter_shortcode( $attr, $content = null ) {
 		global $post;
 		$defaults = array(
-			'filter' => '',
+			'customfields' => '',
+			'category' => true,
 		);
 		extract( shortcode_atts( $defaults, $attr ) );
 		$output = "";
-		
+		$taxonomies = get_object_taxonomies($post, 'names');
+		//echo "<pre>";print_r($taxonomies);echo "</pre>";
+		$raw_array = $_GET;
 		$output .= '<div class="search-filter-container">';
-		$output .= '<form class="searchform" method="get" action="">';
+		$output .= '<form class="searchform" method="GET" action="">';
 		$output .= '<input type="hidden" name="aione_search_filter" value="aione_search_filter">';	
-		if($filter){
-			$filter_by = explode(",",$filter);
+		$output .= '<label>Kewords</label>';
+		$output .= '<input type="text" name="keyword" value="'.$raw_array['keyword'].'">';
+		if($category == true){
+					$output .= '<label>Category</label>';
+					$output .= '<select name="by_cat">';
+					$output .= '<option value=""></option>';
+					foreach( $taxonomies as $taxonomy )
+						{
+							$custom_terms = get_terms($taxonomy);
+							foreach($custom_terms as $custom_term){
+								if($raw_array['by_cat'] == $custom_term->slug){
+									$selected = "selected";
+								} else {
+									$selected = "";
+								}
+								$output .= '<option '.$selected.' value="' . $custom_term->slug . '">' . $custom_term->name . '</option>';
+							}
+							
+						}
+					$output .= '</select>';
+				}
+		if($customfields){
+			$filter_by = explode(",",$customfields);
 			foreach($filter_by as $filter_by_key => $filter_by_value){
 				$field_array = get_field_object($filter_by_value);
 				//echo "<pre>";print_r($field_array);echo "</pre>";
@@ -1119,11 +1143,16 @@ class Aione_App_Builder_Shortcode {
 					$output .= '<option value=""></option>';
 					foreach( $field_array['choices'] as $k => $v )
 						{
-							$output .= '<option value="' . $k . '">' . $v . '</option>';
+							if($raw_array[$field_array['name']] == $k){
+								$selected = "selected";
+							} else {
+								$selected = "";
+							}
+							$output .= '<option '.$selected.' value="' . $k . '">' . $v . '</option>';
 						}
 					$output .= '</select>';
 				} else {
-					$output .= '<input type="text" name="' . $field_array['name'] . '" value="">';	
+					$output .= '<input type="text" name="' . $field_array['name'] . '" value="'.$raw_array[$field_array['name']].'">';	
 				}
 				$output .= '</div>';
 			}
@@ -1133,7 +1162,7 @@ class Aione_App_Builder_Shortcode {
 		$output .= '</div>';
 		
 		return $output;
-	}	
+	}		
 	
 	
 }

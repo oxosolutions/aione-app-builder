@@ -167,6 +167,10 @@ class Aione_App_Builder_Admin_Shortcodes {
 						<td></td>
 						<td>[aione-compare-button removetext="" comparetext=""]</td>
 					</tr>
+					<tr>
+						<td></td>
+						<td>[aione-search-filter customfields="field_58d36c2b25b70,field_58d4f175ca21a" category="true"]</td>
+					</tr>
 					</tbody>
 				</table>
 			</div>
