@@ -1,15 +1,15 @@
 <?php
 
 /**
- * @link              www.sgssandhu.com
- * @since             1.0.0
+ * @link              http://sgssandhu.com/
+ * @since             1.0.0.0
  * @package           Aione_App_Builder
  *
  * @wordpress-plugin
  * Plugin Name:       Aione App Builder
  * Plugin URI:        http://oxosolutions.com/products/wordpress-plugins/aione-app-builder/
  * Description:       Aione App Builder
- * Version:           2.1.5.5 
+ * Version:           2.1.5.6
  * Author:            OXO Solutions
  * Author URI:        https://github.com/oxosolutions/aione-app-builder
  * License:           GPL-2.0+
