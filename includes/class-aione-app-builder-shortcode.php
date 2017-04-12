@@ -109,6 +109,7 @@ class Aione_App_Builder_Shortcode {
 		add_shortcode( 'aione-custom-fields', array($this, 'aione_app_builder_template_cf_shortcode') );
 		add_shortcode( 'aione-compare-button', array($this, 'aione_app_builder_template_compare_button_shortcode') );
 		add_shortcode( 'aione-search-filter', array($this, 'aione_app_builder_template_search_filter_shortcode') );
+		add_shortcode( 'aione-create-post', array($this, 'aione_app_builder_create_post_shortcode') );
 		
     }
 
@@ -1109,7 +1110,7 @@ class Aione_App_Builder_Shortcode {
 		$output .= '<div class="search-filter-container">';
 		$output .= '<form class="searchform" method="GET" action="">';
 		$output .= '<input type="hidden" name="aione_search_filter" value="aione_search_filter">';	
-		$output .= '<label>Kewords</label>';
+		$output .= '<label>Keywords</label>';
 		$output .= '<input type="text" name="keyword" value="'.$raw_array['keyword'].'">';
 		if($category == true){
 					$output .= '<label>Category</label>';
@@ -1164,5 +1165,113 @@ class Aione_App_Builder_Shortcode {
 		return $output;
 	}		
 	
+	public function aione_app_builder_create_post_shortcode($attr, $content = null){
+		global $post;
+		global $wpdb;
+		$user_id = get_current_user_id();
+		$defaults = array(
+			'post_type' => '',
+			'groups' => '',
+		);
+		extract( shortcode_atts( $defaults, $attr ) );
+		$output = "";
+		
+		if( isset($_POST['action']) && $_POST['action'] == 'create_post' ){
+			
+			$fields = $_POST['fields'];
+			$create_post_title		= $_POST["aione_create_post_title"];
+			$create_post_content		= $_POST["aione_create_post_content"];
+			$create_post_category		= $_POST["aione_create_post_category"];
+			
+			$my_post = array(
+			  'post_title'    => wp_strip_all_tags($create_post_title),
+			  'post_content'  => $create_post_content,
+			  'post_status'   => 'publish',
+			  'post_author'   => $user_id,
+			  'post_type'    =>  $post_type
+			);
+			 
+			// Insert the post into the database
+			$new_post_id = wp_insert_post( $my_post );
+			if(is_int($new_post_id)) {
+				foreach($create_post_category as $val){
+					$wpdb->query("INSERT INTO wp_term_relationships (object_id, term_taxonomy_id) VALUES ('".$new_post_id."', '".$val."')");
+				}
+				foreach($fields as $fields_key => $fields_val){
+					update_field($fields_key, $fields_val,$new_post_id);
+					//update_field( 'register_phone_number', $_POST['fields']['field_5801ee639f0d5'], $temp_user_id );
+				}
+				$output .= 'Thank you for posting.';
+				
+				
+			}
+			
+		}
+		
+		$categories = get_categories('orderby=name');  
+		$wp_cats = array();  
+		foreach ($categories as $category_list ) 
+		{  
+			  $wp_cats[$category_list->cat_ID] = $category_list->cat_name;  
+		}  
+		
+		
+		
+		$html_before_fields = '
+			
+			<form id="aione-create-post-form" class="aione-form create-post form acf-form" action="'.get_permalink().'" method="post">
+				<div class="postbox acf_postbox no_box">
+				
+				<div class="aione_form_field field field_type-text">
+					<p class="label"><label for="aione_create_post_title">Post Name<span class="required">*</span></label></p>
+					<div class="acf-input-wrap"><input name="aione_create_post_title" id="aione_create_post_title" class="textbox large required" type="text" placeholder="" value=""/></div>
+					
+				<div class="aione_form_field field field_type-text">
+					<p class="label"><label for="aione_create_post_content">Post Content</label></p>
+					<div class="acf-input-wrap"><textarea name="aione_create_post_content" id="aione_create_post_content" class="textbox large" ></textarea></div>	
+					
+				<div id="acf-check" class="field field_type-checkbox">
+				<p class="label"><label for="aione_create_post_category">Select category</label></p>
+				
+				';
+				foreach ($wp_cats as $k => $v) {
+				  
+				   $html_before_fields .= '<label><input id="acf-field-check" type="checkbox" class="acf-checkbox-list checkbox" name="aione_create_post_category[]" value="'.$k.'">'.$v.'</label>';
+				}
+				$html_before_fields .= '
+				</div>	
+				
+				</div>
+		';
+		$html_after_fields = '<div class="field">
+			<input type="hidden" name="action" value="create_post">
+			<input type="submit" value="Submit">
+		</div>
+		';
+		
+		$field_groups = explode(",",$groups);
+		//$field_groups = get_option('aione_app_builder_registration_custom_field_groups');
+			if(!is_array($field_groups)){
+				$field_groups = array($field_groups);
+			}
+		$options = array(
+				'post_id'	            => 'new_post',
+				'form'                  => false,
+				'field_groups'          => $field_groups,
+				'post_title'            => false,
+				'post_content'          => false,
+				'html_before_fields'    => $html_before_fields,
+				'html_after_fields'     => $html_after_fields,
+				'instruction_placement' => 'field',
+				'submit_value'	        => 'Submit',
+				'updated_message'	    => 'Submitted Successfully',
+			);
+
+			ob_start();
+			acf_form($options);
+			$output .= ob_get_contents();
+			ob_end_clean();	
+		return $output;
+	}
 	
 }
