@@ -51,6 +51,10 @@ class Aione_App_Builder_Public {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+		
+		if(!class_exists('ReallySimpleCaptcha')){
+			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'library/really-simple-captcha/really-simple-captcha.php';
+		}
 
 	}
 
