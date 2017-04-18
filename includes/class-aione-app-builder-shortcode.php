@@ -1002,6 +1002,14 @@ class Aione_App_Builder_Shortcode {
 							$field_value = $field['value'] ;
 							$field_value = implode(", ",$field_value);
 							$output .= "<div id='".$field['id']."'>".$field_label." ".$seprator." ".$field_value."</div>";
+						} elseif ($field_type == "relationship") {
+							$field_label = $field['label'] ;
+							$field_value = $field['value'] ;
+							$output .= "<div id='".$field['id']."'>".$field_label." ".$seprator;
+							foreach($field_value as $field_array){
+								$output .= " <a href='".get_permalink($field_array->ID)."'>".$field_array->post_title."</a> ";
+							}
+							$output .= "</div>";
 						} else {
 							$field_label = $field['label'] ;
 							$field_value = $field['value'] ;
@@ -1109,10 +1117,13 @@ class Aione_App_Builder_Shortcode {
 		$raw_array = $_GET;
 		$output .= '<div class="search-filter-container">';
 		$output .= '<form class="searchform" method="GET" action="">';
-		$output .= '<input type="hidden" name="aione_search_filter" value="aione_search_filter">';	
+		$output .= '<input type="hidden" name="aione_search_filter" value="aione_search_filter">';
+		$output .= '<div class="search-filter keyword">';		
 		$output .= '<label>Keywords</label>';
 		$output .= '<input type="text" name="keyword" value="'.$raw_array['keyword'].'">';
+		$output .= '</div>';
 		if($category == true){
+					$output .= '<div class="search-filter category">';
 					$output .= '<label>Category</label>';
 					$output .= '<select name="by_cat">';
 					$output .= '<option value=""></option>';
@@ -1130,13 +1141,14 @@ class Aione_App_Builder_Shortcode {
 							
 						}
 					$output .= '</select>';
+					$output .= '</div>';
 				}
 		if($customfields){
 			$filter_by = explode(",",$customfields);
 			foreach($filter_by as $filter_by_key => $filter_by_value){
 				$field_array = get_field_object($filter_by_value);
 				//echo "<pre>";print_r($field_array);echo "</pre>";
-				$output .= '<div class="" id="">';
+				$output .= '<div class="search-filter custom" id="">';
 				$output .= '<label>'.$field_array['label'].'</label>';
 				if($field_array['type'] == 'select'){
 					
