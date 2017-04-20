@@ -980,11 +980,11 @@ class Aione_App_Builder_Shortcode {
 						if( $field_type == "textarea" || $field_type == "number" || $field_type == "email" || $field_type == "password" || $field_type == "true_false"){
 							$field_label = $field['label'] ;
 							$field_value = $field['value'] ;
-							if($label == true && $value == true) {
+							if($label == 'true' && $value == 'true') {
 								$output .= "<div id='".$field['id']."'>".$field_label." ".$seprator." ".$field_value."</div>";
 							} else {
-								if($label == true && $value == false) {$output .= $field_label;}
-								if($label == false && $value == true) {$output .= $field_value;}
+								if($label == 'true' && $value == 'false') {$output .= $field_label;}
+								if($label == 'false' && $value == 'true') {$output .= $field_value;}
 							}
 						} elseif ($field_type == "image"){
 							$field_value = $field['value']['url'] ;
@@ -1013,11 +1013,11 @@ class Aione_App_Builder_Shortcode {
 						} else {
 							$field_label = $field['label'] ;
 							$field_value = $field['value'] ;
-							if($label == true && $value == true) {
+							if($label == 'true' && $value == 'true') {
 								$output .= "<div id='".$field['id']."'>".$field_label." ".$seprator." ".$field_value."</div>";
 							} else {
-								if($label == true && $value == false) {$output .= $field_label;}
-								if($label == false && $value == true) {$output .= $field_value;}
+								if($label == 'true' && $value == 'false') {$output .= $field_label;}
+								if($label == 'false' && $value == 'true') {$output .= $field_value;}
 							}
 						}
 						
@@ -1027,14 +1027,58 @@ class Aione_App_Builder_Shortcode {
 				$displayItems = explode( ',', $display );
 					foreach ( $displayItems as $displayItem ) {
 					$field = get_field_object($displayItem);
-					$field_label = $field['label'] ;
+					$field_type = $field['type']; 
+					if( $field_type == "textarea" || $field_type == "number" || $field_type == "email" || $field_type == "password" || $field_type == "true_false"){
+							$field_label = $field['label'] ;
+							$field_value = $field['value'] ;
+							if($label == 'true' && $value == 'true') {
+								$output .= "<div id='".$field['id']."'>".$field_label." ".$seprator." ".$field_value."</div>";
+							} else {
+								if($label == 'true' && $value == 'false') {$output .= $field_label;}
+								if($label == 'false' && $value == 'true') {$output .= $field_value;}
+							}
+						} elseif ($field_type == "image"){
+							$field_value = $field['value']['url'] ;
+							$output .= "<div id='".$field['id']."'><a href='".$field_value."'><img src='".$field_value."'></a></div>";
+						} elseif ($field_type == "file"){
+							$field_value = $field['value']['url'] ;
+							$output .= "<div id='".$field['id']."'><a href='".$field_value."'>".$field_value."</a></div>";
+						} elseif ($field_type == "select" || $field_type == "radio"){
+							$field_label = $field['label'] ;
+							$ansvalue = $field['value'];
+							$anslabel = $field['choices'][ $ansvalue ]; 
+							$output .= "<div id='".$field['id']."'>".$field_label." ".$seprator." ".$anslabel."</div>";
+						} elseif ($field_type == "checkbox") {
+							$field_label = $field['label'] ;
+							$field_value = $field['value'] ;
+							$field_value = implode(", ",$field_value);
+							$output .= "<div id='".$field['id']."'>".$field_label." ".$seprator." ".$field_value."</div>";
+						} elseif ($field_type == "relationship") {
+							$field_label = $field['label'] ;
+							$field_value = $field['value'] ;
+							$output .= "<div id='".$field['id']."'>".$field_label." ".$seprator;
+							foreach($field_value as $field_array){
+								$output .= " <a href='".get_permalink($field_array->ID)."'>".$field_array->post_title."</a> ";
+							}
+							$output .= "</div>";
+						} else {
+							$field_label = $field['label'] ;
+							$field_value = $field['value'] ;
+							if($label == 'true' && $value == 'true') {
+								$output .= "<div id='".$field['id']."'>".$field_label." ".$seprator." ".$field_value."</div>";
+							} else {
+								if($label == 'true' && $value == 'false') {$output .= $field_label;}
+								if($label == 'false' && $value == 'true') {$output .= $field_value;}
+							}
+						}
+					/* $field_label = $field['label'] ;
 					$field_value = $field['value'] ;
 					if($label == true && $value == true) {
 						$output .= "<div id='".$field['id']."'>".$field_label." ".$seprator." ".$field_value."</div>";
 					} else {
 						if($label == true && $value == false) {$output .= "<div id='".$field['id']."'>".$field_label."<div>";}
 						if($label == false && $value == true) {$output .= "<div id='".$field['id']."'>".$field_value."<div>";}
-					}
+					} */
 				}
 			}
 			
