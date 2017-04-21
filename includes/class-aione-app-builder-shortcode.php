@@ -110,6 +110,7 @@ class Aione_App_Builder_Shortcode {
 		add_shortcode( 'aione-compare-button', array($this, 'aione_app_builder_template_compare_button_shortcode') );
 		add_shortcode( 'aione-search-filter', array($this, 'aione_app_builder_template_search_filter_shortcode') );
 		add_shortcode( 'aione-create-post', array($this, 'aione_app_builder_create_post_shortcode') );
+		add_shortcode( 'aione-embed', array($this, 'aione_app_builder_embed_shortcode') );
 		
     }
 
@@ -1327,6 +1328,17 @@ class Aione_App_Builder_Shortcode {
 			acf_form($options);
 			$output .= ob_get_contents();
 			ob_end_clean();	
+		return $output;
+	}
+	
+	function aione_app_builder_embed_shortcode($attr, $content = null){
+		$defaults = array(
+			'link' => ''
+		);
+		extract( shortcode_atts( $defaults, $attr ) );
+		$output = "";
+		global $wp_embed;
+		$output .= $wp_embed->run_shortcode('[embed]'.$link.'[/embed]');
 		return $output;
 	}
 	

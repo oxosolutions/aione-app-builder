@@ -175,6 +175,10 @@ class Aione_App_Builder_Admin_Shortcodes {
 						<td></td>
 						<td>[aione-create-post post_type="" groups=""]</td>
 					</tr>
+					<tr>
+						<td></td>
+						<td>[aione-embed link=""]</td>
+					</tr>
 					</tbody>
 				</table>
 			</div>
