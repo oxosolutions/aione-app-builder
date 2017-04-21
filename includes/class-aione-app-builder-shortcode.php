@@ -306,7 +306,7 @@ class Aione_App_Builder_Shortcode {
 			$output .= wp_login_form( $args );
 		} else {
 			$output .= '<div class="center-align">';
-			$output .= 'You are already logged in!';
+			$output .= 'You are already logged in! ';
 			$output .= '<a href="'.wp_logout_url().'" title="Logout" class="aione-common-button">Logout</a>';
 			$output .= '</div>';
 		}
@@ -791,7 +791,7 @@ class Aione_App_Builder_Shortcode {
 					$errors = array();
 					// load from post
 
-					if( isset($_POST['action']) && $_POST['action'] == 'add_new' && !empty($_POST['fields'])){
+					if( isset($_POST['action']) && $_POST['action'] == 'add_new'){
 						$user_login		= $_POST["aione_user_login"];
 						$user_email		= $_POST["aione_user_email"];
 						$user_pass		= $_POST["aione_user_pass"];
@@ -897,39 +897,46 @@ class Aione_App_Builder_Shortcode {
 	public function aione_app_builder_user_registration_form( ) {
 			$html_before_fields = '
 			
-			<form id="aione-registration-form" class="aione-form register form acf-form" action="'.get_permalink().'" method="post">
+			<form id="aione_registration_form" class="aione-registration-form aione-form form acf-form" action="'.get_permalink().'" method="post">
 				<div class="postbox acf_postbox no_box">
 				
-				<div class="aione_form_field field field_type-text">
+				<div class="aione-form-field field field-type-text">
 					<p class="label"><label for="aione_user_login">Enter Username<span class="required">*</span></label></p>
 					<div class="acf-input-wrap"><input name="aione_user_login" id="aione_user_login" class="textbox large required" type="text" placeholder="Username" value=""/></div>
-					<p class="label"><label for="aione_user_login">Only lowercase letters, numbers, underscore are accepted</label></p>
 				</div>
-				<div class="aione_form_field field field_type-text">
+				<div class="aione-form-field field field-type-text">
 					<p class="label"><label for="aione_user_email">Your Email Address<span class="required">*</span></label></p>
 					<div class="acf-input-wrap"><input name="aione_user_email" id="aione_user_email" class="textbox large required" type="email" placeholder="Your Email Address" value=""/></div>
 				</div>
 
-				<div class="aione_form_field field field_type-text">
+				<div class="aione-form-field field field-type-text">
 					<p class="label"><label for="password">Enter Password<span class="required">*</span></label></p>
 					<div class="acf-input-wrap"><input name="aione_user_pass" id="password" class="textbox large required" type="password"/></div>
 				</div>
 
-				<div class="aione_form_field field field_type-text">
+				<div class="aione-form-field field field-type-text">
 					<p class="label"><label for="password_again">Enter Password Again<span class="required">*</span></label></p>
 					<div class="acf-input-wrap"><input name="aione_user_pass_confirm" id="password_again" class="textbox large required" type="password"/></div>
 				</div>
-				<div class="aione_form_field field field_type-text">
+				<div class="aione-form-field field field-type-text">
 					<p class="label"><label for="aione_user_fname">Enter First Name</label></p>
 					<div class="acf-input-wrap"><input name="aione_user_fname" id="aione_user_fname" class="textbox large" type="text" placeholder="First Name" value=""/></div>
 				</div>
-				<div class="aione_form_field field field_type-text">
+				<div class="aione-form-field field field-type-text">
 					<p class="label"><label for="aione_user_lname">Enter Last Name</label></p>
 					<div class="acf-input-wrap"><input name="aione_user_lname" id="aione_user_lname" class="textbox large" type="text" placeholder="Last Name" value=""/></div>
 				</div>
 
 
 				</div>
+				<style>
+				#aione_registration_form p.label{
+					margin-bottom:0;
+				}
+				#aione_registration_form .aione-form-field{
+					margin-bottom:20px;
+				}
+				</style>
 			
 			';
 			$html_after_fields = '<div class="field">
@@ -1314,11 +1321,11 @@ class Aione_App_Builder_Shortcode {
 			<form id="aione-create-post-form" class="aione-form create-post form acf-form" action="'.get_permalink().'" method="post">
 				<div class="postbox acf_postbox no_box">
 				
-				<div class="aione_form_field field field_type-text">
+				<div class="aione-form-field field field-type-text">
 					<p class="label"><label for="aione_create_post_title">Post Name<span class="required">*</span></label></p>
 					<div class="acf-input-wrap"><input name="aione_create_post_title" id="aione_create_post_title" class="textbox large required" type="text" placeholder="" value=""/></div>
 					
-				<div class="aione_form_field field field_type-text">
+				<div class="aione-form-field field field-type-text">
 					<p class="label"><label for="aione_create_post_content">Post Content</label></p>
 					<div class="acf-input-wrap"><textarea name="aione_create_post_content" id="aione_create_post_content" class="textbox large" ></textarea></div>	
 					
