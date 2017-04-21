@@ -93,6 +93,7 @@
 				//echo "<pre>";print_r($args);
 				$css = get_post_meta($template_post->ID, 'pyre_custom_css',true);
 				$sidebar = get_post_meta($template_post->ID, 'sbg_selected_sidebar_replacement',true);
+				$sidebar = array_filter($sidebar);
 				if(empty($sidebar)){
 					if( $loop->have_posts() ):
 							

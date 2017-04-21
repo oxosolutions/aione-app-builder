@@ -75,7 +75,10 @@ class Aione_App_Builder_Shortcode {
         add_action( 'wp_ajax_nopriv_compareAction', array($this, 'compareCallback') );
 		add_action( 'wp_ajax_removeAction', array($this, 'removeCallback') );
         add_action( 'wp_ajax_nopriv_removeAction', array($this, 'removeCallback') );
-        
+
+
+        //Redirect to a page if login is failed
+        add_action( 'wp_login_failed', array($this, 'aione_app_builder_login_fail_redirect_filter') );
 
 		/**
 		*
@@ -89,16 +92,32 @@ class Aione_App_Builder_Shortcode {
 		add_shortcode( 'user_not_logged_in', array($this, 'aione_app_builder_user_not_logged_in_shortcode') );
 		add_shortcode( 'user_not_logged_in_error', array($this, 'aione_app_builder_user_not_logged_in_error_shortcode') );
 		add_shortcode( 'access', array($this, 'aione_app_builder_access_check_shortcode') );
-		add_shortcode( 'aione-app-builder-login-form', array($this, 'aione_app_builder_login_form_shortcode') );
+
+
+		add_shortcode( 'login', array($this, 'aione_app_builder_login_shortcode') );
+		add_shortcode( 'register', array($this, 'aione_app_builder_register_shortcode') );
+		add_shortcode( 'forget-password', array($this, 'aione_app_builder_forget_password_shortcode') );
+
+		/*
+		add_shortcode( 'account', array($this, 'aione_app_builder_account_shortcode') );
+		add_shortcode( 'account-menu', array($this, 'aione_app_builder_account_menu_shortcode') );
+		add_shortcode( 'account-content', array($this, 'aione_app_builder_account_content_shortcode') );
+		add_shortcode( 'profile', array($this, 'aione_app_builder_profile_shortcode') );
+		add_shortcode( 'edit-profile', array($this, 'aione_app_builder_edit_profile_shortcode') );
+		*/
+		add_shortcode( 'change-password', array($this, 'aione_app_builder_change_password_shortcode') );
+
+
+
 		add_shortcode( 'home_url', array($this, 'aione_app_builder_home_url_shortcode') );
 		
 		add_shortcode( 'url', array($this, 'aione_app_builder_url_shortcode') );
-		add_shortcode( 'forget-password', array($this, 'aione_app_builder_forget_password_shortcode') );
+		
 		add_shortcode( 'list-posts', array($this, 'aione_app_builder_list_post_shortcode') );
 		add_shortcode( 'list-comments', array($this, 'aione_app_builder_list_comments_shortcode') );
 		add_shortcode( 'faq', array($this, 'aione_app_builder_faq_shortcode') );
-		add_shortcode( 'change-password', array($this, 'aione_app_builder_change_password_shortcode') );
-		add_shortcode( 'register', array($this, 'aione_app_builder_register_shortcode') );
+		
+		
 		add_shortcode( 'users', array($this, 'aione_app_builder_users_shortcode') );
 		
 		
@@ -113,6 +132,17 @@ class Aione_App_Builder_Shortcode {
 		add_shortcode( 'aione-embed', array($this, 'aione_app_builder_embed_shortcode') );
 		
     }
+
+
+	function aione_app_builder_login_fail_redirect_filter( $username ) {
+	   $referrer = $_SERVER['HTTP_REFERER'];  // where did the post submission come from?
+	   //$post = serialize($_POST);
+	   // if there's a valid referrer, and it's not the default log-in screen
+	   if ( !empty($referrer) && !strstr($referrer,'wp-login') && !strstr($referrer,'wp-admin') ) {
+	      wp_redirect( $referrer . '?login=failed' );  // let's append some information (login=failed) to the URL for the theme to use
+	      exit;
+	   }
+	}
 
     function compareData_ajaxurl() {
 		echo '<script type="text/javascript">
@@ -230,7 +260,7 @@ class Aione_App_Builder_Shortcode {
 		return '';
 	} // aione_app_builder_access_check_shortcode ()
 	
-	public function aione_app_builder_login_form_shortcode( $atts, $content = null ) {
+	public function aione_app_builder_login_shortcode( $atts, $content = null ) {
 		extract( shortcode_atts(
 			array(
 			'echo'           => false,
@@ -246,6 +276,7 @@ class Aione_App_Builder_Shortcode {
 			'id_submit'      => 'wp-submit',
 			), $atts )
 		);
+
 		$output = "";
 		$login = (isset($_GET['login']) ? $_GET['login'] : null);
 		$errors = array();
@@ -272,12 +303,16 @@ class Aione_App_Builder_Shortcode {
 			'value_remember' => !empty( $instance['value_remember'] ) ? true : false
 		);
 		if ( !is_user_logged_in() ) {
-		$output .= wp_login_form( $args );
+			$output .= wp_login_form( $args );
 		} else {
-			$output .= "You are already logged in! ";
+			$output .= '<div class="center-align">';
+			$output .= 'You are already logged in!';
 			$output .= '<a href="'.wp_logout_url().'" title="Logout" class="aione-common-button">Logout</a>';
+			$output .= '</div>';
 		}
 		return $output;
+
+
 	} // End aione_login_form_shortcode()
 	
 	public function aione_app_builder_home_url_shortcode( $attr, $content = null ) {
@@ -1338,7 +1373,7 @@ class Aione_App_Builder_Shortcode {
 		extract( shortcode_atts( $defaults, $attr ) );
 		$output = "";
 		global $wp_embed;
-		$output .= $wp_embed->run_shortcode('[embed]'.$link.'[/embed]');
+		$output .= $wp_embed->run_shortcode('[embed]'.do_shortcode($link).'[/embed]');
 		return $output;
 	}
 	

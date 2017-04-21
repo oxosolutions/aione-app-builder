@@ -393,7 +393,7 @@ class Aione_App_Builder_Admin {
 					if(array_key_exists($cpt_key,$tem_settings ) ){
 						if($tem_settings[$cpt_key]['template_archive'] ==  $templates->ID){
 							$archive_selected = "selected";
-						} else {$single_selected = "";}
+						} else {$archive_selected = "";}
 						
 					}
 				}

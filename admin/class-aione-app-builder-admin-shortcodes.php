@@ -69,7 +69,7 @@ class Aione_App_Builder_Admin_Shortcodes {
 		}
 		</style>
 		<div class="wrap">
-			<h2>ShortCode List</h2>
+			<h2>Shortcode List</h2>
 			<div class="shortcode-list">
 				<table>
 					<th>Name</th>
@@ -105,7 +105,26 @@ class Aione_App_Builder_Admin_Shortcodes {
 					</tr>
 					<tr>
 						<td>Login Form</td>
-						<td>[aione-app-builder-login-form]</td>
+						<td>
+						[login] <br>
+
+						<strong>Arguments</strong>
+<pre>
+'echo'           => false, // true/false
+'redirect'       => Page set in set pages,  //Link to redirect after login
+'form_id'        => 'loginform', //CSS Id for login form
+'label_username' => __( 'Username' ),//Label for Username Input
+'label_password' => __( 'Password' ), //Label for Password Input
+'label_remember' => __( 'Remember Me' ), //Label for Remember me Input
+'label_log_in'   => __( 'Login' ),   //Label for Login Button
+'id_username'    => 'user_login',  //CSS Id for Username Input
+'id_password'    => 'user_pass',  //CSS Id for password input
+'id_remember'    => 'rememberme',  //CSS Id for Remember me input
+'id_submit'      => 'wp-submit',  //CSS Id for login Button
+</pre>
+
+
+						</td>
 					</tr>
 					<tr>
 						<td>Home URL</td>
