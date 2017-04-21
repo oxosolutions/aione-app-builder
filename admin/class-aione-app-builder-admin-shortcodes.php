@@ -136,7 +136,7 @@ class Aione_App_Builder_Admin_Shortcodes {
 					</tr>
 					<tr>
 						<td></td>
-						<td>[forget-password]</td>
+						<td>[reset-password]</td>
 					</tr>
 					<tr>
 						<td></td>

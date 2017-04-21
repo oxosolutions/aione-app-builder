@@ -96,7 +96,7 @@ class Aione_App_Builder_Shortcode {
 
 		add_shortcode( 'login', array($this, 'aione_app_builder_login_shortcode') );
 		add_shortcode( 'register', array($this, 'aione_app_builder_register_shortcode') );
-		add_shortcode( 'forget-password', array($this, 'aione_app_builder_forget_password_shortcode') );
+		add_shortcode( 'reset-password', array($this, 'aione_app_builder_reset_password_shortcode') );
 
 		/*
 		add_shortcode( 'account', array($this, 'aione_app_builder_account_shortcode') );
@@ -361,7 +361,7 @@ class Aione_App_Builder_Shortcode {
 		}
 	} // End aione_app_builder_url_shortcode()
 	
-	public function aione_app_builder_forget_password_shortcode( $atts ) {
+	public function aione_app_builder_reset_password_shortcode( $atts ) {
 		$output = "";
 		$errors = array();
 		$success_messages = array();
