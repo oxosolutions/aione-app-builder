@@ -29,6 +29,13 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 	 $( document ).ready(function() {
+		 
+		$("#loginform input[type=text]").attr("required", true); 
+		$("#loginform input[type=password]").attr("required", true);
+		 
+		 
+		 
+		 
 	    var compareLink = $('a.compare_link');
 	    var removeLink = $('a.remove_link');
 

@@ -156,7 +156,28 @@ class Aione_App_Builder_Admin_Shortcodes {
 					</tr>
 					<tr>
 						<td></td>
-						<td>[register]</td>
+						<td>
+						[register]
+												<strong>Arguments</strong>
+<pre>
+'echo'           => false, // true/false
+'form_id'        => 'aione_registration_form',  //CSS Id for Registeration form
+'show_firstname' => 'yes', //Label for Username Input
+'show_lastname' 	=> 'yes',
+'label_firstname' => __( 'First Name' ), //Label for First name
+'label_lastname' => __( 'Last Name' ), //Label for Last name
+'label_username' => __( 'Username' ), //Label for Username 
+'label_email' => __( 'Email Address' ), //Label for Email
+'label_password' => __( 'Password' ), //Label for password
+'label_password_again' => __( 'Password Again' ), //Label for Re Enter Password
+'label_submit' => __( 'Register' ), // Text on Submit Button
+'placeholder_firstname' => __( 'Enter Your First Name' ), //Placeholder for Firstname
+'placeholder_laststname' => __( 'Enter Your Last Name' ),  //Placeholder for Lastname
+'placeholder_username' => __( 'Enter Your Username' ),  //Placeholder for Username
+'placeholder_email' => __( 'Enter Your Email Address' )  //Placeholder for Email
+</pre>
+
+						</td>
 					</tr>
 					<tr>
 						<td></td>

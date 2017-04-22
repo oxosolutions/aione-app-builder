@@ -29,22 +29,27 @@
 				}
 				foreach($specifications as $specifications_key => $specifications_value) {
 					echo "<tr>";
-					echo "<td>".$specifications_key."</td>";
+					echo "<td class='".$specifications_value."'>".$specifications_key."</td>";
 					foreach($array as $post_id){
 						$value = get_field_object($specifications_value, $post_id);
+						//echo "<pre>";print_r($value);echo "</pre>";
 						$field_type = $value['type'];
 						if($field_type == "checkbox"){
 							$field_label = $value['label'] ;
 							$field_value = $value['value'] ;
 							$field_value = implode(", ",$field_value);
-							echo "<td>".$field_value."</td>";
+							$class = str_replace(' ', '_', $field_value);
+							$class = preg_replace('/[^A-Za-z0-9\_]/', '', $class);
+							echo "<td class='data-".$value['name']."-".$class."'>".$field_value."</td>";
 						} elseif($field_type == "image"){
 							$field_value = $value['value']['url'] ;
 							echo "<td><img src='".$field_value."'></td>";
 						}else {
 							$field_label = $value['label'] ;
 							$field_value = $value['value'] ;
-							echo "<td>".$field_value."</td>";
+							$class = str_replace(' ', '_', $field_value);
+							$class = preg_replace('/[^A-Za-z0-9\_]/', '', $class);
+							echo "<td class='data-".$value['name']."-".$class."'>".$field_value."</td>";
 						}
 						
 					}
