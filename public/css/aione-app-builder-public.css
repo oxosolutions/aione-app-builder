@@ -2,3 +2,85 @@
  * All of the CSS for your public-facing functionality should be
  * included in this file.
  */
+ 
+.account-menu ul {
+	list-style-type:none;
+	border-left:1px solid #ededed;
+	border-right:1px solid #ededed;
+} 
+.account-menu-list{
+	list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid #ededed;
+    margin-bottom: 20px;
+}
+.account-menu ul li a {
+	border-color: #e0dede;
+	padding: 6px 10px;
+	border-bottom: 1px solid #ededed;
+    display: block;
+    height: auto;
+    font-weight: normal;
+    color: #333333;
+}
+.account-menu .account-menu-list > li:hover > a {
+    padding-left: 15px;
+    border-left: 3px solid #168dc5;
+    color: #168DC5;
+}
+
+.account-items .account-item {
+    color: #333333;
+    display: block;
+    border: 1px solid #e5e5e5;
+    margin: 0 15px 15px 0;
+    padding: 30px 0;
+    width: 30%;
+    float: left;
+    text-align: center;
+    background-color: #fbfbfb;
+    font-size: 16px;
+}
+.account-items .account-item:hover {
+    color: #FFFFFF;
+    border: 1px solid #1570a6;
+    background-color: #168dc5;
+}
+h3.account-content-title-heading-center {
+    text-align: center;
+    border-bottom: 1px dotted #e0dede;
+    margin: -5px 0 20px 0;
+    padding: 0 0 10px 0;
+}
+ul.account-content-profile {
+	list-style-type:none;
+}
+ul.account-content-profile li {
+    margin-bottom: 6px;
+}
+.user-detail-label {
+    background-color: #f2f2f2;
+    border: 1px solid #f2f2f2;
+    width: 25%;
+    display: block;
+    line-height: 32px;
+    float: left;
+    padding: 0 10px;
+    min-height: 32px;
+}
+.user-detail-value {
+    line-height: 32px;
+    border: 1px dotted #e8e8e8;
+    float: left;
+    margin-left: 1%;
+    width: 74%;
+    padding: 0 10px;
+    min-height: 32px;
+}
+.aione-edit-profile-form .acf_postbox , .aione-change-password-form .acf_postbox, .aione-change-password-form .acf_postbox{
+	margin-bottom:2%;
+}
+.aione-edit-profile-form .checkbox, .aione-edit-profile-form .radio, .aione-change-password-form .checkbox, .aione-change-password-form .radio {
+	list-style-type:none;
+}

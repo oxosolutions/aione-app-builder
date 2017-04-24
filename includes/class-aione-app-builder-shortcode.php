@@ -98,13 +98,12 @@ class Aione_App_Builder_Shortcode {
 		add_shortcode( 'register', array($this, 'aione_app_builder_register_shortcode') );
 		add_shortcode( 'reset-password', array($this, 'aione_app_builder_reset_password_shortcode') );
 
-		/*
+		
 		add_shortcode( 'account', array($this, 'aione_app_builder_account_shortcode') );
 		add_shortcode( 'account-menu', array($this, 'aione_app_builder_account_menu_shortcode') );
 		add_shortcode( 'account-content', array($this, 'aione_app_builder_account_content_shortcode') );
 		add_shortcode( 'profile', array($this, 'aione_app_builder_profile_shortcode') );
 		add_shortcode( 'edit-profile', array($this, 'aione_app_builder_edit_profile_shortcode') );
-		*/
 		add_shortcode( 'change-password', array($this, 'aione_app_builder_change_password_shortcode') );
 
 
@@ -845,26 +844,23 @@ class Aione_App_Builder_Shortcode {
 				$output .= '</ul></div>';
 			}
 			if(is_user_logged_in()) {
+			$output .= '<h3 class="account-content-title-heading-center">Change Password</h3>';
+			$output .= '<form method="post" class="aione-change-password-form aione-form form acf-form" id="aione-change-password-form" action="">';
+			$output .= '<div class="aione-form-field field field-type-text">
+						<p class="label"><label for="current_pass">Current Password<span class="required">*</span></label></p>
+						<div class="acf-input-wrap"><input name="current_pass" id="current_pass" class="text-input field-long" type="password" /></div>
+					</div>';
+			$output .= '<div class="aione-form-field field field-type-text">
+						<p class="label"><label for="pass1">New Password<span class="required">*</span></label></p>
+						<div class="acf-input-wrap"><input name="pass1" id="pass1" class="text-input field-long" type="password" /></div>
+					</div>';
+			$output .= '<div class="aione-form-field field field-type-text">
+						<p class="label"><label for="pass2">New Password<span class="required">*</span></label></p>
+						<div class="acf-input-wrap"><input name="pass2" id="pass2" class="text-input field-long" type="password" /></div>
+					</div>';
 			
-			$output .= '<form method="post" class="login-signup" id="login-signup" action="">';
-			$output .= '<ul class="form-style-1">';
-			$output .= '<li>';
-			$output .= '<label for="current_pass">Current Password <span class="required">*</span></label>';
-			$output .= '<input class="text-input field-long" name="current_pass" type="password" id="current_pass">';
-			$output .= '</li>';
-			$output .= '<li>';
-			$output .= '<label for="pass1">New Password <span class="required">*</span></label>';
-			$output .= '<input class="text-input field-long" name="pass1" type="password" id="pass1">';
-			$output .= '</li>';
-			$output .= '<li>';
-			$output .= '<label for="pass2">Confirm Password <span class="required">*</span></label>';
-			$output .= '<input class="text-input field-long" name="pass2" type="password" id="pass2">';
-			$output .= '</li>';
-			$output .= '<li>';
 			$output .= '<input name="updateuser" type="submit" id="updateuser" class="field-long submit btn button-primary button application-button" value="Change Password">';
 			$output .= '<input name="action" type="hidden" id="action" value="changepassword">';
-			$output .= '</li>';
-			$output .= '</ul>';
 			$output .= '</form>';
 		   }
 			return $output;
@@ -996,12 +992,13 @@ class Aione_App_Builder_Shortcode {
 								)
 							);
 							if(is_int($new_user_id)) {
-								$temp_user_id = "user_".$new_user_id;
-								update_field( 'register_phone_number', $_POST['fields']['field_5801ee639f0d5'], $temp_user_id );
-								update_field( 'register_address', $_POST['fields']['field_5801ee859f0d6'], $temp_user_id );
-								 
+								if(isset($_POST['fields'])){
+									$custom_fields = $_POST['fields'];
+									foreach($custom_fields as $custom_field_key => $custom_field){
+										update_field($custom_field_key , $custom_field, "user_".$new_user_id);
+									}
 								
-							
+								}
 								
 								$output .= 'Thank you for registering.';
 						
@@ -1523,7 +1520,8 @@ class Aione_App_Builder_Shortcode {
 		);
 		extract( shortcode_atts( $defaults, $attr ) );
 		$output = "";
-		
+		$output .= $this->aione_app_builder_account_menu_shortcode();	
+		$output .= $this->aione_app_builder_account_content_shortcode();	
 		return $output;
 	}
 	
@@ -1533,6 +1531,15 @@ class Aione_App_Builder_Shortcode {
 		);
 		extract( shortcode_atts( $defaults, $attr ) );
 		$output = "";
+		$output .= '
+		<div class="account-menu" id="account_menu">
+		<ul class="account-menu-list" id="account_menu_list">
+			<li><a href="?action=account">Account</a></li>
+			<li><a href="?action=profile">View Profile</a></li>
+			<li><a href="?action=edit-profile">Edit Profile</a></li>
+			<li><a href="?action=change-password">Change Password</a></li>
+		</ul>
+		</div>';
 		
 		return $output;
 	}
@@ -1543,6 +1550,34 @@ class Aione_App_Builder_Shortcode {
 		);
 		extract( shortcode_atts( $defaults, $attr ) );
 		$output = "";
+		$action = $_GET['action'];
+		if(!isset($action)){
+			$action = "account";
+		}
+		if($action == "account"){
+			$output .='<div class="account-content-outer" id="account_content_outer">
+				<div class="account-content" id="account_content">
+					<div class="account-items">
+						<a class="account-item" href="?action=profile">View Profile</a>
+						<a class="account-item" href="?action=edit-profile">Edit Profile</a>
+						<a class="account-item" href="?action=change-password">Change Password</a>
+					</div>
+					<div style="clear:both;"></div>
+				</div>
+			</div>';
+		}	// Action = Account
+		
+		if($action == "profile"){
+			$output .= $this->aione_app_builder_profile_shortcode();	
+		} // Action = Profile
+		
+		if($action == "edit-profile"){
+			$output .= $this->aione_app_builder_edit_profile_shortcode();	
+		} // Action = Edit Profile
+		
+		if($action == "change-password"){
+			$output .= $this->aione_app_builder_change_password_shortcode();	
+		} // Action = change-password
 		
 		return $output;
 	}
@@ -1553,6 +1588,56 @@ class Aione_App_Builder_Shortcode {
 		);
 		extract( shortcode_atts( $defaults, $attr ) );
 		$output = "";
+		$user = wp_get_current_user();
+		$user_id = $user->ID;
+		$username = $user->user_login;
+		$user_roles = $user->roles;
+		$value = get_user_meta($user_id);
+		$action = $_GET['action'];
+		if($action == "profile"){
+			$output .='<div class="account-content-outer" id="account_content_outer">
+				<h3 class="account-content-title-heading-center">'.$username.' Profile</h3>';
+				$output .= '<ul class="account-content-profile" id="account_content_profile">
+				<li><div class="user-detail-label">ID</div>
+				<div class="user-detail-value">'.$user_id.'</div>
+				<div class="oxo-clearfix"></div></li>
+				<li><div class="user-detail-label">First Name</div>
+				<div class="user-detail-value">'.$value['first_name'][0].'</div>
+				<div class="oxo-clearfix"></div></li>
+				<li><div class="user-detail-label">Last name</div>
+				<div class="user-detail-value">'.$value['last_name'][0].'</div>
+				<div class="oxo-clearfix"></div></li>
+				<li><div class="user-detail-label">Email</div>
+				<div class="user-detail-value">'.$user->user_email.'</div>
+				<div class="oxo-clearfix"></div></li>
+				';
+				
+				$field_groups = get_option('aione_app_builder_registration_custom_field_groups');
+				if(!is_array($field_groups)){
+					$field_groups = array($field_groups);
+				}
+				
+				 foreach($field_groups as $field_group_key => $field_group){
+					$fields = apply_filters('acf/field_group/get_fields',array(), $field_group);
+					
+					foreach($fields as $fields_key => $field){
+						$field_key = $field['key'];
+						$field_data = get_field($field_key , "user_".$user_id);
+						if(is_array($field_data)){
+							$field_data = implode(",",$field_data);
+						}
+						$output .= '<li><div class="user-detail-label">'.$field['label'].'</div>';
+						$output .= '<div class="user-detail-value">'.$field_data.'</div>
+						<div class="oxo-clearfix"></div></li>';
+					}
+					
+					
+				} 
+				
+				$output .= '</ul>
+				</div>';
+		}
+		
 		
 		return $output;
 	}
@@ -1563,6 +1648,67 @@ class Aione_App_Builder_Shortcode {
 		);
 		extract( shortcode_atts( $defaults, $attr ) );
 		$output = "";
+		$user = wp_get_current_user();
+		$user_id = $user->ID;
+		$username = $user->user_login;
+		$value = get_user_meta($user_id);
+		
+		$action = $_GET['action'];
+		
+		if($action == "edit-profile") {
+			
+			if(isset($_POST['update_profile'])  && $_POST['update_profile'] == 'update_profile'){
+				$first_name = $_POST['aione_user_fname'];
+				$last_name = $_POST['aione_user_lname'];
+				$custom_fields = $_POST['fields'];
+				wp_update_user( array( 'ID' => $user_id, 'first_name' => $first_name, 'last_name' => $last_name  ) );
+				foreach($custom_fields as $custom_field_key => $custom_field){
+					update_field($custom_field_key , $custom_field, "user_".$user_id);
+				}
+				
+			}
+			$output .= '<h3 class="account-content-title-heading-center">Edit Profile</h3>';
+			$html_before_fields = "";
+			$html_before_fields .= '
+				<form id="aione_edit_profile_form" class="aione-edit-profile-form aione-form form acf-form" action="'.get_permalink().'?action=edit-profile" method="post">
+			';
+			$html_before_fields .= '<div class="aione-form-field field field-type-text">
+						<p class="label"><label for="aione_user_fname">First Name</label></p>
+						<div class="acf-input-wrap"><input name="aione_user_fname" id="aione_user_fname" class="textbox large" type="text" placeholder="" value="'.$value['first_name'][0].'"/></div>
+					</div>';
+			$html_before_fields .= '<div class="aione-form-field field field-type-text">
+						<p class="label"><label for="aione_user_lname">Last Name</label></p>
+						<div class="acf-input-wrap"><input name="aione_user_lname" id="aione_user_lname" class="textbox large" type="text" placeholder="" value="'.$value['last_name'][0].'"/></div>
+					</div>';		
+			
+			$html_after_fields = '<div class="aione-form-field field">
+				<input type="hidden" name="update_profile" value="update_profile">
+				<input type="submit" value="Update">
+			</div>
+			';
+			
+			$field_groups = get_option('aione_app_builder_registration_custom_field_groups');
+			if(!is_array($field_groups)){
+				$field_groups = array($field_groups);
+			}
+			$options = array(
+				'post_id'	            => 'user_'.$user_id,
+				'form'                  => false,
+				'field_groups'          => $field_groups,
+				'post_title'            => false,
+				'post_content'          => false,
+				'html_before_fields'    => $html_before_fields,
+				'html_after_fields'     => $html_after_fields,
+				'instruction_placement' => 'field',
+				'submit_value'	        => 'Submit',
+				'updated_message'	    => 'Updated Successfully',
+			);
+
+			ob_start();
+			acf_form($options);
+			$output .= ob_get_contents();
+			ob_end_clean();
+		}
 		
 		return $output;
 	}
