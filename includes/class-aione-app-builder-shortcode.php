@@ -92,7 +92,7 @@ class Aione_App_Builder_Shortcode {
 		add_shortcode( 'user_not_logged_in', array($this, 'aione_app_builder_user_not_logged_in_shortcode') );
 		add_shortcode( 'user_not_logged_in_error', array($this, 'aione_app_builder_user_not_logged_in_error_shortcode') );
 		add_shortcode( 'access', array($this, 'aione_app_builder_access_check_shortcode') );
-
+		add_shortcode( 'id', array($this, 'aione_app_builder_id_shortcode') );
 
 		add_shortcode( 'login', array($this, 'aione_app_builder_login_shortcode') );
 		add_shortcode( 'register', array($this, 'aione_app_builder_register_shortcode') );
@@ -1713,4 +1713,14 @@ class Aione_App_Builder_Shortcode {
 		return $output;
 	}
 	
+	public function aione_app_builder_id_shortcode( $attr, $content = null ) {
+		global $post;
+		$defaults = array(
+			
+		);
+		extract( shortcode_atts( $defaults, $attr ) );
+		$output = "";
+		$output .= $post->ID;
+		return $output;
+	}
 }
