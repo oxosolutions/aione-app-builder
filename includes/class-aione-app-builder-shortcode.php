@@ -1125,7 +1125,16 @@ class Aione_App_Builder_Shortcode {
 		} // END aione_app_builder_users_shortcode
 		
 	public function aione_app_builder_template_title_shortcode( $attr, $content = null ) {
-		return "<a href='".get_post_permalink($post->ID)."'>".get_the_title()."</a>";
+		$defaults = array(
+			'link' => true
+		);
+		extract( shortcode_atts( $defaults, $attr ) );
+		if($link == 'true'){
+			return "<a href='".get_post_permalink($post->ID)."'>".get_the_title()."</a>";
+		} else {
+			return get_the_title();
+		}
+		
 	} 
 	public function aione_app_builder_template_content_shortcode( $attr, $content = null ) {
 		//return the_content();
