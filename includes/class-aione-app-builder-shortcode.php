@@ -1637,24 +1637,43 @@ class Aione_App_Builder_Shortcode {
 	}
 	
 	public function aione_app_builder_account_shortcode ($attr, $content = null){
-		$defaults = array(
-			
+		extract( shortcode_atts(
+			array(
+			'pages'    => 'yes', // yes/no
+			'sub_pages'    => 'no', // yes/no
+			'layout_menu'    => 'vertical',// horizontal/vertical
+			'layout_content'    => 'box',// box/table/list
+			), $attr )
 		);
-		extract( shortcode_atts( $defaults, $attr ) );
+
+		
+		$attr_menu = array(
+			'pages'    => $pages, // yes/no
+			'sub_pages'    => $sub_pages, // yes/no
+			'layout'    => $layout_menu,// horizontal/vertical
+		);
+
+		$attr_content = array(
+			'pages'    => $pages, // yes/no
+			'sub_pages'    => $sub_pages, // yes/no
+			'layout'    => $layout_content,// horizontal/vertical
+		);
 		$output = "";
-		$output .= $this->aione_app_builder_account_menu_shortcode();	
-		$output .= $this->aione_app_builder_account_content_shortcode();	
+		$output .= $this->aione_app_builder_account_menu_shortcode($attr_menu);	
+		$output .= $this->aione_app_builder_account_content_shortcode($attr_content);	
 		return $output;
 	}
 	
 	public function aione_app_builder_account_menu_shortcode ($attr, $content = null){
+		// Attributes
 		extract( shortcode_atts(
 			array(
 			'pages'    => 'yes', // yes/no
-			'sub_pages'    => 'yes', // yes/no
+			'sub_pages'    => 'no', // yes/no
 			'layout'    => 'vertical',// horizontal/vertical
-			), $atts )
+			), $attr )
 		);
+
 		$output = "";
 		$output .= '<div id="account_menu" class="account-menu '.$layout.'" >';
 		$output .= '<ul class="account-menu-list" id="account_menu_list">';
@@ -1690,11 +1709,11 @@ class Aione_App_Builder_Shortcode {
 		extract( shortcode_atts(
 			array(
 			'pages'    => 'yes', // yes/no
-			'sub_pages'    => 'yes', // yes/no
+			'sub_pages'    => 'no', // yes/no
 			'layout'    => 'box',// box/table/list
-			), $atts )
+			), $attr )
 		);
-		extract( shortcode_atts( $defaults, $attr ) );
+
 		$output = "";
 		$action = $_GET['action'];
 		if(!isset($action)){
@@ -1703,7 +1722,7 @@ class Aione_App_Builder_Shortcode {
 		if($action == "account"){
 			$output .='<div class="account-content-outer" id="account_content_outer">';
 			$output .='<div class="account-content" id="account_content">';
-			$output .='<ul class="account-items">';
+			$output .='<ul class="account-items '.$layout.'">';
 			if($pages == 'yes'){
 				$output .='<li><a class="account-item" href="?action=profile">View Profile</a></li>';
 				$output .='<li><a class="account-item" href="?action=edit-profile">Edit Profile</a></li>';

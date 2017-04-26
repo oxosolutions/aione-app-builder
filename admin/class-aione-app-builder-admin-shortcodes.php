@@ -127,6 +127,48 @@ class Aione_App_Builder_Admin_Shortcodes {
 						</td>
 					</tr>
 					<tr>
+						<td>Account</td>
+						<td>
+						[account]
+						<br>
+						<strong>Arguments</strong>
+<pre>
+'pages'    => 'yes', // yes/no
+'sub_pages'    => 'no', // yes/no
+'layout_menu'    => 'vertical',// horizontal/vertical
+'layout_content'    => 'box',// box/table/list
+</pre>
+						</td>
+					</tr>
+					<tr>
+						<td>Account Menu</td>
+						<td>
+						[account-menu]
+						<br>
+						<strong>Arguments</strong>
+<pre>
+'pages'    => 'yes', // yes/no
+'sub_pages'    => 'no', // yes/no
+'layout'    =>'vertical',// horizontal/vertical
+</pre>
+						</td>
+					</tr>
+										<tr>
+						<td>Account Content</td>
+						<td>
+						[account-content]
+						<br>
+						<strong>Arguments</strong>
+<pre>
+'pages'    => 'yes', // yes/no
+'sub_pages'    => 'no', // yes/no
+'layout'    => 'box',// box/table/list
+</pre>
+						</td>
+					</tr>
+
+
+					<tr>
 						<td>Home URL</td>
 						<td>[home_url]</td>
 					</tr>
