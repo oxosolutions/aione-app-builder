@@ -106,8 +106,8 @@ class Aione_App_Builder_Admin_Shortcodes {
 					<tr>
 						<td>Login Form</td>
 						<td>
-						[login] <br>
-
+						[login]
+						<br>
 						<strong>Arguments</strong>
 <pre>
 'echo'           => false, // true/false
@@ -158,7 +158,8 @@ class Aione_App_Builder_Admin_Shortcodes {
 						<td></td>
 						<td>
 						[register]
-												<strong>Arguments</strong>
+						<br>
+						<strong>Arguments</strong>
 <pre>
 'echo'           => false, // true/false
 'form_id'        => 'aione_registration_form',  //CSS Id for Registeration form
@@ -180,8 +181,35 @@ class Aione_App_Builder_Admin_Shortcodes {
 						</td>
 					</tr>
 					<tr>
-						<td></td>
-						<td>[users]</td>
+						<td>List or Users</td>
+						<td>
+						[users]
+						<br>
+						<strong>Arguments</strong>
+<pre>
+'site' =>  1, // ID of site in case of multisite
+'style' => 'table',
+'columns' => 'Username', //Headers for the columns
+'fields' => 'user_login', //keys of fields and custom fields to be dispayed
+'role' => '', //Get users of a perticular role
+'roles' => '', //Get users of a roles saperated by comma
+</pre>
+
+						</td>
+					</tr>
+					<tr>
+						<td>Details about Single User</td>
+						<td>
+						[user]
+						<br>
+						<strong>Arguments</strong>
+<pre>
+'user_id' => CURRENT_LOGGED_IN_USER, // ID of user
+'field' => 'user_login', //key of field and custom field to be dispayed
+'field_type' => 'field', //field/meta
+</pre>
+
+						</td>
 					</tr>
 					<tr>
 						<td></td>
