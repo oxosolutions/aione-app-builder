@@ -98,10 +98,10 @@ class Aione_App_Builder_Shortcode {
 		add_shortcode( 'register', array($this, 'aione_app_builder_register_shortcode') );
 		add_shortcode( 'reset-password', array($this, 'aione_app_builder_reset_password_shortcode') );
 
-		
 		add_shortcode( 'account', array($this, 'aione_app_builder_account_shortcode') );
 		add_shortcode( 'account-menu', array($this, 'aione_app_builder_account_menu_shortcode') );
 		add_shortcode( 'account-content', array($this, 'aione_app_builder_account_content_shortcode') );
+
 		add_shortcode( 'profile', array($this, 'aione_app_builder_profile_shortcode') );
 		add_shortcode( 'edit-profile', array($this, 'aione_app_builder_edit_profile_shortcode') );
 		add_shortcode( 'change-password', array($this, 'aione_app_builder_change_password_shortcode') );
@@ -1648,27 +1648,51 @@ class Aione_App_Builder_Shortcode {
 	}
 	
 	public function aione_app_builder_account_menu_shortcode ($attr, $content = null){
-		$defaults = array(
-			
+		extract( shortcode_atts(
+			array(
+			'pages'    => 'yes', // yes/no
+			'sub_pages'    => 'yes', // yes/no
+			'layout'    => 'vertical',// horizontal/vertical
+			), $atts )
 		);
-		extract( shortcode_atts( $defaults, $attr ) );
 		$output = "";
-		$output .= '
-		<div class="account-menu" id="account_menu">
-		<ul class="account-menu-list" id="account_menu_list">
-			<li><a href="?action=account">Account</a></li>
-			<li><a href="?action=profile">View Profile</a></li>
-			<li><a href="?action=edit-profile">Edit Profile</a></li>
-			<li><a href="?action=change-password">Change Password</a></li>
-		</ul>
-		</div>';
+		$output .= '<div id="account_menu" class="account-menu '.$layout.'" >';
+		$output .= '<ul class="account-menu-list" id="account_menu_list">';
+
+		if($pages == 'yes'){
+			$output .= '<li><a href="?action=account">Account</a></li>';
+			$output .= '<li><a href="?action=profile">View Profile</a></li>';
+			$output .= '<li><a href="?action=edit-profile">Edit Profile</a></li>';
+			$output .= '<li><a href="?action=change-password">Change Password</a></li>';
+		}
+
+		if($sub_pages == 'yes'){
+			$post_id = get_the_ID();
+			$post_ancestors = get_ancestors( $post_id, 'page' );
+			$post_parent    = end( $post_ancestors );
+			if ( $post_parent ) {
+				$children = wp_list_pages( sprintf( 'title_li=&child_of=%s&echo=0', $post_parent ) );
+			} else {
+				$children = wp_list_pages( sprintf( 'title_li=&child_of=%s&echo=0', $post_id ) );
+			}
+			if ( $children ) {
+				$output .= $children;
+			}
+		}
+
+		$output .= '</ul>';
+		$output .= '</div>';
 		
 		return $output;
 	}
 	
 	public function aione_app_builder_account_content_shortcode ($attr, $content = null){
-		$defaults = array(
-			
+		extract( shortcode_atts(
+			array(
+			'pages'    => 'yes', // yes/no
+			'sub_pages'    => 'yes', // yes/no
+			'layout'    => 'box',// box/table/list
+			), $atts )
 		);
 		extract( shortcode_atts( $defaults, $attr ) );
 		$output = "";
@@ -1677,16 +1701,33 @@ class Aione_App_Builder_Shortcode {
 			$action = "account";
 		}
 		if($action == "account"){
-			$output .='<div class="account-content-outer" id="account_content_outer">
-				<div class="account-content" id="account_content">
-					<div class="account-items">
-						<a class="account-item" href="?action=profile">View Profile</a>
-						<a class="account-item" href="?action=edit-profile">Edit Profile</a>
-						<a class="account-item" href="?action=change-password">Change Password</a>
-					</div>
-					<div style="clear:both;"></div>
-				</div>
-			</div>';
+			$output .='<div class="account-content-outer" id="account_content_outer">';
+			$output .='<div class="account-content" id="account_content">';
+			$output .='<ul class="account-items">';
+			if($pages == 'yes'){
+				$output .='<li><a class="account-item" href="?action=profile">View Profile</a></li>';
+				$output .='<li><a class="account-item" href="?action=edit-profile">Edit Profile</a></li>';
+				$output .='<li><a class="account-item" href="?action=change-password">Change Password</a></li>';
+			}
+			if($sub_pages == 'yes'){
+				$post_id = get_the_ID();
+				$post_ancestors = get_ancestors( $post_id, 'page' );
+				$post_parent    = end( $post_ancestors );
+				if ( $post_parent ) {
+					$children = wp_list_pages( sprintf( 'title_li=&child_of=%s&echo=0', $post_parent ) );
+				} else {
+					$children = wp_list_pages( sprintf( 'title_li=&child_of=%s&echo=0', $post_id ) );
+				}
+				if ( $children ) {
+					$output .= $children;
+				}
+
+			}
+
+			$output .='<div style="clear:both;"></div>';
+			$output .='</ul>';
+			$output .='	</div>';
+			$output .='</div>';
 		}	// Action = Account
 		
 		if($action == "profile"){

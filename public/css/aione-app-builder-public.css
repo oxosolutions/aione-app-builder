@@ -23,14 +23,21 @@
     height: auto;
     font-weight: normal;
     color: #333333;
+    -moz-transition: all 200ms ease-in-out;
+    -webkit-transition: all 200ms ease-in-out;
+    transition: all 200ms ease-in-out;
 }
 .account-menu .account-menu-list > li:hover > a {
     padding-left: 15px;
     border-left: 3px solid #168dc5;
     color: #168DC5;
 }
-
-.account-items .account-item {
+.account-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.account-items li a {
     color: #333333;
     display: block;
     border: 1px solid #e5e5e5;
@@ -41,8 +48,11 @@
     text-align: center;
     background-color: #fbfbfb;
     font-size: 16px;
+    -moz-transition: all 200ms ease-in-out;
+    -webkit-transition: all 200ms ease-in-out;
+    transition: all 200ms ease-in-out;
 }
-.account-items .account-item:hover {
+.account-items li a:hover {
     color: #FFFFFF;
     border: 1px solid #1570a6;
     background-color: #168dc5;
