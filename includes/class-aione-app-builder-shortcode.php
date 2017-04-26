@@ -1125,7 +1125,7 @@ class Aione_App_Builder_Shortcode {
 		);
 		
 		$output = "";
-		
+
 		$roles = explode(",", $roles);
 		$args = array(
 			'blog_id'      => $site,
@@ -1209,26 +1209,33 @@ class Aione_App_Builder_Shortcode {
 	} // END aione_app_builder_users_shortcode	
 
 	public function aione_app_builder_user_shortcode( ) {
+		
+		$user = wp_get_current_user();
+		$userid = $user->ID;
 
+		// Attributes
+		extract( shortcode_atts(
+			array(
+				'user_id' => $userid, // ID of user
+				'field' => 'user_login', //key of field and custom field to be dispayed
+				'field_type' => 'field', //field/meta
+			), $atts )
+		);
+		
+		$user = get_user_by('id', $user_id);
 
-
-				$user = wp_get_current_user();
-		$user_id = $user->ID;
-		$username = $user->user_login;
-		$user_roles = $user->roles;
-		$value = get_user_meta($user_id);
 		$output = "";
-		$blogusers = get_users( 'blog_id=1&role=subscriber' );
-		$count = 1;
-		// Array of WP_User objects.
-		foreach ( $blogusers as $user ) {
-			$output .= '<br><span>'.$count.'. ' . esc_html( $user->user_login ) . '</span>';
-			$count++;
+		if($field_type == 'field'){
+			$output .= $user->$field;
+		} else {
+			$custom_field = get_user_meta( $user_id, $field, true ); 
+			$output .= '<td>' . $custom_field . '</td>';
+
 		}
 		
 		return $output;
 		
-	} // END aione_app_builder_users_shortcode
+	} // END aione_app_builder_user_shortcode
 		
 	public function aione_app_builder_template_title_shortcode( $attr, $content = null ) {
 		$defaults = array(
