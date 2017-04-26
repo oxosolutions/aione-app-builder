@@ -118,6 +118,7 @@ class Aione_App_Builder_Shortcode {
 		
 		
 		add_shortcode( 'users', array($this, 'aione_app_builder_users_shortcode') );
+		add_shortcode( 'user', array($this, 'aione_app_builder_user_shortcode') );
 		
 		
 		add_shortcode( 'aione-post-title', array($this, 'aione_app_builder_template_title_shortcode') );
@@ -1111,18 +1112,123 @@ class Aione_App_Builder_Shortcode {
 		} // END aione_app_builder_user_registration_form()
 		
 	public function aione_app_builder_users_shortcode( ) {
-			$output = "";
-			$blogusers = get_users( 'blog_id=1&role=subscriber' );
+		// Attributes
+		extract( shortcode_atts(
+			array(
+				'site' =>  $GLOBALS['blog_id'],
+				'style' => 'table',
+				'columns' => 'Username',
+				'fields' => 'user_login',
+				'role' => '',
+				'roles' => '',
+			), $atts )
+		);
+		
+		$output = "";
+		
+		$roles = explode(",", $roles);
+		$args = array(
+			'blog_id'      => $site,
+			'role'         => $role,
+			'role__in'     => $roles,
+			'role__not_in' => array(),
+			'meta_key'     => '',
+			'meta_value'   => '',
+			'meta_compare' => '',
+			'meta_query'   => array(),
+			'date_query'   => array(),        
+			'include'      => array(),
+			'exclude'      => array(),
+			'orderby'      => 'login',
+			'order'        => 'ASC',
+			'offset'       => '',
+			'search'       => '',
+			'number'       => '',
+			'count_total'  => false,
+			'fields'       => 'all',
+			'who'          => ''
+		 );
+		$users = get_users( $args );
+		
+		if($style == 'table'){
+			
+			$columns = explode("|", $columns); 
+			$fields = explode("|", $fields); 
+			
+			$output .= '<div class="table-1">';
+			$output .= '<table width="100%">';
+			$output .= '<thead>';
+			$output .= '<tr>';
+			
+			foreach ( $columns as $column ) {
+				$output .= '<th>'.$column.'</th>';
+			}
+			
+			$output .= '</tr>';
+			$output .= '</thead>';
+			$output .= '<tbody>';
+			
+			// Array of WP_User objects.
+			foreach ( $users as $user ) {
+				
+				$user_id = $user->ID;
+			
+				$output .= '<tr>';
+				foreach ( $fields as $field ) {
+					if( $field == 'status'){
+						$output .= '<td>' . esc_html( $user->$field ) . '</td>';
+					} elseif(empty($field)){
+						$output .= '<td></td>';
+					}elseif (preg_match("~\{\{\s*(.*?)\s*\}\}~", $field)) {
+						$field = str_replace("{","",$field);
+						$field = str_replace("}","",$field);
+						$custom_field = get_user_meta( $user_id, $field, true ); 
+						$output .= '<td>' . $custom_field . '</td>';
+					}else {
+						$output .= '<td>' . esc_html( $user->$field ) . '</td>';
+					}
+					
+				}
+				$output .= '</tr>';
+			}
+			
+			$output .= '</tbody>';
+			$output .= '</table>';
+			$output .= '</div>';
+			
+		} else{ 
 			$count = 1;
 			// Array of WP_User objects.
-			foreach ( $blogusers as $user ) {
+			foreach ( $users as $user ) {
 				$output .= '<br><span>'.$count.'. ' . esc_html( $user->user_login ) . '</span>';
 				$count++;
 			}
-			
-			return $output;
-			
-		} // END aione_app_builder_users_shortcode
+		}
+		return $output;
+		
+	} // END aione_app_builder_users_shortcode	
+
+	public function aione_app_builder_user_shortcode( ) {
+
+
+
+				$user = wp_get_current_user();
+		$user_id = $user->ID;
+		$username = $user->user_login;
+		$user_roles = $user->roles;
+		$value = get_user_meta($user_id);
+		$output = "";
+		$blogusers = get_users( 'blog_id=1&role=subscriber' );
+		$count = 1;
+		// Array of WP_User objects.
+		foreach ( $blogusers as $user ) {
+			$output .= '<br><span>'.$count.'. ' . esc_html( $user->user_login ) . '</span>';
+			$count++;
+		}
+		
+		return $output;
+		
+	} // END aione_app_builder_users_shortcode
 		
 	public function aione_app_builder_template_title_shortcode( $attr, $content = null ) {
 		$defaults = array(
