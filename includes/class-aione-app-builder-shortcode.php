@@ -87,6 +87,7 @@ class Aione_App_Builder_Shortcode {
 		*/
         add_shortcode( 'login-link', array($this, 'aione_app_builder_login_link_shortcode') );
 		add_shortcode( 'register-link', array($this, 'aione_app_builder_register_link_shortcode') );
+		add_shortcode( 'reset-password-link', array($this, 'aione_app_builder_reset_password_shortcode') );
 		add_shortcode( 'logout-link', array($this, 'aione_app_builder_logout_link_shortcode') );
 		add_shortcode( 'is_user_logged_in', array($this, 'aione_app_builder_is_user_logged_in_shortcode') );
 		add_shortcode( 'user_not_logged_in', array($this, 'aione_app_builder_user_not_logged_in_shortcode') );
@@ -182,8 +183,25 @@ class Aione_App_Builder_Shortcode {
 		$output = "";
 		
 		if ( !is_user_logged_in() ) {
-			$output .= '<div id="login_link" class="user-links login-link '.$class.'">';
+			$output .= '<div id="register_link" class="user-links register-link '.$class.'">';
 			$output .= '<a href="'.wp_registration_url().'" title="' . $text . '">' . $text . '</a>';
+			$output .= '</div>';
+		} 
+		return $output;
+	} // End aione_app_builder_register_link_shortcode()
+
+	public function aione_app_builder_reset_password_shortcode( $atts ) {
+		extract( shortcode_atts(
+				array(
+					'class'           => '',
+					'text'           => 'Reset Password'
+				), $atts )
+		);
+		$output = "";
+		
+		if ( !is_user_logged_in() ) {
+			$output .= '<div id="reset_password_link" class="user-links reset-password-link '.$class.'">';
+			$output .= '<a href="'.lostpassword_url().'" title="' . $text . '">' . $text . '</a>';
 			$output .= '</div>';
 		} 
 		return $output;
