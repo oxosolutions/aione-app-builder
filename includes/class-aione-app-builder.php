@@ -76,6 +76,12 @@ class Aione_App_Builder {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 
+
+		//Remove Wordpress Auto insert P functionality
+		remove_filter( 'the_content', 'wpautop' );
+		remove_filter( 'the_excerpt', 'wpautop' );
+		
+
 	
 		/**
 		*
