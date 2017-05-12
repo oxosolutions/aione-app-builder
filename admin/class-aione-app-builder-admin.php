@@ -55,6 +55,7 @@ class Aione_App_Builder_Admin {
 		
 		$this->plugin_admin_shortcodes = new Aione_App_Builder_Admin_Shortcodes( $this->plugin_name, $this->version );
 		$this->plugin_admin_templates = new Aione_App_Builder_Admin_Templates( $this->plugin_name, $this->version );
+		$this->plugin_admin_aione_cpt = new Aione_App_Builder_Admin_Aione_Custom_Post_Type( $this->plugin_name, $this->version );
 		
 		
 		if(!class_exists('Types_Main')){
@@ -193,6 +194,7 @@ class Aione_App_Builder_Admin {
 				__('aione_app_builder_set_view', 'aione_app_builder'),
 				array($this,'aione_app_builder_set_view')
 			); 
+			
 		
 	      
 	    //remove_submenu_page('aione_app_builder', 'aione_app_builder' );
@@ -334,10 +336,10 @@ class Aione_App_Builder_Admin {
 		$cpts_raw = ! isset( $_GET['toolset-dashboard-simulate-no-custom-post-types'] )
 					? get_option( WPCF_OPTION_NAME_CUSTOM_TYPES, array() )
 					: array();
-
+		
 		// remove buildin types
 		$cpts_raw = array_diff_key( $cpts_raw, $this->get_types_by_wordpress() );
-
+		
 		$cpts = array();
 
 		foreach( $cpts_raw as $cpt_raw ) {
@@ -440,5 +442,7 @@ class Aione_App_Builder_Admin {
 
 		return $this->types_by_wordpress;
 	}
+	
+	
 	
 }

@@ -166,6 +166,7 @@ class Aione_App_Builder {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-aione-app-builder-admin.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-aione-app-builder-admin-shortcodes.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-aione-app-builder-admin-templates.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-aione-app-builder-admin-aione-custom-post-type.php';
 		
 		
 		/**

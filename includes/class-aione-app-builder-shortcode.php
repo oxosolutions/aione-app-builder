@@ -891,6 +891,7 @@ class Aione_App_Builder_Shortcode {
 			extract( shortcode_atts(
 				array(
 					'echo'           => false,
+					'captcha'        => true,
 					'form_id'        => 'aione_registration_form',
 					'show_firstname' => 'yes',
 					'show_lastname' 	=> 'yes',
@@ -910,6 +911,7 @@ class Aione_App_Builder_Shortcode {
 
 			$args = array(
 					'echo'						=> $echo,
+					'captcha'                   => $captcha,
 					'form_id'					=> $form_id,
 					'show_firstname'			=> $show_firstname,
 					'show_lastname'				=> $show_lastname,
@@ -925,7 +927,8 @@ class Aione_App_Builder_Shortcode {
 					'placeholder_username'		=> $placeholder_username,
 					'placeholder_email'			=> $placeholder_email,
 				);
-
+				
+			
 
 			$output = "";
 			// only show the registration form to non-logged-in members
@@ -935,10 +938,11 @@ class Aione_App_Builder_Shortcode {
 				$aione_load_css = true;
 				// check to make sure user registration is enabled
 				$registration_enabled = get_option('users_can_register');
-
+				
 				// only show the registration form if allowed
 				if($registration_enabled) {
 					$errors = array();
+					
 					// load from post
 
 					if( isset($_POST['action']) && $_POST['action'] == 'add_new'){
@@ -948,6 +952,20 @@ class Aione_App_Builder_Shortcode {
 						$pass_confirm 	= $_POST["aione_user_pass_confirm"];
 						$user_first		= $_POST["aione_user_fname"];
 						$user_last		= $_POST["aione_user_lname"];
+						
+						if($captcha == true){
+							if (class_exists('ReallySimpleCaptcha'))  {
+								$captcha_value= $_POST['captcha_value'];
+								$prefix = $_POST['captcha_prefix'];
+								$captcha_instance_check = new ReallySimpleCaptcha();
+								$is_captcha_correct = $captcha_instance_check->check( $prefix, $captcha_value);
+								
+								if(!$is_captcha_correct){
+									$errors[] = 'Wrong Captcha value';
+								}
+							}
+						}
+						
 						
 						// this is required for username checks
 						if($user_email == '') {
@@ -1046,7 +1064,26 @@ class Aione_App_Builder_Shortcode {
 		} //END aione_app_builder_register_shortcode()
 
 	public function aione_app_builder_user_registration_form($args) {
-
+		if($args['captcha'] == true){
+			if (class_exists('ReallySimpleCaptcha'))  {
+				
+				$captcha_instance = new ReallySimpleCaptcha();
+				$captcha_instance->cleanup($minutes = 30);
+					
+				$captcha_instance->chars = '2345678abcdefghijklmnpqrstuvwxyz2345678ABCDEFGHJKLMNPQRSTUVWXYZ23456789';	
+				$captcha_instance->bg = array( 255, 255, 255 );
+				$captcha_instance->fg = array( 21, 141, 197 );
+				$captcha_instance->img_size = array( 205, 40 );
+				$captcha_instance->base = array( 20, 30 );
+				$captcha_instance->font_size = 22;
+				$captcha_instance->char_length = 6;
+				$captcha_instance->font_char_width = 28;
+				$upload_dir = wp_upload_dir();
+				$captcha_instance->tmp_dir = $upload_dir['basedir'].'/captcha/';
+				
+			}	
+		}
+		
 			$html_before_fields = '';
 			$html_before_fields .= '
 			
@@ -1089,7 +1126,7 @@ class Aione_App_Builder_Shortcode {
 					<div class="acf-input-wrap"><input name="aione_user_pass_confirm" id="password_again" class="textbox large required" type="password"/></div>
 				</div>
 
-				</div>
+				
 				<style>
 				.aione-registration-form p.label{
 					margin-bottom:0;
@@ -1100,6 +1137,27 @@ class Aione_App_Builder_Shortcode {
 				</style>
 			
 			';
+			if($args['captcha'] == true){
+				if (class_exists('ReallySimpleCaptcha'))  {	
+					$word = $captcha_instance->generate_random_word();
+					$prefix = mt_rand();
+					$image_name = $captcha_instance->generate_image( $prefix, $word );
+					$captcha_image_url =  $upload_dir['baseurl'].'/captcha/'.$image_name;
+					//$blog_template = intval($_GET['template']);
+						
+					$html_before_fields .= '<div class="aione-form-field field field-type-text">
+							<p class="label"><label for="register_form_captcha_value">Captcha<span class="required">*</span></label></p>
+							<div class="register_form_captcha_image">
+							<img src="'.$captcha_image_url.'" />
+							</div> 
+							<div class="acf-input-wrap"><input name="captcha_value" id="register_form_captcha_value" type="text" placeholder="Enter Captcha Here" value="" class="textbox large required" >
+							<input name="captcha_prefix" type="hidden" value="'.$prefix.'" >
+							</div>
+						
+						</div>
+						';
+				}
+			}
 			$html_after_fields = '<div class="aione-form-field field">
 				<input type="hidden" name="action" value="add_new">
 				<input type="submit" value="'.$args['label_submit'].'">
