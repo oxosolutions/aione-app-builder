@@ -974,7 +974,7 @@ class Aione_App_Builder_Shortcode {
 						} else {
 							if(!is_email($user_email)) {
 								//invalid email
-								$errors[] = 'Invalid email';
+								$errors[] = 'Email address you have entered is invalid.';
 							}
 							if(email_exists($user_email)) {
 								//Email address already registered
@@ -984,11 +984,11 @@ class Aione_App_Builder_Shortcode {
 					
 						if($user_login == '') {
 							// empty username
-						   $errors[] = 'Please enter a username';
+						   $errors[] = 'Username cannot be empty. Please enter a username';
 						} else {
 							if(!validate_username($user_login)) {
 								// invalid username
-								$errors[] = 'Invalid username';
+								$errors[] = 'Username you have entered is invalid';
 							}
 
 							if(username_exists($user_login)) {
@@ -1006,6 +1006,11 @@ class Aione_App_Builder_Shortcode {
 							// passwords do not match
 							$errors[] = 'Passwords do not match';
 						}
+						if($user_first == '') {
+							//Empty password
+							$errors[] = 'Please enter a password';
+						}
+
 						if(!empty($user_first) && !preg_match('/^[a-zA-Z\s]+$/', $user_first) ) {
 							//Invalid Mobile
 							$errors[] = 'Invalid first name. Numbers not allowed.';
@@ -1093,8 +1098,8 @@ class Aione_App_Builder_Shortcode {
 				if($args['show_firstname'] == 'yes'){
 
 					$html_before_fields .= '<div class="aione-form-field field field-type-text">
-						<p class="label"><label for="aione_user_fname">'.$args['label_firstname'].'</label></p>
-						<div class="acf-input-wrap"><input name="aione_user_fname" id="aione_user_fname" class="textbox large" type="text" placeholder="'.$args['placeholder_firstname'].'" value=""/></div>
+						<p class="label"><label for="aione_user_fname">'.$args['label_firstname'].'<span class="required">*</span></label></p>
+						<div class="acf-input-wrap"><input name="aione_user_fname" id="aione_user_fname" class="textbox large" type="text" placeholder="'.$args['placeholder_firstname'].'" value="" minlength="2" maxlength="200" required /></div>
 					</div>';
 				}
 
@@ -1109,33 +1114,23 @@ class Aione_App_Builder_Shortcode {
 				
 				$html_before_fields .= '<div class="aione-form-field field field-type-text">
 					<p class="label"><label for="aione_user_login">'.$args['label_username'].'<span class="required">*</span></label></p>
-					<div class="acf-input-wrap"><input name="aione_user_login" id="aione_user_login" class="textbox large required" type="text" placeholder="'.$args['placeholder_username'].'" value=""/></div>
+					<div class="acf-input-wrap"><input name="aione_user_login" id="aione_user_login" class="textbox large required" type="text" placeholder="'.$args['placeholder_username'].'" value="" minlength="6" maxlength="50" required/></div>
 				</div>
 				<div class="aione-form-field field field-type-text">
 					<p class="label"><label for="aione_user_email">'.$args['label_email'].'<span class="required">*</span></label></p>
-					<div class="acf-input-wrap"><input name="aione_user_email" id="aione_user_email" class="textbox large required" type="email" placeholder="'.$args['placeholder_email'].'" value=""/></div>
+					<div class="acf-input-wrap"><input name="aione_user_email" id="aione_user_email" class="textbox large required" type="email" placeholder="'.$args['placeholder_email'].'" value="" required /></div>
 				</div>
 
 				<div class="aione-form-field field field-type-text">
 					<p class="label"><label for="password">'.$args['label_password'].'<span class="required">*</span></label></p>
-					<div class="acf-input-wrap"><input name="aione_user_pass" id="password" class="textbox large required" type="password"/></div>
+					<div class="acf-input-wrap"><input name="aione_user_pass" id="password" class="textbox large required" type="password" required /></div>
 				</div>
 
 				<div class="aione-form-field field field-type-text">
 					<p class="label"><label for="password_again">'.$args['label_password_again'].'<span class="required">*</span></label></p>
-					<div class="acf-input-wrap"><input name="aione_user_pass_confirm" id="password_again" class="textbox large required" type="password"/></div>
+					<div class="acf-input-wrap"><input name="aione_user_pass_confirm" id="password_again" class="textbox large required" type="password" required/></div>
 				</div>
 
-				
-				<style>
-				.aione-registration-form p.label{
-					margin-bottom:0;
-				}
-				.aione-registration-form .aione-form-field{
-					margin-bottom:20px;
-				}
-				</style>
-			
 			';
 			if($args['captcha'] == true){
 				if (class_exists('ReallySimpleCaptcha'))  {	
@@ -1162,6 +1157,21 @@ class Aione_App_Builder_Shortcode {
 				<input type="hidden" name="action" value="add_new">
 				<input type="submit" value="'.$args['label_submit'].'">
 			</div>
+			<script>
+				jQuery("#'.$args['form_id'].'").validate();
+			</script>
+
+			<style>
+			.error{
+				color:#cc0000;
+			}
+			.aione-registration-form p.label{
+				margin-bottom:0;
+			}
+			.aione-registration-form .aione-form-field{
+				margin-bottom:20px;
+			}
+			</style>
 			';
 			
 			$field_groups = get_option('aione_app_builder_registration_custom_field_groups');
