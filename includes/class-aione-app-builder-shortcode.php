@@ -966,19 +966,18 @@ class Aione_App_Builder_Shortcode {
 							}
 						}
 						
-						
 						// this is required for username checks
 						if($user_email == '') {
 							//empty email
-							$errors[] = 'Please enter email address';
+							$errors[] = 'Email address field can not be empty.';
 						} else {
 							if(!is_email($user_email)) {
 								//invalid email
-								$errors[] = 'Email address you have entered is invalid.';
+								$errors[] = 'Email address you have entered is invalid. Enter a valid email address.';
 							}
 							if(email_exists($user_email)) {
 								//Email address already registered
-								$errors[] = 'Email already registered';
+								$errors[] = 'Email already registered. You can reset your password instead.';
 							}
 						}
 					
@@ -986,14 +985,19 @@ class Aione_App_Builder_Shortcode {
 							// empty username
 						   $errors[] = 'Username cannot be empty. Please enter a username';
 						} else {
-							if(!validate_username($user_login)) {
-								// invalid username
-								$errors[] = 'Username you have entered is invalid';
+							if(!preg_match("'/^[a-z0-9]+$/", $user_login)){
+								$errors[] = 'The username you have entered is invalid. Please enter at least 6 alphanumeric characters in lowercase. Special characters and white spaces are not allowed.'; 
+							} else{	
+								if(!validate_username($user_login)) {
+									// invalid username
+									$errors[] = 'Username you have entered is invalid. ';
+								}
 							}
+
 
 							if(username_exists($user_login)) {
 								// Username already registered
-								$errors[] = 'Username already taken';
+								$errors[] = 'Username already taken. Try something else.';
 							}				
 						}
 
@@ -1008,7 +1012,7 @@ class Aione_App_Builder_Shortcode {
 						}
 						if($user_first == '') {
 							//Empty password
-							$errors[] = 'Please enter a password';
+							$errors[] = 'First name can not be empry. Humans do have names.';
 						}
 
 						if(!empty($user_first) && !preg_match('/^[a-zA-Z\s]+$/', $user_first) ) {
@@ -1123,12 +1127,12 @@ class Aione_App_Builder_Shortcode {
 
 				<div class="aione-form-field field field-type-text">
 					<p class="label"><label for="password">'.$args['label_password'].'<span class="required">*</span></label></p>
-					<div class="acf-input-wrap"><input name="aione_user_pass" id="password" class="textbox large required" type="password" required /></div>
+					<div class="acf-input-wrap"><input name="aione_user_pass" id="password" class="textbox large required" type="password" minlength="6" required /></div>
 				</div>
 
 				<div class="aione-form-field field field-type-text">
 					<p class="label"><label for="password_again">'.$args['label_password_again'].'<span class="required">*</span></label></p>
-					<div class="acf-input-wrap"><input name="aione_user_pass_confirm" id="password_again" class="textbox large required" type="password" required/></div>
+					<div class="acf-input-wrap"><input name="aione_user_pass_confirm" id="password_again" class="textbox large required" type="password" minlength="6" required/></div>
 				</div>
 
 			';
