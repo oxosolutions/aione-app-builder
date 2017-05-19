@@ -105,7 +105,8 @@
 							$data .= $css;
 							$data .= "</style>";
 							echo $data;
-							echo "<hr>";
+							echo "<div style='clear:both;'></div>";
+							
 						endwhile;
 						
 						global $wp_query;
@@ -137,8 +138,8 @@
 							$data .= $css;
 							$data .= "</style>";
 							echo $data;
+							echo "<div style='clear:both;'></div>";
 							
-							echo "<hr>";
 						endwhile;
 						
 						global $wp_query;
