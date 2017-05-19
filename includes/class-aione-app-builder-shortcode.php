@@ -1408,7 +1408,11 @@ class Aione_App_Builder_Shortcode {
 							}
 							$output .= "</div>";
 						} elseif($field_type == "repeater"){
-							$field_label = $field['label'] ;
+							if($label == 'true'){
+								$field_label = $field['label'] ;
+							} else {
+								$field_label = "" ;
+							}
 							$subfields = $field['value'];
 							$output .= "<div id='".$field['id']."'>".$field_label." ".$seprator;
 							foreach( $subfields as $k1 => $v1 ) {
@@ -1472,8 +1476,14 @@ class Aione_App_Builder_Shortcode {
 							}
 							$output .= "</div>";
 						} elseif($field_type == "repeater"){
-							$field_label = $field['label'] ;
+							if($label == 'true'){
+								$field_label = $field['label'] ;
+							} else {
+								$field_label = "" ;
+							}
+							
 							$subfields = $field['value'];
+
 							$output .= "<div id='".$field['id']."'>".$field_label." ".$seprator;
 							foreach( $subfields as $k1 => $v1 ) {
 								foreach( $v1 as $k2 => $v2 ) {
