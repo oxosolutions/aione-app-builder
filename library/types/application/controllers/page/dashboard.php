@@ -197,9 +197,9 @@ final class Types_Page_Dashboard extends Types_Page_Abstract {
 
 		// remove buildin types
 		$cpts_raw = array_diff_key( $cpts_raw, $this->get_types_by_wordpress() );
-
+echo "<pre>";print_r($cpts_raw);echo "</pre>";
 		$cpts = array();
-
+		
 		foreach( $cpts_raw as $cpt_raw ) {
 			$post_type = new Types_Post_Type( $cpt_raw['slug'] );
 			// only use active post types

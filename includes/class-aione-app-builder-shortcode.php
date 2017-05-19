@@ -1407,7 +1407,20 @@ class Aione_App_Builder_Shortcode {
 								$output .= " <a href='".get_permalink($field_array->ID)."'>".$field_array->post_title."</a> ";
 							}
 							$output .= "</div>";
-						} else {
+						} elseif($field_type == "repeater"){
+							$field_label = $field['label'] ;
+							$subfields = $field['value'];
+							$output .= "<div id='".$field['id']."'>".$field_label." ".$seprator;
+							foreach( $subfields as $k1 => $v1 ) {
+								foreach( $v1 as $k2 => $v2 ) {
+									$field_value = $v2." ";
+									$output .= $field_value;
+								}
+								$output .= ", ";
+								
+							}
+							$output .= "</div>";
+						}else {
 							$field_label = $field['label'] ;
 							$field_value = $field['value'] ;
 							if($label == 'true' && $value == 'true') {
@@ -1458,7 +1471,20 @@ class Aione_App_Builder_Shortcode {
 								$output .= " <a href='".get_permalink($field_array->ID)."'>".$field_array->post_title."</a> ";
 							}
 							$output .= "</div>";
-						} else {
+						} elseif($field_type == "repeater"){
+							$field_label = $field['label'] ;
+							$subfields = $field['value'];
+							$output .= "<div id='".$field['id']."'>".$field_label." ".$seprator;
+							foreach( $subfields as $k1 => $v1 ) {
+								foreach( $v1 as $k2 => $v2 ) {
+									$field_value = $v2." ";
+									$output .= $field_value;
+								}
+								$output .= ", ";
+								
+							}
+							$output .= "</div>";
+						}else {
 							$field_label = $field['label'] ;
 							$field_value = $field['value'] ;
 							if($label == 'true' && $value == 'true') {

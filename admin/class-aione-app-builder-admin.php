@@ -64,6 +64,7 @@ class Aione_App_Builder_Admin {
 		}
 		if(!class_exists('acf')){
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'library/advanced-custom-fields/acf.php';
+			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'library/acf-repeater/acf-repeater.php' ;
 			add_action( 'admin_menu', array($this,'remove_acf_main_menus'), 9999 );
 		}
 		if(!class_exists('Members_Plugin')){

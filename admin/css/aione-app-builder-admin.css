@@ -61,6 +61,24 @@ h2 .nav-tab{
 }
 	
 
+div.aione-cpt-menu-image {
+    float: left;
+    width: 36px;
+    height: 34px;
+    margin: 0;
+    text-align: center;
+}
+
+.aione-cpt-form-table td:first-child {
+    width: 20%;
+    max-width: 300px;
+    min-width: 100px;
+}
+#aione-cpt-form-name-table tbody tr td:first-child, .aione-cpt-fields tbody td:first-child, #poststuff #cpt_metabox_label .inside td:first-child {
+    text-align: right;
+}
+
+
 /**
  * Custom Post Typle
  * Types Plugin
