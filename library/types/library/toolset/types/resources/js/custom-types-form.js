@@ -15,6 +15,7 @@ jQuery(document).ready(function($){
 
     $('.js-wpcf-singular').html( labelPostType );
     $('#post-body-content').on('keyup input cut paste', '.js-wpcf-slugize-source', function() {
+        console.log($(this).val());
         $('.js-wpcf-singular').html($(this).val());
     });
     /*

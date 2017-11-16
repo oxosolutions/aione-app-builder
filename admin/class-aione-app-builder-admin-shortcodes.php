@@ -348,7 +348,11 @@ class Aione_App_Builder_Admin_Shortcodes {
 					</tr>
 					<tr>
 						<td></td>
-						<td>[aione-post-author]</td>
+						<td>[aione-post-author]<br>
+			<strong>Arguments</strong>
+<pre>
+'link'           => true
+</pre></td>
 					</tr>
 					<tr>
 						<td></td>

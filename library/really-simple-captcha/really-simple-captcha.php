@@ -207,7 +207,7 @@ class ReallySimpleCaptcha {
 				return true;
 			}
 		}
-
+		
 		return false;
 	}
 

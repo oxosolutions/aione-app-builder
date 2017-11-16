@@ -167,6 +167,11 @@ class Aione_App_Builder {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-aione-app-builder-admin-shortcodes.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-aione-app-builder-admin-templates.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-aione-app-builder-admin-aione-custom-post-type.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-aione-app-builder-admin-aione-custom-post-types-list.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-aione-app-builder-admin-aione-custom-taxonomy.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-aione-app-builder-admin-aione-custom-taxonomies-list.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-aione-app-builder-admin-backup-restore.php';
+		
 		
 		
 		/**

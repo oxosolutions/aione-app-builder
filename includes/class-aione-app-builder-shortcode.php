@@ -1087,8 +1087,8 @@ class Aione_App_Builder_Shortcode {
 				$captcha_instance->font_size = 22;
 				$captcha_instance->char_length = 6;
 				$captcha_instance->font_char_width = 28;
-				$upload_dir = wp_upload_dir();
-				$captcha_instance->tmp_dir = $upload_dir['basedir'].'/captcha/';
+				//$upload_dir = wp_upload_dir();
+				//$captcha_instance->tmp_dir = $upload_dir['basedir'].'/captcha/';
 				
 			}	
 		}
@@ -1141,7 +1141,10 @@ class Aione_App_Builder_Shortcode {
 					$word = $captcha_instance->generate_random_word();
 					$prefix = mt_rand();
 					$image_name = $captcha_instance->generate_image( $prefix, $word );
-					$captcha_image_url =  $upload_dir['baseurl'].'/captcha/'.$image_name;
+					//$captcha_image_url =  $upload_dir['baseurl'].'/captcha/'.$image_name;
+					//$captcha_image_url = plugins_url();
+					$captcha_image_url =  plugin_dir_url(dirname(__FILE__))."library/really-simple-captcha/tmp/".$image_name;
+
 					//$blog_template = intval($_GET['template']);
 						
 					$html_before_fields .= '<div class="aione-form-field field field-type-text">
@@ -1342,11 +1345,28 @@ class Aione_App_Builder_Shortcode {
 	} 
 	public function aione_app_builder_template_content_shortcode( $attr, $content = null ) {
 		//return the_content();
-		return get_the_content();
+		//return get_the_content();
+		global $post;
+		return $post->post_content;
+		
 	} 
 	public function aione_app_builder_template_author_shortcode( $attr, $content = null ) {
 		//return the_author();
-		return get_the_author();
+		//return get_the_author();
+		global $post;
+		$defaults = array(
+			'link' => true
+		);
+		extract( shortcode_atts( $defaults, $attr ) );
+		$author_id = $post->post_author;
+		$author_meta = get_user_by( 'ID', $author_id );
+		$author_display_name = $author_meta->display_name;
+		
+		if($link == 'true') {
+			return "<a href='".get_author_posts_url($author_id)."'>".$author_display_name."</a>";
+		} else {
+			return $author_display_name;
+		}
 	} 
 	public function aione_app_builder_template_date_shortcode( $attr, $content = null ) {
 		$defaults = array(

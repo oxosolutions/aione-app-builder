@@ -56,6 +56,8 @@ class Aione_App_Builder_Admin {
 		$this->plugin_admin_shortcodes = new Aione_App_Builder_Admin_Shortcodes( $this->plugin_name, $this->version );
 		$this->plugin_admin_templates = new Aione_App_Builder_Admin_Templates( $this->plugin_name, $this->version );
 		$this->plugin_admin_aione_cpt = new Aione_App_Builder_Admin_Aione_Custom_Post_Type( $this->plugin_name, $this->version );
+		$this->plugin_admin_aione_taxonomy = new Aione_App_Builder_Admin_Aione_Custom_Taxonomy( $this->plugin_name, $this->version );
+		$this->plugin_admin_backup_restore = new Aione_App_Builder_Admin_Backup_Restore( $this->plugin_name, $this->version );
 		
 		
 		if(!class_exists('Types_Main')){
