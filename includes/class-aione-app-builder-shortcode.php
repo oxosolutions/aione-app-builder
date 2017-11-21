@@ -1679,7 +1679,7 @@ class Aione_App_Builder_Shortcode {
 		global $wpdb;
 		$user_id = get_current_user_id();
 		$defaults = array(
-			'post_type' => '',
+			'post_type' => 'post',
 			'groups' => '',
 		);
 		extract( shortcode_atts( $defaults, $attr ) );
@@ -1704,7 +1704,8 @@ class Aione_App_Builder_Shortcode {
 			$new_post_id = wp_insert_post( $my_post );
 			if(is_int($new_post_id)) {
 				foreach($create_post_category as $val){
-					$wpdb->query("INSERT INTO wp_term_relationships (object_id, term_taxonomy_id) VALUES ('".$new_post_id."', '".$val."')");
+					$term_relationships_table = $wpdb->prefix . "term_relationships";
+					$wpdb->query("INSERT INTO ".$term_relationships_table." (object_id, term_taxonomy_id) VALUES ('".$new_post_id."', '".$val."')");
 				}
 				foreach($fields as $fields_key => $fields_val){
 					update_field($fields_key, $fields_val,$new_post_id);

@@ -119,7 +119,8 @@ class Aione_App_Builder_Admin_Backup_List_Table extends WP_List_Table{
         ) );
 
         global $wpdb;
-		$this->backup = $wpdb->get_results( 'SELECT * FROM wp_options WHERE option_name LIKE "%aione-backup-%"' );
+        $options_table = $wpdb->prefix . "options";
+		$this->backup = $wpdb->get_results( 'SELECT * FROM '.$options_table.' WHERE option_name LIKE "%aione-backup-%"' );
        
         //echo "<pre>";print_r($this->backup);echo "</pre>";
     }
