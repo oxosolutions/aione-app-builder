@@ -1205,7 +1205,7 @@ class Aione_App_Builder_Shortcode {
 			return $output;
 		} // END aione_app_builder_user_registration_form()
 		
-	public function aione_app_builder_users_shortcode( ) {
+	public function aione_app_builder_users_shortcode($atts) {
 		// Attributes
 		extract( shortcode_atts(
 			array(
@@ -1302,7 +1302,7 @@ class Aione_App_Builder_Shortcode {
 		
 	} // END aione_app_builder_users_shortcode	
 
-	public function aione_app_builder_user_shortcode( ) {
+	public function aione_app_builder_user_shortcode( $atts ) {
 		
 		$user = wp_get_current_user();
 		$userid = $user->ID;
