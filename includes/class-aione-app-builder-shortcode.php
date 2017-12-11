@@ -906,6 +906,7 @@ class Aione_App_Builder_Shortcode {
 					'placeholder_laststname' => __( 'Enter Your Last Name' ),
 					'placeholder_username' => __( 'Enter Your Username' ),
 					'placeholder_email' => __( 'Enter Your Email Address' ),
+					'role' => get_option('default_role'),
 				), $atts )
 			);
 
@@ -926,6 +927,7 @@ class Aione_App_Builder_Shortcode {
 					'placeholder_laststname'	=> $placeholder_laststname,
 					'placeholder_username'		=> $placeholder_username,
 					'placeholder_email'			=> $placeholder_email,
+					'role' 						=> $role,
 				);
 				
 			
@@ -952,6 +954,7 @@ class Aione_App_Builder_Shortcode {
 						$pass_confirm 	= $_POST["aione_user_pass_confirm"];
 						$user_first		= $_POST["aione_user_fname"];
 						$user_last		= $_POST["aione_user_lname"];
+
 						
 						if($captcha == true){
 							if (class_exists('ReallySimpleCaptcha'))  {
@@ -985,7 +988,9 @@ class Aione_App_Builder_Shortcode {
 							// empty username
 						   $errors[] = 'Username cannot be empty. Please enter a username';
 						} else {
-							if(!preg_match("'/^[a-z0-9]+$/", $user_login)){
+							
+							$pattern = '/^[a-z0-9]+$/';
+							if(!preg_match($pattern, $user_login)){
 								$errors[] = 'The username you have entered is invalid. Please enter at least 6 alphanumeric characters in lowercase. Special characters and white spaces are not allowed.'; 
 							} else{	
 								if(!validate_username($user_login)) {
@@ -1027,7 +1032,14 @@ class Aione_App_Builder_Shortcode {
 					
 						// only create the user in if there are no errors
 						if(empty($errors)) {
-							$user_role = get_option('default_role');
+							global $wp_roles;
+							$roles = wp_roles()->get_names();
+							if(array_key_exists($role,$roles)){
+								$user_role = $role;
+							} else {
+								$user_role = get_option('default_role');
+							}
+							
 							$new_user_id = wp_insert_user(array(
 									'user_login'		=> $user_login,
 									'user_pass'	 		=> $user_pass,

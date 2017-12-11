@@ -297,6 +297,7 @@ class Aione_App_Builder_Admin_Shortcodes {
 'placeholder_laststname' => __( 'Enter Your Last Name' ),  //Placeholder for Lastname
 'placeholder_username' => __( 'Enter Your Username' ),  //Placeholder for Username
 'placeholder_email' => __( 'Enter Your Email Address' )  //Placeholder for Email
+'role' => 'subscriber'  //Role for user
 </pre>
 
 						</td>
