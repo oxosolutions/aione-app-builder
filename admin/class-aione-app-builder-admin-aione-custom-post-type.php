@@ -62,9 +62,11 @@ class Aione_App_Builder_Admin_Aione_Custom_Post_Type {
 	function init_scripts_2(){
    
 	    wp_enqueue_script('jquery-ui-dialog'); 
+	    wp_enqueue_script('postbox'); 
 	    wp_register_style('jquery-ui-acpt', plugin_dir_url( __FILE__ ) . 'css/aione-app-builder-admin-acpt.css');
 	    wp_enqueue_style('jquery-ui-acpt'); ///call the recently added style
 	}
+
 
 	/**
 	 * Register the stylesheets for the admin area.
@@ -107,6 +109,7 @@ class Aione_App_Builder_Admin_Aione_Custom_Post_Type {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
+				
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/aione-app-builder-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
@@ -337,7 +340,13 @@ class Aione_App_Builder_Admin_Aione_Custom_Post_Type {
 					'feeds' => $cpt_rewrite_feeds,
 					'pages' => $cpt_rewrite_pages
 				);
-			$cpt_meta['taxonomies'] = $cpt_taxonomies;
+			
+			if(empty($cpt_taxonomies)){
+				$cpt_meta['taxonomies'] = array();
+			} else {
+				$cpt_meta['taxonomies'] = $cpt_taxonomies;
+			}
+			
 			$cpt_meta['has_archive'] = $cpt_has_archive;
 			$cpt_meta['has_archive_slug'] = $cpt_has_archive_slug;
 			$cpt_meta['show_in_menu'] = $cpt_show_in_menu;
@@ -353,7 +362,8 @@ class Aione_App_Builder_Admin_Aione_Custom_Post_Type {
 			$cpt_meta['permalink_epmask'] = $cpt_permalink_epmask;
 			$cpt_meta['show_in_rest'] = $cpt_show_in_rest;
 			$cpt_meta['rest_base'] = $cpt_rest_base;
-
+			
+			$cpt_meta['taxonomies'] = array_filter($cpt_meta['taxonomies']);
 			if(!empty($cpt_meta['taxonomies'])){
 				$tax = $cpt_meta['taxonomies'];
 				$taxonomies = get_option('aione-custom-taxonomies', array());
@@ -361,7 +371,7 @@ class Aione_App_Builder_Admin_Aione_Custom_Post_Type {
 				foreach ($tax as $tax_key => $tax_value) {
 					if(array_key_exists($tax_key, $taxonomies)){
 						$taxonomies[$tax_key]['supports'][$cpt_slug] = 1;
-						$taxonomies[$tax_key]['object_type'] = $cpt_slug;
+						$taxonomies[$tax_key]['object_type'][] = $cpt_slug;
 					}
 				}
 				update_option('aione-custom-taxonomies', $taxonomies);
@@ -455,15 +465,15 @@ class Aione_App_Builder_Admin_Aione_Custom_Post_Type {
 			<tbody>
 				<tr>
 					<td><label class="aione-cpt-form-label aione-cpt-form-textfield-label" for="name-plural">Name plural (<strong>required</strong>)</label></td>
-					<td><input type="text" id="name-plural" name="cpt_name_plural" value="<?php echo $cpt_meta["labels"]["name"]; ?>"  placeholder="Enter Post Type name plural" class="large-text aione-cpt-form-textfield form-textfield textfield js-types-validate" data-anonymous-post-type="this Post Type"></td>
+					<td><input required type="text" id="name-plural" name="cpt_name_plural" value="<?php echo $cpt_meta["labels"]["name"]; ?>"  placeholder="Enter Post Type name plural" class="large-text aione-cpt-form-textfield form-textfield textfield js-types-validate" data-anonymous-post-type="this Post Type"></td>
 				</tr>
 				<tr>
 					<td><label class="aione-cpt-form-label aione-cpt-form-textfield-label" for="name-singular">Name singular (<strong>required</strong>)</label></td>
-					<td><input type="text" id="name-singular" name="cpt_name_singular" value="<?php echo $cpt_meta["labels"]["singular_name"]; ?>" placeholder="Enter Post Type name singular" class="large-text aione-cpt-form-textfield form-textfield textfield js-types-validate js-wpcf-slugize-source" data-anonymous-post-type="this Post Type"></td>
+					<td><input required type="text" id="name-singular" name="cpt_name_singular" value="<?php echo $cpt_meta["labels"]["singular_name"]; ?>" placeholder="Enter Post Type name singular" class="large-text aione-cpt-form-textfield form-textfield textfield js-types-validate js-wpcf-slugize-source" data-anonymous-post-type="this Post Type"></td>
 				</tr>
 				<tr>
 					<td><label class="aione-cpt-form-label aione-cpt-form-textfield-label" for="slug">Slug (<strong>required</strong>)</label></td>
-					<td><input type="text" id="slug" name="cpt_slug" value="<?php echo $cpt_meta["slug"]; ?>" maxlength="20" placeholder="Enter Post Type slug" class="large-text aione-cpt-form-textfield form-textfield textfield js-types-validate js-wpcf-slugize "></td>
+					<td><input required type="text" id="slug" name="cpt_slug" value="<?php echo $cpt_meta["slug"]; ?>" maxlength="20" placeholder="Enter Post Type slug" class="large-text aione-cpt-form-textfield form-textfield textfield js-types-validate js-wpcf-slugize "></td>
 				</tr>
 				<tr>
 				<?php
@@ -872,17 +882,18 @@ class Aione_App_Builder_Admin_Aione_Custom_Post_Type {
 
 		<p class="description aione-form-description aione-form-description-checkbox description-checkbox">Rewrite permalinks with this format. False to prevent rewrite. Default: true and use post type as slug.</p>
 
-
+		<div id="aione-types-form-rewrite-toggle" class="">
 		<input type="radio" id="aione_cpt_rewrite_custom1" name="aione_cpt_rewrite_custom" value="normal" class="aione-form-radio form-radio radio" checked="checked"><label class="aione-form-label aione-form-radio-label" for="aione_cpt_rewrite_custom1">Use the normal WordPress URL logic</label>
 		<br>
 
 		<input type="radio" id="aione_cpt_rewrite_custom2" name="aione_cpt_rewrite_custom" value="custom" class="aione-form-radio form-radio radio"><label class="aione-form-label aione-form-radio-label" for="aione_cpt_rewrite_custom2">Use a custom URL format</label>
 		<br>
 		<br>
-		<div id="aione-types-form-rewrite-toggle" class="hidden">
+		<div id="aione-types-form-rewrite-custom-toggle" class="hidden">
 
 		<input type="text" id="aione_cpt_rewrite_slug" name="aione_cpt_rewrite_slug" value="" class="widefat aione-form-textfield form-textfield textfield js-types-validate">
 		<p class="description aione-form-description aione-form-description-textfield description-textfield">Optional. Prepend posts with this slug - defaults to post type's name.</p>
+		</div>
 		</div>
 
 		<input type="checkbox" id="aione_cpt_rewrite_with_front" name="aione_cpt_rewrite_with_front" value="1" class="aione-form-checkbox form-checkbox checkbox" checked="checked"><label class="aione-form-label aione-form-checkbox-label" for="aione_cpt_rewrite_with_front">Allow permalinks to be prepended with front base</label>

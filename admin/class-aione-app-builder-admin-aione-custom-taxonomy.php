@@ -113,7 +113,7 @@ class Aione_App_Builder_Admin_Aione_Custom_Taxonomy {
 	function aione_taxonomy_init(){
 		$taxonomies = $this->get_taxonomies_list();
 		$taxonomies = $this->object_to_array_deep($taxonomies);
-		
+		//echo "<pre>";print_r($taxonomies);echo "</pre>";
 		foreach ($taxonomies as $tax_key => $tax_value) {
 			$taxonomies[$tax_key]['supports'] = array($tax_value['object_type'][0]  => 1);
 

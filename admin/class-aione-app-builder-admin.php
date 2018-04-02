@@ -60,10 +60,10 @@ class Aione_App_Builder_Admin {
 		$this->plugin_admin_backup_restore = new Aione_App_Builder_Admin_Backup_Restore( $this->plugin_name, $this->version );
 		
 		
-		if(!class_exists('Types_Main')){
+		/*if(!class_exists('Types_Main')){
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'library/types/wpcf.php';
 			add_action( 'admin_menu', array($this,'remove_types_main_menus'), 9999 );
-		}
+		}*/
 		if(!class_exists('acf')){
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'library/advanced-custom-fields/acf.php';
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'library/acf-repeater/acf-repeater.php' ;
