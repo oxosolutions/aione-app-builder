@@ -112,6 +112,7 @@ class Aione_App_Builder_Admin_Aione_Custom_Taxonomy {
 
 	function aione_taxonomy_init(){
 		$taxonomies = $this->get_taxonomies_list();
+		//echo "<pre>";print_r($taxonomies);echo "</pre>";
 		$taxonomies = $this->object_to_array_deep($taxonomies);
 		//echo "<pre>";print_r($taxonomies);echo "</pre>";
 		foreach ($taxonomies as $tax_key => $tax_value) {
@@ -135,6 +136,7 @@ class Aione_App_Builder_Admin_Aione_Custom_Taxonomy {
 	            if (( isset($data['_builtin']) && $data['_builtin'] )) {
 	                continue;
 	            }
+	           // echo "<pre>";print_r($data);echo "</pre>";
 	            $this->aione_taxonomy_register( $taxonomy, $data );
 	        }
 	    }
@@ -318,12 +320,22 @@ class Aione_App_Builder_Admin_Aione_Custom_Taxonomy {
 
 	}
 
+	function show_message($class,$message){
+		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) ); 
+	}
+
 	function taxonomy_metabox_main(){ 
 		wp_nonce_field( plugin_basename( __FILE__ ), 'taxonomy_noncename' );
 		wp_nonce_field( plugin_basename( __FILE__ ), 'taxonomy_noncesave' );
-		$aione_registered_taxonomies = get_option('aione-custom-taxonomies');
+		$aione_registered_taxonomies = get_option('aione-custom-taxonomies', array());
+		//echo "<pre>";print_r($aione_registered_taxonomies);echo "</pre>";
 		if(isset($_POST['taxonomy_noncesave'])){
-			$default  = $this->aione_taxonomy_default();
+			if (isset($_GET['aione-taxonomy']) && !empty($_GET['aione-taxonomy'])){
+				$default  = $aione_registered_taxonomies[$_GET['aione-taxonomy']];
+			} else {
+				$default  = $this->aione_taxonomy_default();
+			}
+			//echo "1==========<pre>";print_r($default);echo "</pre>";
 			$taxonomy_data = $_POST['taxonomy'];
 			$builtin = false;
 			$error = "";
@@ -363,7 +375,7 @@ class Aione_App_Builder_Admin_Aione_Custom_Taxonomy {
 	    	$default['hierarchical'] = $data['hierarchical'];
 
 
-			//echo "<pre>";print_r($default);echo "</pre>";
+			//echo "2==========<pre>";print_r($default);echo "</pre>";
 
 			$taxonomy_data['labels']['name'] = isset( $taxonomy_data['labels']['name'] )
 	            ? sanitize_text_field( $taxonomy_data['labels']['name'])
@@ -393,8 +405,12 @@ class Aione_App_Builder_Admin_Aione_Custom_Taxonomy {
 
 	        if($error == ""){
 				if (isset($_GET['aione-taxonomy']) && !empty($_GET['aione-taxonomy'])){
-					$aione_registered_taxonomies[$default['slug']] = array_replace($aione_registered_taxonomies[$default['slug']],$default);
+					//echo "1==<pre>";print_r($aione_registered_taxonomies[$_GET['aione-taxonomy']]);echo "</pre>";
+					//echo "2==<pre>";print_r($default);echo "</pre>";
+					$aione_registered_taxonomies[$default['slug']] = array_replace($aione_registered_taxonomies[$_GET['aione-taxonomy']],$default);
 					$aione_new_custom_taxonomies = $aione_registered_taxonomies;
+					echo "1==<pre>";print_r($aione_new_custom_taxonomies);echo "</pre>";
+					unset($aione_new_custom_taxonomies[$_GET['aione-taxonomy']]);
 				} else {
 					if($aione_registered_taxonomies == false || $aione_registered_taxonomies == ""){
 						$aione_new_custom_taxonomies = array($default['slug']=>$default);
@@ -406,13 +422,13 @@ class Aione_App_Builder_Admin_Aione_Custom_Taxonomy {
 				
 				update_option('aione-custom-taxonomies', $aione_new_custom_taxonomies); 
 				 if (!isset($_GET['aione-taxonomy']) && empty($_GET['aione-taxonomy'])){
-				 	show_message("Taxonomy registered succesfully");
+				 	$this->show_message("notice notice-success is-dismissible","Taxonomy registered succesfully");
 				 } else {
-				 	show_message("Taxonomy updated succesfully");
+				 	$this->show_message("notice notice-success is-dismissible","Taxonomy updated succesfully");
 				 }
 				
 			} else {
-				show_message( $error );
+				$this->show_message("notice notice-error", $error );
 			}
 			//echo "<pre>";print_r($taxonomy_data);echo "</pre>";
 		}
@@ -436,14 +452,14 @@ class Aione_App_Builder_Admin_Aione_Custom_Taxonomy {
     				<tbody>
     				<tr>
     					<td><label class="wpcf-form-label wpcf-form-textfield-label" for="taxonomy-plural">Name plural (<strong>required</strong>)</label></td>
-    					<td><input type="text" id="taxonomy-plural" name="taxonomy[labels][name]" value="<?php echo $taxonomy_meta["labels"]["name"]; ?>" placeholder="Enter Taxonomy name plural" class="widefat wpcf-form-textfield form-textfield textfield js-types-validate"></td>
+    					<td><input required type="text" id="taxonomy-plural" name="taxonomy[labels][name]" value="<?php echo $taxonomy_meta["labels"]["name"]; ?>" placeholder="Enter Taxonomy name plural" class="widefat wpcf-form-textfield form-textfield textfield js-types-validate"></td>
     				</tr>
 					<tr>
 						<td><label class="wpcf-form-label wpcf-form-textfield-label" for="taxonomy-singular">Name singular (<strong>required</strong>)</label></td>
-						<td><input type="text" id="taxonomy-singular" name="taxonomy[labels][singular_name]" value="<?php echo $taxonomy_meta["labels"]["singular_name"]; ?>" placeholder="Enter Taxonomy name singular" class="widefat js-wpcf-slugize-source wpcf-form-textfield form-textfield textfield js-types-validate"></td>
+						<td><input required type="text" id="taxonomy-singular" name="taxonomy[labels][singular_name]" value="<?php echo $taxonomy_meta["labels"]["singular_name"]; ?>" placeholder="Enter Taxonomy name singular" class="widefat js-wpcf-slugize-source wpcf-form-textfield form-textfield textfield js-types-validate"></td>
 					</tr>
 					<tr>
-						<td><label class="wpcf-form-label wpcf-form-textfield-label" for="taxonomy-slug">Slug (<strong>required</strong>)</label></td>
+						<td><label required class="wpcf-form-label wpcf-form-textfield-label" for="taxonomy-slug">Slug (<strong>required</strong>)</label></td>
 						<td><input type="text" id="taxonomy-slug" name="taxonomy[slug]" value="<?php echo $taxonomy_meta["slug"]; ?>" maxlength="30" placeholder="Enter Taxonomy slug" class="widefat js-wpcf-slugize wpcf-form-textfield form-textfield textfield js-types-validate"></td>
 					</tr>
 					<tr>

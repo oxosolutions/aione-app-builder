@@ -59,6 +59,7 @@ class Aione_App_Builder_Admin_Aione_Custom_Post_Type {
 		$this->plugin_admin_aione_cpt_list = new Aione_App_Builder_Admin_Custom_Post_Types_List_Table( $this->plugin_name, $this->version );
 	}
 
+
 	function init_scripts_2(){
    
 	    wp_enqueue_script('jquery-ui-dialog'); 
@@ -401,15 +402,16 @@ class Aione_App_Builder_Admin_Aione_Custom_Post_Type {
 					}			
 				}
 				
-				update_option('aione_custom_post_types', $aione_new_custom_post_types); 
+				update_option('aione_custom_post_types', $aione_new_custom_post_types);
+				
 				if (isset($_GET['aione-post-type']) && !empty($_GET['aione-post-type'])) {
-					show_message("Post type updated succesfully");
+					$this->show_message("notice notice-success is-dismissible","Post type updated succesfully");
 				} else {
-					show_message("Post type registered succesfully");
+					$this->show_message("notice notice-success is-dismissible","Post type registered succesfully");
 				}
 				
 			} else {
-				show_message( $error );
+				$this->show_message("notice notice-error", $error );
 			}
 
 			
@@ -423,7 +425,9 @@ class Aione_App_Builder_Admin_Aione_Custom_Post_Type {
 			echo '<h1>Add New Post Type</h1>';
 		}
 		
-		echo '<form method="post" action="" class="wpcf-types-form wpcf-form-validate js-types-do-not-show-modal"><div id="poststuff">
+		echo '<form method="post" action="" class="wpcf-types-form wpcf-form-validate js-types-do-not-show-modal">
+		<input type="hidden" name="action" value="wpse10500" />
+		<div id="poststuff">
 			<div id="post-body" class="metabox-holder columns-2">';
 		$this->cpt_metabox_main();
 		echo '<div id="postbox-container-2" class="postbox-container">';
@@ -438,10 +442,11 @@ class Aione_App_Builder_Admin_Aione_Custom_Post_Type {
 		echo '</div></div></form>';
 		echo '</div>';
 
-		
 	}
 
-	
+	function show_message($class,$message){
+		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) ); 
+	}
 	
 	function cpt_metabox_main(){
 		wp_nonce_field( plugin_basename( __FILE__ ), 'cpt_noncename' );

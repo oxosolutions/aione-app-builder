@@ -4,10 +4,10 @@ if(!class_exists('WP_List_Table')){
 }
 class Aione_App_Builder_Admin_Custom_Post_Types_List_Table extends WP_List_Table{
 
-	var $custom_types;
-	var $bulk_action_field_name = 'wpcf_cpt_ids';
+    var $custom_types;
+    var $bulk_action_field_name = 'wpcf_cpt_ids';
 
-	function __construct()
+    function __construct()
     {
         //Set parent defaults
         $args = wp_parse_args( $args, array(
@@ -99,9 +99,6 @@ class Aione_App_Builder_Admin_Custom_Post_Types_List_Table extends WP_List_Table
             if ( isset($_REQUEST['_wpnonce'] ) ) {
                 $nonce = sanitize_text_field( $_REQUEST['_wpnonce'] );
             }
-            /*if ( ! wp_verify_nonce( $nonce, 'bulk-posttypes' ) ) {
-                die( 'Security check' );
-            }*/
         }
 
         //Detect when a bulk action is being triggered...
@@ -125,6 +122,11 @@ class Aione_App_Builder_Admin_Custom_Post_Types_List_Table extends WP_List_Table
              */
             update_option('aione_custom_post_types', $this->custom_types);
             
+        }
+        if (!empty($this->custom_types) && isset($action) && $action == "delete" && isset($_REQUEST['slug'] )){        
+            $post_type = $_REQUEST['slug'];
+            unset($this->custom_types[$post_type]);
+            update_option('aione_custom_post_types', $this->custom_types);            
         }
     }
 
@@ -301,12 +303,14 @@ class Aione_App_Builder_Admin_Custom_Post_Types_List_Table extends WP_List_Table
         $actions = array();
         $actions['edit'] = sprintf('<a href="%s">%s</a>', $edit_link, __('Edit', 'wpcf'));
         if ( 'cpt' == $item['type'] ) {
-            $a = array(
+            /*$a = array(
                 'delete'     => sprintf(
                     '<a href="%s" class="submitdelete wpcf-ajax-link" id="wpcf-list-delete-%s">%s</a>',
                     esc_url(
                         add_query_arg(
                             array(
+                                //'action' => 'wpcf_ajax',
+                                //'wpcf_action' => 'aione_cpt_delete_post_type',
                                 'action' => 'aione_cpt_delete_post_type',
                                 'wpcf-post-type' => $item['slug'],
                                 'wpcf_ajax_update' => 'wpcf_list_ajax_response_'.$item['slug'],
@@ -319,7 +323,12 @@ class Aione_App_Builder_Admin_Custom_Post_Types_List_Table extends WP_List_Table
                     $item['slug'],
                     __('Delete', 'wpcf')
                 ),
+            );*/
+            $delete_nonce = wp_create_nonce( 'sp_delete' );
+            $a = array(
+                'delete' => sprintf('<a href="?page=aione-cpt&action=%s&slug=%s&_wpnonce=%s">Delete</a>','delete',$item['slug'],$delete_nonce)
             );
+            
             $actions += $a;
         } 
 
@@ -356,7 +365,4 @@ class Aione_App_Builder_Admin_Custom_Post_Types_List_Table extends WP_List_Table
         return -$result;
     }
 
-
 }
-
-?>

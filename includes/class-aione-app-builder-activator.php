@@ -30,7 +30,12 @@ class Aione_App_Builder_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
+		if ( is_network_admin() ) {
+			return;
+		}
 
+		// Add the transient to redirect.
+		set_transient( 'aab_activation_redirect', true, 30 );
 	}
 
 }

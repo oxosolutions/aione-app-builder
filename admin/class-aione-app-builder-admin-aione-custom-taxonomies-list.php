@@ -107,7 +107,7 @@ class Aione_App_Builder_Admin_Custom_Taxonomies_List_Table extends WP_List_Table
 
         //Detect when a bulk action is being triggered...
         if (
-            !empty($this->custom_types)
+            !empty($this->custom_taxonomies)
             && isset($_POST[$this->bulk_action_field_name])
             && !empty($_POST[$this->bulk_action_field_name])
         ) {
@@ -116,7 +116,7 @@ class Aione_App_Builder_Admin_Custom_Taxonomies_List_Table extends WP_List_Table
                 
                 switch($action) {
                 case 'delete':
-                    unset($this->custom_types[$key]);
+                    unset($this->custom_taxonomies[$key]);
                     $slugs_to_delete[] = $key;
                     break;
                 }
@@ -127,10 +127,17 @@ class Aione_App_Builder_Admin_Custom_Taxonomies_List_Table extends WP_List_Table
             update_option('aione-custom-taxonomies', $this->custom_taxonomies);
             
         }
+        if (!empty($this->custom_taxonomies) && isset($action) && $action == "delete" && isset($_REQUEST['slug'] )){        
+            $tax = $_REQUEST['slug'];
+            unset($this->custom_taxonomies[$tax]);
+            update_option('aione-custom-taxonomies', $this->custom_taxonomies);            
+        }
     }
 
     function prepare_items()
     {
+        
+
         /**
          * First, lets decide how many records per page to show
          */
@@ -307,7 +314,7 @@ class Aione_App_Builder_Admin_Custom_Taxonomies_List_Table extends WP_List_Table
         $actions = array();
         $actions['edit'] = sprintf('<a href="%s">%s</a>', $edit_link, __('Edit', 'wpcf'));
         if ( 'cpt' == $item['type'] ) {
-            $a = array(
+            /*$a = array(
                 'delete'     => sprintf(
                     '<a href="%s" class="submitdelete wpcf-ajax-link" id="wpcf-list-delete-%s">%s</a>',
                     esc_url(
@@ -325,6 +332,10 @@ class Aione_App_Builder_Admin_Custom_Taxonomies_List_Table extends WP_List_Table
                     $item['slug'],
                     __('Delete', 'wpcf')
                 ),
+            );*/
+            $delete_nonce = wp_create_nonce( 'sp_delete' );
+            $a = array(
+                'delete' => sprintf('<a href="?page=aione-taxonomies&action=%s&slug=%s&_wpnonce=%s">Delete</a>','delete',$item['slug'],$delete_nonce)
             );
             $actions += $a;
         } 

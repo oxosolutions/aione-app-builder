@@ -159,7 +159,7 @@ class Aione_App_Builder_Admin {
 				array($this,'aione_app_builder_shortcodes')
 			);
 		 // Custom Post Type
-            $page(
+           /* $page(
 				__('aione_app_builder', 'aione_app_builder'),
 				__('Custom Post Type', 'aione_app_builder'),
 				__('Custom Post Type', 'aione_app_builder'),
@@ -167,9 +167,9 @@ class Aione_App_Builder_Admin {
 				__('admin.php?page=wpcf-cpt', 'aione_app_builder'),
 				false
 				
-			);
+			);*/
 		// Custom Taxonomies
-            $page(
+            /*$page(
 				__('aione_app_builder', 'aione_app_builder'),
 				__('Custom Taxonomies', 'aione_app_builder'),
 				__('Custom Taxonomies', 'aione_app_builder'),
@@ -177,7 +177,7 @@ class Aione_App_Builder_Admin {
 				__('admin.php?page=wpcf-ctt', 'aione_app_builder'),
 				false
 				
-			);	
+			);*/	
 		 // Custom Fields
             $page(
 				__('aione_app_builder', 'aione_app_builder'),
@@ -333,25 +333,19 @@ class Aione_App_Builder_Admin {
 		$operator = 'or'; // 'and' or 'or'
 
 		$post_types = get_post_types( $args, $name, $operator );
-		//echo "<pre>";print_r($post_types);echo "</pre>";
 		
-		
-		$cpts_raw = ! isset( $_GET['toolset-dashboard-simulate-no-custom-post-types'] )
-					? get_option( WPCF_OPTION_NAME_CUSTOM_TYPES, array() )
-					: array();
+		$aione_registered_post_types = get_option('aione_custom_post_types',array());			
 		
 		// remove buildin types
-		$cpts_raw = array_diff_key( $cpts_raw, $this->get_types_by_wordpress() );
-		
+		$cpts_raw = array_diff_key( $aione_registered_post_types, $this->get_types_by_wordpress() );
+		//echo "<pre>";print_r($cpts_raw);echo "</pre>";
 		$cpts = array();
 
 		foreach( $cpts_raw as $cpt_raw ) {
-			$post_type = new Types_Post_Type( $cpt_raw['slug'] );
-			// only use active post types
-			if( isset( $post_type->name ) )
-				$cpts[$cpt_raw['slug']] = $post_type;
+			$post_type =  $cpt_raw['slug'];
+			$cpts[$cpt_raw['slug']] = $post_type;
 		}
-		
+		//echo "<pre>";print_r($cpts);echo "</pre>";
 		$args = array(
 			'post_type'  => 'templates',
 			'post_status'  => 'publish',
@@ -440,7 +434,7 @@ class Aione_App_Builder_Admin {
 			if( isset( $post_type->name ) )
 				$cpts[$cpt_raw['slug']] = $post_type;
 		}
-
+		//echo "<pre>";print_r($cpts);echo "</pre>";
 		$this->types_by_wordpress = $cpts;
 
 		return $this->types_by_wordpress;

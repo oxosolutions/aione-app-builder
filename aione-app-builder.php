@@ -6,7 +6,7 @@
  * @package           Aione_App_Builder
  *
  * @wordpress-plugin
- * Plugin Name:       Aione App Builder
+ * Plugin Name:       Aione App Builder 
  * Plugin URI:        http://oxosolutions.com/products/wordpress-plugins/aione-app-builder/
  * Description:       Aione App Builder
  * Version:           2.2.8.9
