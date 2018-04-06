@@ -376,5 +376,13 @@
         }
         return str;
     }
+    /*
+     * 
+     * Save form with ajax
+     */
+    $( document ).on( 'click', '#aione-cpt-submit', function(e) { 
+        e.preventDefault();
+        console.log("hello");
+    });
 
 })( jQuery );

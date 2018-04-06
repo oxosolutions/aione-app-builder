@@ -6,7 +6,7 @@
  * @package           Aione_App_Builder
  *
  * @wordpress-plugin
- * Plugin Name:       Aione App Builder 
+ * Plugin Name:       Aione App Builder
  * Plugin URI:        http://oxosolutions.com/products/wordpress-plugins/aione-app-builder/
  * Description:       Aione App Builder
  * Version:           2.2.8.9
@@ -24,6 +24,17 @@
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
+}
+
+// Used for referring to the plugin file or basename
+if ( ! defined( 'AIONE_FILE' ) ) {
+	define( 'AIONE_FILE', plugin_basename( __FILE__ ) );
+}
+if ( ! defined( 'AIONE_DIR_PATH' ) ) {
+	define( 'AIONE_DIR_PATH', plugin_dir_path( __FILE__ ) );
+}
+if ( ! defined( 'AIONE_DIR_URL' ) ) {
+	define( 'AIONE_DIR_URL', plugin_dir_url( __FILE__ ) );
 }
 
 /**
