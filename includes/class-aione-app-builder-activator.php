@@ -3,7 +3,7 @@
 /**
  * Fired during plugin activation
  *
- * @link       www.sgssandhu.com
+ * @link       www.oxosolutions.com
  * @since      1.0.0
  *
  * @package    Aione_App_Builder
@@ -18,7 +18,7 @@
  * @since      1.0.0
  * @package    Aione_App_Builder
  * @subpackage Aione_App_Builder/includes
- * @author     SGS Sandhu <contact@oxosolutions.com>
+ * @author     OXO Solutions <contact@oxosolutions.com>
  */
 class Aione_App_Builder_Activator {
 
@@ -30,16 +30,14 @@ class Aione_App_Builder_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-		if ( is_network_admin() ) {
-			return;
-		}
-
-		// Add the transient to redirect.
-		set_transient( 'aab_activation_redirect', true, 30 );
-
-		/*require_once AIONE_DIR_PATH. 'admin/class-aione-app-builder-admin-aione-custom-post-type.php';
-		$options = Aione_App_Builder_Admin_Aione_Custom_Post_Type::aione_get_builtin_in_post_types();
-		update_option( 'aione_custom_post_types', $options );*/
+		$version = get_option('AIONE_VERSION');
+	    if ( empty($version) ) {
+	        $version = 0;
+	        add_option('AIONE_VERSION', 0, null, 'no');
+	    }
+	    if ( version_compare($version, AIONE_VERSION) < 0 ) {
+	        update_option('AIONE_VERSION', AIONE_VERSION);
+	    }
 	}
 
 }

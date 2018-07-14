@@ -3,7 +3,7 @@
 /**
  * The admin-specific functionality of the plugin.
  *
- * @link       www.sgssandhu.com
+ * @link       www.oxosolutions.com
  * @since      1.0.0
  *
  * @package    Aione_App_Builder
@@ -18,8 +18,9 @@
  *
  * @package    Aione_App_Builder
  * @subpackage Aione_App_Builder/admin
- * @author     SGS Sandhu <contact@oxosolutions.com>
+ * @author     OXO Solutions <contact@oxosolutions.com>
  */
+
 class Aione_App_Builder_Admin {
 
 	/**
@@ -49,36 +50,83 @@ class Aione_App_Builder_Admin {
 	 */
 	public function __construct( $plugin_name, $version ) {
 
+		/*if ( ! is_admin() || ! is_user_logged_in() ) {
+			return;
+		} *///Only for admin
+
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-		add_action( 'admin_menu', array( $this, 'aione_app_builder_admin_menu_hook' ) );
-		
-		$this->plugin_admin_shortcodes = new Aione_App_Builder_Admin_Shortcodes( $this->plugin_name, $this->version );
-		$this->plugin_admin_templates = new Aione_App_Builder_Admin_Templates( $this->plugin_name, $this->version );
-		$this->plugin_admin_aione_cpt = new Aione_App_Builder_Admin_Aione_Custom_Post_Type( $this->plugin_name, $this->version );
-		$this->plugin_admin_aione_taxonomy = new Aione_App_Builder_Admin_Aione_Custom_Taxonomy( $this->plugin_name, $this->version );
-		$this->plugin_admin_backup_restore = new Aione_App_Builder_Admin_Backup_Restore( $this->plugin_name, $this->version );
-		
-		
-		/*if(!class_exists('Types_Main')){
-			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'library/types/wpcf.php';
-			add_action( 'admin_menu', array($this,'remove_types_main_menus'), 9999 );
-		}*/
-		if(!class_exists('acf')){
-			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'library/advanced-custom-fields/acf.php';
-			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'library/acf-repeater/acf-repeater.php' ;
-			add_action( 'admin_menu', array($this,'remove_acf_main_menus'), 9999 );
-		}
-		if(!class_exists('Members_Plugin')){
-			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'library/members/members.php';
-		}
-		if(!class_exists('Page_Template_Plugin')){
-			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'library/aione-templates/aione-templates.php';
-		}
-		
-		
+
+		define('AIONE_OPTION_NAME_COMPONENTS', 'aione-components');
+		define('AIONE_OPTION_NAME_TAXONOMIES', 'aione-taxonomies');
+		define('AIONE_OPTION_NAME_TEMPLATES', 'aione-templates');
+
+		add_action( 'init', array( $this,'aione_init'), AIONE_INIT_PRIORITY );
+		add_action( 'admin_notices', array( $this, 'show_admin_messages' ) );
+		add_action( 'admin_menu',array( &$this, 'admin_menu' ) );
+		add_action('admin_init', array( $this,'init_dialog_scripts'));		
+		add_action( 'admin_init',array( $this, 'aione_register_acf_menu' ), 10 );
+		// TO DO: To add Members Plugin Menu in Aione App Builder
+		//add_action( 'admin_init',array( $this, 'aione_register_members_menu' ), 1000 );
+		add_filter( 'aione_filter_register_menu_pages', array( $this, 'register_page_dashboard_in_menu' ), 1000 );
+		add_filter( 'aione_filter_register_menu_pages',array( $this, 'aione_register_menu_pages' ), 10 );
+		//add_action('wp_head', array( $this, 'aione_ajaxurl'));
+		add_action( 'init', array($this,'aione_init_components_taxonomies'), apply_filters('aione_init_components_taxonomies', 10));
+
 	}
-	
+
+	function aione_init(){
+		global $aione;
+		// Set post object
+	    $aione->post = new stdClass();
+
+	    // Define exceptions - privileged plugins and their data
+	    $aione->aione_post_types = array(
+	        'view', 'view-template', 'cred-form', 'cred-user-form'
+	    );
+	    // 'attachment' = Media
+	    //
+	    $aione->excluded_post_types = array(
+	        'cred-form',
+	        'cred-user-form',
+		    'custom_css',
+		    'customize_changeset',
+	        'dd_layouts',
+	        'deprecated_log',
+	        'mediapage',
+	        'nav_menu_item',
+	        'revision',
+	        'view',
+	        'view-template',
+	        'wp-types-group',
+	        'wp-types-user-group',
+		    'wp-types-term-group',
+		    'acf-field-group',
+		    'acf'
+	    );
+
+	    /**
+	     * Filter that allows to add own post types which will be not used in Toolset plugins.
+	     *
+	     * @param string[] $post_types array of post type slugs.
+	     * @since 1.9
+	     */
+	    $aione->excluded_post_types = apply_filters( 'aione_filter_exclude_own_post_types', $aione->excluded_post_types );
+	}
+
+	function init_dialog_scripts(){
+   
+        wp_enqueue_script('jquery-ui-dialog'); 
+        wp_enqueue_script('postbox');
+        
+    }
+
+    function aione_ajaxurl() {
+	   echo '<script>
+	           var ajaxurl = "' . admin_url('admin-ajax.php') . '";
+	         </script>';
+	}
+
 	/**
 	 * Register the stylesheets for the admin area.
 	 *
@@ -98,7 +146,15 @@ class Aione_App_Builder_Admin {
 		 * class.
 		 */
 
+		
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/aione-app-builder-admin.css', array(), $this->version, 'all' );
+		global $pagenow, $typenow;
+
+		if(is_admin() && $pagenow == 'admin.php' && $_GET['page'] == 'aione-dashboard'){
+			wp_register_style( 'aione-framework-css',  plugin_dir_url( __FILE__ ) .'/css/aione.min.css', array(), $this->version, 'all' );
+			wp_enqueue_style('aione-framework-css');
+		}
+   
 
 	}
 
@@ -124,93 +180,263 @@ class Aione_App_Builder_Admin {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/aione-app-builder-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
-/**
-	 * admin_menu hook.
-	 */
-	
-	function aione_app_builder_admin_menu_hook(){  
-		 add_menu_page( 
-			__('App Builder', 'aione_app_builder'),
-			__('App Builder', 'aione_app_builder'),
-			__('manage_options', 'aione_app_builder'),
-			'aione_app_builder', 
-			false,
-			'dashicons-image-filter',
-			29 
-		); 
-		
-		$page = 'add_submenu_page';
-		 // Set Pages
-            $page(
-				__('aione_app_builder', 'aione_app_builder'),
-				__('Set Pages', 'aione_app_builder'),
-				__('Set Pages', 'aione_app_builder'),
-				__('manage_options', 'aione_app_builder'),
-				__('aione_app_builder', 'aione_app_builder'),
-				array($this,'aione_app_builder_set_pages')
+
+	public function show_admin_messages() {
+		if ( ! empty( $this->admin_messages ) ) {
+			$types = array( 'error', 'updated', 'notice' );
+			foreach ( $this->admin_messages as $message ) {
+				$class = in_array( $message['type'], $types ) ? $message['type'] : 'updated';
+				?>
+                <div class="<?php echo $class ?>">
+                    <p>
+						<?php echo $message['text'] ?>
+                    </p>
+                </div>
+				<?php
+			}
+		}
+	}
+
+	public function admin_menu(){ 
+		$registered_pages = apply_filters( 'aione_filter_register_menu_pages', array() );
+		//echo "I am here<pre>";print_r($registered_pages);echo "</pre>";
+		if ( count( $registered_pages ) > 0 ) {
+            $top_level_page_registered = false;
+            while (
+                count( $registered_pages ) > 0
+                && ! $top_level_page_registered
+            ) {
+                $top_level_page = array_shift( $registered_pages );
+                $top_level_page['capability'] = isset( $top_level_page['capability'] ) ? $top_level_page['capability'] : 'manage_options';
+                if ( current_user_can( $top_level_page['capability'] ) ) {
+                    $hook = add_menu_page( $top_level_page['page_title'], 'Aione App Builder', $top_level_page['capability'], $top_level_page['slug'], array($this,$top_level_page['callback'] ));
+                    $this->add_menu_page_hooks( @$page, $hook );
+                    $top_level_page_registered = true;
+                }
+            }
+
+            if (
+                $top_level_page_registered
+                && is_array( $registered_pages )
+            ) {
+                $this->add_submenu_page( $top_level_page, $top_level_page );
+                foreach ( $registered_pages as $page ) {
+                    $this->add_submenu_page( $page, $top_level_page );
+                }
+            }
+        }
+	}
+
+	public function add_submenu_page( $page, $top_level_page ) {
+        $page['capability'] = isset( $page['capability'] ) ? $page['capability'] : 'manage_options';
+        $callback = isset( $page['callback'] ) ? $page['callback'] : null;
+        $hook = add_submenu_page( $top_level_page['slug'], $page['page_title'], $page['menu_title'], $page['capability'], $page['slug'], array($this,$callback ));
+        $this->add_menu_page_hooks( $page, $hook );
+    }
+
+    public function add_menu_page_hooks( $page, $hook ) {
+        global $wp_version;
+        $load_action = sprintf(
+            'load-%s',
+            $hook
+        );
+        if (! empty( $page['load_hook'] ) && is_callable( array($this,$page['load_hook'] ) )
+            ) { 
+                add_action( $load_action, array($this,$page['load_hook'] ));
+            }
+    }
+
+    public function register_page_dashboard_in_menu( $pages ) {
+		array_unshift( $pages, array(
+			'slug'			=> 'aione-dashboard',
+			'menu_title'	=> __( 'Dashboard', 'aione-app-builder' ),
+			'page_title'	=> __( 'Aione Dashboard', 'aione-app-builder' ),
+			'callback'		=> 'aione_admin_menu_summary_dashboard'
+		) );
+
+		return $pages;
+	}
+
+    public function aione_register_menu_pages( $pages ) {
+		$current_page = '';
+		if ( isset( $_GET['page'] ) ) {
+		    $current_page = sanitize_text_field( $_GET['page'] );
+		}
+		$pages['aione-component'] = array(
+			'slug'				=> 'aione-component',
+	        'menu_title'		=> __( 'Components', 'aione-app-builder' ),
+	        'page_title'		=> __( 'Components', 'aione-app-builder' ),
+	        'callback'  		=> 'aione_admin_menu_summary_component',
+	        'capability'		=> 'manage_options',
+	    );
+		$pages['aione-component']['load_hook'] = aione_admin_calculate_menu_page_load_hook( $pages['aione-component'] );
+
+		if ( $current_page == 'aione-edit-component' ) {
+			$pages['aione-edit-component'] = array(
+				'slug'				=> 'aione-edit-component',
+				'menu_title'		=> isset( $_GET['aione-component-slug'] ) ? __( 'Edit Component', 'aione-app-builder' ) : __( 'Add New Component', 'aione-app-builder' ),
+				'page_title'		=> isset( $_GET['aione-component-slug'] ) ? __( 'Edit Component', 'aione-app-builder' ) : __( 'Add New Component', 'aione-app-builder' ),
+				'callback'  		=> 'aione_admin_menu_edit_component',
+				'capability'		=> 'manage_options',
+				'load_hook'			=> 'aione_admin_menu_edit_component_hook'
 			);
-		 // Shortcodes
-            $page(
-				__('aione_app_builder', 'aione_app_builder'),
-				__('Shortcodes', 'aione_app_builder'),
-				__('Shortcodes', 'aione_app_builder'),
-				__('manage_options', 'aione_app_builder'),
-				__('aione_app_builder_shortcodes', 'aione_app_builder'),
-				array($this,'aione_app_builder_shortcodes')
+			
+			$pages['aione-edit-component']['load_hook'] = aione_admin_calculate_menu_page_load_hook( $pages['aione-edit-component'] );
+		}
+		$pages['aione-taxonomy'] = array(
+			'slug'				=> 'aione-taxonomy',
+	        'menu_title'		=> __( 'Taxonomies', 'aione-app-builder' ),
+	        'page_title'		=> __( 'Taxonomies', 'aione-app-builder' ),
+	        'callback'  		=> 'aione_admin_menu_summary_taxonomy',
+	        'capability'		=> 'manage_options',
+	    );
+		$pages['aione-taxonomy']['load_hook'] = aione_admin_calculate_menu_page_load_hook( $pages['aione-taxonomy'] );
+
+		if ( $current_page == 'aione-edit-taxonomy' ) {
+			$pages['aione-edit-taxonomy'] = array(
+				'slug'				=> 'aione-edit-taxonomy',
+				'menu_title'		=> isset( $_GET['aione-taxonomy-slug'] ) ? __( 'Edit Taxonomy', 'aione-app-builder' ) : __( 'Add New Taxonomy', 'aione-app-builder' ),
+				'page_title'		=> isset( $_GET['aione-taxonomy-slug'] ) ? __( 'Edit Taxonomy', 'aione-app-builder' ) : __( 'Add New Taxonomy', 'aione-app-builder' ),
+				'callback'  		=> 'aione_admin_menu_edit_taxonomy',
+				'capability'		=> 'manage_options',
+				'load_hook'			=> 'aione_admin_menu_edit_taxonomy_hook'
 			);
-		 // Custom Post Type
-           /* $page(
-				__('aione_app_builder', 'aione_app_builder'),
-				__('Custom Post Type', 'aione_app_builder'),
-				__('Custom Post Type', 'aione_app_builder'),
-				__('manage_options', 'aione_app_builder'),
-				__('admin.php?page=wpcf-cpt', 'aione_app_builder'),
-				false
-				
-			);*/
-		// Custom Taxonomies
-            /*$page(
-				__('aione_app_builder', 'aione_app_builder'),
-				__('Custom Taxonomies', 'aione_app_builder'),
-				__('Custom Taxonomies', 'aione_app_builder'),
-				__('manage_options', 'aione_app_builder'),
-				__('admin.php?page=wpcf-ctt', 'aione_app_builder'),
-				false
-				
-			);*/	
-		 // Custom Fields
-            $page(
-				__('aione_app_builder', 'aione_app_builder'),
-				__('Custom Fields', 'aione_app_builder'),
-				__('Custom Fields', 'aione_app_builder'),
-				__('manage_options', 'aione_app_builder'),
-				__('edit.php?post_type=acf', 'aione_app_builder'),
-				false
-			);	
 			
-		 //  Template
-            $page(
-				__('aione_app_builder', 'aione_app_builder'),
-				__('Set View', 'aione_app_builder'),
-				__('Set View', 'aione_app_builder'),
-				__('manage_options', 'aione_app_builder'),
-				__('aione_app_builder_set_view', 'aione_app_builder'),
-				array($this,'aione_app_builder_set_view')
-			); 
+			$pages['aione-edit-taxonomy']['load_hook'] = aione_admin_calculate_menu_page_load_hook( $pages['aione-edit-taxonomy'] );
+		}
+
+		$pages['aione-template'] = array(
+			'slug'				=> 'aione-template',
+	        'menu_title'		=> __( 'Templates', 'aione-app-builder' ),
+	        'page_title'		=> __( 'Templates', 'aione-app-builder' ),
+	        'callback'  		=> 'aione_admin_menu_summary_template',
+	        'capability'		=> 'manage_options',
+	    );
+		$pages['aione-template']['load_hook'] = aione_admin_calculate_menu_page_load_hook( $pages['aione-template'] );
+
+		if ( $current_page == 'aione-edit-template' ) {
+			$pages['aione-edit-template'] = array(
+				'slug'				=> 'aione-edit-template',
+				'menu_title'		=> isset( $_GET['aione-template-slug'] ) ? __( 'Edit Template', 'aione-app-builder' ) : __( 'Add New Template', 'aione-app-builder' ),
+				'page_title'		=> isset( $_GET['aione-template-slug'] ) ? __( 'Edit Template', 'aione-app-builder' ) : __( 'Add New Template', 'aione-app-builder' ),
+				'callback'  		=> 'aione_admin_menu_edit_template',
+				'capability'		=> 'manage_options',
+				'load_hook'			=> 'aione_admin_menu_edit_template_hook'
+			);
 			
-		
-	      
-	    //remove_submenu_page('aione_app_builder', 'aione_app_builder' );
+			$pages['aione-edit-template']['load_hook'] = aione_admin_calculate_menu_page_load_hook( $pages['aione-edit-template'] );
+		}
+
+		$pages['aione-shortcodes'] = array(
+			'slug'				=> 'aione-shortcodes',
+	        'menu_title'		=> __( 'Shortcodes', 'aione-app-builder' ),
+	        'page_title'		=> __( 'Aione Shortcodes', 'aione-app-builder' ),
+	        'callback'  		=> 'aione_admin_menu_summary_shortcodes',
+	        'capability'		=> 'manage_options',
+	    );
+		$pages['aione-shortcodes']['load_hook'] = aione_admin_calculate_menu_page_load_hook( $pages['aione-shortcodes'] );
+
+		$pages['aione-settings'] = array(
+			'slug'				=> 'aione-settings',
+	        'menu_title'		=> __( 'Settings', 'aione-app-builder' ),
+	        'page_title'		=> __( 'Aione Settings', 'aione-app-builder' ),
+	        'callback'  		=> 'aione_admin_menu_summary_settings',
+	        'capability'		=> 'manage_options',
+	    );
+		$pages['aione-settings']['load_hook'] = aione_admin_calculate_menu_page_load_hook( $pages['aione-settings'] );
+		//echo "<pre>";print_r($pages);echo "</pre>";
+		return $pages;
 		
 	}
-	
+
 	/**
-	 * aione_app_builder_set_pages
+	 * ACF menu in Main Menu
 	 */
-	 
-	 function aione_app_builder_set_pages() {
+	public function aione_register_acf_menu()	{
+		if (class_exists('acf')){
+			remove_menu_page( 'edit.php?post_type=acf' );
+			add_submenu_page( 'aione-dashboard', __( 'Field Groups', 'aione-app-builder' ), __( 'Custom Fields', 'aione-app-builder' ), 'manage_options', 'edit.php?post_type=acf' );
+			add_action('admin_head', array($this,'acf_page_style'));
+		}
+	}
+
+	function acf_page_style(){
+		?>
+<style type="text/css"> 
+	#acf-field-group-wrap .acf-columns-2 {margin-right: 0;}
+	#acf-field-group-wrap .acf-column-2 {display: none;}
+</style>
+		<?php
+	}
+
+	/**
+	 * Members menu in Main Menu
+	 */
+	public function aione_register_members_menu()	{
+		if (class_exists('Members_Plugin')){
+			remove_submenu_page( 'users.php', 'roles' );
+			// Get the page title.
+			$title = __( 'Roles', 'aione-app-builder' );
+			if ( isset( $_GET['action'] ) && 'edit' === $_GET['action'] && isset( $_GET['role'] ) )
+				$title = __( 'Edit Role', 'aione-app-builder' );
+			$edit_roles_cap = 'list_roles';
+
+			// If the current user can 'edit_roles'.
+			if ( current_user_can( 'edit_roles' ) )
+				$edit_roles_cap = 'edit_roles';
+
+			// If the current user can 'delete_roles'.
+			elseif ( current_user_can( 'delete_roles' ) )
+				$edit_roles_cap = 'delete_roles';
+			add_submenu_page( 'aione-dashboard', $title, __( 'Roles', 'aione-app-builder' ), 'manage_options', 'admin.php?page=roles' );
+			
+		}
+	}
+
+	 /**
+	 * Menu page display.
+	 */
+	function aione_admin_menu_summary_dashboard(){
+		aione_add_admin_header(
+	        __( 'Aione Dashboard', 'aione-app-builder' )
+	    );
+	    aione_admin_dashboard_boxes();
+	    aione_add_admin_footer();
+	}
+	function aione_admin_menu_summary_component(){
+		aione_add_admin_header(
+	        __( 'Components', 'aione-app-builder' ),
+	        array('page'=>'aione-edit-component'),
+	        __('Add New', 'aione-app-builder')
+	    );
+	    aione_admin_components_list();
+    	aione_add_admin_footer();
+	}
+	function aione_admin_menu_summary_taxonomy(){
+		aione_add_admin_header(
+	        __( 'Taxonomies', 'aione-app-builder' ),
+	        array('page'=>'aione-edit-taxonomy'),
+	        __('Add New', 'aione-app-builder')
+	    );
+	    aione_admin_taxonomies_list();
+    	aione_add_admin_footer();
+	}
+	function aione_admin_menu_summary_template(){
+		aione_add_admin_header(
+	        __( 'Templates', 'aione-app-builder' ),
+	        array('page'=>'aione-edit-template'),
+	        __('Add New', 'aione-app-builder')
+	    );
+	    aione_admin_templates_list();
+    	aione_add_admin_footer();
+	}
+
+	function aione_admin_menu_summary_shortcodes(){
+		include( plugin_dir_path( __FILE__ ) . 'partials/aione-app-builder-admin-shortcodes-table.php' );
+	}
+
+	function aione_admin_menu_summary_settings(){
 		$this->tabs();
-		
 		if ( isset( $_POST['action'] ) && $_POST['action'] == "save" ){
 			$validation_key = $_POST['save_set_page'];
 			if ( ! isset( $validation_key )  || ! wp_verify_nonce( $validation_key, 'validation_key' ) ) {
@@ -241,205 +467,158 @@ class Aione_App_Builder_Admin {
 				}
 			}
 		}
-	 
-		
 		if(isset ( $_GET['tab'] ) && $_GET['tab'] == 'register'){
-			require_once plugin_dir_path( __FILE__ ) .'views/register-tab.php';
+			require_once plugin_dir_path( __FILE__ ) . 'partials/aione-app-builder-admin-register-tab.php';
 		} 
 		else if(isset ( $_GET['tab'] ) && $_GET['tab'] == 'forgot_Password'){
-			require_once plugin_dir_path( __FILE__ ) .'views/lost-password-tab.php';
+			require_once plugin_dir_path( __FILE__ ) . 'partials/aione-app-builder-admin-lost-password-tab.php';
 		}
 		else if(isset ( $_GET['tab'] ) && $_GET['tab'] == 'logout'){
-			require_once plugin_dir_path( __FILE__ ) .'views/logout-tab.php';
+			require_once plugin_dir_path( __FILE__ ) . 'partials/aione-app-builder-admin-logout-tab.php';
 		}
 		else {
-			require_once plugin_dir_path( __FILE__ ) .'views/login-tab.php';
+			require_once plugin_dir_path( __FILE__ ) . 'partials/aione-app-builder-admin-login-tab.php';
 		}
-		
-	 }
-	 
-	 public function tabs(){
-		 if(isset ( $_GET['page'] ) && $_GET['page'] == 'aione_app_builder'){
-			 $selected_tab = 'login';
-		 }
-         ?>
-		
-			<h2 class="nav-tab-wrapper">
-                <a class="nav-tab <?php echo $selected_tab == 'login' ? 'nav-tab-active' : ''; ?>"
-                    href="<?php echo esc_url( admin_url( add_query_arg( array( 'tab' => 'login' ), 'admin.php?page=aione_app_builder' ) ) ); ?>">
-                    <?php esc_attr_e( "Login", 'aione_app_builder' ); ?> </a> 
-				
-				<a class="nav-tab <?php echo $selected == 'register' ? 'nav-tab-active' : ''; ?>"
-                    href="<?php echo esc_url( admin_url( add_query_arg( array( 'tab' => 'register' ), 'admin.php?page=aione_app_builder' ) ) ); ?>">
-                    <?php esc_attr_e( 'Register', 'aione_app_builder' ); ?> </a>
-				
-				<a class="nav-tab <?php echo $selected == 'forgot_Password' ? 'nav-tab-active' : ''; ?>"
-                    href="<?php echo esc_url( admin_url( add_query_arg( array( 'tab' => 'forgot_Password' ), 'admin.php?page=aione_app_builder' ) ) ); ?>">
-                    <?php esc_attr_e( 'Forgot Password', 'aione_app_builder' ); ?> </a> 
-					
-				<a class="nav-tab <?php echo $selected == 'logout' ? 'nav-tab-active' : ''; ?>"
-                    href="<?php echo esc_url( admin_url( add_query_arg( array( 'tab' => 'logout' ), 'admin.php?page=aione_app_builder' ) ) ); ?>">
-                    <?php _e( 'Log Out', 'aione_app_builder' ); ?> </a>  
-					
-            </h2>
-			
-        <?php
-		
+	}
+
+
+	function aione_admin_menu_edit_component(){
+		$post_type = current_filter();
+		if ( isset( $_GET['aione-component-slug'] ) ) {
+            $title = __( 'Edit Component', 'aione-app-builder' );
+            /**
+             * add new Component link
+             */
+            $title .= sprintf(
+                '<a href="%s" class="add-new-h2">%s</a>',
+                esc_url(add_query_arg( 'page', 'aione-edit-component', admin_url('admin.php'))),
+                __('Add New', 'aione-app-builder')
+            );
+        } else {
+            $title = __( 'Add New Component', 'aione-app-builder' );
         }
+        aione_add_admin_header($title);
+        $form = aione_form( 'aione_form_components' );
+        echo '<form method="post" action="" class="aione-fields-form aione-form-validate js-types-show-modal">';
+        aione_admin_screen($post_type, $form->renderForm());
+    	echo '</form>';
+        aione_add_admin_footer();
+	}
+	function aione_admin_menu_edit_taxonomy(){
+		$taxonomy = current_filter(); 
+		if ( isset( $_GET['aione-taxonomy-slug'] ) ) {
+            $title = __( 'Edit Taxonomy', 'aione-app-builder' );
+            /**
+             * add new taxonomy link
+             */
+            $title .= sprintf(
+                '<a href="%s" class="add-new-h2">%s</a>',
+                esc_url(add_query_arg( 'page', 'aione-edit-taxonomy', admin_url('admin.php'))),
+                __('Add New', 'aione-app-builder')
+            );
+        } else {
+            $title = __( 'Add New Taxonomy', 'aione-app-builder' );
+        }
+        aione_add_admin_header($title);
+        $form = aione_form( 'aione_form_taxonomies' );
+        echo '<form method="post" action="" class="aione-fields-form aione-form-validate js-types-show-modal">';
+        aione_admin_screen($taxonomy, $form->renderForm());
+    	echo '</form>';
+        aione_add_admin_footer();
+	}
+
+	function aione_admin_menu_edit_template(){
+		$template = current_filter(); 
+		if ( isset( $_GET['aione-template-slug'] ) ) {
+            $title = __( 'Edit Template', 'aione-app-builder' );
+            /**
+             * add new template link
+             */
+            $title .= sprintf(
+                '<a href="%s" class="add-new-h2">%s</a>',
+                esc_url(add_query_arg( 'page', 'aione-edit-template', admin_url('admin.php'))),
+                __('Add New', 'aione-app-builder')
+            );
+        } else {
+            $title = __( 'Add New Template', 'aione-app-builder' );
+        }
+        aione_add_admin_header($title);
+        $form = aione_form( 'aione_form_templates' );
+        echo '<form method="post" action="" class="aione-fields-form aione-form-validate js-types-show-modal">';
+        aione_admin_screen($template, $form->renderForm());
+    	echo '</form>';
+        aione_add_admin_footer();
+	}
+
+	function aione_admin_menu_edit_component_hook(){
+		//require_once dirname( __FILE__ ).'/class-component-edit.php';
+	    $aione_admin = new Aione_Admin_Edit_Component();
+	    $aione_admin->init_admin();
+	    $form = $aione_admin->form();
+	    aione_form( 'aione_form_components', $form );
+	}
+	function aione_admin_menu_edit_taxonomy_hook(){
+		//require_once dirname( __FILE__ ).'/class-component-edit.php';
+	    $aione_admin = new Aione_Admin_Edit_Taxonomy();
+	    $aione_admin->init_admin();
+	    $form = $aione_admin->form();
+	    aione_form( 'aione_form_taxonomies', $form );
+	}
+	function aione_admin_menu_edit_template_hook(){
+		//require_once dirname( __FILE__ ).'/class-component-edit.php';
+	    $aione_admin = new Aione_Admin_Edit_Template();
+	    $aione_admin->init_admin();
+	    $form = $aione_admin->form();
+	    aione_form( 'aione_form_templates', $form );
+	}
+
+	function aione_init_components_taxonomies(){ 
+		$custom_taxonomies = get_option( AIONE_OPTION_NAME_TAXONOMIES, array() );
+	    if ( !empty( $custom_taxonomies ) ) {
+	        //require_once WPCF_EMBEDDED_INC_ABSPATH . '/custom-taxonomies.php';
+	        aione_custom_taxonomies_init();
+	    }
 		
-	/**
-	 * aione_app_builder_shortcodes
-	 */
-	 function aione_app_builder_shortcodes(){ 
-		 $this->plugin_admin_shortcodes->aione_app_builder_shortcodes_list();
-	 }
-	 
-	 // remove Types Main Menu
-	function remove_types_main_menus (){
-		global $menu;
-		global $submenu;
-		remove_menu_page( 'toolset-dashboard' ); 
+	    // register post types
+		$post_type_option = new Aione_App_Builder_Admin_Components_Utils();
+	    $custom_types = $post_type_option->get_components();
+	    if ( !empty( $custom_types ) ) {
+	        //require_once dirname( __FILE__ ). '/component-functions.php';
+	        aione_custom_types_init();
+	        aione_builtin_taxonomies_init();
+	    }
+
+	    
 	}
-	// remove ACF Main Menu
-	function remove_acf_main_menus (){
-		global $menu;
-		global $submenu;
-		remove_menu_page( 'edit.php?post_type=acf' );
-	}
-	
-	function aione_app_builder_set_view(){
-		$option_name = "aione_app_builder_template_setting";
-		//delete_option( $option_name );
-		if(isset($_POST['set-view-submit'])){
-			unset($_POST['set-view-submit']);
-			$settings = $_POST;
-			$settings_serailized = serialize($settings);
-			//echo "<pre>";print_r($settings);echo "</pre>";
-			
-			if ( get_option( $option_name ) !== false ) {
-				update_option( $option_name, $settings_serailized );
+	public function tabs(){
+		if(isset ( $_GET['page'] ) && $_GET['page'] == 'aione-settings'){			
+			if(isset ( $_GET['tab'] )){
+				$selected_tab = $_GET['tab'];
 			} else {
-				add_option( $option_name, $settings_serailized );
-			}
+				$selected_tab = 'login';
+			}		 
 		}
-		
-		$output = "<h1>SET VIEW</h1>";
-		$args = array(
-		   'public'   => true,
-		   '_builtin' => false
-		);
+		?>
 
-		$name = 'names'; // names or objects, note names is the default
-		$operator = 'or'; // 'and' or 'or'
-
-		$post_types = get_post_types( $args, $name, $operator );
-		
-		$aione_registered_post_types = get_option('aione_custom_post_types',array());			
-		
-		// remove buildin types
-		$cpts_raw = array_diff_key( $aione_registered_post_types, $this->get_types_by_wordpress() );
-		//echo "<pre>";print_r($cpts_raw);echo "</pre>";
-		$cpts = array();
-
-		foreach( $cpts_raw as $cpt_raw ) {
-			$post_type =  $cpt_raw['slug'];
-			$cpts[$cpt_raw['slug']] = $post_type;
-		}
-		//echo "<pre>";print_r($cpts);echo "</pre>";
-		$args = array(
-			'post_type'  => 'templates',
-			'post_status'  => 'publish',
-			'posts_per_page'   => -1
-		);
-		$query = get_posts( $args ); //echo "<pre>";print_r($query);echo "</pre>";
-		
-		$output .= "<form method='post' action=''>";
-		$output .= "<table style='border:1px solid #e8e8e8;border-collapse:collapse;'>";
-		$output .= "<tr style='border:1px solid #e8e8e8;'>";
-		$output .= "<th>Post Type</th>";
-		$output .= "<th>Single</th>";
-		$output .= "<th>Archive</th>";
-		$output .= "</tr>";
-		foreach ( $cpts as $cpt_key => $cpt_value ) {
-			$output .= "<tr style='border:1px solid #e8e8e8;'>";
-			$output .="<td style='border:1px solid #e8e8e8;padding:1%;'>".$cpt_key."</td>";
-			$output .="<td style='border:1px solid #e8e8e8;padding:1%;'>";
-			$output .="<select name='".$cpt_key."[template_single]'>";
-			$output .="<option value=''>Select Single View Template</option>";
+		<h2 class="nav-tab-wrapper">
+		    <a class="nav-tab <?php echo $selected_tab == 'login' ? 'nav-tab-active' : ''; ?>"
+		        href="<?php echo esc_url( admin_url( add_query_arg( array( 'tab' => 'login' ), 'admin.php?page=aione-settings' ) ) ); ?>">
+		        <?php echo __( "Login", 'aione-app-builder' ); ?> </a> 
 			
-			foreach($query as $templates){
-				if ( get_option( $option_name ) !== false ) {
-					$tem_settings = get_option( $option_name ); 
-					$tem_settings = unserialize($tem_settings); 
-					if(array_key_exists($cpt_key,$tem_settings ) ){
-						if($tem_settings[$cpt_key]['template_single'] ==  $templates->ID){
-							$single_selected = "selected";
-						} else {$single_selected = "";}
-						
-					}
-				}
-				$output .="<option value='".$templates->ID."' ".$single_selected.">".$templates->post_title."</option>";
-			}
-			$output .="</select>";
-			$output .="</td>";
-			$output .="<td style='border:1px solid #e8e8e8;padding:1%;'>";
-			$output .="<select name='".$cpt_key."[template_archive]'>";
-			$output .="<option value=''>Select Archive View Template</option>";
-			foreach($query as $templates){
-				if ( get_option( $option_name ) !== false ) {
-					$tem_settings = get_option( $option_name );
-					$tem_settings = unserialize($tem_settings); 
-					if(array_key_exists($cpt_key,$tem_settings ) ){
-						if($tem_settings[$cpt_key]['template_archive'] ==  $templates->ID){
-							$archive_selected = "selected";
-						} else {$archive_selected = "";}
-						
-					}
-				}
-				$output .="<option value='".$templates->ID."' ".$archive_selected.">".$templates->post_title."</option>";
-			}
-			$output .="</select>";
-			$output .="</td>";
-			$output .= "</tr>";
-		}
-		$output .= "</table>";
-		$output .='<input type="submit" name="set-view-submit" value="Save View" class="button-primary form-submit submit">';
-		$output .= "</form>";
-		echo $output;
+			<a class="nav-tab <?php echo $selected_tab == 'register' ? 'nav-tab-active' : ''; ?>"
+		        href="<?php echo esc_url( admin_url( add_query_arg( array( 'tab' => 'register' ), 'admin.php?page=aione-settings' ) ) ); ?>">
+		        <?php echo __( 'Register', 'aione-app-builder' ); ?> </a>
+			
+			<a class="nav-tab <?php echo $selected_tab == 'forgot_Password' ? 'nav-tab-active' : ''; ?>"
+		        href="<?php echo esc_url( admin_url( add_query_arg( array( 'tab' => 'forgot_Password' ), 'admin.php?page=aione-settings' ) ) ); ?>">
+		        <?php echo __( 'Forgot Password', 'aione-app-builder' ); ?> </a> 
+				
+			<a class="nav-tab <?php echo $selected_tab == 'logout' ? 'nav-tab-active' : ''; ?>"
+		        href="<?php echo esc_url( admin_url( add_query_arg( array( 'tab' => 'logout' ), 'admin.php?page=aione-settings' ) ) ); ?>">
+		        <?php echo __( 'Log Out', 'aione-app-builder' ); ?> </a>  
+				
+		</h2>
+		<?php
 	}
-	
-	function get_types_by_wordpress() {
-		if( $this->types_by_wordpress !== null )
-			return $this->types_by_wordpress;
 
-		$cpts_raw = array(
-			'post' => array(
-				'slug'      => 'post',
-				'_buildin'  => 1
-			),
-			'page' => array(
-				'slug'      => 'page',
-				'_buildin'  => 1
-			),
-			'attachment' => array(
-				'slug'      => 'attachment',
-				'_buildin'  => 1
-			),
-		);
-
-		$cpts = array();
-		foreach( $cpts_raw as $cpt_raw ) {
-			$post_type = new Types_Post_Type( $cpt_raw['slug'] );
-			// only use active post types
-			if( isset( $post_type->name ) )
-				$cpts[$cpt_raw['slug']] = $post_type;
-		}
-		//echo "<pre>";print_r($cpts);echo "</pre>";
-		$this->types_by_wordpress = $cpts;
-
-		return $this->types_by_wordpress;
-	}
-	
-	
-	
 }

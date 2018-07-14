@@ -2,66 +2,1465 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
- 
-h2.nav-tab-wrapper, h3.nav-tab-wrapper {
+
+.ui-resizable{position:relative}.ui-resizable-handle{position:absolute;font-size:.1px;display:block;-ms-touch-action:none;touch-action:none}.ui-resizable-autohide .ui-resizable-handle,.ui-resizable-disabled .ui-resizable-handle{display:none}.ui-resizable-n{cursor:n-resize;height:7px;width:100%;top:-5px;left:0}.ui-resizable-s{cursor:s-resize;height:7px;width:100%;bottom:-5px;left:0}.ui-resizable-e{cursor:e-resize;width:7px;right:-5px;top:0;height:100%}.ui-resizable-w{cursor:w-resize;width:7px;left:-5px;top:0;height:100%}.ui-resizable-se{cursor:se-resize;width:12px;height:12px;right:1px;bottom:1px}.ui-resizable-sw{cursor:sw-resize;width:9px;height:9px;left:-5px;bottom:-5px}.ui-resizable-nw{cursor:nw-resize;width:9px;height:9px;left:-5px;top:-5px}.ui-resizable-ne{cursor:ne-resize;width:9px;height:9px;right:-5px;top:-5px}.ui-button{display:inline-block;font-size:13px;line-height:26px;height:28px;padding:0 10px 1px;cursor:pointer;border-width:1px;border-style:solid;-webkit-appearance:none;-webkit-border-radius:3px;border-radius:3px;white-space:nowrap;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;color:#555;border-color:#ccc;background:#f7f7f7;-webkit-box-shadow:0 1px 0 #ccc;box-shadow:0 1px 0 #ccc;vertical-align:top}.ui-button:active,.ui-button:focus{outline:0}.ui-button::-moz-focus-inner{border-width:0;border-style:none;padding:0}.ui-button:focus,.ui-button:hover{background:#fafafa;border-color:#999;color:#23282d}.ui-button:focus{border-color:#5b9dd9;-webkit-box-shadow:0 0 3px rgba(0,115,170,.8);box-shadow:0 0 3px rgba(0,115,170,.8)}.ui-button:active{background:#eee;border-color:#999;-webkit-box-shadow:inset 0 2px 5px -3px rgba(0,0,0,.5);box-shadow:inset 0 2px 5px -3px rgba(0,0,0,.5);-webkit-transform:translateY(1px);-ms-transform:translateY(1px);transform:translateY(1px)}.ui-button:disabled,.ui-button[disabled]{color:#a0a5aa!important;border-color:#ddd!important;background:#f7f7f7!important;-webkit-box-shadow:none!important;box-shadow:none!important;text-shadow:0 1px 0 #fff!important;cursor:default;-webkit-transform:none!important;-ms-transform:none!important;transform:none!important}@media screen and (max-width:782px){.ui-button{padding:6px 14px;line-height:normal;font-size:14px;vertical-align:middle;height:auto;margin-bottom:4px}}.ui-dialog{position:absolute;top:0;left:0;z-index:100102;background-color:#fff;-webkit-box-shadow:0 3px 6px rgba(0,0,0,.3);box-shadow:0 3px 6px rgba(0,0,0,.3)}.ui-dialog-titlebar{background:#fcfcfc;border-bottom:1px solid #dfdfdf;height:36px;font-size:18px;font-weight:600;line-height:36px;padding:0 36px 0 16px}.ui-button.ui-dialog-titlebar-close{background:0 0;border:none;-webkit-box-shadow:none;box-shadow:none;color:#666;cursor:pointer;display:block;padding:0;position:absolute;top:0;right:0;width:36px;height:36px;text-align:center}.ui-dialog-titlebar-close:before{font:400 20px/1 dashicons;vertical-align:top;speak:none;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;line-height:36px;width:36px;height:36px;content:'\f158'}.ui-button.ui-dialog-titlebar-close:hover{color:#00a0d2}.ui-dialog-titlebar-close .ui-button-text{display:none}.ui-dialog-content{padding:16px;overflow:auto}.ui-dialog-buttonpane{background:#fcfcfc;border-top:1px solid #dfdfdf;padding:16px}.ui-dialog-buttonpane .ui-button{margin-left:16px}.ui-dialog-buttonpane .ui-dialog-buttonset{float:right}.ui-draggable .ui-dialog-titlebar{cursor:move}.ui-widget-overlay{position:fixed;top:0;left:0;right:0;bottom:0;min-height:360px;background:#000;opacity:.7;filter:alpha(opacity=70);z-index:100101}
+
+
+#icon-aione-access {
+    background: url('../images/access-icon-32x32.png') no-repeat;
+}
+
+.aione-ajax-loading-small {
+    background: url('../images/ajax-loader-small.gif') no-repeat;
+    width: 16px;
+    height: 16px;
+}
+
+/* FORMS */
+.aione-form-fieldset {
+    background-color: #fff;
+    padding: 0 15px 15px 15px;
+    border: 1px solid #ccc;
+    border-color: #ccc;
+    margin: 15px 0 25px 0;
+}
+.aione-form-fieldset fieldset {
     margin-bottom: 0;
-    margin-top: 25px;
+}
+
+.aione-fields h3 i.fa
+{
+    text-align: center;
+    width: 2em;
+}
+
+.aione-fields-form fieldset
+{
+    width: auto;
+}
+
+#poststuff .aione-fields .inside
+,#poststuff #types_labels .inside
+,#poststuff #types_labels .inside table
+,#custom_fields .inside .aione-custom-field-group ul
+,#aione-form-visibility-table
+,#aione-form-visibility-table td
+,.widefat .aione-fields-field-value-options .hndle
+{
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+
+body.wp-admin .aione-ui-dialog
+,body.wp-admin .aione-ui-dialog .ui-dialog-titlebar
+,body.wp-admin .aione-ui-dialog .ui-dialog-titlebar-close
+,body.wp-admin .aione-ui-dialog .ui-dialog-content
+,body.wp-admin .ui-corner-all
+{
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+}
+
+#poststuff #types_labels .aione-inside
+{
+    margin: 6px 0 0 0;
+    padding: 0 12px 12px;
+}
+
+#poststuff .aione-box-loading .spinner
+{
+    visibility: visible;
+    float: left;
+}
+
+body.toolset_page_aione-edit-usermeta #major-publishing-actions
+,body.toolset_page_aione-edit #major-publishing-actions
+{
+    border-top: 0;
+}
+
+#custom_fields .inside .aione-custom-field-group h4
+{
+    margin-top: 0;
+    margin-bottom: .5em;
+}
+
+#custom_fields .inside .aione-custom-field-group
+{
+    width: 200px;
+    float: left;
+    margin: 10px 10px 0 10px;
+}
+
+#custom_fields .menu-item-handle
+{
+    display: inline-block;
+    margin: 0 10px 10px 10px;
+}
+
+#custom_fields .aione-custom-field-order
+{
+    border-top: 1px solid #eee;
+    padding-top: 4px;
+}
+
+#types_options .inside h3
+,#relationship .inside h3
+{
     padding-left: 0;
-    width: 98.1%;
-    border-bottom: 1px solid #1570a6;
-}
-h2 .nav-tab{
-	padding: 6px 20px;
-}
-.nav-tab{
-	border: 1px solid #1570a6;
-	margin: 0px 6px -1px 0;
-	background: #138dc5;
-	color: #ffffff;
-}
-.nav-tab:hover {
-	border: 1px solid #e5e5e5;
-	border-bottom: 1px solid #FFFFFF;
 }
 
-.nav-tab-active, .nav-tab-active:hover {
-  border: 1px solid #e5e5e5;
-  border-bottom: 1px solid #FFFFFF;
-  background: #FFFFFF;
-  color:#666666;
+.aione-fields-field-value-options
+{
+    border-collapse: collapse;
 }
-#aione_app_builder_page_target .welcome-panel {
-	padding: 20px 1.5% 30px 1.5%;
-	width: 95%;
-	float: left;
-	margin-top: 0px;
-	border-top:none;
+.widefat .aione-fields-field-value-options td
+{
+    vertical-align: middle;
+    padding: 4px;
 }
-#aione_app_builder_page_target .welcome-panel.right {
-	margin-left:1.6%;
+
+/* Make input fields for Select/Radio options resize together with table cells. */
+.widefat .aione-fields-field-value-options td > input[type=text] {
+    width: 100%;
 }
-#aione_app_builder_page_target .welcome-panel h1{
-	font-weight: 100;
-	border-bottom: 1px solid #b8b8b8;
-	margin: 0 0 10px 0;
-	padding: 0 0 10px 0;
-	text-align:center;
+
+.aione-fields table ul
+,.aione-fields dd
+{
+    margin: 0;
 }
-#aione_app_builder_page_target .welcome-panel p{
-	text-align:center;
+
+.aione-fields dd
+{
+    padding-bottom: 1em;
+}
+
+.aione-fields .aione-border-top td .aione-fields-field-value-options th
+,.aione-fields .aione-border-top td .aione-fields-field-value-options td
+{
+    border: 0;
+    font-size: inherit;
+    line-height: inherit;
+    padding: 0 8px 4px 8px;
+}
+
+.aione-fields .aione-border-top td td
+{
+    border: 0;
+    padding: 2px;
+}
+
+.aione-fields .aione-border-top td
+{
+    border-top: 1px solid #e5e5e5;
+    padding-top: 11px;
+}
+
+.aione-fields-field-value-options i.fa
+{
+    font-size: 1.2em;
+}
+
+.aione-fields-field-value-options
+{
+    border: 0;
+}
+
+/**
+ *  jQuery UI
+ */
+
+.aione-child-post-fields-dialog .ui-dialog-title
+{
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.aione-field-remove
+,#aione-conditional a
+{
+    color: #a00;
+}
+
+input.disabled, input:disabled, select.disabled, select:disabled, textarea.disabled, textarea:disabled {
+    background: rgba(0,0,0,0.05);
+}
+
+.aione-field-remove
+,#aione-conditional a
+{
+    text-decoration: none;
+}
+
+body .ui-dialog .aione-ui-dialog-cancel
+{
+    position: absolute;
+    left: 16px;
+    margin-left: 0;
+}
+
+body.rtl .ui-dialog .aione-ui-dialog-cancel
+{
+    position: relative;
+    left: auto;
+    margin-left: 0;
+    margin-right: 5px;
+}
+
+body.wp-admin .aione-ui-dialog
+,body.wp-admin .aione-ui-dialog .ui-dialog-titlebar
+,body.wp-admin .aione-ui-dialog .ui-dialog-titlebar-close
+,body.wp-admin .aione-ui-dialog .ui-dialog-content
+{
+    border: 0;
+    background-image: none;
+    color: #444;
+}
+
+body.wp-admin .aione-ui-dialog .ui-dialog-titlebar
+,body.wp-admin .aione-ui-dialog .ui-dialog-titlebar-close
+{
+    background-color: transparent;
+}
+
+.aione-choose-field .aione-form-button:hover i
+,body.wp-admin .aione-ui-dialog .ui-dialog-titlebar-close:hover
+{
+    color: #00a0d2;
+}
+
+body.wp-admin .aione-ui-dialog .ui-dialog-titlebar
+,body.wp-admin .aione-ui-dialog .ui-dialog-buttonpane
+{
+    background-color: #fcfcfc;
+}
+
+body.wp-admin .aione-ui-dialog .ui-dialog-titlebar
+{
+    border-bottom: 1px solid #dfdfdf;
+}
+
+body.wp-admin .aione-ui-dialog .ui-dialog-buttonpane
+{
+    padding: 8px 16px;
+}
+
+.aione-filter-dialog h3
+{
+    border-bottom: 1px solid #ddd;
+}
+
+.aione-filter-dialog li
+{
+    width: 33%;
+    float: left;
+}
+
+.aione-filter-dialog .inside .form-item-textfield
+{
+    margin-bottom: 1em;
+}
+
+.aione-child-post-fields-dialog ul
+,.ui-dialog .aione-form-item
+{
+    margin: 0;
+}
+
+#types_where .aione-filter-container:last-of-type
+{
+    padding-bottom: 2em;
+}
+
+#types_where .aione-filter-container h3
+{
+    padding-left: 0;
+}
+
+.aione-form-fieldset legend {
+    font-weight: bold;
+}
+.aione-form-fieldset .legend-collapsed {
+    padding-left: 15px;
+    background-image: url('../images/expand.png');
+    background-repeat: no-repeat;
+    background-position: 0px 2px;
+    cursor: pointer;
+}
+.aione-form-fieldset .legend-expanded {
+    padding-left: 15px;
+    background-image: url('../images/collapse.png');
+    background-repeat: no-repeat;
+    background-position: 0px 3px;
+    cursor: pointer;
+}
+
+.aione-form-item
+{
+    margin-bottom: 25px;
+}
+.form-table .aione-form-item
+{
+    margin-bottom: .25em;
+}
+.aione-form-fieldset .aione-form-item:first-child {
+    margin-top: 5px;
+}
+.aione-form-item .aione-form-item {
+    margin-bottom: 0;
+}
+.aione-form-submit {
+    margin-top: 15px;
+}
+.aione-form-description {
+    font-size: 0.85em;
+    font-style: italic;
+    margin-bottom: 5px;
+}
+td>.aione-form-description-fieldset
+{
+    margin-top: 0;
+}
+
+.aione-form-description-fieldset
+{
+    font-size: 1em;
+    font-style: normal;
+    margin: 10px 0;
+}
+.aione-form-textarea {
+    width: 99%;
+}
+.aione-form-description-textarea,
+.aione-form-description-checkboxes,
+.aione-form-description-radios {
+    font-size: 1em;
+    font-style: normal;
+    margin-bottom: 5px;
+}
+.aione-form-fieldset .aione-form-label
+{
+    white-space: normal;
+}
+.aione-form-item-textarea label {
+    display: block;
+}
+.aione-form-error {
+    background-color: #ffffe0;
+    border: 1px solid #e6db55;
+    padding: 5px 10px;
+    width: auto;
+    margin: 10px 0;
+    display: block;
+}
+
+.toolset_page_aione-edit-type .aione-form-error {
+    width: 99%;
+    margin: 1px;
+    padding: 3px 5px;
+}
+.toolset_page_aione-edit-type #aione_warning_same_as_slug {
+    border-left-color: #ffba00;
+}
+
+input.aione-form-error {
+    background-color: #F8F8F8;
+    border-color: Red !important;
+}
+.aione-form-fields-align-right {
+    float: left;
+    width: 250px;
+    margin-top: 0;
+    margin-left: 450px;
+    /*    position: absolute;*/
+    position: fixed;
+    /*    THIS IS ALSO SET IN JS AFTER ADDING SCROLL */
+    clear: both;
+}
+.aione-form-fields-align-right fieldset {
+    width: 250px;
+    background-color: #ffffff;
+}
+.aione-form-fields-align-right a.aione-fields-add-ajax-link {
+    margin: 3px 5px 2px 0;
+    float: left;
+}
+.aione-fields-form .ui-draggable .aione-form-fieldset .aione-form-fieldset legend {
+    cursor: pointer;
+}
+.aione-fields-form .ui-sortable-placeholder {
+    border: 1px dashed #CCCCCC;
+    width: auto;
+    visibility: visible !important;
+}
+.aione-form-fields-delete,
+.aione-fields-form-move-field {
+    float: left;
+    margin-top: 3px;
+    margin-right: 5px;
+}
+.aione-fields-form-move-field {
+    cursor: move;
+}
+.aione-fields-form .taxonomy-title {
+    margin-top: 10px;
+    font-style: italic;
+}
+
+/* LIST */
+#aione_groups_list th {
+    white-space: nowrap;
+}
+#aione-table-group_name {
+    width: 250px;
+}
+#aione-table-group_taxonomies {
+    width: 200px;
+}
+.aione-form-fields-main
+{
+    width: 400px;
+}
+
+.aione-shortcode {
+    margin-top: 5px;
+}
+.aione-pointer {
+    cursor: pointer;
+}
+
+.aione-custom-field-disabled label,
+.aione-custom-field-disabled input[type="checkbox"] {
+    cursor: default;
+    color: #999;
+}
+
+.aione-fields-form-radio-move-field {
+    cursor: move;
+}
+
+.aione-where-to-include-inner {
+    display: table;
+    width: 100%;
+}
+
+.aione-conditions-container,
+.aione-edit-button-container {
+    display: table-cell;
+}
+
+.aione-edit-button-container {
+    width: 5%;
+    text-align: right;
+    vertical-align: bottom;
+}
+
+#aione-fields-form-filters-association-form .aione-form-title {
+    float: left;
+    padding-right: 15px;
+}
+
+#aione-fields-form-filters-association-form input[type="radio"] {
+    margin-right: 0;
+}
+
+#aione-fields-form-filters-association-form label {
+    padding-right: 15px;
+}
+
+/* TYPES FORM */
+#aione-form-name-table,
+#aione-form-labels-table,
+#aione-form-taxonomies-table,
+#aione-form-supports-table,
+.aione-form-table {
+    margin-bottom: 20px;
+    padding-bottom: 5px;
+}
+#aione-form-name-table td,
+#aione-form-visibility-table td,
+#aione-form-labels-table td,
+#aione-form-taxonomies-table td,
+#aione-form-supports-table td,
+.aione-form-table td {
+    border: none;
+}
+
+#aione-form-name-table tbody tr td:first-child
+,.aione-fields tbody td:first-child
+,#poststuff #types_labels .inside td:first-child
+{
+    text-align: right;
+}
+#aione-form-name-table tbody tr:first-child td
+{
+    padding-top: 10px;
+}
+
+.aione-where-to-include.widefat {
+    margin-bottom: 20px;
+}
+
+.aione-fields table
+,.aione-fields .aione-fields-field-value-options
+{
+    border: 0;
+}
+
+#aione-form-name-table tbody td:first-child
+,.aione-fields tbody td:first-child
+{
+    min-width: 200px;
+    width: 20%;
+}
+
+.aione-form-table td:first-child
+{
+    width: 20%;
+    max-width: 300px;
+    min-width: 100px;
+}
+
+.aione-fields .aione-fields-field-value-options td:first-child
+{
+    min-width: 0;
+    width: auto;
+    text-align: inherit;
+}
+
+.widefat .aione-fields-field-value-options .num input
+{
+    margin: 0;
+}
+
+.aione-form #custom_fields .menu-item-handle
+{
+    padding: 10px 15px;
+}
+
+#aione-form-name-table tbody tr:first-child td {
+    padding-top: 10px;
+}
+#aione-form-name-table input[type=button]
+{
+    width: auto;
+}
+#aione-form-name-table input[type="checkbox"] {
+    width: auto;
+}
+#aione-form-name-table label {
+    font-weight: normal;
+}
+
+#aione-form-table tbody tr td:first-child
+,#aione-form-labels-table tbody tr td:first-child
+{
+    text-align: right;
+}
+
+#aione-form-table tbody label
+,#aione-form-labels-table tbody label
+{
+    font-weight: normal;
+}
+
+#aione-form-table tbody td
+,#aione-form-labels-table tbody td
+{
+    vertical-align: middle;
+}
+
+#aione-form-table .aione-form-description
+,#aione-form-labels-table .aione-form-description
+{
+    font-size: 0.9em;
+    line-height: 1.2em;
+}
+
+#aione-form-table tbody tr:first-child td
+,#aione-form-labels-table tbody tr:first-child td
+{
+    padding-top: 15px;
+}
+
+#aione-form-rewrite-toggle {
+    margin: 0 0 20px 0;
+}
+/*CHECKBOXES*/
+.aione-checkboxes-drag {
+    position: absolute;
+}
+.aione-checkboxes-drag img {
+    cursor: pointer;
+}
+.aione-fields-checkboxes-draggable legend {
+    background-position: 15px 2px !important;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    padding-left: 30px !important;
+}
+.aione-message {
+    padding: 0 0.6em;
+    border-radius: 3px 3px 3px 3px;
+    border-style: solid;
+    border-width: 1px;
+    margin: 1em 0 1em 0;
+}
+.aione-error {
+    background-color: #ffebe8;
+    border-color: #c00;
+    padding: 5px;
+}
+.aione-admin-fields-help {
+    margin-bottom: 10px;
+}
+
+.aione-help-link {
+    display:inline-block;
+    min-height:19px;
+    height:19px;
+    font-size:11px !important;
+    line-height:19px;
+    min-width:19px;
+    padding-left:20px;
+    padding-top:4px;
+    background:url('../../../../toolset-common/res/images/question.png') no-repeat 0 6px;
+    text-decoration:none !important;
+    position:relative;
+    z-index:100;
+    /*color:#FFFFFF !important;*/
+    float:right;
+    margin: -20px 45px 0 0;
+}
+
+.aione-help-link:hover {
+    text-decoration:underline !important;
+    color:#d54e21 !important;
+    background-position:0 -19px;
+}
+
+.aione-loading {
+    width: 20px;
+    height: 16px;
+    background: url('../images/wpspin.gif') no-repeat 2px 0;
+    display: inline-block;
+}
+
+.aione-show {
+    /*display: block;*/
+}
+
+/* SETTINGS PAGE */
+.horlist {
+    margin-bottom: 12px;
+}
+.horlist li {
+    float: left;
+    line-height: 20px;
+    margin-right: 10px;
+}
+
+/*#aione-ajax * {
+    width: auto;
+}*/
+#aione-ajax #wpcontent {
+    margin: 0px;
+}
+#aione-ajax #wpbody-content{
+    padding: 20px;
+    width: 80%;
+}
+#aione-ajax #wpfooter
+{
+    clear: both;
+}
+.aione-editor-popup-advanced-link {
+    display: block;
+    padding: 10px 0;
+    outline: 0 !important;
+    border: 0 !important;
+}
+.aione-editor-popup-advanced-link a:hover,
+.aione-editor-popup-advanced-link a:active,
+.aione-editor-popup-advanced-link a:focus {
+    outline: 0 !important;
+    border: 0 !important;
+}
+
+.modman
+{
+    margin-top: 20px;
+}
+.aione-pagination-top {
+    margin-bottom: 10px;
+}
+
+.types-ajax #wpwrap {
+    margin-top: 20px;
+}
+.types-small-italic {
+    font-size: 0.9em;
+    font-style: italic;
+}
+
+/* temp */
+.types-help {
+    border: 1px solid;
+    border-radius: 4px 4px 4px 4px;
+    clear: both;
+    margin: 20px 0;
+    position: relative;
+    background: linear-gradient(to bottom, #ecfce8 0%, #dcffd4 100%) repeat scroll 0 0 transparent;
+    border-color: #bafca9;
+    min-height: 140px;
+}
+.types-help-content {
+    color: #4f4f4f;
+    min-height: 105px;
+    padding: 15px 160px 15px 15px;
+}
+.types-help-content a {
+    display: inline-block;
+    line-height: 18px;
+    text-decoration: underline;
+}
+.types-help-content p, .toolset-help-content ul, .toolset-help-content ol {
+    line-height: 1.6;
+}
+
+/**
+ * message after active plugin
+ */
+
+.toolset-message-after-activate
+,.toolset-message-after-activate h2
+{
+    color: #4d4d4d;
+}
+
+.toolset-message-after-activate
+{
+    background-color: #fffce1;
+    border: 2px solid #fffe38;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.toolset-message-after-activate span:before
+{
+    color:#f05a28;
+    font-size:70px;
+}
+
+.toolset-message-after-activate .button-dismiss:hover
+{
+    text-decoration: underline;
+}
+
+.toolset-message-after-activate .button-dismiss
+{
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.toolset-message-after-activate .button-primary
+{
+    font-size: 18px;
+    font-weight: 900;
+    font-style: italic;
+}
+
+.toolset-message-after-activate p.buttons
+{
+    margin-bottom: 0;
+}
+
+.toolset-message-after-activate p
+{
+    font-size: 16px;
+}
+
+.toolset-message-after-activate h2 em
+{
+    font-weight: 900;
+}
+
+.toolset-message-after-activate h2
+{
+    font-size: 40px;
+}
+
+.toolset-message-after-activate div
+{
+    border-right: 2px solid #f05a28;
+    max-width: 500px;
+    padding-right: 60px;
+    float: left;
+}
+
+.wp-core-ui .toolset-message-after-activate .button-primary
+,#poststuff .aione-fields-add-new
+{
+    background-color: #f05a28;
+    border-color: #ed4e26;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255,175,148,0.5), 0 1px 0 rgba(0,0,0,.15);
+    box-shadow: inset 0 1px 0 rgba(255,175,148,0.5), 0 1px 0 rgba(0,0,0,.15);
+}
+
+#poststuff .aione-fields-add-new
+{
+    color: #fff;
+    font-weight: 700;
+    height: auto;
+    padding: 10px 15px 10px 10px;
+    margin-bottom: 1em;
+}
+
+#poststuff .aione-fields-add-new .dashicons {
+    vertical-align: middle;
+}
+
+.aione-second-submit-container {
+    text-align: right;
+    border-top: 1px solid #ddd;
+    padding-top: 17px;
+    margin-top: 25px;
+}
+
+.toolset-message-after-activate:after
+,ul.types:after
+{
+    content: " ";
+    display: block;
+    clear: both;
+}
+
+.toolset-message-after-activate .logo
+{
+    background: transparent url(../images/types-toolset-component.png) no-repeat 73px 50%;
+    display: block;
+    height: 70px;
+    width: 158px;
+    float: left;
+    margin: 35px 0 0 20px;
+}
+
+.status-inactive:hover
+{
+    opacity: 1;
+}
+
+.status-inactive
+{
+    opacity: .7;
+/*transition: all .4s;*/
+}
+
+.aione-table-column-name
+{
+    min-width: 250px;
+}
+
+#aione_types_list
+,#aione_tax_list
+{
+    margin: 1.5em 0;
+}
+
+/**
+ * code mirror RTL for CSS
+ */
+#aione-admin-styles-box .CodeMirror-lines
+{
+    direction: ltr;
+}
+
+/**
+ * views marketing
+ */
+
+.types-marketing-views .more
+{
+    color: #0073aa;
+    text-decoration: underline;
+}
+
+.types-marketing-views
+{
+    border: 1px solid #ddd;
+    background-color: #f5f5f5;
+    padding: 0 10px;
+    margin: 4px 4px 0;
+}
+
+#wp-content-editor-tools .types-marketing-views .ont-color-orange
+,.aione-howto-views .icon-views-logo
+{
+    color: #f05a28;
+}
+
+.aione-info-box-with-icon div.aione-icon {
+    width: 40px;
+    position:absolute;
+    top: 0;
+    left: 10px;
+}
+
+.aione-info-box-with-icon div.aione-info {
+    box-sizing: border-box;
+    padding-left: 46px;
+}
+
+.aione-info-box-with-icon div.aione-icon span {
+    color: #f05a28;
+}
+
+.aione-info-box-with-icon:after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+.aione-no-glow:focus {
+    box-shadow: none;
+}
+
+.aione-arrow-right:after,
+.aione-arrow-down:after {
+    content: '\25B8';
+    font-size: 120%;
+    line-height: 100%;
+}
+
+.aione-arrow-down:after {
+    content: '\25BE';
+}
+#wp-content-editor-tools .types-marketing-views .ont-color-orange
+{
+    font-size: 1.5em;
+}
+
+#poststuff .dashicons-no:before
+{
+    color: #f20;
+}
+
+#poststuff .dashicons-yes:before
+{
+    color: green;
+}
+
+#relationship .disabled label
+,#relationship .disabled .aione-form-checkbox
+{
+    opacity: .7;
+    cursor: default;
+}
+
+#relationship .inside span
+{
+    visibility: hidden;
+}
+
+#relationship .inside .active span
+{
+    visibility: visible;
+}
+
+/* aione Tabs for Fields Group filters */
+body.wp-admin .aione-ui-dialog.aione-filter-dialog .ui-dialog-titlebar {
+    border: 0;
+}
+
+.aione-ui-dialog.aione-filter-dialog .ui-dialog-titlebar {
+    height: auto;
+}
+
+.aione-ui-dialog.aione-filter-dialog {
+    overflow: hidden;
+}
+
+.aione-tabs-menu {
+    width: 100%;
+    box-sizing: content-box;
+    position:relative;
+    clear: both;
+    top:0;
+    margin: 6px -16px 0;
+    padding: 0 36px 0 16px;
+    border-bottom: 1px solid #dfdfdf;
+    box-shadow: 0 10px 15px #fff;
+    z-index: 100;
+}
+
+.aione-tabs-menu li {
+    width: auto;
+    display: inline-block;
+    float: none;
+    margin-bottom: -1px;
+    border-bottom: 1px solid #dfdfdf;
+}
+
+.aione-tabs-menu .aione-tabs-menu-current {
+    border-color: #fff;
+}
+
+.aione-tabs-menu span {
+    color: #0073aa;
+    font-weight: normal;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    padding: 8px 10px 9px;
+    margin: 0;
+    height: 18px;
+    line-height: 18px;
+    font-size: 14px;
+    text-decoration: none;
+    -webkit-transition: none;
+    transition: none;
+}
+
+.aione-tabs-menu > span:last-child {
+    border-right: 0;
+}
+
+.aione-tabs-menu > span:active {
+    outline: none;
+}
+
+.aione-tabs-menu .aione-tabs-menu-current span,
+.aione-tabs-menu span:hover {
+    color: #32373c;
+}
+
+.aione-tabs-menu .aione-tabs-menu-current span {
+    margin: -1px -1px 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-bottom: none;
+}
+
+.aione-tabs > div {
+    display: none;
+}
+
+.aione-tabs div:first-child {
+    display: block;
+}
+
+.aione-tabs div.hidden:first-child {
+    display: none;
+}
+
+.aione-fields-group-conditions-description {
+    display: none;
+}
+
+.js-aione-fields-group-conditions-condition {
+    font-weight: bold;
+}
+.js-aione-fields-group-conditions-condition span {
+    font-weight: normal;
+}
+
+.aione-filter-button-edit-container {
+    text-align:right;
+}
+
+#aione-fields-form-filters-association-form {
+    padding-top: 10px;
+    margin: 15px 0 0;
+    border-top: 1px solid #eee;
+}
+
+button .ui-button-icon-primary
+,.types-ajax #screen-meta
+,.types-ajax #screen-meta-links
+,#ui-datepicker-div
+,#aione-ajax #wpfooter
+,#aione-conditional a span
+,#aione-conditional thead
+,.aione_custom_field_invalid_date
+,.aione-form-fieldset .collapsed
+,.aione-hide
+,.aione-read-only #conditional-logic-button-open
+,.aione-read-only #relationship a
+,.aione-read-only #relationship p
+,.aione-read-only .ui-draggable
+,.aione-read-only .aione-fields-checkboxes-draggable
+,.aione-read-only .aione-fields-form-move-field
+,.aione-read-only .aione-form-fields-delete
+,#aione-form-visibility-table thead
+{
+    display: none;
+}
+
+.aione-conditions-dialog .aione-cd-relation
+{
+    margin-bottom: 1em;
+}
+
+.aione-conditions-dialog .aione-form-title-radios
+{
+    display: inline;
+}
+
+.aione-read-only dl
+{
+      border: 1px solid #e5e5e5;
+      background-color: #fff;
+      padding: 10px;
+}
+
+#types-tools
+{
+    margin-top: 3em;
+}
+
+#cf-filter
+,#usermeta-filter
+{
+    margin-bottom: 3em;
+}
+
+#tab-panel-aione dt
+{
+    font-weight: bold;
+}
+
+/**
+ * Types Dashboard
+ */
+
+#post-body-content .types .dashicons
+{
+    height: auto;
+    width: 100%;
+}
+
+#post-body-content .types span.dashicons:before
+{
+    font-size: 2em;
+    line-height: normal;
+}
+
+#post-body-content .types span:before
+{
+    font-size:3em;
+}
+
+#post-body-content .types span:before
+,#post-body-content .types .dashicons
+{
+    padding: 10px 0;
+}
+
+#post-body-content .types span
+{
+    display: block;
+}
+
+#post-body-content .types li a
+{
+    display: block;
+    width: 200px;
+    height: 100px;
+    background-color: #fff;
+    border: 1px solid #999;
+    margin: 0 20px 20px 0;
+    text-align: center;
+    text-decoration: none;
+}
+
+.types li
+{
+    float: left;
+}
+
+/**
+ * #postbox-container-2 related classes
+ */
+
+#postbox-container-2 .aione-list
+{
+    margin-bottom: 0;
+}
+
+#postbox-container-2 .aione-list li
+{
+    display: inline-block;
+    width: 150px;
+    margin: 0 10px 10px 0;
+}
+
+#postbox-container-2 .flat-in-postbox-container-2:after
+{
+    content: '';
+    display: block;
+    clear: both;
+}
+#postbox-container-2 .flat-in-postbox-container-2 li
+{
+    float: left;
+    padding: 0 10px;
+}
+
+/**
+ * select icon
+ */
+.aione-howto-views a
+{
+    text-decoration: none;
+}
+
+.aione-howto-views span
+{
+    font-size: 3em;
+    padding-right: 5px;
+}
+
+.aione-dashicons .selected
+,.tooltip
+{
+    -webkit-box-shadow: 0 0 5px 0 rgba(50, 50, 50, 0.50);
+    -moz-box-shadow:    0 0 5px 0 rgba(50, 50, 50, 0.50);
+    box-shadow:         0 0 5px 0 rgba(50, 50, 50, 0.50);
+    border-color: #ddd;
+}
+
+.aione-dashicons .spinner
+{
+    visibility: visible;
+    float: left;
+}
+
+.aione-dashicons .dashicons-before:before
+{
+    padding-right: 10px;
+}
+
+.aione-dashicons a
+{
+    display: block;
+    width: 155px;
+    padding: 5px;
+    text-decoration: none;
+    color: #000;
+}
+
+.aione-dashicons li
+{
+    float: left;
+    margin: 0 10px;
+    border: 1px solid transparent;
+}
+
+/**
+ * Where to include
+ */
+.aione-filter-container hr
+{
+    margin-top: 20px;
+}
+.aione-filter-container .clear .aione-filter-button-edit
+{
+    margin-bottom: .5em;
+}
+
+/**
+ * add new field
+ */
+
+.aione-choose-field .aione-form-button i
+{
+    display: block;
+    font-size: 1.4em;
+    margin: 0 auto;
+    padding-top: 10px;
+}
+
+.aione-choose-field .aione-form-button:hover i
+,.aione-tooltip
+{
+    color: #00a0d2;
+}
+
+body .aione-choose-field button.aione-form-button span
+{
+    display: block;
+    margin: 0 auto;
+    overflow: hidden;
+    width: 90%;
+}
+
+.aione-choose-field .form-item-textfield
+{
+    padding-bottom: 1em;
+}
+
+.aione-choose-field button.aione-form-button
+{
+    height: auto;
+    margin: 0 10px 10px 0;
+    padding: 0 5px;
+    text-align: center;
+    width: 140px;
+    line-height: 1.75em;
+}
+
+.aione-choose-field button.aione-switch-to-exists
+,.aione-choose-field button.aione-switch-to-new
+{
+    width: auto;
+    padding: 0 .5em;
+}
+
+#aione-specific
+{
+    padding-left: 3em;
+}
+
+#postbox-container-2 .aione-list
+{
+    margin-bottom: 0;
+}
+
+#aione-specific li
+,#postbox-container-2 .aione-list li
+,#relationship li
+,.aione-list-of-items li
+{
+    display: inline-block;
+    width: 200px;
+    padding: 3px 10px;
+    margin: 0 10px 10px 0;
+    vertical-align: top;
+}
+
+/**
+ *  jQuery UI
+ */
+.toolset_page_aione-edit-type .aione-ui-dialog-cancel
+,.toolset_page_aione-edit-type .aione-ui-dialog-cancel:active
+,.toolset_page_aione-edit-type .aione-ui-dialog-cancel:focus
+,#aione-form-visibility-table
+{
+    border: 0;
+    background: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow:    none;
+    box-shadow:         none;
+}
+
+body .wp-core-ui .button-primary
+{
+    text-shadow: none;
+}
+
+/* normalise text-decoration for links in dialogs  */
+body.wp-admin .aione-ui-dialog a {
+    text-decoration: none;
+}
+
+body.wp-admin .aione-ui-dialog a:hover {
+    text-decoration: underline;
+}
+
+/* button center */
+.aione-block-center {
+    margin: 0 auto !important;
+    display: block !important;
+}
+
+/**
+ * tooltip
+ */
+.aione-tooltip
+{
+    opacity: .9;
+}
+
+.tooltip
+{
+    margin: 8px;
+    padding: 8px;
+    background-color: #fff;
+    position: absolute;
+    z-index:  2;
+    max-width: 200px;
+}
+
+/* WP4.4 fixes */
+.aione-ui-dialog #poststuff h3 { font-size: 14px; padding: 8px 12px; margin: 0; line-height: 1.4; }
+.aione-ui-dialog .postbox .handlediv:before,
+.js-aione-fields .postbox .handlediv:before {right:12px;font:400 20px/1 dashicons;speak:none;display:inline-block;padding:8px 10px;top:0;position:relative;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-decoration:none!important;content:'\f142'}
+.aione-ui-dialog .postbox.closed .handlediv:before,
+.js-aione-fields .postbox.closed .handlediv:before {content:'\f140';}
+
+
+/* Hide remove margin of empty p tags in admin message */
+div.message p:empty {
+    margin: 0;
 }
 
 
-.acf-columns-2 {
-	margin-right:0px !important;
+/* Field Icons */
+.aione-choose-field i.types-field-icon {
+    display: block;
+    margin: 3px auto 0 auto;
+    height: 15px;
 }
 
-.acf-columns-2 .acf-column-2 {
-	display:none;
+.aione-fields h3 i.types-field-icon {
+    width: 2em;
+    height: 20px;
+    vertical-align: bottom;
 }
-	
 
-div.aione-cpt-menu-image {
+.types-field-icon {
+    display: inline-block;
+    background-size: contain;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.types-field-icon-checkboxes {
+    background-image: url( '../images/fields/checkboxes.png' );
+}
+
+.types-field-icon-select {
+    background-image: url( '../images/fields/select.png' );
+}
+
+input#slug+p.aione-form-description {
+    margin-bottom: 0;
+}
+
+.toolset_page_aione-edit-type #post-body #visibility:before,
+.toolset_page_aione-edit-tax #post-body #visibility:before {
+    content: '\f173';
+}
+.ui-sortable-handle .aione_required_data{
+    font-weight: normal;
+    font-size: 13px;
+}
+.ui-sortable-handle .description{
+    font-weight: normal;
+}
+
+/* Part of removed file: ./dashicons.css */
+div.aione-menu-image {
     float: left;
     width: 36px;
     height: 34px;
@@ -69,27 +1468,128 @@ div.aione-cpt-menu-image {
     text-align: center;
 }
 
-.aione-cpt-form-table td:first-child {
-    width: 20%;
-    max-width: 300px;
-    min-width: 100px;
+
+
+.mylist:hover a
+{
+color:black;
+
 }
-#aione-cpt-form-name-table tbody tr td:first-child, .aione-cpt-fields tbody td:first-child, #poststuff #cpt_metabox_label .inside td:first-child {
-    text-align: right;
+ .firstbox
+ {
+min-height:270px; 
+max-height:270px;
+position: relative;
+ }
+ .secondbox
+ {
+min-height:270px; 
+max-height:270px;
+position: relative;
+ }
+ .thirdbox
+ {
+    min-height:270px; 
+max-height:270px;
+position: relative;
+ }
+
+ .span1
+ {
+    color: #4c4c4c;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 15px;
+    font-family: "Open Sans",Arial,sans-serif;
+ }
+ .span2
+ {
+    color:#1685c2;
+    padding-right: 2px; 
+ }
+.mylist:hover
+{
+    border-left: 4px solid #1685c2;
+    background-color:#f9f9f9;
+}
+.myimg
+{
+    position: absolute;
+    bottom:18px;
+}
+.myimg2
+{
+    position: absolute;
+    bottom: 44px;
+}
+.myimg3
+{
+    position: absolute;
+    bottom:17px;
+}
+.mylist
+{
+    border-left: 4px solid white;
+    
+}
+.mylist1
+{
+    background-color: #f9f9f9;
+}
+
+.anc a:hover
+{
+    color: white;
+}
+/********* Dashboard ************/
+/*.aione-dashboard-box {
+    width: 32%;
+    float: left;
+    margin-right: 1%;
+    border:1px solid #d2d2d2;
+}
+.aione-dashboard-box .title-outer-div{
+    background-color: #333;
+    text-align: center;
+}
+.aione-dashboard-box .title-outer-div h2 {
+    margin: 0;
+    color: #fff;
+    line-height: 2em;
+}
+.aione-dashboard-box .content-outer-div{
+    background-color:#fff; 
+}
+.aione-dashboard-box .content-outer-div ul{
+    margin: 0;
+    padding: 1em;
+    font-size: 17px;   
+}
+.aione-dashboard-box .content-outer-div .list-div{
+     border-bottom: 1px solid;
+}
+.aione-dashboard-box .content-outer-div ul li a{
+    text-decoration: none;
+}
+.aione-dashboard-box .add-new-button{
+    text-align: center;
+    padding: 1.5em;
+}
+.aione-dashboard-box .add-new-button a{
+    text-decoration: none;
+    margin: 0;
+    padding: 10px 15px;
+    top: 0;
+}
+*/
+
+.wp-person a:focus .gravatar, a:focus, a:focus .media-icon img {
+    color: #124964;
+    box-shadow: none;
+    
 }
 
 
-/**
- * Custom Post Typle
- * Types Plugin
- * Hide View Generator
- */
- 
 
-.toolset_page_wpcf-edit-type #types-information-table{
-	display:none;
-}
 
-#types-information-table{
-	display:none;
-}
+

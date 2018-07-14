@@ -3,7 +3,7 @@
 /**
  * Register all actions and filters for the plugin
  *
- * @link       www.sgssandhu.com
+ * @link       www.oxosolutions.com
  * @since      1.0.0
  *
  * @package    Aione_App_Builder
@@ -19,7 +19,7 @@
  *
  * @package    Aione_App_Builder
  * @subpackage Aione_App_Builder/includes
- * @author     SGS Sandhu <contact@oxosolutions.com>
+ * @author     OXO Solutions <contact@oxosolutions.com>
  */
 class Aione_App_Builder_Loader {
 
@@ -42,6 +42,15 @@ class Aione_App_Builder_Loader {
 	protected $filters;
 
 	/**
+     * The array of actions registered with WordPress.
+     *
+     * @since    1.0.0
+     * @access   protected
+     * @var      array    $shortcodes    The actions registered with WordPress to fire when the plugin loads.
+     */
+    protected $shortcodes;
+
+	/**
 	 * Initialize the collections used to maintain the actions and filters.
 	 *
 	 * @since    1.0.0
@@ -50,6 +59,7 @@ class Aione_App_Builder_Loader {
 
 		$this->actions = array();
 		$this->filters = array();
+		$this->shortcodes = array();
 
 	}
 
@@ -60,7 +70,7 @@ class Aione_App_Builder_Loader {
 	 * @param    string               $hook             The name of the WordPress action that is being registered.
 	 * @param    object               $component        A reference to the instance of the object on which the action is defined.
 	 * @param    string               $callback         The name of the function definition on the $component.
-	 * @param    int                  $priority         Optional. he priority at which the function should be fired. Default is 10.
+	 * @param    int                  $priority         Optional. The priority at which the function should be fired. Default is 10.
 	 * @param    int                  $accepted_args    Optional. The number of arguments that should be passed to the $callback. Default is 1.
 	 */
 	public function add_action( $hook, $component, $callback, $priority = 10, $accepted_args = 1 ) {
@@ -74,12 +84,24 @@ class Aione_App_Builder_Loader {
 	 * @param    string               $hook             The name of the WordPress filter that is being registered.
 	 * @param    object               $component        A reference to the instance of the object on which the filter is defined.
 	 * @param    string               $callback         The name of the function definition on the $component.
-	 * @param    int                  $priority         Optional. he priority at which the function should be fired. Default is 10.
+	 * @param    int                  $priority         Optional. The priority at which the function should be fired. Default is 10.
 	 * @param    int                  $accepted_args    Optional. The number of arguments that should be passed to the $callback. Default is 1
 	 */
 	public function add_filter( $hook, $component, $callback, $priority = 10, $accepted_args = 1 ) {
 		$this->filters = $this->add( $this->filters, $hook, $component, $callback, $priority, $accepted_args );
 	}
+
+	/**
+     * Add a new shortcode to the collection to be registered with WordPress
+     *
+     * @since     1.0.0
+     * @param     string        $tag           The name of the new shortcode.
+     * @param     object        $component      A reference to the instance of the object on which the shortcode is defined.
+     * @param     string        $callback       The name of the function that defines the shortcode.
+     */
+     public function add_shortcode( $tag, $component, $callback, $priority = 10, $accepted_args = 1) {
+        $this->shortcodes = $this->add( $this->shortcodes, $tag, $component, $callback, $priority, $accepted_args );
+    }
 
 	/**
 	 * A utility function that is used to register the actions and hooks into a single
@@ -123,6 +145,11 @@ class Aione_App_Builder_Loader {
 		foreach ( $this->actions as $hook ) {
 			add_action( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args'] );
 		}
+
+		foreach ( $this->shortcodes as $hook ) {
+
+            add_shortcode(  $hook['hook'], array( $hook['component'], $hook['callback'] ));
+        }
 
 	}
 

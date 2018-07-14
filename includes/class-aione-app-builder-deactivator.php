@@ -3,7 +3,7 @@
 /**
  * Fired during plugin deactivation
  *
- * @link       www.sgssandhu.com
+ * @link       www.oxosolutions.com
  * @since      1.0.0
  *
  * @package    Aione_App_Builder
@@ -18,7 +18,7 @@
  * @since      1.0.0
  * @package    Aione_App_Builder
  * @subpackage Aione_App_Builder/includes
- * @author     SGS Sandhu <contact@oxosolutions.com>
+ * @author     OXO Solutions <contact@oxosolutions.com>
  */
 class Aione_App_Builder_Deactivator {
 
@@ -30,7 +30,9 @@ class Aione_App_Builder_Deactivator {
 	 * @since    1.0.0
 	 */
 	public static function deactivate() {
-		flush_rewrite_rules();
+		// Delete messages
+	    delete_option( 'aione-messages' );
+	    delete_option( 'AIONE_VERSION' );
 	}
 
 }

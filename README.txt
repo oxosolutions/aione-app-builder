@@ -1,6 +1,6 @@
 === Plugin Name ===
 Contributors: (this should be a list of wordpress.org userid's)
-Donate link: www.sgssandhu.com
+Donate link: www.oxosolutions.com
 Tags: comments, spam
 Requires at least: 3.0.1
 Tested up to: 3.4
@@ -66,6 +66,10 @@ directory take precedence. For example, `/assets/screenshot-1.png` would win ove
 2. This is the second screen shot
 
 == Changelog ==
+
+= 1.0.1 =
+* Add ACF Menu in Main Menu
+* Add Members Menu in Main Menu
 
 = 1.0 =
 * A change since the previous version.
