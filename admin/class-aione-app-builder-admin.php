@@ -209,7 +209,7 @@ class Aione_App_Builder_Admin {
                 $top_level_page = array_shift( $registered_pages );
                 $top_level_page['capability'] = isset( $top_level_page['capability'] ) ? $top_level_page['capability'] : 'manage_options';
                 if ( current_user_can( $top_level_page['capability'] ) ) {
-                    $hook = add_menu_page( $top_level_page['page_title'], 'Aione App Builder', $top_level_page['capability'], $top_level_page['slug'], array($this,$top_level_page['callback'] ));
+                    $hook = add_menu_page( $top_level_page['page_title'], 'Aione App Builder', $top_level_page['capability'], $top_level_page['slug'], array($this,$top_level_page['callback'] ), 'dashicons-grid-view', '62');
                     $this->add_menu_page_hooks( @$page, $hook );
                     $top_level_page_registered = true;
                 }
