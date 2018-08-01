@@ -115,7 +115,7 @@ class Aione_App_Builder_Public {
 	//change default Login url 
 	function aione_app_builder_login_url( $login_url, $redirect ) {
 		$aione_app_builder_login_page = get_option('aione_app_builder_login_page');
-		if(isset($aione_app_builder_login_page)){
+		/*if(isset($aione_app_builder_login_page)){
 			if(!empty($aione_app_builder_login_page)){
 				return get_permalink($aione_app_builder_login_page);
 			} else {
@@ -123,8 +123,13 @@ class Aione_App_Builder_Public {
 			}
 		}else {
 			return $login_url;
-		}		
+		}*/
+		if(isset($aione_app_builder_login_page) && !empty($aione_app_builder_login_page)){
+			$login_url = add_query_arg( 'redirect_to', $redirect, $aione_app_builder_login_page );
+		}
+		return $login_url;		
 	}
+
 	//change default redirect url after Login
 	function admin_login_redirect( $redirect_to, $request, $user ){		
 		$admin_login_redirect_page = get_option('admin_login_redirect_page');
