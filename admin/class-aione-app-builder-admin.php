@@ -354,8 +354,15 @@ class Aione_App_Builder_Admin {
 	 */
 	public function aione_register_acf_menu()	{
 		if (class_exists('acf')){
-			remove_menu_page( 'edit.php?post_type=acf' );
-			add_submenu_page( 'aione-dashboard', __( 'Field Groups', 'aione-app-builder' ), __( 'Custom Fields', 'aione-app-builder' ), 'manage_options', 'edit.php?post_type=acf' );
+			$acf_version = get_option('acf_version', false);
+			if($acf_version < 5){
+				remove_menu_page( 'edit.php?post_type=acf' );
+				add_submenu_page( 'aione-dashboard', __( 'Field Groups', 'aione-app-builder' ), __( 'Custom Fields', 'aione-app-builder' ), 'manage_options', 'edit.php?post_type=acf' );
+			} else {
+				remove_menu_page( 'edit.php?post_type=acf-field-group' );
+				add_submenu_page( 'aione-dashboard', __( 'Field Groups', 'aione-app-builder' ), __( 'Custom Fields', 'aione-app-builder' ), 'manage_options', 'edit.php?post_type=acf-field-group' );
+			}
+			
 			add_action('admin_head', array($this,'acf_page_style'));
 		}
 	}
