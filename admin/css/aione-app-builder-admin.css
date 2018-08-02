@@ -1589,7 +1589,25 @@ position: relative;
     
 }
 
+.aione-app-builder-dashboard{
 
+}
+.aione-app-builder-dashboard .ac > .wrapper{
+    min-height:100px;
+}
+@media only screen and (min-width: 993px){
+    .aione-app-builder-dashboard .ac > .wrapper{
+        min-height:500px;
+    }
+}
+
+#duplicate-post-notice{
+    display:none;
+}
+
+body.settings_page_duplicatepost #icon-options-general > div{
+    display:none;
+}
 
 
 

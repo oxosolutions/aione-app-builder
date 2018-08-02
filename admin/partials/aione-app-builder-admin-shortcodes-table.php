@@ -13,28 +13,15 @@
  */
 ?>
 
-<!-- This file should primarily consist of HTML with a little bit of PHP. -->
-<style>
-	.shortcode-list table {
-		width:98%;
-		background:#fff;
-		border:1px solid #d2d2d2;
-		border-collapse: collapse;
-	}
-	.shortcode-list th,.shortcode-list tr, .shortcode-list td {
-		border:1px solid #d2d2d2;
-		padding:1%;
-		
-	}
-</style>
-<div class="wrap">
-	<h2>Shortcode List</h2>
-	<div class="shortcode-list">
-		<table>
-			<th>Name</th>
-			<th>Shortcode</th>
-			<th>Arguments</th>
-			<th>Syntax</th>
+<div class="aione">
+	<h4>Aione Shortcodes</h4>
+	<div class="aione-table">
+		<table class="compact">
+			<thead>
+				<th>Name</th>
+				<th>Shortcode</th>
+				<th>Arguments</th>
+			</thead>
 			<tbody>
 				<tr>
 					<td>Login Link</td>
@@ -43,7 +30,6 @@
 'class' => '', //CSS class for login link
 'text'  => 'Login' //Default Text to be shown 
 </pre></td>
-					<td></td>
 				</tr>
 				<tr>
 					<td>Register Link</td>
@@ -52,7 +38,6 @@
 'class' => '', //CSS class for Register link
 'text'  => 'Sign up' //Default Text to be shown 
 </pre></td>
-					<td></td>
 				</tr>
 				<tr>
 					<td>logout Link</td>
@@ -61,24 +46,20 @@
 'class'  => '', //CSS class for Register link
 'text'   => 'Logout' //Default Text to be shown 
 </pre></td>
-					<td></td>
 				</tr>
 				<tr>
 					<td>Is user logged in</td>
 					<td>[is_user_logged_in][/is_user_logged_in]</td>
-					<td></td>
 					<td></td>
 				</tr>
 				<tr>
 					<td>User not logged in</td>
 					<td>[user_not_logged_in][/user_not_logged_in]</td>
 					<td></td>
-					<td></td>
 				</tr>
 				<tr>
 					<td>User not logged in Error</td>
 					<td>[user_not_logged_in_error][/user_not_logged_in_error]</td>
-					<td></td>
 					<td></td>
 				</tr>
 				<tr>
@@ -88,7 +69,6 @@
 'capability'     => '', //Defines the capabilities of user
 'role'           => '', //Defines the role to be given to user
 </pre></td>
-					<td></td>
 				</tr>
 				<tr>
 					<td>Login Form</td>
@@ -107,7 +87,6 @@
 'id_submit'      => 'wp-submit',  //CSS Id for login Button
 'social_login'   => 'no', //Whether social login or not
 </pre></td>
-					<td></td>
 				</tr>
 				<tr>
 					<td>Account</td>
@@ -118,7 +97,6 @@
 'layout_menu'    => 'vertical',// horizontal/vertical
 'layout_content' => 'box',// box/table/list
 </pre></td>
-					<td></td>
 				</tr>
 				<tr>
 					<td>Account Menu</td>
@@ -128,7 +106,6 @@
 'sub_pages'      => 'no', // yes/no
 'layout'         =>'vertical',// horizontal/vertical
 </pre></td>
-					<td></td>
 				</tr>
 				<tr>
 					<td>Account Content</td>
@@ -138,7 +115,6 @@
 'sub_pages'      => 'no', // yes/no
 'layout'         => 'box',// box/table/list
 </pre></td>
-					<td></td>
 				</tr>
 				<tr>
 					<td>Home URL</td>
@@ -151,7 +127,6 @@
 'action'         => '',
 'class'          => '',
 </pre></td>
-					<td></td>
 				</tr>
 				<tr>
 					<td>URL</td>
@@ -159,12 +134,10 @@
 <td><pre>
 'id'             => '',
 </pre></td>
-					<td></td>
 				</tr>
 				<tr>
 					<td>Reset Password</td>
 					<td>[reset-password]</td>
-					<td></td>
 					<td></td>
 				</tr>
 				<tr>
@@ -179,7 +152,6 @@
 'id'             => '',
 'class'          => ''	
 </pre></td>
-					<td></td>
 				</tr>
 				<tr>
 					<td>List Comments</td>
@@ -189,7 +161,6 @@
 'id'             => '',
 'class'          => ''						
 </pre></td>
-					<td></td>
 				</tr>
 				<tr>
 					<td>Frequently Asked Questions</td>
@@ -199,13 +170,11 @@
 'id'             => '',
 'class'          => '',					
 </pre></td>
-					<td></td>
 				</tr>
 				<tr>
 					<td>Change Password</td>
 					<td>[change-password]</td>
 					<td></td>
-					<td></td>	
 				</tr>
 				<tr>
 					<td>Register Form</td>
@@ -229,7 +198,6 @@
 'placeholder_email' => __( 'Enter Your Email Address' )  //Placeholder for Email
 'role' => 'subscriber'  //Role for user
 </pre></td>
-					<td></td>
 				</tr>
 				<tr>
 					<td>List or Users</td>
@@ -242,7 +210,6 @@
 'role'           => '', //Get users of a perticular role
 'roles'          => '', //Get users of a roles saperated by comma
 </pre></td>
-					<td></td>
 				</tr>
 				<tr>
 					<td>Details about Single User</td>
@@ -252,7 +219,15 @@
 'field'          => 'user_login', //key of field and custom field to be dispayed
 'field_type'     => 'field', //field/meta
 </pre></td>
-					<td></td>
+				</tr>
+				<tr>
+					<td>Welcome User</td>
+					<td>[welcome]</td>
+<td><pre>
+'user_id'        => CURRENT_LOGGED_IN_USER, // ID of user
+'class'          => 'user_login', //CSS Class
+'id'     => 'field', //CSS Id
+</pre></td>
 				</tr>
 			</tbody>
 		</table>

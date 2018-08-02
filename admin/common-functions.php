@@ -763,7 +763,7 @@ function aione_ajax_helper_verification_failed_and_die()
 
 
 function aione_admin_dashboard_boxes(){
-    $dashboard = '<div class="ar pv-5p">';
+    $dashboard = '<div class="aione-app-builder-dashboard ar s-columns-1 m-columns-1 l-columns-3">';
     $dashboard .= aione_admin_dashboard_component_box();
     $dashboard .= aione_admin_dashboard_taxonomy_box();
     $dashboard .= aione_admin_dashboard_template_box();
@@ -771,156 +771,138 @@ function aione_admin_dashboard_boxes(){
     echo $dashboard;
 }
 
-function aione_admin_dashboard_component_box()
-{
+function aione_admin_dashboard_component_box(){
+    $post_type_option = new Aione_App_Builder_Admin_Components_Utils();
+    $custom_components = $post_type_option->get_components();
+    $buildin_components = aione_get_builtin_in_post_types();
+    foreach ($buildin_components as $key => $value) {
+        unset($custom_components[$key]);
+    }
+
     $output = '';
-    $output .= '<div class="ac l33 m33 s100">
-                    <div  class="aione-border-buttom border-width-2 bg-white firstbox">
-                       <div class="bg-grey bg-lighten-5 p-9 aione-border">
-                            <h6 class="black font-size-18 font-weight-400">Custom Components</h6>
-                       </div>
-                       <p class="font-size-15 p-10 pt-10">Add <span class="span2">Components</span>to your custom components</p>
-                       <div class="pt-8p  pb-10 aione-align-center anc">
-                            <a style="width: 100%;position: absolute;bottom: 0px;left: 0px;margin-left: 0px;z-index:999;" class="aione-button bg-blue-grey bg-darken-4 p-8 white firstbox1" href="http://aione.oxosolutions.com/wp-admin/admin.php?page=aione-edit-component">Add New </a>
-                       </div>
-                    </div>
-                  </div>';
-       
-        $post_type_option =new Aione_App_Builder_Admin_Components_Utils();
-        $custom_components =$post_type_option->get_components();
-        $buildin_components = aione_get_builtin_in_post_types();
-        foreach ($buildin_components as $key => $value) {
-            unset($custom_components[$key]);
-        }
-        $output .= '<div class="content-outer-div">';
-        if(!empty($custom_components)){
-            $output .= '<div class="list-div">';
-            $output .= '<ul>';
-            foreach ($custom_components as $key => $value) {
-                $edit_link = esc_url(
-                    add_query_arg(
-                        array(
-                            'page' => 'aione-edit-component',
-                            'aione-component-slug' => $value['slug'],
-                        ),
-                        admin_url('admin.php')
-                    )
-                );
-                $output .= '<li>'.sprintf('<a href="%s">%s</a>', $edit_link, __($value['labels']['name'], 'aione-app-builder')).'</li>';
-            }
-            $output .= '</ul>';
-            $output .= '</div>';            
-        }
-        
-        $output .= '</div>';
-    // $output .= '</div>';
+    $output .= '
+        <div class="ac">
+            <div class="wrapper aione-border bg-white">
+                <div class="aione-title aione-border-bottom p-5">
+                    <h6 class="aione-float-left pl-5 aione-float-left">Components</h6>
+                    <a class="aione-button small circle white color bg-blue-grey bg-darken-4 aione-float-right" href="">
+                      <span class="icon"><i class="ion ion-md-add-circle-outline"></i></span>
+                      <span class="text">Add New</span>
+                    </a>
+                    <div class="aione-clear"></div>
+                </div>
+                <div class="">
+                ';
+
+                if(!empty($custom_components)){
+                    foreach ($custom_components as $key => $value) {
+                        $edit_link = esc_url(
+                            add_query_arg(
+                                array(
+                                    'page' => 'aione-edit-component',
+                                    'aione-component-slug' => $value['slug'],
+                                ),
+                                admin_url('admin.php')
+                            )
+                        );
+                        $output .= '<div>'.sprintf('<a href="%s" class="display-block pv-10 pl-10 aione-border-bottom">%s</a>', $edit_link, __($value['labels']['name'], 'aione-app-builder')).'</div>';
+                    }
+                } else{
+                    $output .= '<p class="p-10">No components available.You can add new componant</p>';
+                }
+
+            $output .= '            
+                </div>
+            </div>
+        </div>';
+
     return $output;
 }
 function aione_admin_dashboard_taxonomy_box(){
-    $output = '';
-    $output .= '<div class="ac l33 m33 s100">
-   <div  class="aione-border-bottom bg-white secondbox">
-      <div class="bg-grey bg-lighten-5 p-9 aione-border">
-         <h6 class="black font-size-18 font-weight-400">Custom Taxonomies</h6>
-      </div>
-        <ul>
-          <li class="p-10 aione-border-bottom  mylist">  
-            <a href="http://aione.oxosolutions.com/wp-admin/admin.php?page=aione-edit-taxonomy&aione-taxonomy-slug=hello-tax"><span class="span1">Hello Tax</span></a><img class="aione-float-right" src="'. plugins_url( 'images/next (1).png', __FILE__ ) . '" >
-          </li>
-        </ul>
-      <div class="pv-3p  aione-align-center  anc">
-         <a style="position: absolute;bottom:0px;left: 0px;margin-left: 0px;width: 100%;margin-left: 0px;z-index:999;" href="http://aione.oxosolutions.com/wp-admin/admin.php?page=aione-edit-taxonomy" class="aione-button p-8 white bg-blue-grey bg-darken-4">Add New</a>
-      </div>
-    </div>
-</div>
-';
-        
-        $custom_taxonomies = get_option(AIONE_OPTION_NAME_TAXONOMIES, array());
-        $builtin_taxonomies = aione_get_builtin_in_taxonomies();
-        foreach ($builtin_taxonomies as $key => $value) {
-            unset($custom_taxonomies[$key]);
-        }
-        $output .= '<div class="content-outer-div">';
-        if(!empty($custom_taxonomies)){
-            $output .= '<div class="list-div">';
-            $output .= '<ul>';
-            foreach ($custom_taxonomies as $key => $value) {
-                $edit_link = esc_url(
-                    add_query_arg(
-                        array(
-                            'page' => 'aione-edit-taxonomy',
-                            'aione-taxonomy-slug' => $value['slug'],
-                        ),
-                        admin_url('admin.php')
-                    )
-                );
-                // $output .= '<li>'.sprintf('<a href="%s">%s</a>', $edit_link, __($value['labels']['name'], 'aione-app-builder')).'</li>';
-            }
-            $output .= '</ul>';
-            $output .= '</div>';            
-        }
-        
-        $output .= '</div>';
-    // $output .= '</div>';
-    return $output;
+    $custom_taxonomies = get_option(AIONE_OPTION_NAME_TAXONOMIES, array());
+    $builtin_taxonomies = aione_get_builtin_in_taxonomies();
+    foreach ($builtin_taxonomies as $key => $value) {
+        unset($custom_taxonomies[$key]);
+    }
 
+    $output = '';
+    $output .= '
+        <div class="ac">
+            <div class="wrapper aione-border bg-white">
+                <div class="aione-title aione-border-bottom p-5">
+                    <h6 class="aione-float-left pl-5 aione-float-left">Taxonomies</h6>
+                    <a class="aione-button small circle white color bg-blue-grey bg-darken-4 aione-float-right" href="">
+                      <span class="icon"><i class="ion ion-md-add-circle-outline"></i></span>
+                      <span class="text">Add New</span>
+                    </a>
+                    <div class="aione-clear"></div>
+                </div>
+                <div class="">
+                ';
+
+                if(!empty($custom_taxonomies)){
+                    foreach ($custom_taxonomies as $key => $value) {
+                        $edit_link = esc_url(
+                            add_query_arg(
+                                array(
+                                    'page' => 'aione-edit-taxonomy',
+                                    'aione-taxonomy-slug' => $value['slug'],
+                                ),
+                                admin_url('admin.php')
+                            )
+                        );
+                        $output .= '<div>'.sprintf('<a href="%s" class="display-block pv-10 pl-10 aione-border-bottom">%s</a>', $edit_link, __($value['labels']['name'], 'aione-app-builder')).'</div>';
+                    }
+                } else{
+                    $output .= '<p class="p-10">No taxonomies available. You can add new taxonomy</p>';
+                }
+
+            $output .= '            
+                </div>
+            </div>
+        </div>';
+        
+    return $output;
 }
 function aione_admin_dashboard_template_box(){
+    $custom_templates = get_option(AIONE_OPTION_NAME_TEMPLATES, array());
+
     $output = '';
-    $output .= '<div class="ac l33 m33 s100">
-                    <div class="aione-border-bottom bg-white thirdbox">
-                       <div class="bg-grey bg-lighten-5 p-9 aione-border">
-                        <h6 class="black font-size-18 font-weight-400">Custom Template</h6>
-                       </div>
-                    <div>
-                       <ul>
-                       <li  class="p-10  aione-border-bottom mylist">
-                       <a class="" href="http://aione.oxosolutions.com/wp-admin/admin.php?page=aione-edit-template&aione-template-slug=hello-archive"><span class="span1">Hello Arrchive</span></a>
-                           <img class="aione-float-right" src="'. plugins_url( 'images/next (1).png', __FILE__ ) .'">
+    $output .= '
+        <div class="ac">
+            <div class="wrapper aione-border bg-white">
+                <div class="aione-title aione-border-bottom p-5">
+                    <h6 class="aione-float-left pl-5 aione-float-left">Templates</h6>
+                    <a class="aione-button small circle white color bg-blue-grey bg-darken-4 aione-float-right" href="">
+                      <span class="icon"><i class="ion ion-md-add-circle-outline"></i></span>
+                      <span class="text">Add New</span>
+                    </a>
+                    <div class="aione-clear"></div>
+                </div>
+                <div class="">
+                ';
 
-                       </li>
+                if(!empty($custom_taxonomies)){
+                    foreach ($custom_templates as $key => $value) {
+                        $edit_link = esc_url(
+                            add_query_arg(
+                                array(
+                                    'page' => 'aione-edit-template',
+                                    'aione-template-slug' => $value['slug'],
+                                ),
+                                admin_url('admin.php')
+                            )
+                        );
+                        $output .= '<div>'.sprintf('<a href="%s" class="display-block pv-10 pl-10 aione-border-bottom">%s</a>', $edit_link, __($value['name'], 'aione-app-builder')).'</div>';
+                    }
+                } else{
+                    $output .= '<p class="p-10">No templates available. You can add new template</p>';
+                }
 
-                       <li class="p-10 aione-border-bottom mylist mylist1">
-                       <a href="http://aione.oxosolutions.com/wp-admin/admin.php?page=aione-edit-template&aione-template-slug=opening"><span class="span1">Opening</span></a><img class="aione-float-right" src="'. plugins_url( 'images/next (1).png', __FILE__ ) . '" ></li>
-
-                       <li class="p-10 aione-border-bottom mylist">
-                       <a href="http://aione.oxosolutions.com/wp-admin/admin.php?page=aione-edit-template&aione-template-slug=hello-single"><span class="span1">Hello Single</span></a><img class="aione-float-right" src="'. plugins_url( 'images/next (1).png', __FILE__ ) . '" ></li>
-
-                       <li class="p-10 aione-border-bottom mylist mylist1">
-                       <a href="http://aione.oxosolutions.com/wp-admin/admin.php?page=aione-edit-template&aione-template-slug=openings"><span class="span1">Openings</span></a><img class="aione-float-right" src="'. plugins_url( 'images/next (1).png', __FILE__ ) . '" ></li>
-
-                       </ul>
-                    </div>
-                       <div class="anc pt-3p aione-align-center">
-                        <a  style="position:absolute;bottom:0px;left: 0px;margin-left: 0px;width: 100%;z-index:999;margin-left:0px;" href="http://aione.oxosolutions.com/wp-admin/admin.php?page=aione-edit-template" class="aione-button  p-8 white bg-blue-grey bg-darken-4">Add New</a>
-                       </div>
-                    </div>
-                    
-                  </div>';
+            $output .= '            
+                </div>
+            </div>
+        </div>';
         
-        $custom_templates = get_option(AIONE_OPTION_NAME_TEMPLATES, array());
-        //echo "<pre>";print_r($custom_templates);echo "</pre>";
-        $output .= '<div class="content-outer-div">';
-        if(!empty($custom_templates)){
-            $output .= '<div class="list-div">';
-            $output .= '<ul>';
-            foreach ($custom_templates as $key => $value) {
-                $edit_link = esc_url(
-                    add_query_arg(
-                        array(
-                            'page' => 'aione-edit-template',
-                            'aione-template-slug' => $value['slug'],
-                        ),
-                        admin_url('admin.php')
-                    )
-                );
-                // $output .= '<li>'.sprintf('<a href="%s">%s</a>', $edit_link, __($value['name'], 'aione-app-builder')).'</li>';
-            }
-            $output .= '</ul>';
-            $output .= '</div>';            
-        }
-        
-        $output .= '</div>';
-    $output .= '</div>';
     return $output;
 }

@@ -228,6 +228,7 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'faq', $plugin_public, 'aione_app_builder_faq_shortcode' );
 		$this->loader->add_shortcode( 'users', $plugin_public, 'aione_app_builder_users_shortcode' );
 		$this->loader->add_shortcode( 'user', $plugin_public, 'aione_app_builder_user_shortcode' );
+		$this->loader->add_shortcode( 'welcome', $plugin_public, 'aione_app_builder_welcome_shortcode' );
 
 	}
 

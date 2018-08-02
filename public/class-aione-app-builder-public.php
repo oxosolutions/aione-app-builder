@@ -1543,17 +1543,65 @@ class Aione_App_Builder_Public {
 		
 		$user = get_user_by('id', $user_id);
 
+		/*echo "<pre>";
+		print_r($user);
+		echo "</pre>";*/
+
 		$output = "";
 		if($field_type == 'field'){
-			$output .= $user->$field;
+			if($field == 'user_pass'){
+				$output .= '';
+			} else {
+				$output .= $user->$field;
+			}			
 		} else {
 			$custom_field = get_user_meta( $user_id, $field, true ); 
 			$output .= '<td>' . $custom_field . '</td>';
-
 		}
 		
 		return $output;
 		
 	} // END aione_app_builder_user_shortcode
+
+	function aione_app_builder_welcome_shortcode($atts){
+		$user = wp_get_current_user();
+		$userid = $user->ID;
+
+		// Attributes
+		extract( shortcode_atts(
+			array(
+				'class' => '', 
+				'id' => '', 
+				'user_id' => $userid, // ID of user
+			), $atts )
+		);
+		
+		$user = get_user_by('id', $user_id);
+		/*echo "<pre>";
+		print_r($user);
+		echo "</pre>";*/
+
+		$output = "<span>Welcome </span>";
+
+		$displayname = $user->user_displayname;
+		if(empty($displayname) || $displayname == ""){
+			$first_name = get_user_meta( $user_id, "first_name", true );
+			if(empty($first_name) || $first_name == ""){
+				$nicename = $user->user_nicename;
+				if(empty($nicename) || $nicename == ""){
+					$user_login = $user->user_login;
+					$output .= "<span>".$user_login."</span>";
+				} else {
+					$output .= "<span>".$nicename."</span>";
+				}
+			} else {
+				$output .= "<span>".$first_name."</span>";
+			}
+		} else {
+			$output .= "<span>".$displayname."</span>";
+		}
+		
+		return $output;
+	} //END aione_app_builder_welcome_shortcode
 
 }

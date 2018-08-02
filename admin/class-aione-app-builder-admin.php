@@ -149,13 +149,6 @@ class Aione_App_Builder_Admin {
 		
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/aione-app-builder-admin.css', array(), $this->version, 'all' );
 		global $pagenow, $typenow;
-
-		if(is_admin() && $pagenow == 'admin.php' && $_GET['page'] == 'aione-dashboard'){
-			wp_register_style( 'aione-framework-css',  plugin_dir_url( __FILE__ ) .'/css/aione.min.css', array(), $this->version, 'all' );
-			wp_enqueue_style('aione-framework-css');
-		}
-   
-
 	}
 
 	/**
@@ -180,8 +173,6 @@ class Aione_App_Builder_Admin {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/aione-app-builder-admin.js', array( 'jquery' ), $this->version, false );
 
 		$screen = get_current_screen();
-		//echo "SCREEN==".$screen->id;
-
 		$aione_admin_pages = array(
 			'dashboard',
 			'toplevel_page_aione-dashboard',
