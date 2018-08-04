@@ -42,6 +42,16 @@ class Aione_App_Builder_Admin {
 	private $version;
 
 	/**
+	 * The version of this plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string    $version    The current version of this plugin.
+	 */
+	private $menifest;
+	private $icon_sizes;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
@@ -72,6 +82,35 @@ class Aione_App_Builder_Admin {
 		add_filter( 'aione_filter_register_menu_pages',array( $this, 'aione_register_menu_pages' ), 10 );
 		//add_action('wp_head', array( $this, 'aione_ajaxurl'));
 		add_action( 'init', array($this,'aione_init_components_taxonomies'), apply_filters('aione_init_components_taxonomies', 10));
+
+		// Call Function to store PWA settings value into database.
+		add_action('init', array($this, 'pwa_settings_store_in_database'));
+
+		$this->icon_sizes = array('16','32','76','96','120','144','152');
+		$icon_array = array();
+		foreach ($icon_sizes as $value) {
+			$temp = array();
+			$temp['src'] = "/assets/images/icon-".$value."x".$value.".png";
+			$temp['sizes'] = $value."x".$value;
+			$temp['type'] = "image/png";
+			array_push($icon_array, $temp);
+		}
+		$this->menifest = array(
+			"dir" => "ltr",
+			"lang" => "en",
+		    "name" => "Aione Framework",
+		    "scope" => "/",
+		    "display" => "fullscreen",
+		    "start_url" => "/index.html",
+		    "short_name" => "Aione",
+		    "theme_color" => "#e6e6f2",
+		    "description" => "Aione framework code playground to edit html code and live preview the output",
+		    "orientation" => "any",
+		    "background_color" => "#168dc5",
+		    "related_applications" => [],
+		    "prefer_related_applications" => false,
+		    "icons" => $icon_array
+		);
 
 	}
 
@@ -173,6 +212,7 @@ class Aione_App_Builder_Admin {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/aione-app-builder-admin.js', array( 'jquery' ), $this->version, false );
 
 		$screen = get_current_screen();
+		
 		$aione_admin_pages = array(
 			'dashboard',
 			'toplevel_page_aione-dashboard',
@@ -349,6 +389,15 @@ class Aione_App_Builder_Admin {
 	        'capability'		=> 'manage_options',
 	    );
 		$pages['aione-settings']['load_hook'] = aione_admin_calculate_menu_page_load_hook( $pages['aione-settings'] );
+
+		$pages['aione-pwa'] = array(
+			'slug'				=> 'aione-pwa',
+	        'menu_title'		=> __( 'Progressive Web App', 'aione-app-builder' ),
+	        'page_title'		=> __( 'Aione Progressive Web App', 'aione-app-builder' ),
+	        'callback'  		=> 'aione_admin_menu_summary_pwa',
+	        'capability'		=> 'manage_options',
+	    );
+		$pages['aione-pwa']['load_hook'] = aione_admin_calculate_menu_page_load_hook( $pages['aione-pwa'] );
 		//echo "<pre>";print_r($pages);echo "</pre>";
 		return $pages;
 		
@@ -490,6 +539,179 @@ class Aione_App_Builder_Admin {
 		}
 		else {
 			require_once plugin_dir_path( __FILE__ ) . 'partials/aione-app-builder-admin-login-tab.php';
+		}
+	}
+
+	function aione_admin_menu_summary_pwa(){
+		global $wpdb;
+		global $post;
+		$site_title = get_bloginfo( 'name' );
+		$pwa_settings = unserialize(get_option('pwa_settings',true));
+		//echo "<pre>";print_r($pwa_settings);echo "</pre>";
+
+		$pwa_name = ($pwa_settings['pwa_app_name']) ? $pwa_settings['pwa_app_name'] : $site_title;
+		$short_name = ($pwa_settings['pwa_short_name']) ? $pwa_settings['pwa_short_name'] : $site_title;
+		$theme_color = ($pwa_settings['pwa_theme_color']) ? $pwa_settings['pwa_theme_color'] : "#2196F3";
+		$background_color = ($pwa_settings['pwa_background_color']) ? $pwa_settings['pwa_background_color'] : "#2196F3";
+		$scope = ($pwa_settings['pwa_scope']) ? $pwa_settings['pwa_scope'] : "/";
+		$start_url = ($pwa_settings['pwa_start_url']) ? $pwa_settings['pwa_start_url'] : "/";
+
+		echo "<h1>Progressive Web Application</h1>";
+		$form = '';
+		$form .= '<div class="wrap">
+				<form name="" class="" id="" method="post" action="" enctype="multipart/form-data">
+				<table class="form-table">
+				<tbody>
+				<tr>
+				<th scope="row"><label for="name">App Name</label></th>
+				<td><input placeholder="Placeholder" id="name" name="name" type="text" class="regular-text" value="'.$pwa_name.'"></td>
+		       </tr>
+				<tr>
+				<th scope="row"><label for="short_name">Short Name</label></th>
+				<td><input placeholder="Placeholder" id="short_name" name="short_name" type="text" class="regular-text" value="'.$short_name.'"></td>
+				</tr>
+				<tr>
+				<th scope="row"><label for="theme_color">Theme Color</label></th>
+				<td><input placeholder="Placeholder" id="theme_color" name="theme_color" type="color" class="regular-text" value="'.$theme_color.'"></td>
+				</tr>
+				<tr>
+				<th scope="row"><label for="background_color">Background Color</label></th>
+				<td><input placeholder="Placeholder" id="background_color" name="background_color" type="color" class="regular-text" value="'.$background_color.'"></td>
+				</tr>
+				<tr>
+				<th scope="row"><label for="display">Display Mode</label></th>
+				<td><select name="display" id="display">';
+
+				$form .= '<option value="browser"'; 
+				if($pwa_settings['pwa_display'] == "browser"){
+					$form .= ' selected ';
+				}
+				$form .= '>Browser</option>';
+		        $form .= '<option value="standalone"';
+		        if($pwa_settings['pwa_display'] == "standalone"){
+					$form .= ' selected ';
+				}
+		        $form .= '>Standalone</option>';
+		        $form .= '<option value="minimal-ui"';
+		        if($pwa_settings['pwa_display'] == "minimal-ui"){
+					$form .= ' selected ';
+				}
+		        $form .= '>Minimal UI</option>';
+		        $form .= '<option value="fullscreen"';
+		        if($pwa_settings['pwa_display'] == "fullscreen"){
+					$form .= ' selected ';
+				}
+		        $form .= '>Fullscreen</option>';
+		        $form .= '</select>';
+				$form .= '</td>
+				</tr>
+				<tr>
+				<th scope="row"><label for="orientation">Orientation</label></th>
+				<td><select id="orientation" name="orientation" class="initialized">';
+		            $form .= '<option value="Any" ';
+			        if($pwa_settings['pwa_orientation'] == "Any"){
+						$form .= ' selected ';
+					}
+		        	$form .= '>Any</option>';
+		            $form .= '<option value="portrait"';
+			        if($pwa_settings['pwa_orientation'] == "portrait"){
+						$form .= ' selected ';
+					}
+			        $form .= '>Portrait</option>';
+		            $form .= '<option value="landscape"';
+			        if($pwa_settings['pwa_orientation'] == "landscape"){
+						$form .= ' selected ';
+					}
+			        $form .= '>Landscape</option>';
+		          $form .= '</select>
+				</td>
+				</tr>
+				<tr>
+				<th scope="row"><label for="scope">Application Scope</label></th>
+				<td><input placeholder="Placeholder" id="scope" name="scope" type="text" class="regular-text" value="'.$scope.'"></td>
+				</tr>
+				<tr>
+				<th scope="row"><label for="start_url">Start URL</label></th>
+				<td><input placeholder="Placeholder" id="start_url" name="start_url" type="text" class="regular-text" value="'.$start_url.'" autocomplete="off"></td>
+				</tr>
+				<tr>
+				<th scope="row"><label for="icon">Icon</label></th>
+				<td><input type="file" name="icon"></td>
+				</tr>
+				</table>
+				<p class="submit"><input type="submit" id="submit_button" name="action" class="button button-primary" value="Save Settings">
+				<input type="hidden" name="pwa_action" value="pwa_settings"></p>
+				</form>
+			</div>';
+		echo $form;		
+	}
+
+	public function pwa_settings_store_in_database(){
+		if(isset($_POST['pwa_action']) && $_POST['pwa_action'] == "pwa_settings" ){
+			$option_array = array();
+			$option_array["pwa_app_name"] = $_POST['name'];
+			$option_array["pwa_short_name"] = $_POST['short_name'];
+			$option_array["pwa_theme_color"] = $_POST['theme_color'];
+			$option_array["pwa_background_color"] = $_POST['background_color'];
+			$option_array["pwa_display"] = $_POST['display'];
+			$option_array["pwa_orientation"] = $_POST['orientation'];
+			$option_array["pwa_scope"] = $_POST['scope'];
+			$option_array["pwa_start_url"] = $_POST['start_url'];
+
+
+			update_option('pwa_settings', serialize($option_array));
+
+			$this->menifest['name'] = $option_array["pwa_app_name"];
+			$this->menifest['short_name'] = $option_array["pwa_short_name"];
+			$this->menifest['theme_color'] = $option_array["pwa_theme_color"];
+			$this->menifest['background_color'] = $option_array["pwa_background_color"];
+			$this->menifest['display'] = $option_array["pwa_display"];
+			$this->menifest['orientation'] = $option_array["pwa_orientation"];
+			$this->menifest['scope'] = $option_array["pwa_scope"];
+			$this->menifest['start_url'] = $option_array["pwa_start_url"];
+
+			$upload_dir = wp_upload_dir();
+			$path = $upload_dir['basedir']."/sites/".get_current_blog_id()."/pwa/";
+			if (!is_dir($path)) {
+				mkdir($path, 0755, true);
+			}
+			$filename = "manifest";
+			$ext = '.json';
+			$file = $path.$filename.$ext;
+			if( file_exists ( $file ) ){
+				unlink($file);
+			}
+			$output = fopen($file, "w"); 
+			$saved = fwrite($output, json_encode($this->menifest));			
+			fclose($output);
+
+			$target_dir = $upload_dir['basedir']."/sites/".get_current_blog_id()."/pwa/images";
+			if (!is_dir($target_dir)) {
+				mkdir($target_dir, 0755, true);
+			}
+			
+			$target_file = $target_dir."/" . basename($_FILES["icon"]["name"]);
+			if (move_uploaded_file($_FILES["icon"]["tmp_name"], $target_file)) {
+		        echo "The file ". basename( $_FILES["icon"]["name"]). " has been uploaded.";
+		    } else {
+		        echo "Sorry, there was an error uploading your file.";
+		    }
+
+		    /*foreach ($this->icon_sizes as $value) {
+		    	add_image_size( "size".$value, $value, $value );
+		    }*/
+		    
+			
+			if(@$saved){
+				$status = "success";
+				$message = "Request submitted successfully.";
+			} else {
+				$status = "error";
+				$message = "Something went wrong";
+			}
+
+			echo "<div style='width:80%;float:right;'>Status = ".$status."</div>";
+			echo "<div style='width:80%;float:right;'>Message = ".$message."</div>";
 		}
 	}
 

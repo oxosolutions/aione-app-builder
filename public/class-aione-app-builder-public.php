@@ -617,7 +617,7 @@ class Aione_App_Builder_Public {
 				$captcha_instance = new ReallySimpleCaptcha();
 				$captcha_instance->cleanup($minutes = 30);
 					
-				$captcha_instance->chars = '2345678abcdefghijklmnpqrstuvwxyz2345678ABCDEFGHJKLMNPQRSTUVWXYZ23456789';	
+				$captcha_instance->chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';	
 				$captcha_instance->bg = array( 255, 255, 255 );
 				$captcha_instance->fg = array( 21, 141, 197 );
 				$captcha_instance->img_size = array( 205, 40 );
