@@ -1577,9 +1577,6 @@ class Aione_App_Builder_Public {
 		);
 		
 		$user = get_user_by('id', $user_id);
-		/*echo "<pre>";
-		print_r($user);
-		echo "</pre>";*/
 
 		$output = "<span>Welcome </span>";
 
@@ -1604,4 +1601,164 @@ class Aione_App_Builder_Public {
 		return $output;
 	} //END aione_app_builder_welcome_shortcode
 
+	function aione_app_builder_blog_shortcode($atts){
+		// Attributes
+		extract( shortcode_atts(
+			array(
+				'class'			   			=> '',
+				'id'				 		=> '',
+				'blog_grid_column_spacing'	=> '40',
+				'blog_grid_columns'   		=> '3',
+				'cat_slug'			  		=> '',
+				'excerpt'			  		=> 'yes',
+				'excerpt_length'	 		=> '',
+				
+				'exclude_cats'		  		=> '',
+				'layout' 			  		=> 'large',
+				'meta_all'			  		=> 'yes',
+				'meta_author' 		  		=> 'yes',
+				'meta_categories'  	  		=> 'yes',
+				'meta_comments'  	  		=> 'yes',
+				'meta_date' 		  		=> 'yes',
+				'meta_link'  	  	  		=> 'yes',
+				'meta_read'					=> 'yes',
+				'meta_tags'  	  	  		=> 'no',
+				'number_posts'				=> '6',
+				'offset'					=> '',
+				'order'			   			=> 'DESC',
+				'orderby'			   		=> 'date',
+				'paging'			  		=> 'yes',
+				'show_title'				=> 'yes',
+				'scrolling'			  		=> 'infinite',
+				'strip_html'		  		=> 'yes',
+				'thumbnail'			  		=> 'yes',
+				'title_link'				=> 'yes',
+				'posts_per_page'	  		=> '-1',
+				'taxonomy'					=> 'category',
+				
+				'excerpt_words'		  		=> '50',	//deprecated
+				'title'				  		=> '',	// deprecated 
+			), $atts )
+		);
+		$output = "";
+
+		if ( $atts['title'] ) {
+			$atts['show_title'] = $atts['title'];
+		}
+		unset( $atts['title'] );
+
+		if ( is_front_page() || 
+			is_home() 
+		) {
+			$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : ( ( get_query_var( 'page' ) ) ? get_query_var( 'page' ) : 1 );
+		} else {
+			$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+		}
+
+		$atts['paged'] = $paged;
+		
+		// covert all attributes to correct values for WP query		
+		if ( $atts['number_posts'] ) {
+			$atts['posts_per_page'] = $atts['number_posts'];
+		}
+		
+		if ( $atts['posts_per_page'] == -1 ) {
+			$atts['paging'] = 'no';
+		}
+
+		// Add hyphens for alternate layout options
+		if ( $atts['layout'] == 'large alternate' ) {
+			$atts['layout'] = 'large-alternate';
+		} elseif ( $atts['layout'] == 'medium alternate' ) {
+			$atts['layout'] = 'medium-alternate';
+		}
+
+		$atts['load_more'] = FALSE;
+		if ( $atts['scrolling'] != 'pagination' ) {
+			$atts['paging'] = TRUE;
+		
+			if ( $atts['scrolling'] == 'load_more_button' ) {
+				$atts['load_more'] = TRUE;
+			}
+			
+			$atts['scrolling'] = 'infinite';
+		}		
+
+		( $atts['meta_all'] == "yes" ) 			? ( $atts['meta_all'] = TRUE ) 			: ( $atts['meta_all'] = FALSE );
+		( $atts['meta_author'] == "yes" ) 		? ( $atts['meta_author'] = TRUE ) 		: ( $atts['meta_author'] = FALSE );
+		( $atts['meta_categories'] == "yes" ) 	? ( $atts['meta_categories'] = TRUE ) 	: ( $atts['meta_categories'] = FALSE );
+		( $atts['meta_comments'] == "yes" ) 	? ( $atts['meta_comments'] = TRUE) 		: ( $atts['meta_comments'] = FALSE );
+		( $atts['meta_date'] == "yes" ) 		? ( $atts['meta_date'] = TRUE ) 		: ( $atts['meta_date'] = FALSE );
+		( $atts['meta_link'] == "yes" ) 		? ( $atts['meta_link'] = TRUE ) 		: ( $atts['meta_link'] = FALSE );
+		( $atts['meta_tags'] == "yes" ) 		? ( $atts['meta_tags'] = TRUE ) 		: ( $atts['meta_tags'] = FALSE );
+		( $atts['paging'] == "yes" ) 			? ( $atts['paging'] = TRUE ) 			: ( $atts['paging'] = FALSE );
+		( $atts['strip_html'] == "yes" ) 		? ( $atts['strip_html'] = TRUE ) 		: ( $atts['strip_html'] = FALSE );
+		( $atts['thumbnail'] == "yes" ) 		? ( $atts['thumbnail'] = TRUE ) 		: ( $atts['thumbnail'] = FALSE );
+		( $atts['show_title'] == "yes" ) 		? ( $atts['show_title'] = TRUE ) 		: ( $atts['show_title'] = FALSE );
+		( $atts['title_link'] == "yes" ) 		? ( $atts['title_link'] = TRUE ) 		: ( $atts['title_link'] = FALSE );
+	
+		if ( $atts['excerpt_length'] || 
+			$atts['excerpt_length'] === '0' 
+		) {
+			$atts['excerpt_words'] = $atts['excerpt_length'];
+		}
+
+		// Combine meta info into one variable
+		$atts['meta_info_combined'] = $atts['meta_all'] * ( $atts['meta_author'] + $atts['meta_date'] + $atts['meta_categories'] + $atts['meta_tags'] + $atts['meta_comments'] + $atts['meta_link'] );
+		// Create boolean that holds info whether content should be excerpted
+		$atts['is_zero_excerpt'] = ( $atts['excerpt'] == 'yes' && $atts['excerpt_words'] < 1 ) ? 1 : 0;
+
+		//check for cats to exclude; needs to be checked via exclude_cats param and '-' prefixed cats on cats param
+		//exclution via exclude_cats param 
+		$cats_to_exclude = explode( ',' , $atts['exclude_cats'] );
+		$cats_id_to_exclude = array();
+		if ( $cats_to_exclude ) {
+			foreach ( $cats_to_exclude as $cat_to_exclude ) {
+				$id_obj = get_category_by_slug( $cat_to_exclude );
+				if ( $id_obj ) {
+					$cats_id_to_exclude[] = $id_obj->term_id;
+				}
+			}
+			if ( $cats_id_to_exclude ) {
+				$atts['category__not_in'] = $cats_id_to_exclude;
+			}
+		}
+
+		//setting up cats to be used and exclution using '-' prefix on cats param; transform slugs to ids
+		$cat_ids ='';
+		$categories = explode( ',' , $atts['cat_slug'] );
+		if ( isset( $categories ) && 
+			 $categories 
+		) {
+			foreach ( $categories as $category ) {
+			
+				$id_obj = get_category_by_slug( $category );
+				
+				if ( $id_obj ) {
+					if ( strpos( $category, '-' ) === 0 ) {
+						$cat_ids .= '-' . $id_obj->cat_ID . ',';
+					} else {
+						$cat_ids .= $id_obj->cat_ID . ',';
+					}
+				}
+			}
+		}
+		$atts['cat'] = substr( $cat_ids, 0, -1 );
+		
+		if ( $atts['blog_grid_column_spacing'] === '0' ) {
+			$atts['blog_grid_column_spacing'] = '0.0';
+		}
+		
+
+		$blog_query = new WP_Query( $atts );
+		//echo "<pre>";print_r($blog_query);echo "</pre>";
+		if ( $blog_query->have_posts() ) : while ( $blog_query->have_posts() ) : $blog_query->the_post();
+			$post_id = get_the_ID();
+			$output .= "<div class='aione-border mv-5'>".$post_id."</div>";	
+		endwhile;
+		else:
+		endif;
+		wp_reset_query();	
+		return $output;
+	} //END aione_app_builder_blog_shortcode
 }
