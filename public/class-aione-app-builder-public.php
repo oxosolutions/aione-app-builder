@@ -1640,7 +1640,7 @@ class Aione_App_Builder_Public {
 				'title'				  		=> '',	// deprecated 
 			), $atts )
 		);
-		$output = "";
+		
 
 		if ( $atts['title'] ) {
 			$atts['show_title'] = $atts['title'];
@@ -1752,13 +1752,50 @@ class Aione_App_Builder_Public {
 
 		$blog_query = new WP_Query( $atts );
 		//echo "<pre>";print_r($blog_query);echo "</pre>";
-		if ( $blog_query->have_posts() ) : while ( $blog_query->have_posts() ) : $blog_query->the_post();
-			$post_id = get_the_ID();
-			$output .= "<div class='aione-border mv-5'>".$post_id."</div>";	
-		endwhile;
+		if ( $blog_query->have_posts() ) : 
+			while ( $blog_query->have_posts() ) : 
+				$blog_query->the_post(); 
+				?>
+				<article id="post_<?php the_ID(); ?>" <?php post_class(); ?>> 
+					<div class="ar list-blog">
+						<div class="ac s100 m50 l40">
+							<?php if (has_post_thumbnail( $post->ID ) && $theme_options['blog_archive_featured_image_enable'] == 1 ){ ?>
+							<div class="featured-image aione-rounded">
+								<?php the_post_thumbnail( 'medium' ); ?>	
+						    </div>
+						<?php } ?>
+						</div>
+						<div class="ac s100 m50 l60">
+							<header class="entry-header">
+								<?php 
+									the_title( '<h1 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h1>' );
+								?>
+								<div class="entry-meta">
+									<?php gutenbergtheme_posted_on(); ?>
+								</div><!-- .entry-meta -->
+							</header><!-- .entry-header -->
+
+							<div class="entry-content"> 
+								<?php if($theme_options['blog_archive_content_length'] == 'Excerpt'){
+									echo wp_trim_words( get_the_content(), $theme_options['blog_archive_excerpt_length'], '...' );
+								} else {
+									echo get_the_content();
+								}
+								?>
+							</div><!-- .entry-content -->
+
+							<footer class="entry-footer">
+								<a class="read-more-link" href="<?php echo get_permalink(); ?>">Read more</a>
+							</footer>
+						</div>
+					</div>
+				</article>	
+				<?php
+			endwhile;
+			wp_reset_postdata();
 		else:
 		endif;
 		wp_reset_query();	
-		return $output;
+		
 	} //END aione_app_builder_blog_shortcode
 }
