@@ -1474,8 +1474,8 @@ class Aione_App_Builder_Public {
 			$columns = explode("|", $columns); 
 			$fields = explode("|", $fields); 
 			
-			$output .= '<div class="table-1">';
-			$output .= '<table width="100%">';
+			$output .= '<div class="aione-table">';
+			$output .= '<table class="compact">';
 			$output .= '<thead>';
 			$output .= '<tr>';
 			
@@ -1601,10 +1601,13 @@ class Aione_App_Builder_Public {
 		return $output;
 	} //END aione_app_builder_welcome_shortcode
 
-	function aione_app_builder_blog_shortcode($atts){
+
+
+	function aione_app_builder_blog_shortcode( $atts, $content = null ){
 		// Attributes
 		extract( shortcode_atts(
 			array(
+				'post_type'			   		=> 'post',
 				'class'			   			=> '',
 				'id'				 		=> '',
 				'blog_grid_column_spacing'	=> '40',
@@ -1612,7 +1615,6 @@ class Aione_App_Builder_Public {
 				'cat_slug'			  		=> '',
 				'excerpt'			  		=> 'yes',
 				'excerpt_length'	 		=> '',
-				
 				'exclude_cats'		  		=> '',
 				'layout' 			  		=> 'large',
 				'meta_all'			  		=> 'yes',
@@ -1645,7 +1647,9 @@ class Aione_App_Builder_Public {
 		if ( $atts['title'] ) {
 			$atts['show_title'] = $atts['title'];
 		}
-		unset( $atts['title'] );
+		if( isset( $atts['title'] ) ){
+			unset( $atts['title'] );
+		}
 
 		if ( is_front_page() || 
 			is_home() 
@@ -1748,18 +1752,67 @@ class Aione_App_Builder_Public {
 		if ( $atts['blog_grid_column_spacing'] === '0' ) {
 			$atts['blog_grid_column_spacing'] = '0.0';
 		}
-		
+		 
+		// echo "<br>atts==========<br>";
+		// echo "<pre>";print_r($atts);echo "</pre>";
+		// echo "<br>blog_query==========<br>";
+/*
 
-		$blog_query = new WP_Query( $atts );
+		// WP_Query arguments
+		$args = array(
+			'p'                      => '101', //
+			'name'                   => 'Post Name',
+			'page_id'                => '50',
+			'pagename'               => 'About',
+			'post_parent'            => '1',
+			'post_type'              => array( 'post' ),
+			'post_status'            => array( 'published' ),
+			'has_password'           => true,
+			'post_password'          => 'password',
+
+		// author
+			'author'				=> '',				// (int | string) - use author id or comma-separated list of IDs.  Use '-' (minus) sign( e.g. 'author' => -12 ) to display all posts except those from an author
+			'author_name'			=> '',				// (string) - use 'user_nicename' - NOT name.
+			'author__in'			=> array(),			// (array) - use author id 
+			'author__not_in'		=> array(),			// (array) - use author id 
+
+			's'                      => 'SEO',
+			'nopaging'               => false,
+			'paged'                  => '6',
+			'posts_per_page'         => '8',
+			'posts_per_archive_page' => '10',
+			'ignore_sticky_posts'    => true,
+			'offset'                 => '2',
+			'order'                  => 'DESC',
+			'orderby'                => 'date',
+			'cache_results'          => true,
+			'update_post_meta_cache' => true,
+			'update_post_term_cache' => true,
+		);
+*/
+
+
+		// WP_Query arguments
+		$args = array(
+			'post_type'              => array( 'post' ),
+			'post_status'            => array( 'publish' ),
+		);
+
+
+		global $theme_options;
+
+
+		$blog_query = new WP_Query( $args );
 		//echo "<pre>";print_r($blog_query);echo "</pre>";
 		if ( $blog_query->have_posts() ) : 
 			while ( $blog_query->have_posts() ) : 
 				$blog_query->the_post(); 
+				$post_id = get_the_ID();
 				?>
 				<article id="post_<?php the_ID(); ?>" <?php post_class(); ?>> 
 					<div class="ar list-blog">
 						<div class="ac s100 m50 l40">
-							<?php if (has_post_thumbnail( $post->ID ) && $theme_options['blog_archive_featured_image_enable'] == 1 ){ ?>
+							<?php if (has_post_thumbnail($post_id ) && $theme_options['blog_archive_featured_image_enable'] == 1 ){ ?>
 							<div class="featured-image aione-rounded">
 								<?php the_post_thumbnail( 'medium' ); ?>	
 						    </div>
@@ -1777,9 +1830,9 @@ class Aione_App_Builder_Public {
 
 							<div class="entry-content"> 
 								<?php if($theme_options['blog_archive_content_length'] == 'Excerpt'){
-									echo wp_trim_words( get_the_content(), $theme_options['blog_archive_excerpt_length'], '...' );
+									echo wp_trim_words( wp_strip_all_tags( get_the_content() ), $theme_options['blog_archive_excerpt_length'], '...' );
 								} else {
-									echo get_the_content();
+									echo wp_strip_all_tags( get_the_content() );
 								}
 								?>
 							</div><!-- .entry-content -->
