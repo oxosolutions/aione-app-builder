@@ -229,6 +229,38 @@
 'id'     => 'field', //CSS Id
 </pre></td>
 				</tr>
+				<tr>
+					<td>Blog Archive</td>
+					<td>[blog][/blog]</td>
+<td><pre>
+'post_type'           =>  "post,movie", // post types with comma seprated
+'post_status'          => "publish", // publish,pending,draft
+'order'        => 'DESC', // DESC or ASC
+'orderby'         => 'date', //keys of fields and custom fields to be dispayed
+'class'           => '', 
+'id'          => '', 
+'number_posts'          => '10',  // any number or -1 for all
+'offset'			     => '', // Number of post to displace or pass over
+'cat_slug'			     => 'slug1,slug2', // Category Slug
+'exclude_cats'			 => 'slug3,slug4', // 
+'show_title'			 => 'yes', //yes/no. Default=yes
+'title_link'			 => 'yes', //yes/no. Default=yes
+'thumbnail'			 => 'yes', //yes/no. Default=yes
+'excerpt'			 => 'yes', //yes/no. Default=yes
+'excerpt_length'			 => '55', //Number
+'meta_author'			=> 'yes', //yes/no. Default=yes
+'meta_categories'			=> 'yes', //yes/no. Default=yes
+'meta_date'			=> 'yes', //yes/no. Default=yes
+'meta_date_format'			=> 'F j, Y', 
+'meta_tags'			=> 'yes', //yes/no. Default=yes
+'read_more'			=> 'yes', //yes/no. Default=yes
+'read_more_text'			=> 'Read More..', 
+'layout'			=> 'list',  // list,grid,timeline
+'blog_grid_columns'			=> '3',  // 
+'blog_grid_column_spacing'	=> '40',
+'pagination'	=> 'yes',
+</pre></td>
+				</tr>
 			</tbody>
 		</table>
 	</div>

@@ -1604,133 +1604,42 @@ class Aione_App_Builder_Public {
 
 
 	function aione_app_builder_blog_shortcode( $atts, $content = null ){
+		global $theme_options;
 		// Attributes
 		extract( shortcode_atts(
 			array(
-				'post_type'			   		=> 'post',
-				'class'			   			=> '',
-				'id'				 		=> '',
+				'post_type'              => array( 'post' ), // Post Types
+				'post_status'            => array( 'publish' ), // Post status
+				'order'			   		 => 'DESC', // ASC/DESC Order
+				'orderby'			   	 => 'date', // Order By
+				'class'			   		 => '', // Custom CSS Class
+				'id'				 	 => '', // Custom CSS ID
+				'number_posts'			 => '-1', // Number of posts per page
+				'offset'			     => '', // Number of post to displace or pass over
+				'cat_slug'			     => '', // Category Slug
+				'exclude_cats'			 => '', // 
+				'show_title'			 => $theme_options['blog_archive_title_enable'], //yes/no. Default=yes
+				'title_link'			 => $theme_options['blog_archive_title_link_enable'], //yes/no. Default=yes
+				'thumbnail'			  	 => $theme_options['blog_archive_featured_image_enable'], //yes/no. Default=yes
+				'excerpt'			  	 => $theme_options['blog_archive_excerpt'], //yes/no. Default=yes
+				'excerpt_length'	 	 => $theme_options['blog_archive_excerpt_length'], //Number. Default=55
+				'meta_author' 		  	 => $theme_options['blog_archive_author_meta_enable'], //yes/no. Default=yes
+				'meta_categories'  	  	 => $theme_options['blog_archive_categories_meta_enable'], //yes/no. Default=yes
+				'meta_date' 		  	 => $theme_options['blog_archive_date_meta_enable'], //yes/no. Default=yes
+				'meta_date_format' 		  => $theme_options['blog_archive_date_format'], //F j, Y
+				'meta_tags'  	  	  	 => $theme_options['blog_archive_tags_meta_enable'], //yes/no. Default=no
+				'pagination'			  	 => 'yes',
 				'blog_grid_column_spacing'	=> '40',
-				'blog_grid_columns'   		=> '3',
-				'cat_slug'			  		=> '',
-				'excerpt'			  		=> 'yes',
-				'excerpt_length'	 		=> '',
-				'exclude_cats'		  		=> '',
-				'layout' 			  		=> 'large',
-				'meta_all'			  		=> 'yes',
-				'meta_author' 		  		=> 'yes',
-				'meta_categories'  	  		=> 'yes',
-				'meta_comments'  	  		=> 'yes',
-				'meta_date' 		  		=> 'yes',
-				'meta_link'  	  	  		=> 'yes',
-				'meta_read'					=> 'yes',
-				'meta_tags'  	  	  		=> 'no',
-				'number_posts'				=> '6',
-				'offset'					=> '',
-				'order'			   			=> 'DESC',
-				'orderby'			   		=> 'date',
-				'paging'			  		=> 'yes',
-				'show_title'				=> 'yes',
-				'scrolling'			  		=> 'infinite',
-				'strip_html'		  		=> 'yes',
-				'thumbnail'			  		=> 'yes',
-				'title_link'				=> 'yes',
-				'posts_per_page'	  		=> '-1',
-				'taxonomy'					=> 'category',
-				
-				'excerpt_words'		  		=> '50',	//deprecated
-				'title'				  		=> '',	// deprecated 
+				'blog_grid_columns'   	=> $theme_options['blog_archive_grid_columns'], //Default=3
+				'read_more'   	        => $theme_options['blog_archive_read_more_enable'], //yes/no. Default=yes
+				'read_more_text'   		=> $theme_options['blog_archive_read_more_text'], //Text. Default is Read More
+				'layout' 			  	=> $theme_options['blog_archive_layout'], // list,grid,timeline. Default =list
 			), $atts )
 		);
-		
 
-		if ( $atts['title'] ) {
-			$atts['show_title'] = $atts['title'];
-		}
-		if( isset( $atts['title'] ) ){
-			unset( $atts['title'] );
-		}
-
-		if ( is_front_page() || 
-			is_home() 
-		) {
-			$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : ( ( get_query_var( 'page' ) ) ? get_query_var( 'page' ) : 1 );
-		} else {
-			$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
-		}
-
-		$atts['paged'] = $paged;
-		
-		// covert all attributes to correct values for WP query		
-		if ( $atts['number_posts'] ) {
-			$atts['posts_per_page'] = $atts['number_posts'];
-		}
-		
-		if ( $atts['posts_per_page'] == -1 ) {
-			$atts['paging'] = 'no';
-		}
-
-		// Add hyphens for alternate layout options
-		if ( $atts['layout'] == 'large alternate' ) {
-			$atts['layout'] = 'large-alternate';
-		} elseif ( $atts['layout'] == 'medium alternate' ) {
-			$atts['layout'] = 'medium-alternate';
-		}
-
-		$atts['load_more'] = FALSE;
-		if ( $atts['scrolling'] != 'pagination' ) {
-			$atts['paging'] = TRUE;
-		
-			if ( $atts['scrolling'] == 'load_more_button' ) {
-				$atts['load_more'] = TRUE;
-			}
-			
-			$atts['scrolling'] = 'infinite';
-		}		
-
-		( $atts['meta_all'] == "yes" ) 			? ( $atts['meta_all'] = TRUE ) 			: ( $atts['meta_all'] = FALSE );
-		( $atts['meta_author'] == "yes" ) 		? ( $atts['meta_author'] = TRUE ) 		: ( $atts['meta_author'] = FALSE );
-		( $atts['meta_categories'] == "yes" ) 	? ( $atts['meta_categories'] = TRUE ) 	: ( $atts['meta_categories'] = FALSE );
-		( $atts['meta_comments'] == "yes" ) 	? ( $atts['meta_comments'] = TRUE) 		: ( $atts['meta_comments'] = FALSE );
-		( $atts['meta_date'] == "yes" ) 		? ( $atts['meta_date'] = TRUE ) 		: ( $atts['meta_date'] = FALSE );
-		( $atts['meta_link'] == "yes" ) 		? ( $atts['meta_link'] = TRUE ) 		: ( $atts['meta_link'] = FALSE );
-		( $atts['meta_tags'] == "yes" ) 		? ( $atts['meta_tags'] = TRUE ) 		: ( $atts['meta_tags'] = FALSE );
-		( $atts['paging'] == "yes" ) 			? ( $atts['paging'] = TRUE ) 			: ( $atts['paging'] = FALSE );
-		( $atts['strip_html'] == "yes" ) 		? ( $atts['strip_html'] = TRUE ) 		: ( $atts['strip_html'] = FALSE );
-		( $atts['thumbnail'] == "yes" ) 		? ( $atts['thumbnail'] = TRUE ) 		: ( $atts['thumbnail'] = FALSE );
-		( $atts['show_title'] == "yes" ) 		? ( $atts['show_title'] = TRUE ) 		: ( $atts['show_title'] = FALSE );
-		( $atts['title_link'] == "yes" ) 		? ( $atts['title_link'] = TRUE ) 		: ( $atts['title_link'] = FALSE );
-	
-		if ( $atts['excerpt_length'] || 
-			$atts['excerpt_length'] === '0' 
-		) {
-			$atts['excerpt_words'] = $atts['excerpt_length'];
-		}
-
-		// Combine meta info into one variable
-		$atts['meta_info_combined'] = $atts['meta_all'] * ( $atts['meta_author'] + $atts['meta_date'] + $atts['meta_categories'] + $atts['meta_tags'] + $atts['meta_comments'] + $atts['meta_link'] );
-		// Create boolean that holds info whether content should be excerpted
-		$atts['is_zero_excerpt'] = ( $atts['excerpt'] == 'yes' && $atts['excerpt_words'] < 1 ) ? 1 : 0;
-
-		//check for cats to exclude; needs to be checked via exclude_cats param and '-' prefixed cats on cats param
-		//exclution via exclude_cats param 
-		$cats_to_exclude = explode( ',' , $atts['exclude_cats'] );
-		$cats_id_to_exclude = array();
-		if ( $cats_to_exclude ) {
-			foreach ( $cats_to_exclude as $cat_to_exclude ) {
-				$id_obj = get_category_by_slug( $cat_to_exclude );
-				if ( $id_obj ) {
-					$cats_id_to_exclude[] = $id_obj->term_id;
-				}
-			}
-			if ( $cats_id_to_exclude ) {
-				$atts['category__not_in'] = $cats_id_to_exclude;
-			}
-		}
-
-		//setting up cats to be used and exclution using '-' prefix on cats param; transform slugs to ids
+		//setting up categories to be used .Transform slugs to ids
 		$cat_ids ='';
-		$categories = explode( ',' , $atts['cat_slug'] );
+		$categories = explode( ',' , $cat_slug );
 		if ( isset( $categories ) && 
 			 $categories 
 		) {
@@ -1747,108 +1656,238 @@ class Aione_App_Builder_Public {
 				}
 			}
 		}
-		$atts['cat'] = substr( $cat_ids, 0, -1 );
-		
-		if ( $atts['blog_grid_column_spacing'] === '0' ) {
-			$atts['blog_grid_column_spacing'] = '0.0';
+		$cat = substr( $cat_ids, 0, -1 );
+
+		//check for categories to exclude.Transform slugs to ids
+		$cats_to_exclude = explode( ',' , $exclude_cats );
+		$cats_id_to_exclude = array();
+		if ( $cats_to_exclude ) {
+			foreach ( $cats_to_exclude as $cat_to_exclude ) {
+				$id_obj = get_category_by_slug( $cat_to_exclude );
+				if ( $id_obj ) {
+					$cats_id_to_exclude[] = $id_obj->term_id;
+				}
+			}
 		}
-		 
-		// echo "<br>atts==========<br>";
-		// echo "<pre>";print_r($atts);echo "</pre>";
-		// echo "<br>blog_query==========<br>";
-/*
 
+		if ( $number_posts == -1 ) {
+			$pagination = 'no';
+		}
+
+		$paged = ( get_query_var('paged') ) ? get_query_var('paged') : 1;
 		// WP_Query arguments
 		$args = array(
-			'p'                      => '101', //
-			'name'                   => 'Post Name',
-			'page_id'                => '50',
-			'pagename'               => 'About',
-			'post_parent'            => '1',
-			'post_type'              => array( 'post' ),
-			'post_status'            => array( 'published' ),
-			'has_password'           => true,
-			'post_password'          => 'password',
-
-		// author
-			'author'				=> '',				// (int | string) - use author id or comma-separated list of IDs.  Use '-' (minus) sign( e.g. 'author' => -12 ) to display all posts except those from an author
-			'author_name'			=> '',				// (string) - use 'user_nicename' - NOT name.
-			'author__in'			=> array(),			// (array) - use author id 
-			'author__not_in'		=> array(),			// (array) - use author id 
-
-			's'                      => 'SEO',
-			'nopaging'               => false,
-			'paged'                  => '6',
-			'posts_per_page'         => '8',
-			'posts_per_archive_page' => '10',
-			'ignore_sticky_posts'    => true,
-			'offset'                 => '2',
-			'order'                  => 'DESC',
-			'orderby'                => 'date',
-			'cache_results'          => true,
-			'update_post_meta_cache' => true,
-			'update_post_term_cache' => true,
-		);
-*/
-
-
-		// WP_Query arguments
-		$args = array(
-			'post_type'              => array( 'post' ),
-			'post_status'            => array( 'publish' ),
+			'post_type'              => explode(",",$post_type),
+			'post_status'            => explode(",",$post_status),
+			'order'			   		 => $order,
+			'orderby'			   	 => $orderby,
+			'posts_per_page'		 => $number_posts,
+			'offset'		         => $offset,
+			'paged' 				 => $paged,
+			'cat'		             => $cat,
+			'category__not_in'		 => $cats_id_to_exclude,
 		);
 
-
-		global $theme_options;
-
-
+		( $show_title == "yes" || $show_title == "1" ) ? ( $show_title = TRUE ) : ( $show_title = FALSE );
+		( $title_link == "yes" || $title_link == "1" ) ? ( $title_link = TRUE ) : ( $title_link = FALSE );
+		( $thumbnail == "yes" || $thumbnail == "1" ) ? ( $thumbnail = TRUE ) : ( $thumbnail = FALSE );
+		( $excerpt == "yes" || $excerpt == "1" ) ? ( $excerpt = TRUE ) : ( $excerpt = FALSE );
+		( $read_more == "yes" || $read_more == "1" ) ? ( $read_more = TRUE ) : ( $read_more = FALSE );
+		( $meta_author == "yes" || $meta_author == "1" ) ? ( $meta_author = TRUE ) : ( $meta_author = FALSE );
+		( $meta_categories == "yes" || $meta_categories == "1" ) ? ( $meta_categories = TRUE ) : ( $meta_categories = FALSE );
+		( $meta_date == "yes" || $meta_date == "1" ) ? ( $meta_date = TRUE ) : ( $meta_date = FALSE );
+		( $meta_tags == "yes" || $meta_tags == "1" ) ? ( $meta_tags = TRUE ) : ( $meta_tags = FALSE );
+		( $pagination == "yes" ) ? ( $pagination = TRUE ) : ( $pagination = FALSE );
+		
+				
 		$blog_query = new WP_Query( $args );
 		//echo "<pre>";print_r($blog_query);echo "</pre>";
-		if ( $blog_query->have_posts() ) : 
+		if ( $blog_query->have_posts() ) { 
 			while ( $blog_query->have_posts() ) : 
 				$blog_query->the_post(); 
 				$post_id = get_the_ID();
+
+				if($thumbnail){
+					$attachment_ids = array();
+					if ( get_post_thumbnail_id( $post_id ) ) {
+						$attachment_ids[] = get_post_thumbnail_id( $post_id );
+					}
+				}				
+				($thumbnail && !empty($attachment_ids)) ? ( $has_thumbnail = TRUE ) : ( $has_thumbnail = FALSE );
+
+				$meta_info_combined = '';
+				if( $meta_date ) {
+					$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time>';
+
+					$time_string = sprintf( $time_string,
+						esc_attr( get_the_date( 'c' ) ),
+						esc_html( get_the_date($meta_date_format) )
+					);
+					$posted_on = sprintf(
+						esc_html_x( 'Posted on %s', 'post date', 'gutenbergtheme' ),
+						'<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . $time_string . '</a>'
+					);
+					$meta_info_combined .= '<span class="posted-on">' . $posted_on . '</span>';
+				}
+				if( $meta_author ){
+					$byline = sprintf(
+						esc_html_x( 'by %s', 'post author', 'gutenbergtheme' ),
+						'<span class="author vcard"><a class="url fn n" href="' . esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ) . '">' . esc_html( get_the_author() ) . '</a></span>'
+					);
+					$meta_info_combined .= ' <span class="byline">' . $byline . '</span>';
+				}
+				if($meta_categories){
+					if ( 'post' === get_post_type() ) {
+						$categories_list = get_the_category_list( esc_html__( ', ', 'gutenbergtheme' ) );
+						if ( $categories_list ) {
+							$incat = sprintf( ' <span class="cat-links">' . esc_html__( 'Posted in %1$s', 'gutenbergtheme' ) . '</span>', $categories_list ); 
+							$meta_info_combined .= $incat;
+						}
+					}
+				}
+				if($meta_tags){
+					if ( 'post' === get_post_type() ) {
+						$tags_list = get_the_tag_list( '', esc_html_x( ', ', 'list item separator', 'gutenbergtheme' ) );
+						if ( $tags_list ) {
+							$tags = sprintf( ' <span class="tags-links">' . esc_html__( 'Tagged %1$s', 'gutenbergtheme' ) . '</span>', $tags_list ); 
+							$meta_info_combined .= $tags;
+						}
+					}
+				}
 				?>
 				<article id="post_<?php the_ID(); ?>" <?php post_class(); ?>> 
-					<div class="ar list-blog">
+					<div class="ar list-blog <?php echo $layout;?>">
+						<?php 
+						if($has_thumbnail) { 
+						?>
 						<div class="ac s100 m50 l40">
-							<?php if (has_post_thumbnail($post_id ) && $theme_options['blog_archive_featured_image_enable'] == 1 ){ ?>
 							<div class="featured-image aione-rounded">
 								<?php the_post_thumbnail( 'medium' ); ?>	
 						    </div>
-						<?php } ?>
 						</div>
 						<div class="ac s100 m50 l60">
+						<?php
+						}else {
+							?>
+						<div class="ac s100 m100 l100">
+							<?php
+						}
+						?>
+							<?php
+							if($show_title) { 
+							?>
 							<header class="entry-header">
 								<?php 
-									the_title( '<h1 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h1>' );
+								$before = '<h1 class="entry-title">';
+								$after = '</h1>';
+								if($title_link){
+									$before .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">';
+									$after = '</a></h1>';
+								}
+								
+									the_title($before,$after);
+								?>
+								<?php
+								if($meta_info_combined){
 								?>
 								<div class="entry-meta">
-									<?php gutenbergtheme_posted_on(); ?>
+									<?php echo $meta_info_combined ?>
 								</div><!-- .entry-meta -->
+								<?php
+								}
+								?>
 							</header><!-- .entry-header -->
+							<?php
+							}
+							?>
 
 							<div class="entry-content"> 
-								<?php if($theme_options['blog_archive_content_length'] == 'Excerpt'){
-									echo wp_trim_words( wp_strip_all_tags( get_the_content() ), $theme_options['blog_archive_excerpt_length'], '...' );
+								<?php if($excerpt){
+									echo wp_trim_words( wp_strip_all_tags( get_the_content() ), $excerpt_length, '...' );
 								} else {
 									echo wp_strip_all_tags( get_the_content() );
 								}
 								?>
 							</div><!-- .entry-content -->
-
+							<?php
+							if($read_more){
+							?>
 							<footer class="entry-footer">
-								<a class="read-more-link" href="<?php echo get_permalink(); ?>">Read more</a>
+								<a class="read-more-link" href="<?php echo get_permalink(); ?>"><?php echo $read_more_text;?></a>
 							</footer>
+							<?php
+							}
+							?>
 						</div>
 					</div>
 				</article>	
 				<?php
 			endwhile;
 			wp_reset_postdata();
-		else:
-		endif;
+			// Get the pagination
+			if($pagination){				
+				$this->aione_blog_pagination( $blog_query->max_num_pages, $range = 2, $blog_query );
+			}
+			
+		}else{
+
+		}
 		wp_reset_query();	
 		
 	} //END aione_app_builder_blog_shortcode
+
+	function aione_blog_pagination( $pages = '', $range = 2, $current_query = '' ) {
+		global $theme_options;
+		$showitems = ($range * 2)+1;
+
+		if( $current_query == '' ) {
+			global $paged;
+			if( empty( $paged ) ) $paged = 1;
+		} else {
+			$paged = $current_query->query_vars['paged'];
+		}
+
+		if( $pages == '' ) {
+			if( $current_query == '' ) {
+				global $wp_query;
+				$pages = $wp_query->max_num_pages;
+				if(!$pages) {
+					 $pages = 1;
+				}
+			} else {
+				$pages = $current_query->max_num_pages;
+			}
+		}
+
+		 if(1 != $pages)
+		 {
+			/*if ( ( Aione()->theme_options[ 'blog_pagination_type' ] != 'Pagination' && ( is_home() || is_search() || ( get_post_type() == 'post' && ( is_author() || is_archive() ) ) ) ) ||
+				 ( Aione()->theme_options[ 'grid_pagination_type' ] != 'Pagination' && ( aione_is_portfolio_template() || is_post_type_archive( 'aione_portfolio' ) || is_tax( 'portfolio_category' ) || is_tax( 'portfolio_skills' )  || is_tax( 'portfolio_tags' ) ) )
+			) {
+				echo "<div class='pagination infinite-scroll clearfix'>";
+			} else {
+				echo "<div class='pagination clearfix'>";
+			}*/
+			echo "<div class='pagination clearfix'>";
+			 if ( $paged > 1 ) {
+			 	echo "<a class='pagination-prev' href='".get_pagenum_link($paged - 1)."'><span class='page-prev'></span><span class='page-text'>".__('Previous', 'Aione')."</span></a>";
+			 }
+
+			 for ($i=1; $i <= $pages; $i++)
+			 {
+				 if (1 != $pages &&( !($i >= $paged+$range+1 || $i <= $paged-$range-1) || $pages <= $showitems ))
+				 {
+					 echo ($paged == $i)? "<span class='current'>".$i."</span>":"<a href='".get_pagenum_link($i)."' class='inactive' >".$i."</a>";
+				 }
+			 }
+
+			 if ($paged < $pages) echo "<a class='pagination-next' href='".get_pagenum_link($paged + 1)."'><span class='page-text'>".__('Next', 'Aione')."</span><span class='page-next'></span></a>";
+			 echo "</div>\n";
+			 
+			 // Needed for Theme check
+			 ob_start();
+			 posts_nav_link();
+			 ob_get_clean();
+		 }
+	}
 }
