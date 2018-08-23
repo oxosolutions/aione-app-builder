@@ -85,16 +85,11 @@ class Aione_App_Builder_Admin {
 
 		// Call Function to store PWA settings value into database.
 		add_action('init', array($this, 'pwa_settings_store_in_database'));
+		//add_action('wp_head', array($this,'pwa_manifest_include'));
 
-		$this->icon_sizes = array('16','32','76','96','120','144','152');
-		$icon_array = array();
-		foreach ($icon_sizes as $value) {
-			$temp = array();
-			$temp['src'] = "/assets/images/icon-".$value."x".$value.".png";
-			$temp['sizes'] = $value."x".$value;
-			$temp['type'] = "image/png";
-			array_push($icon_array, $temp);
-		}
+
+		$this->icon_sizes = array('16','32','72','96','128','144','152','192','384','512');
+		
 		$this->menifest = array(
 			"dir" => "ltr",
 			"lang" => "en",
@@ -109,7 +104,7 @@ class Aione_App_Builder_Admin {
 		    "background_color" => "#168dc5",
 		    "related_applications" => [],
 		    "prefer_related_applications" => false,
-		    "icons" => $icon_array
+		    "icons" => array()
 		);
 
 	}
@@ -546,15 +541,22 @@ class Aione_App_Builder_Admin {
 		global $wpdb;
 		global $post;
 		$site_title = get_bloginfo( 'name' );
+		$site_short_name = ( mb_strstr(get_bloginfo('name'), ' ', true, 'utf-8') ) ? mb_strstr(get_bloginfo('name'), ' ', true, 'utf-8') : get_bloginfo('name');
 		$pwa_settings = unserialize(get_option('pwa_settings',true));
 		//echo "<pre>";print_r($pwa_settings);echo "</pre>";
 
 		$pwa_name = ($pwa_settings['pwa_app_name']) ? $pwa_settings['pwa_app_name'] : $site_title;
-		$short_name = ($pwa_settings['pwa_short_name']) ? $pwa_settings['pwa_short_name'] : $site_title;
+		$short_name = ($pwa_settings['pwa_short_name']) ? $pwa_settings['pwa_short_name'] : $site_short_name;
+		$description = ($pwa_settings['pwa_description']) ? $pwa_settings['pwa_description'] : get_bloginfo('description');
 		$theme_color = ($pwa_settings['pwa_theme_color']) ? $pwa_settings['pwa_theme_color'] : "#2196F3";
 		$background_color = ($pwa_settings['pwa_background_color']) ? $pwa_settings['pwa_background_color'] : "#2196F3";
-		$scope = ($pwa_settings['pwa_scope']) ? $pwa_settings['pwa_scope'] : "/";
-		$start_url = ($pwa_settings['pwa_start_url']) ? $pwa_settings['pwa_start_url'] : "/";
+		$scope = ($pwa_settings['pwa_scope']) ? $pwa_settings['pwa_scope'] : "";
+		$start_url = ($pwa_settings['pwa_start_url']) ? $pwa_settings['pwa_start_url'] : trailingslashit( get_bloginfo('url') );
+		$icon = @$pwa_settings['pwa_icon'];
+
+		$upload_dir = wp_upload_dir();
+		$target_dir = $upload_dir['baseurl']."/pwa/images";
+		$icon_path = $target_dir."/".$icon;
 
 		echo "<h1>Progressive Web Application</h1>";
 		$form = '';
@@ -564,29 +566,29 @@ class Aione_App_Builder_Admin {
 				<tbody>
 				<tr>
 				<th scope="row"><label for="name">App Name</label></th>
-				<td><input placeholder="Placeholder" id="name" name="name" type="text" class="regular-text" value="'.$pwa_name.'"></td>
+				<td><input placeholder="" id="name" name="name" type="text" class="regular-text" value="'.$pwa_name.'"></td>
 		       </tr>
 				<tr>
 				<th scope="row"><label for="short_name">Short Name</label></th>
-				<td><input placeholder="Placeholder" id="short_name" name="short_name" type="text" class="regular-text" value="'.$short_name.'"></td>
+				<td><input placeholder="" id="short_name" name="short_name" type="text" class="regular-text" value="'.$short_name.'"></td>
+				</tr>
+				<tr>
+				<th scope="row"><label for="description">Description</label></th>
+				<td><input placeholder="" id="description" name="description" type="text" class="regular-text" value="'.$description.'"></td>
 				</tr>
 				<tr>
 				<th scope="row"><label for="theme_color">Theme Color</label></th>
-				<td><input placeholder="Placeholder" id="theme_color" name="theme_color" type="color" class="regular-text" value="'.$theme_color.'"></td>
+				<td><input placeholder="" id="theme_color" name="theme_color" type="color" class="regular-text" value="'.$theme_color.'"></td>
 				</tr>
 				<tr>
 				<th scope="row"><label for="background_color">Background Color</label></th>
-				<td><input placeholder="Placeholder" id="background_color" name="background_color" type="color" class="regular-text" value="'.$background_color.'"></td>
+				<td><input placeholder="" id="background_color" name="background_color" type="color" class="regular-text" value="'.$background_color.'"></td>
 				</tr>
 				<tr>
 				<th scope="row"><label for="display">Display Mode</label></th>
 				<td><select name="display" id="display">';
 
-				$form .= '<option value="browser"'; 
-				if($pwa_settings['pwa_display'] == "browser"){
-					$form .= ' selected ';
-				}
-				$form .= '>Browser</option>';
+				
 		        $form .= '<option value="standalone"';
 		        if($pwa_settings['pwa_display'] == "standalone"){
 					$form .= ' selected ';
@@ -597,6 +599,11 @@ class Aione_App_Builder_Admin {
 					$form .= ' selected ';
 				}
 		        $form .= '>Minimal UI</option>';
+		        $form .= '<option value="browser"'; 
+				if($pwa_settings['pwa_display'] == "browser"){
+					$form .= ' selected ';
+				}
+				$form .= '>Browser</option>';
 		        $form .= '<option value="fullscreen"';
 		        if($pwa_settings['pwa_display'] == "fullscreen"){
 					$form .= ' selected ';
@@ -608,8 +615,8 @@ class Aione_App_Builder_Admin {
 				<tr>
 				<th scope="row"><label for="orientation">Orientation</label></th>
 				<td><select id="orientation" name="orientation" class="initialized">';
-		            $form .= '<option value="Any" ';
-			        if($pwa_settings['pwa_orientation'] == "Any"){
+		            $form .= '<option value="any" ';
+			        if($pwa_settings['pwa_orientation'] == "any"){
 						$form .= ' selected ';
 					}
 		        	$form .= '>Any</option>';
@@ -628,41 +635,124 @@ class Aione_App_Builder_Admin {
 				</tr>
 				<tr>
 				<th scope="row"><label for="scope">Application Scope</label></th>
-				<td><input placeholder="Placeholder" id="scope" name="scope" type="text" class="regular-text" value="'.$scope.'"></td>
+				<td><input placeholder="" id="scope" name="scope" type="text" class="regular-text" value="'.$scope.'"></td>
 				</tr>
 				<tr>
 				<th scope="row"><label for="start_url">Start URL</label></th>
-				<td><input placeholder="Placeholder" id="start_url" name="start_url" type="text" class="regular-text" value="'.$start_url.'" autocomplete="off"></td>
-				</tr>
-				<tr>
+				<td><input placeholder="" id="start_url" name="start_url" type="text" class="regular-text" value="'.$start_url.'" autocomplete="off"></td>
+				</tr>';
+				/*<tr>
 				<th scope="row"><label for="icon">Icon</label></th>
-				<td><input type="file" name="icon"></td>
+				<td>';
+				if( has_site_icon() ) :
+								
+					$form .= '<a href="'.esc_url( admin_url('customize.php?autofocus[section]=title_tagline') ).'" title="Change image" id="webmanifest_icons">
+						<img src="'.get_site_icon_url(300).'" alt="Site icon preview" />
+					</a>';
+				else :
+					
+				$form .= '<p>No image selected</p>
+					
+					<a href="'.esc_url( admin_url('customize.php?autofocus[section]=title_tagline') ).'" title="Select image" id="webmanifest_icons" class="button">
+						Select image
+					</a>';
+				endif; 
+				$form .= '</td>
+				</tr>*/
+				$form .= '<tr>
+				<th scope="row"><label for="icon">Icon</label></th>
+				<td>';
+				if($icon != ""){
+					$form .= '<div class="img-wrap"><span class="close">&times;</span><img src="'.$icon_path.'" id="preview" width="72" /></div>';
+				} else {
+					$form .= '<div class="img-wrap hide"><span class="close">&times;</span><img id="preview" width="72" /></div>';
+				}
+				$form .= '<input accept="image/png" type="file" name="icon" onchange="loadFile(event)" style="display:block;">
+				<input type="hidden" name="check_icon" value="">
+				<p>Only .png is allowed</p></td>
 				</tr>
 				</table>
 				<p class="submit"><input type="submit" id="submit_button" name="action" class="button button-primary" value="Save Settings">
 				<input type="hidden" name="pwa_action" value="pwa_settings"></p>
 				</form>
-			</div>';
+			</div>
+
+			<style>
+			.img-wrap {
+			    position: relative;
+			    display: inline-block;
+			}
+			.img-wrap .close {
+			    position: absolute;
+			    top: -6px;
+			    right: -6px;
+			    z-index: 100;
+			    background-color: red;
+			    padding: 5px;
+			    color: white;
+			    font-weight: bold;
+			    cursor: pointer;
+			    opacity: 0;
+			    text-align: center;
+			    font-size: 20px;
+			    line-height: 10px;
+			}
+			.img-wrap:hover .close {
+				opacity:1;
+			}
+			.hide{
+				display:none;
+			}
+			.show {
+				display:block;
+			}
+			</style>
+
+			<script>
+				var loadFile = function(event) {
+					var image = document.getElementById("preview");
+					image.src = URL.createObjectURL(event.target.files[0]);
+					jQuery(".img-wrap").removeClass("hide");
+				};
+				jQuery(".img-wrap .close").on("click", function() {
+				    var id = jQuery(this).closest(".img-wrap").find("img").attr("id");
+				    jQuery("#"+id).removeAttr("src");
+				    jQuery("input[name=check_icon]").val("no-image");
+				    jQuery(".img-wrap").addClass("hide");
+				});
+			</script>';
 		echo $form;		
 	}
 
 	public function pwa_settings_store_in_database(){
+		$pwa_settings = unserialize(get_option('pwa_settings',true));
 		if(isset($_POST['pwa_action']) && $_POST['pwa_action'] == "pwa_settings" ){
 			$option_array = array();
 			$option_array["pwa_app_name"] = $_POST['name'];
 			$option_array["pwa_short_name"] = $_POST['short_name'];
+			$option_array["pwa_description"] = $_POST['description'];
 			$option_array["pwa_theme_color"] = $_POST['theme_color'];
 			$option_array["pwa_background_color"] = $_POST['background_color'];
 			$option_array["pwa_display"] = $_POST['display'];
 			$option_array["pwa_orientation"] = $_POST['orientation'];
-			$option_array["pwa_scope"] = $_POST['scope'];
-			$option_array["pwa_start_url"] = $_POST['start_url'];
-
-
+			$option_array["pwa_scope"] = trailingslashit($_POST['scope']);
+			$option_array["pwa_start_url"] = trailingslashit($_POST['start_url']);
+			if($_FILES["icon"]["name"]) {
+				$new_icon_name = 'icon.png';
+			    $option_array["pwa_icon"] = $new_icon_name;
+			} else {
+				if($_POST['check_icon'] == 'no-image'){
+					$option_array["pwa_icon"] = '';
+				} else {					
+					$option_array["pwa_icon"] = @$pwa_settings['pwa_icon'];
+				}
+			}
+			
 			update_option('pwa_settings', serialize($option_array));
 
 			$this->menifest['name'] = $option_array["pwa_app_name"];
 			$this->menifest['short_name'] = $option_array["pwa_short_name"];
+			$this->menifest['description'] = $option_array["pwa_description"];
 			$this->menifest['theme_color'] = $option_array["pwa_theme_color"];
 			$this->menifest['background_color'] = $option_array["pwa_background_color"];
 			$this->menifest['display'] = $option_array["pwa_display"];
@@ -670,11 +760,47 @@ class Aione_App_Builder_Admin {
 			$this->menifest['scope'] = $option_array["pwa_scope"];
 			$this->menifest['start_url'] = $option_array["pwa_start_url"];
 
+			/** Create PWA folder **/
 			$upload_dir = wp_upload_dir();
-			$path = $upload_dir['basedir']."/sites/".get_current_blog_id()."/pwa/";
+			$path = $upload_dir['basedir']."/pwa/";
 			if (!is_dir($path)) {
 				mkdir($path, 0755, true);
 			}
+
+			/** Copy Service Worker **/
+		    $source = WP_CONTENT_DIR."/uploads/serviceworker.js";
+		    $destination = $path."serviceworker.js";
+		    copy($source, $destination);
+
+			/** create Images folder **/
+			$target_dir = $upload_dir['basedir']."/pwa/images";
+			if (!is_dir($target_dir)) {
+				mkdir($target_dir, 0755, true);
+			}
+
+			if($option_array["pwa_icon"] != ''){
+				/** Move uploaded Image **/
+				$new_icon_name = 'icon.png';
+				$target_file = $target_dir."/" . $new_icon_name;
+				move_uploaded_file($_FILES["icon"]["tmp_name"], $target_file);
+
+				/** create Different Sizes icons **/
+				$image = wp_get_image_editor( $target_file );
+				if ( ! is_wp_error( $image ) ) {
+				    foreach ($this->icon_sizes as $value) {
+						$temp = array();
+						$temp['src'] = "/images/icon-".$value."x".$value.".png";
+						$temp['sizes'] = $value."x".$value;
+						$temp['type'] = "image/png";
+						array_push($this->menifest['icons'], $temp);
+
+						$image->resize( $value, $value, true );
+				    	$image->save( $target_dir.'/icon-'.$value.'x'.$value.'.png' );
+					}			    
+				}
+			}
+
+			/** Generate Menifest.json **/
 			$filename = "manifest";
 			$ext = '.json';
 			$file = $path.$filename.$ext;
@@ -682,25 +808,9 @@ class Aione_App_Builder_Admin {
 				unlink($file);
 			}
 			$output = fopen($file, "w"); 
-			$saved = fwrite($output, json_encode($this->menifest));			
+			$saved = fwrite($output, json_encode($this->menifest,JSON_UNESCAPED_SLASHES));			
 			fclose($output);
 
-			$target_dir = $upload_dir['basedir']."/sites/".get_current_blog_id()."/pwa/images";
-			if (!is_dir($target_dir)) {
-				mkdir($target_dir, 0755, true);
-			}
-			
-			$target_file = $target_dir."/" . basename($_FILES["icon"]["name"]);
-			if (move_uploaded_file($_FILES["icon"]["tmp_name"], $target_file)) {
-		        echo "The file ". basename( $_FILES["icon"]["name"]). " has been uploaded.";
-		    } else {
-		        echo "Sorry, there was an error uploading your file.";
-		    }
-
-		    /*foreach ($this->icon_sizes as $value) {
-		    	add_image_size( "size".$value, $value, $value );
-		    }*/
-		    
 			
 			if(@$saved){
 				$status = "success";
@@ -710,11 +820,24 @@ class Aione_App_Builder_Admin {
 				$message = "Something went wrong";
 			}
 
-			echo "<div style='width:80%;float:right;'>Status = ".$status."</div>";
-			echo "<div style='width:80%;float:right;'>Message = ".$message."</div>";
+			//echo "<div style='width:80%;float:right;'>Status = ".$status."</div>";
+			//echo "<div style='width:80%;float:right;'>Message = ".$message."</div>";
 		}
 	}
 
+	function pwa_manifest_include(){
+		$upload_dir = wp_upload_dir();
+		$path = $upload_dir['basedir']."/pwa/";
+		$filePath	=	$path . 'manifest.json' ;
+		$pathurl = $upload_dir['baseurl']."/pwa/";
+		$fileURL	=	$pathurl . 'manifest.json';
+		
+		if( file_exists($filePath) ){
+			echo "\n" . '<!-- Web Manifest -->' . "\n";
+			echo '<link rel="manifest" href="' . $fileURL . '" />' . "\n\n";
+		}
+
+	}
 
 	function aione_admin_menu_edit_component(){
 		$post_type = current_filter();

@@ -125,7 +125,8 @@ class Aione_App_Builder_Public {
 			return $login_url;
 		}*/
 		if(isset($aione_app_builder_login_page) && !empty($aione_app_builder_login_page)){
-			$login_url = add_query_arg( 'redirect_to', $redirect, $aione_app_builder_login_page );
+			$login_page = get_permalink($aione_app_builder_login_page);
+			$login_url = add_query_arg( 'redirect_to', $redirect, $login_page );
 		}
 		return $login_url;		
 	}

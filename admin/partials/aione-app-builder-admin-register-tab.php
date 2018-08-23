@@ -23,7 +23,7 @@
 				<tbody>
 					<tr>
 						<th scope='row'><label for='aione_app_builder_login_page'>Registration Custom Fields Groups( ACF )</label></th>
-						<td><?php wp_dropdown_pages(array('name' => 'aione_app_builder_registration_custom_field_groups','show_option_none' => 'Select Custom Fields Groups','id' => 'aione_app_builder_registration_custom_field_groups','post_type' => 'acf', 'selected'=> get_option('aione_app_builder_registration_custom_field_groups'))); ?>
+						<td><?php wp_dropdown_pages(array('name' => 'aione_app_builder_registration_custom_field_groups','show_option_none' => 'Select Custom Fields Groups','id' => 'aione_app_builder_registration_custom_field_groups','post_type' => 'acf-field-group', 'selected'=> get_option('aione_app_builder_registration_custom_field_groups'))); ?>
 							<p class="description">Select the Advanced Custom Field group you wish to display under registration form.</p>
 						</td>
 					</tr>
