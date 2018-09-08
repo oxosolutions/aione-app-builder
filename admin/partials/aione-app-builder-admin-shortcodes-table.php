@@ -281,7 +281,9 @@
 					<td>[info]</td>
 <td><pre>
 'show' => 'name', 
-</pre></td>
+</pre>
+<a href="https://developer.wordpress.org/reference/functions/get_bloginfo/" target="_blank">Supported Parameters</a></td>
+</td>
 				</tr>
 			</tbody>
 		</table>
