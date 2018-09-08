@@ -1891,4 +1891,84 @@ class Aione_App_Builder_Public {
 			 ob_get_clean();
 		 }
 	}
+
+	/**
+	* Shortcode [aione-icon]
+	* 
+	*/
+	function aione_app_builder_aione_icon_shortcode( $atts ) {
+		$atts = shortcode_atts( array(
+			'class' => '',
+		), $atts, 'aione-icon' );
+
+		$output = '';
+		$aione_icon = $atts['class'];
+
+		if($aione_icon){
+			$output = '<i class="'.$aione_icon.'"></i>';
+		}
+		return $output;
+	}
+	/**
+	* Shortcode [date]
+	* 
+	*/
+	function aione_app_builder_date_shortcode( $atts ) {
+		$atts = shortcode_atts( array(
+			'format' => 'jS F Y H:i A',
+			'time-zone' => 'Asia/Kolkata',
+		), $atts, 'date' );
+
+		$output = '';
+		//$output = date($atts['format']);
+		$tz = $atts['time-zone'];
+		$timestamp = time();
+		$dt = new DateTime("now", new DateTimeZone($tz)); //first argument "must" be a string
+		$dt->setTimestamp($timestamp); //adjust the object to correct timestamp
+		$output .=  $dt->format($atts['format']);
+		return $output;
+	}
+	/**
+	* Shortcode [info]
+	* 
+	*/
+	function aione_app_builder_info_shortcode( $atts ) {
+		$atts = shortcode_atts( array(
+			'show' => 'name',
+		), $atts, 'info' );
+
+		$output = '';
+		$output = get_bloginfo( $atts['show'], $filter );
+		return $output;
+	}
+	/**
+	* Shortcode [aione-form]
+	* 
+	*/
+	function aione_app_builder_form_shortcode( $atts ) {
+		$atts = shortcode_atts( array(
+			'type' => 'post',
+			'status' => 'draft',
+			'class' => '',
+			'id' => '',
+		), $atts, 'aione-form' );
+
+		$output = '';
+		if(isset($_POST['submit'])){
+			echo "<pre>";print_r($_POST);echo "</pre>";
+		}
+		$output .= acf_form(array(
+					  'id' => $atts['id'],
+					  'post_id'		=> 'new_post',
+					  'post_title'	=> true,
+					  'post_content'	=> true,
+					  'submit_value'		=> 'Submit',
+					  'new_post' => array(
+			            'post_type' => $atts['type'],
+			            'post_status' => $atts['status']
+			         ),
+				));
+		return $output;
+	}
+
 }

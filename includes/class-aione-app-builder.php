@@ -231,6 +231,11 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'welcome', $plugin_public, 'aione_app_builder_welcome_shortcode' );
 		$this->loader->add_shortcode( 'blog', $plugin_public, 'aione_app_builder_blog_shortcode' );
 
+		$this->loader->add_shortcode( 'aione-icon', $plugin_public, 'aione_app_builder_aione_icon_shortcode' );
+		$this->loader->add_shortcode( 'date', $plugin_public, 'aione_app_builder_date_shortcode' );
+		$this->loader->add_shortcode( 'info', $plugin_public, 'aione_app_builder_info_shortcode' );
+		$this->loader->add_shortcode( 'aione-form', $plugin_public, 'aione_app_builder_form_shortcode' );
+
 	}
 
 	/**

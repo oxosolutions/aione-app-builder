@@ -261,6 +261,28 @@
 'pagination'	=> 'yes',
 </pre></td>
 				</tr>
+				<tr>
+					<td>Icon</td>
+					<td>[aione-icon]</td>
+<td><pre>
+'class' => 'fa fa-facebook', //Fontawsome class
+</pre></td>
+				</tr>
+				<tr>
+					<td>Date</td>
+					<td>[date]</td>
+<td><pre>
+'format' => 'jS F Y H:i A', //DateTime format 
+'time-zone' => 'Asia/Kolkata', // TimeZone 
+</pre> <a href="http://php.net/manual/en/timezones.php" target="_blank">Supported TimeZone</a></td>
+				</tr>
+				<tr>
+					<td>Blog Info</td>
+					<td>[info]</td>
+<td><pre>
+'show' => 'name', 
+</pre></td>
+				</tr>
 			</tbody>
 		</table>
 	</div>
