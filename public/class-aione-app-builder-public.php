@@ -1954,9 +1954,9 @@ class Aione_App_Builder_Public {
 		), $atts, 'aione-form' );
 
 		$output = '';
-		if(isset($_POST['submit'])){
+		//if(isset($_POST['submit'])){
 			echo "<pre>";print_r($_POST);echo "</pre>";
-		}
+		//}
 		$output .= acf_form(array(
 					  'id' => $atts['id'],
 					  'post_id'		=> 'new_post',
