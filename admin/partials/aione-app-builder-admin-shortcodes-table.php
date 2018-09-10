@@ -117,6 +117,21 @@
 </pre></td>
 				</tr>
 				<tr>
+					<td>View Profile</td>
+					<td>[profile]</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Edit Profile</td>
+					<td>[edit-profile]</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Change Password</td>
+					<td>[change-password]</td>
+					<td></td>
+				</tr>
+				<tr>
 					<td>Home URL</td>
 					<td>[home_url]</td>
 <td><pre>
@@ -170,11 +185,6 @@
 'id'             => '',
 'class'          => '',					
 </pre></td>
-				</tr>
-				<tr>
-					<td>Change Password</td>
-					<td>[change-password]</td>
-					<td></td>
 				</tr>
 				<tr>
 					<td>Register Form</td>

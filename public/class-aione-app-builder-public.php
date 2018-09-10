@@ -955,7 +955,7 @@ class Aione_App_Builder_Public {
 			$user_roles = $user->roles;
 			$value = get_user_meta($user_id);
 			$action = $_GET['action'];
-			if($action == "profile"){
+			//if($action == "profile"){
 				$output .='<div class="account-content-outer" id="account_content_outer">
 					<h3 class="account-content-title-heading-center">'.$username.' Profile</h3>';
 					$output .= '<ul class="account-content-profile" id="account_content_profile">
@@ -997,7 +997,7 @@ class Aione_App_Builder_Public {
 					
 					$output .= '</ul>
 					</div>';
-			}
+			//}
 		} else {
 			$output .= "";
 		}
@@ -1019,7 +1019,7 @@ class Aione_App_Builder_Public {
 			
 			$action = $_GET['action'];
 			
-			if($action == "edit-profile") {
+			//if($action == "edit-profile") {
 				
 				if(isset($_POST['update_profile'])  && $_POST['update_profile'] == 'update_profile'){
 					$first_name = $_POST['aione_user_fname'];
@@ -1072,7 +1072,7 @@ class Aione_App_Builder_Public {
 				acf_form($options);
 				$output .= ob_get_contents();
 				ob_end_clean();
-			}
+			//}
 		} else {
 			$output .= "";
 		}	
@@ -1915,7 +1915,7 @@ class Aione_App_Builder_Public {
 	*/
 	function aione_app_builder_date_shortcode( $atts ) {
 		$atts = shortcode_atts( array(
-			'format' => 'jS F Y H:i A',
+			'format' => 'jS F Y h:i:s',
 			'time-zone' => 'Asia/Kolkata',
 		), $atts, 'date' );
 
