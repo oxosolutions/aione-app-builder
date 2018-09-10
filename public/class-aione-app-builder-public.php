@@ -235,7 +235,51 @@ class Aione_App_Builder_Public {
 			$output .= '</div>';
 		} 
 		return $output;
-	} // End aione_app_builder_register_link_shortcode()
+	} // End aione_app_builder_reset_password_link_shortcode()
+
+	public function aione_app_builder_account_link_shortcode( $atts ) {
+		extract( shortcode_atts(
+				array(
+					'class'           => '',
+					'text'           => 'Account'
+				), $atts )
+		);
+
+		$admin_login_redirect_page_link = "#";
+
+		$admin_login_redirect_page = get_option('admin_login_redirect_page');
+		if(isset($admin_login_redirect_page)){
+			if(!empty($admin_login_redirect_page)){
+				$admin_login_redirect_page_link = get_permalink($admin_login_redirect_page);
+			}
+		}
+
+		$output = "";
+
+		$output .= '<div id="account_link" class="user-links account-link '.$class.'">';
+		$output .= '<a href="'.$admin_login_redirect_page_link.'" title="' . $text . '">' . $text . '</a>';
+		$output .= '</div>';
+
+
+		return $output;
+	} // End aione_app_builder_account_link_shortcode()
+
+	public function aione_app_builder_dashboard_link_shortcode( $atts ) {
+		extract( shortcode_atts(
+				array(
+					'class'           => '',
+					'text'           => 'Dashboard'
+				), $atts )
+		);
+		$output = "";
+
+		$output .= '<div id="dashboard_link" class="user-links dashboard-link '.$class.'">';
+		$output .= '<a href="'.get_bloginfo( 'url' ).'/wp-admin/" title="' . $text . '">' . $text . '</a>';
+		$output .= '</div>';
+
+		return $output;
+	} // End aione_app_builder_dashboard_link_shortcode()
+
 
 	public function aione_app_builder_logout_link_shortcode( $atts ) {
 		extract( shortcode_atts(

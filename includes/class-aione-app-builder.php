@@ -207,6 +207,8 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'register-link', $plugin_public, 'aione_app_builder_register_link_shortcode' );
 		$this->loader->add_shortcode( 'reset-password-link', $plugin_public, 'aione_app_builder_reset_password_link_shortcode' );
 		$this->loader->add_shortcode( 'logout-link', $plugin_public, 'aione_app_builder_logout_link_shortcode' );
+		$this->loader->add_shortcode( 'account-link', $plugin_public, 'aione_app_builder_account_link_shortcode' );
+		$this->loader->add_shortcode( 'dashboard-link', $plugin_public, 'aione_app_builder_dashboard_link_shortcode' );
 		$this->loader->add_shortcode( 'is_user_logged_in', $plugin_public, 'aione_app_builder_is_user_logged_in_shortcode' );
 		$this->loader->add_shortcode( 'user_not_logged_in', $plugin_public, 'aione_app_builder_user_not_logged_in_shortcode' );
 		$this->loader->add_shortcode( 'user_not_logged_in_error', $plugin_public, 'aione_app_builder_user_not_logged_in_error_shortcode' );

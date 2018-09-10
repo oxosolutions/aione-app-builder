@@ -43,8 +43,24 @@
 					<td>logout Link</td>
 					<td>[logout-link]</td>
 <td><pre>
-'class'  => '', //CSS class for Register link
+'class'  => '', //CSS class for Logout link
 'text'   => 'Logout' //Default Text to be shown 
+</pre></td>
+				</tr>
+				<tr>
+					<td>Account Link</td>
+					<td>[account-link]</td>
+<td><pre>
+'class'  => '', //CSS class for Account link
+'text'   => 'Account' //Default Text to be shown 
+</pre></td>
+				</tr>
+				<tr>
+					<td>Dashboard Link</td>
+					<td>[dashboard-link]</td>
+<td><pre>
+'class'  => '', //CSS class for Dashboard link
+'text'   => 'Dashboard' //Default Text to be shown 
 </pre></td>
 				</tr>
 				<tr>
