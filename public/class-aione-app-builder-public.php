@@ -999,49 +999,50 @@ class Aione_App_Builder_Public {
 			$user_roles = $user->roles;
 			$value = get_user_meta($user_id);
 			$action = $_GET['action'];
-			//if($action == "profile"){
-				$output .='<div class="account-content-outer" id="account_content_outer">
-					<h3 class="account-content-title-heading-center">'.$username.' Profile</h3>';
-					$output .= '<ul class="account-content-profile" id="account_content_profile">
-					<li><div class="user-detail-label">ID</div>
-					<div class="user-detail-value">'.$user_id.'</div>
-					<div class="oxo-clearfix"></div></li>
-					<li><div class="user-detail-label">First Name</div>
-					<div class="user-detail-value">'.$value['first_name'][0].'</div>
-					<div class="oxo-clearfix"></div></li>
-					<li><div class="user-detail-label">Last name</div>
-					<div class="user-detail-value">'.$value['last_name'][0].'</div>
-					<div class="oxo-clearfix"></div></li>
-					<li><div class="user-detail-label">Email</div>
-					<div class="user-detail-value">'.$user->user_email.'</div>
-					<div class="oxo-clearfix"></div></li>
-					';
+			
+
+			$output .='<div class="account-content-outer" id="account_content_outer">
+				<h3 class="account-content-title-heading-center">'.$username.' Profile</h3>';
+				$output .= '<ul class="account-content-profile" id="account_content_profile">
+				<li><div class="user-detail-label">ID</div>
+				<div class="user-detail-value">'.$user_id.'</div>
+				<div class="oxo-clearfix"></div></li>
+				<li><div class="user-detail-label">First Name</div>
+				<div class="user-detail-value">'.$value['first_name'][0].'</div>
+				<div class="oxo-clearfix"></div></li>
+				<li><div class="user-detail-label">Last name</div>
+				<div class="user-detail-value">'.$value['last_name'][0].'</div>
+				<div class="oxo-clearfix"></div></li>
+				<li><div class="user-detail-label">Email</div>
+				<div class="user-detail-value">'.$user->user_email.'</div>
+				<div class="oxo-clearfix"></div></li>
+				';
+				
+				$field_groups = get_option('aione_app_builder_registration_custom_field_groups');
+				if(!is_array($field_groups)){
+					$field_groups = array($field_groups);
+				}
+				
+				 foreach($field_groups as $field_group_key => $field_group){
+					$fields = apply_filters('acf/field_group/get_fields',array(), $field_group);
 					
-					$field_groups = get_option('aione_app_builder_registration_custom_field_groups');
-					if(!is_array($field_groups)){
-						$field_groups = array($field_groups);
+					foreach($fields as $fields_key => $field){
+						$field_key = $field['key'];
+						$field_data = get_field($field_key , "user_".$user_id);
+						if(is_array($field_data)){
+							$field_data = implode(",",$field_data);
+						}
+						$output .= '<li><div class="user-detail-label">'.$field['label'].'</div>';
+						$output .= '<div class="user-detail-value">'.$field_data.'</div>
+						<div class="oxo-clearfix"></div></li>';
 					}
 					
-					 foreach($field_groups as $field_group_key => $field_group){
-						$fields = apply_filters('acf/field_group/get_fields',array(), $field_group);
-						
-						foreach($fields as $fields_key => $field){
-							$field_key = $field['key'];
-							$field_data = get_field($field_key , "user_".$user_id);
-							if(is_array($field_data)){
-								$field_data = implode(",",$field_data);
-							}
-							$output .= '<li><div class="user-detail-label">'.$field['label'].'</div>';
-							$output .= '<div class="user-detail-value">'.$field_data.'</div>
-							<div class="oxo-clearfix"></div></li>';
-						}
-						
-						
-					} 
 					
-					$output .= '</ul>
-					</div>';
-			//}
+				} 
+				
+				$output .= '</ul>
+				</div>';
+			
 		} else {
 			$output .= "";
 		}
