@@ -257,7 +257,7 @@
 				</tr>
 				<tr>
 					<td>Blog Archive</td>
-					<td>[blog][/blog]</td>
+					<td>[blog]</td>
 <td><pre>
 'post_type'           =>  "post,movie", // post types with comma seprated
 'post_status'          => "publish", // publish,pending,draft
