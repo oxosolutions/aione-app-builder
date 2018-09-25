@@ -1319,6 +1319,7 @@ class Aione_App_Builder_Public {
 					
 				}
 			$output .= '</ul>';
+			wp_reset_postdata();
 		}  else {
 			$output .= '<h5 class="font-size-16 aligncenter">No Posts Available.</h5>';
 		}
@@ -1469,6 +1470,7 @@ class Aione_App_Builder_Public {
 			$output .= '</div>';
 			$output .= '</div>';
 		endwhile;
+		wp_reset_postdata();
 		$output .= '</div>';
 		$output .= '</div>';
 		$output .= '</div>';
