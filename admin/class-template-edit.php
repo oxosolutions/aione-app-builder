@@ -50,12 +50,12 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
                 'default' => 'advanced',
                 'post_types' => 'custom',
             ),
-            'types_applyto' => array(
+            /*'types_applyto' => array(
                 'callback' => array($this, 'box_applyto'),
                 'title' => __('Applied to', 'aione-app-builder'),
                 'default' => 'side',
                 'post_types' => 'custom',
-            ),
+            ),*/
 
             'submitdiv' => array(
                 'callback' => array($this, 'box_submitdiv'),
