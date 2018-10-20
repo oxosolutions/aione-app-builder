@@ -2126,7 +2126,7 @@ class Aione_App_Builder_Public {
 		), $atts, 'aione-post-custom-field' );
 
 		$field = get_field_object($atts['field']);
-		echo "<pre>";print_r($field);echo "</pre>";
+		//echo "<pre>";print_r($field);echo "</pre>";
 		$field_class = 'field_'.$field['name'];
 
 		if( empty( $field_class ) ){
@@ -2186,12 +2186,28 @@ class Aione_App_Builder_Public {
 
 
 						
-						if($sub_field_array['type'] == 'text' || $sub_field_array['type'] == 'textarea' || $sub_field_array['type'] == 'number' || $sub_field_array['type'] == 'range' || $sub_field_array['type'] == 'email' || $sub_field_array['type'] == 'url' || $sub_field_array['type'] == 'password' || $sub_field_array['type'] == 'wysiwyg' || $sub_field_array['type'] == 'oembed'){
+						if($sub_field_array['type'] == 'text' || $sub_field_array['type'] == 'textarea' || $sub_field_array['type'] == 'number' || $sub_field_array['type'] == 'range' || $sub_field_array['type'] == 'email' || $sub_field_array['type'] == 'url' || $sub_field_array['type'] == 'password' || $sub_field_array['type'] == 'wysiwyg' || $sub_field_array['type'] == 'oembed' || $sub_field_array['type'] == 'select'){
 							$data = $this->get_text_data($sub_field_array['key'],$post->ID, true );
 							if($data){
 								$output .= '<li class="'.$sub_field_classes.'">';
 								if($sub_field_array['type'] == 'url'){
 									$output .= '<a href="'.$data.'">'.$data.'</a>';
+								} elseif($sub_field_array['type'] == 'select'){
+									if($sub_field_array['multiple'] == '1'){ 
+										if($sub_field_array['return_format'] == "value" || $sub_field_array['return_format'] == "label"){
+											$output .= implode(",", $data);
+										} else {
+											foreach ($data as $value) {	
+												$output .= $value['label']." ";
+											}
+										}
+									} else {
+										if($sub_field_array['return_format'] == "array" ){ 
+											$output .= $data['label'];
+										} else {						
+											$output .= $data;
+										}
+									}
 								} else {
 									$output .= $data;
 								}
@@ -2232,10 +2248,26 @@ class Aione_App_Builder_Public {
 
 			}
 			
-		} elseif($field['type'] == 'text' || $field['type'] == 'textarea' || $field['type'] == 'number' || $field['type'] == 'range' || $field['type'] == 'email' || $field['type'] == 'url' || $field['type'] == 'password' || $field['type'] == 'wysiwyg' || $field['type'] == 'oembed'){			
+		} elseif($field['type'] == 'text' || $field['type'] == 'textarea' || $field['type'] == 'number' || $field['type'] == 'range' || $field['type'] == 'email' || $field['type'] == 'url' || $field['type'] == 'password' || $field['type'] == 'wysiwyg' || $field['type'] == 'oembed' || $field['type'] == 'select'){			
 			$data = $this->get_text_data($field['key'],$post->ID);
 			if($field['type'] == 'url'){
 				$output .= '<a href="'.$data.'">'.$data.'</a>';
+			} elseif($field['type'] == 'select'){
+				if($field['multiple'] == '1'){ 
+					if($field['return_format'] == "value" || $field['return_format'] == "label"){
+						$output .= implode(",", $data);
+					} else {
+						foreach ($data as $value) {	
+							$output .= $value['label']." ";
+						}
+					}
+				} else {
+					if($field['return_format'] == "array" ){ 
+						$output .= $data['label'];
+					} else {						
+						$output .= $data;
+					}
+				}
 			} else {
 				$output .= $data;
 			}
@@ -2253,8 +2285,6 @@ class Aione_App_Builder_Public {
 					$output .= '<img src="'.$gallery_value['url'].'"/>';
 				}
 			}
-		} elseif($field['type'] == 'select'){
-			$output .= $this->get_select_data($field['key'],$post->ID,$field['return_format']);
 		} else{
 			$output .= "unknown field";
 		}
@@ -2316,20 +2346,6 @@ class Aione_App_Builder_Public {
 		}
 		return $gallery;
 	}
-	function get_select_data($key , $post_id, $return_format, $repeater = false){
-		if($repeater == true){
-			$select = get_sub_field($key,$post_id);
-		} else {			
-			$select =   get_field($key,$post_id);
-		}
-		echo "<pre>";print_r($select);echo "</pre>";
-		if($return_format == "array"){
-			//return $image['url'];
-		} elseif($return_format == "value"){
-			//return $image;
-		} else {
-			//return $image_url;
-		}
-	}
+	
 
 }
