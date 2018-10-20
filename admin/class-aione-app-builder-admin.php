@@ -725,7 +725,10 @@ class Aione_App_Builder_Admin {
 	}
 
 	public function pwa_settings_store_in_database(){
-		$pwa_settings = unserialize(get_option('pwa_settings',true));
+		$pwa_settings = get_option('pwa_settings',true);
+		if($pwa_settings){			
+			$pwa_settings = unserialize($pwa_settings);
+		}
 		if(isset($_POST['pwa_action']) && $_POST['pwa_action'] == "pwa_settings" ){
 			$option_array = array();
 			$option_array["pwa_app_name"] = $_POST['name'];

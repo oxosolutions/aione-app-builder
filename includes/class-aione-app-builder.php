@@ -238,6 +238,12 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'info', $plugin_public, 'aione_app_builder_info_shortcode' );
 		$this->loader->add_shortcode( 'aione-form', $plugin_public, 'aione_app_builder_form_shortcode' );
 
+		$this->loader->add_shortcode( 'aione-post-title', $plugin_public, 'aione_app_builder_post_title_shortcode' );
+		$this->loader->add_shortcode( 'aione-post-content', $plugin_public, 'aione_app_builder_post_content_shortcode' );
+		$this->loader->add_shortcode( 'aione-post-feature-image', $plugin_public, 'aione_app_builder_post_feature_image_shortcode' );
+		$this->loader->add_shortcode( 'aione-post-tags', $plugin_public, 'aione_app_builder_post_tags_shortcode' );
+		$this->loader->add_shortcode( 'aione-post-categories', $plugin_public, 'aione_app_builder_post_categories_shortcode' );
+		$this->loader->add_shortcode( 'aione-post-custom-field', $plugin_public, 'aione_app_builder_post_custom_field_shortcode' );
 	}
 
 	/**

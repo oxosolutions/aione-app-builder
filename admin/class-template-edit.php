@@ -22,6 +22,8 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
     public function __construct()
     {
         add_action( 'wp_ajax_aione_ajax_delete_template',array($this,'aione_ajax_delete_template_callback') );
+
+        $custom_templates = get_option( AIONE_OPTION_NAME_TEMPLATES, array() );
     }
 
     public function init_admin()

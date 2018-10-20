@@ -785,10 +785,13 @@ function aione_admin_dashboard_component_box(){
             <div class="wrapper aione-border bg-white">
                 <div class="aione-title aione-border-bottom p-5">
                     <h6 class="aione-float-left pl-5 aione-float-left">Components</h6>
-                    <a class="aione-button small circle white color bg-blue-grey bg-darken-4 aione-float-right" href="">
-                      <span class="icon"><i class="ion ion-md-add-circle-outline"></i></span>
-                      <span class="text">Add New</span>
-                    </a>
+                      ';
+                      $output .= sprintf(' 
+                            <a class="aione-button small circle white color bg-blue-grey bg-darken-4 aione-float-right"  href="%s">%s</a>',
+                            esc_url(add_query_arg( array('page'=>'aione-edit-component'), admin_url('admin.php'))),
+                            '<span class="icon"><i class="ion ion-md-add-circle-outline"></i></span><span class="text"> Add New </span>'
+                        );
+                      $output .= '
                     <div class="aione-clear"></div>
                 </div>
                 <div class="">
@@ -831,10 +834,13 @@ function aione_admin_dashboard_taxonomy_box(){
             <div class="wrapper aione-border bg-white">
                 <div class="aione-title aione-border-bottom p-5">
                     <h6 class="aione-float-left pl-5 aione-float-left">Taxonomies</h6>
-                    <a class="aione-button small circle white color bg-blue-grey bg-darken-4 aione-float-right" href="">
-                      <span class="icon"><i class="ion ion-md-add-circle-outline"></i></span>
-                      <span class="text">Add New</span>
-                    </a>
+                      ';
+                      $output .= sprintf(' 
+                            <a class="aione-button small circle white color bg-blue-grey bg-darken-4 aione-float-right"  href="%s">%s</a>',
+                            esc_url(add_query_arg( array('page'=>'aione-edit-taxonomy'), admin_url('admin.php'))),
+                            '<span class="icon"><i class="ion ion-md-add-circle-outline"></i></span><span class="text"> Add New </span>'
+                        );
+                      $output .= '
                     <div class="aione-clear"></div>
                 </div>
                 <div class="">
@@ -873,16 +879,19 @@ function aione_admin_dashboard_template_box(){
             <div class="wrapper aione-border bg-white">
                 <div class="aione-title aione-border-bottom p-5">
                     <h6 class="aione-float-left pl-5 aione-float-left">Templates</h6>
-                    <a class="aione-button small circle white color bg-blue-grey bg-darken-4 aione-float-right" href="">
-                      <span class="icon"><i class="ion ion-md-add-circle-outline"></i></span>
-                      <span class="text">Add New</span>
-                    </a>
+                      ';
+                      $output .= sprintf(' 
+                            <a class="aione-button small circle white color bg-blue-grey bg-darken-4 aione-float-right"  href="%s">%s</a>',
+                            esc_url(add_query_arg( array('page'=>'aione-edit-template'), admin_url('admin.php'))),
+                            '<span class="icon"><i class="ion ion-md-add-circle-outline"></i></span><span class="text"> Add New </span>'
+                        );
+                      $output .= '
                     <div class="aione-clear"></div>
                 </div>
                 <div class="">
                 ';
 
-                if(!empty($custom_taxonomies)){
+                if(!empty($custom_templates)){
                     foreach ($custom_templates as $key => $value) {
                         $edit_link = esc_url(
                             add_query_arg(

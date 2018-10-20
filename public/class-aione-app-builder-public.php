@@ -2018,4 +2018,318 @@ class Aione_App_Builder_Public {
 		return $output;
 	}
 
+	function aione_app_builder_post_title_shortcode($atts){
+		global $post;
+		$atts = shortcode_atts( array(
+			'link' => "true",
+			'class' => '',
+			'id' => '',
+		), $atts, 'aione-post-title' );
+		if($atts['link'] == "true"){
+			$title = '<a href="'.get_permalink().'">'.get_the_title().'</a>';
+		} else {
+			$title = get_the_title();
+		}
+		
+		return $title;
+	}
+	function aione_app_builder_post_content_shortcode($atts){
+		global $post;
+		$atts = shortcode_atts( array(
+			'expert' => "false",
+			'expert-length' => "20",
+			'more-text' => "...",
+			'class' => '',
+			'id' => '',
+		), $atts, 'aione-post-content' );
+		if($atts['expert'] == "true"){
+			$content = wp_trim_words( get_the_content(), $atts['expert-length'], $atts['more-text'] );
+		} else {
+			$content = get_the_content();
+		}
+		return $content;
+	}
+	function aione_app_builder_post_feature_image_shortcode($atts){
+		global $post;
+		$atts = shortcode_atts( array(
+			'class' => '',
+			'id' => '',
+		), $atts, 'aione-post-feature-image' );
+		$image = "";
+		if ( has_post_thumbnail($post->ID) ) {
+        	$image .= "<img class='".$atts['class']."' id='".$atts['id']."' src='".wp_get_attachment_url( get_post_thumbnail_id($post->ID ) )."'/>";
+        }
+		
+		return $image;
+  
+	}
+
+	function aione_app_builder_post_tags_shortcode($atts){
+		global $post;
+		$atts = shortcode_atts( array(
+			'style' => 'list',
+			'class' => '',
+			'id' => '',
+		), $atts, 'aione-post-tags' );
+		$tags = "";
+		$post_tags = get_the_tags( $post->ID );
+		if ( $post_tags ) {
+			if($atts['style'] == 'list'){
+				$tags .= "<ul class='".$atts['class']."' id='".$atts['id']."'>";
+			    foreach( $post_tags as $tag ) {
+			    	$tags .= '<li>'.$tag->name.'</li>';
+			    }
+			    $tags .= '</ul>';
+			} else {
+				foreach( $post_tags as $tag ) {
+			    	$tags .= "<div class='".$atts['class']."' id='".$atts['id']."'>".$tag->name.'</div>';
+			    }
+			}
+		}
+		return $tags;
+	}
+
+	function aione_app_builder_post_categories_shortcode($atts){
+		global $post;
+		$atts = shortcode_atts( array(
+			'style' => 'list',
+			'class' => '',
+			'id' => '',
+		), $atts, 'aione-post-categories' );
+		$cats = "";
+		$post_categories = get_the_category( $post->ID );
+		if ( $post_categories ) {
+			if($atts['style'] == 'list'){
+				$cats .= "<ul class='".$atts['class']."' id='".$atts['id']."'>";
+			    foreach( $post_categories as $category ) {
+			    	$cats .= '<li>'.$category->name.'</li>';
+			    }
+			    $cats .= '</ul>';
+			} else {
+				foreach( $post_categories as $category ) {
+			    	$cats .= "<div class='".$atts['class']."' id='".$atts['id']."'>".$category->name.'</div>';
+			    }
+			}
+		}
+		return $cats;
+	}
+
+	function aione_app_builder_post_custom_field_shortcode($atts){
+		global $post;
+		$atts = shortcode_atts( array(
+			'field' => '',
+			'label' => "true",
+			'seperator' => ' : ',
+			'class' => '',
+			'id' => '',
+			'style' => 'table', // table/div/list
+		), $atts, 'aione-post-custom-field' );
+
+		$field = get_field_object($atts['field']);
+		echo "<pre>";print_r($field);echo "</pre>";
+		$field_class = 'field_'.$field['name'];
+
+		if( empty( $field_class ) ){
+			$field_class = $field['key'];
+		}
+
+		$field_id = $field['wrapper']['id'];
+
+		if( empty( $field_id ) ){
+			$field_id = $field['key'];
+		}
+
+		$field_classes = array(
+			'field',
+			$field_class,
+			$field['wrapper']['class'],
+			'field_type_'.$field['type'],
+		);
+
+		$field_classes = implode(' ', $field_classes);
+
+		$output = '';
+		$output .= '<div id="'.$field_id.'" class="'.$field_classes.'">';
+
+		if($atts['label'] == "true"){
+			$output .= '<label class="field-label"><h3>'.$field['label'].'</h3></label>';
+		}
+		if($field['type'] == 'repeater'){
+			if( have_rows($field['key']) ){
+				$output .= '<ul class="field-rows">';
+				while( have_rows($field['key']) ){
+					the_row(); 
+					$output .= '<li class="field-row">';
+					$output .= '<ul class="subfields">';
+					foreach ($field['sub_fields'] as $sub_fields_key => $sub_field_array) {
+
+						$field_class = 'subfield_'.$sub_field_array['name'];
+
+						if( empty( $field_class ) ){
+							$field_class = $sub_field_array['key'];
+						}
+
+						$field_id = $sub_field_array['wrapper']['id'];
+
+						if( empty( $field_id ) ){
+							$field_id = $sub_field_array['key'];
+						}
+
+						$sub_field_classes = array(
+							'subfield',
+							$field_class,
+							$sub_field_array['wrapper']['class'],
+							'field_type_'.$sub_field_array['type'],
+						);
+
+						$sub_field_classes = implode(' ', $sub_field_classes);
+
+
+						
+						if($sub_field_array['type'] == 'text' || $sub_field_array['type'] == 'textarea' || $sub_field_array['type'] == 'number' || $sub_field_array['type'] == 'range' || $sub_field_array['type'] == 'email' || $sub_field_array['type'] == 'url' || $sub_field_array['type'] == 'password' || $sub_field_array['type'] == 'wysiwyg' || $sub_field_array['type'] == 'oembed'){
+							$data = $this->get_text_data($sub_field_array['key'],$post->ID, true );
+							if($data){
+								$output .= '<li class="'.$sub_field_classes.'">';
+								if($sub_field_array['type'] == 'url'){
+									$output .= '<a href="'.$data.'">'.$data.'</a>';
+								} else {
+									$output .= $data;
+								}
+								$output .= '</li>';
+							}
+						} elseif($sub_field_array['type'] == 'image'){
+							$data =  $this->get_image_data($sub_field_array['key'],$post->ID,$sub_field_array['return_format'], true );
+							if($data){
+								$output .= '<li class="'.$sub_field_classes.'">';
+								$output .= '<img src="'.$data.'"/>';
+								$output .= '</li>';
+							}
+						} elseif($sub_field_array['type'] == 'file'){
+							$data =  $this->get_file_data($sub_field_array['key'],$post->ID,$sub_field_array['return_format'], true);
+							if($data){
+								$output .= '<li class="'.$sub_field_classes.'">';
+								$output .= $data;
+								$output .= '</li>';
+							}
+						} elseif($sub_field_array['type'] == 'gallery'){
+							$gallery = $this->get_gallery_data($sub_field_array['key'],$post->ID,$sub_field_array['return_format'], true);
+							if(!empty($gallery)){
+								$output .= '<li class="'.$sub_field_classes.'">';
+								foreach ($gallery as  $gallery_value) {
+									$output .= '<img src="'.$gallery_value['url'].'"/>';
+								}
+								$output .= '</li>';
+							}
+						}else {
+							$output .= "unknown field";
+						}
+						
+					}
+					$output .= '</ul>';
+					$output .= '</li>';
+				}
+				$output .= '</ul>';
+
+			}
+			
+		} elseif($field['type'] == 'text' || $field['type'] == 'textarea' || $field['type'] == 'number' || $field['type'] == 'range' || $field['type'] == 'email' || $field['type'] == 'url' || $field['type'] == 'password' || $field['type'] == 'wysiwyg' || $field['type'] == 'oembed'){			
+			$data = $this->get_text_data($field['key'],$post->ID);
+			if($field['type'] == 'url'){
+				$output .= '<a href="'.$data.'">'.$data.'</a>';
+			} else {
+				$output .= $data;
+			}
+		} elseif($field['type'] == 'image'){
+			$image .= $this->get_image_data($field['key'],$post->ID,$field['return_format']);
+			if($image){				
+				$output .= '<img src="'.$image.'"/>';
+			}
+		} elseif($field['type'] == 'file'){
+			$output .= $this->get_file_data($field['key'],$post->ID,$field['return_format']);
+		} elseif($field['type'] == 'gallery'){
+			$gallery = $this->get_gallery_data($field['key'],$post->ID,$field['return_format']);
+			if(!empty($gallery)){
+				foreach ($gallery as  $gallery_value) {
+					$output .= '<img src="'.$gallery_value['url'].'"/>';
+				}
+			}
+		} elseif($field['type'] == 'select'){
+			$output .= $this->get_select_data($field['key'],$post->ID,$field['return_format']);
+		} else{
+			$output .= "unknown field";
+		}
+
+		$output .= '</div>';
+		return $output;
+	}
+
+	function get_text_data($key , $post_id, $repeater = false){
+		if($repeater == true){
+			return get_sub_field($key,$post_id);
+		} else {			
+			return  get_field($key,$post_id);
+		}
+	}
+	function get_image_data($key , $post_id, $return_format, $repeater = false){
+
+		$output = '';
+		if($repeater == true){
+			$image = get_sub_field($key,$post_id);
+		} else {			
+			$image = get_field($key,$post_id);
+		}
+		if($return_format == "array"){
+			return $image['url'];
+		} elseif($return_format == "url"){
+			return $image;
+		} else {
+			$image_url = wp_get_attachment_url( $image );
+			return $image_url;
+		}
+		
+	}
+	function get_file_data($key , $post_id, $return_format, $repeater = false){
+
+		$output = '';
+		if($repeater == true){
+			$file = get_sub_field($key,$post_id);
+		} else {			
+			$file = get_field($key,$post_id);
+		}
+		if($return_format == "array"){
+			$output .= '<img src="'.$file['icon'].'"/><div><a href="'.$file['url'].'">'.$file['filename'].'</a></div>';
+		} elseif($return_format == "url"){
+			$field = get_field_object($key);
+			$output .= '<div><a href="'.$file.'"><button>'.$field['label'].'</button></a>';
+		} else {
+			$file_url = wp_get_attachment_url( $file );
+			$field = get_field_object($key);
+			$output .= '<div><a href="'.$file_url.'"><button>'.$field['label'].'</button></a>';
+		}
+		return $output;
+	}
+	function get_gallery_data($key , $post_id, $return_format, $repeater = false){
+		if($repeater == true){
+			$gallery = get_sub_field($key,$post_id);
+		} else {			
+			$gallery =   get_field($key,$post_id);
+		}
+		return $gallery;
+	}
+	function get_select_data($key , $post_id, $return_format, $repeater = false){
+		if($repeater == true){
+			$select = get_sub_field($key,$post_id);
+		} else {			
+			$select =   get_field($key,$post_id);
+		}
+		echo "<pre>";print_r($select);echo "</pre>";
+		if($return_format == "array"){
+			//return $image['url'];
+		} elseif($return_format == "value"){
+			//return $image;
+		} else {
+			//return $image_url;
+		}
+	}
+
 }
