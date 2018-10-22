@@ -2067,51 +2067,57 @@ class Aione_App_Builder_Public {
 	function aione_app_builder_post_tags_shortcode($atts){
 		global $post;
 		$atts = shortcode_atts( array(
+			'texonomy' => 'post_tag',
 			'style' => 'list',
-			'class' => '',
-			'id' => '',
+			'class' => 'aione-tags',
+			'id' => 'aione_tags_'.$post->ID,
 		), $atts, 'aione-post-tags' );
-		$tags = "";
-		$post_tags = get_the_tags( $post->ID );
-		if ( $post_tags ) {
-			if($atts['style'] == 'list'){
-				$tags .= "<ul class='".$atts['class']."' id='".$atts['id']."'>";
-			    foreach( $post_tags as $tag ) {
-			    	$tags .= '<li>'.$tag->name.'</li>';
-			    }
-			    $tags .= '</ul>';
-			} else {
-				foreach( $post_tags as $tag ) {
-			    	$tags .= "<div class='".$atts['class']."' id='".$atts['id']."'>".$tag->name.'</div>';
-			    }
-			}
-		}
-		return $tags;
+
+		$output = "";
+		$output .= $this->aione_app_builder_get_post_terms( $post->ID, $atts['texonomy'], $atts['style'], $atts['class'], $atts['id']);
+		return $output;
 	}
 
 	function aione_app_builder_post_categories_shortcode($atts){
 		global $post;
 		$atts = shortcode_atts( array(
+			'texonomy' => 'category',
 			'style' => 'list',
-			'class' => '',
-			'id' => '',
+			'class' => 'aione-categories',
+			'id' => 'aione_categories_'.$post->ID,
 		), $atts, 'aione-post-categories' );
-		$cats = "";
-		$post_categories = get_the_category( $post->ID );
-		if ( $post_categories ) {
-			if($atts['style'] == 'list'){
-				$cats .= "<ul class='".$atts['class']."' id='".$atts['id']."'>";
-			    foreach( $post_categories as $category ) {
-			    	$cats .= '<li>'.$category->name.'</li>';
-			    }
-			    $cats .= '</ul>';
+
+		$output = "";
+		$output .= $this->aione_app_builder_get_post_terms( $post->ID, $atts['texonomy'], $atts['style'], $atts['class'], $atts['id']);
+		return $output;
+	}
+
+	function aione_app_builder_get_post_terms($post_id, $texonomy, $style, $class, $id){
+		$output = "";
+
+		$args = array(
+		    'orderby' => 'name', 
+		    'order' => 'ASC', 
+		    'fields' => 'all'
+		);
+		$post_terms = wp_get_post_terms( $post_id, $texonomy, $args ); 
+		
+		if ( $post_terms ) {
+			if($style == 'list'){
+				$parent_element = "ul";
+				$child_element = "li";
 			} else {
-				foreach( $post_categories as $category ) {
-			    	$cats .= "<div class='".$atts['class']."' id='".$atts['id']."'>".$category->name.'</div>';
-			    }
+				$parent_element = "div";
+				$child_element = "span";
 			}
+			$output .= '<'.$parent_element.' class="'.$class.'" id="'.$id.'">';
+		    foreach( $post_terms as $term ) {
+		    	$term_link = get_term_link( $term);
+			    $output .= '<'.$child_element.'><a href="' . esc_url( $term_link ) . '">' . $term->name . '</a></'.$child_element.'>';
+		    }
+		    $output .= '</'.$parent_element.'>';
 		}
-		return $cats;
+		return $output;
 	}
 
 	function aione_app_builder_post_custom_field_shortcode($atts){
