@@ -352,16 +352,7 @@ class Aione_App_Builder_Public {
 		return '';
 	} // aione_app_builder_access_check_shortcode ()
 
-	public function aione_app_builder_id_shortcode( $attr, $content = null ) {
-		global $post;
-		$defaults = array(
-			
-		);
-		extract( shortcode_atts( $defaults, $attr ) );
-		$output = "";
-		$output .= $post->ID;
-		return $output;
-	}
+	
 
 	public function aione_app_builder_login_shortcode( $atts, $content = null ) {
 		extract( shortcode_atts(
@@ -2018,6 +2009,20 @@ class Aione_App_Builder_Public {
 		return $output;
 	}
 
+	public function aione_app_builder_post_id_shortcode( $attr, $content = null ) {
+		global $post;
+		$output = "";
+		$output .= $post->ID;
+		return $output;
+	}
+
+	public function aione_app_builder_post_link_shortcode( $attr, $content = null ) {
+		global $post;
+		$output = "";
+		$output .= get_permalink( $post->ID );
+		return $output;
+	}
+
 	function aione_app_builder_post_title_shortcode($atts){
 		global $post;
 		$atts = shortcode_atts( array(
@@ -2049,19 +2054,61 @@ class Aione_App_Builder_Public {
 		}
 		return $content;
 	}
-	function aione_app_builder_post_feature_image_shortcode($atts){
+	function aione_app_builder_post_featured_image_shortcode($atts){
 		global $post;
 		$atts = shortcode_atts( array(
+			'size' => 'full',
 			'class' => '',
 			'id' => '',
+			'return' => 'image',// image/url/width/height/alt
 		), $atts, 'aione-post-feature-image' );
-		$image = "";
+		$output = "";
 		if ( has_post_thumbnail($post->ID) ) {
-        	$image .= "<img class='".$atts['class']."' id='".$atts['id']."' src='".wp_get_attachment_url( get_post_thumbnail_id($post->ID ) )."'/>";
+			$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ),  $atts['size']);
+			$featured_image_url = $featured_image[0];
+			$featured_image_width = $featured_image[1];
+			$featured_image_height = $featured_image[2];
+			$featured_image_meta = wp_get_attachment_metadata( get_post_thumbnail_id( $post->ID ),  true);
+			$featured_image_meta_alt = get_post_meta( get_post_thumbnail_id( $post->ID ), '_wp_attachment_image_alt');
+
+			
+			/*
+			$output .= "<pre>";
+			$output .= print_r($featured_image, true);
+			$output .= "</pre>";
+			*/
+			
+
+			$image_meta = $featured_image_meta['image_meta'];
+
+			/*
+			$image_meta['aperture']
+			$image_meta['credit']
+			$image_meta['camera']
+			$image_meta['caption']
+			$image_meta['created_timestamp']
+			$image_meta['copyright']
+			$image_meta['focal_length']
+			$image_meta['iso']
+			$image_meta['shutter_speed']
+			$image_meta['title']
+			$image_meta['orientation']
+			$image_meta['keywords']
+			*/
+
+			if( $atts['return'] == 'image' ){
+        		$output .= '<img class="'.$atts['class'].'" id="'.$atts['id'].'" src="'.$featured_image_url.'" alt="'.$featured_image_meta_alt.'" width="'.$featured_image_width.'"/>';
+			} elseif( $atts['return'] == 'url' ){
+        		$output .= $featured_image_url;
+			} elseif( $atts['return'] == 'width' ){
+        		$output .= $featured_image_width;
+			} elseif( $atts['return'] == 'height' ){
+        		$output .= $featured_image_height;
+			} elseif( $atts['return'] == 'alt' ){
+        		$output .= $featured_image_meta_alt;
+			}
         }
-		
-		return $image;
-  
+		return $output;
 	}
 
 	function aione_app_builder_post_tags_shortcode($atts){
@@ -2117,6 +2164,14 @@ class Aione_App_Builder_Public {
 		    }
 		    $output .= '</'.$parent_element.'>';
 		}
+		return $output;
+	}
+
+	function aione_app_builder_post_custom_fields_shortcode($atts){
+
+		$output = "";
+		$output .= "WORKING!";
+
 		return $output;
 	}
 
@@ -2352,6 +2407,4 @@ class Aione_App_Builder_Public {
 		}
 		return $gallery;
 	}
-	
-
 }

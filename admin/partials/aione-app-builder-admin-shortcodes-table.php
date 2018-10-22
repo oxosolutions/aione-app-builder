@@ -289,7 +289,7 @@
 				</tr>
 				<tr>
 					<td>Icon</td>
-					<td>[aione-icon]</td>
+					<td>[icon]</td>
 <td><pre>
 'class' => 'fa fa-facebook', //Fontawsome class
 </pre></td>
@@ -312,8 +312,22 @@
 </td>
 				</tr>
 				<tr>
+					<td>Post ID</td>
+					<td>[id]</td>
+<td>
+</td>
+</td>
+				</tr>
+				<tr>
+					<td>Post Link</td>
+					<td>[link]</td>
+<td>
+</td>
+</td>
+				</tr>
+				<tr>
 					<td>Post Title</td>
-					<td>[aione-post-title]</td>
+					<td>[title]</td>
 <td><pre>
 'link' => 'true', //false
 'class' => ' ',
@@ -324,7 +338,7 @@
 				</tr>
 				<tr>
 					<td>Post Content</td>
-					<td>[aione-post-content]</td>
+					<td>[content]</td>
 <td><pre>
 'expert' => 'true', //false
 'expert-length' => '20',
@@ -337,17 +351,19 @@
 				</tr>
 				<tr>
 					<td>Post Feature Image</td>
-					<td>[aione-post-feature-image]</td>
+					<td>[featured-image]</td>
 <td><pre>
-'class' => ' ',
-'id' => ' '
+'size' => 'full',
+'class' => '',
+'id' => ' ',
+'return' => 'image' // image/url/width/height/alt
 </pre>
 </td>
 </td>
 				</tr>
 				<tr>
 					<td>Post Tags</td>
-					<td>[aione-post-tags]</td>
+					<td>[tags]</td>
 <td><pre>
 'style' => 'list', //list,div
 'class' => ' ',
@@ -358,7 +374,7 @@
 				</tr>
 				<tr>
 					<td>Post Categories</td>
-					<td>[aione-post-categories]</td>
+					<td>[categories]</td>
 <td><pre>
 'style' => 'list', //list,div
 'class' => ' ',
@@ -369,12 +385,22 @@
 				</tr>
 				<tr>
 					<td>Custom Field</td>
-					<td>[aione-post-custom-field]</td>
+					<td>[custom-field]</td>
 <td><pre>
 'field' => 'field_5bc5a7afa60b0', //acf field_key
 'label' => 'true', //false
 'seperator' => ' : ',
 
+</pre>
+</td>
+</td>
+				</tr>
+				<tr>
+					<td>Custom Field</td>
+					<td>[custom-fields]</td>
+<td><pre>
+'label' => 'true', //false
+'seperator' => ' : ',
 </pre>
 </td>
 </td>
