@@ -1,0 +1,5 @@
+# CHANGELOG
+Changelog for Aione App Builder Plugin
+
+## 1.3.0.1 23-10-2018
+UPDATED: Updated shortcode table section

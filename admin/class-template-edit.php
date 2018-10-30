@@ -584,11 +584,11 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
             // Set protected data
             $protected_data_check = !empty( $custom_templates[$data['slug']] ) ? $custom_templates[$data['slug']] : array();
         }
-
-        $data['content'] = wp_kses_post($data['content']);
+        
+        //$data['content'] = wp_kses_post($data['content']);
         $data['content'] = html_entity_decode(stripcslashes($data['content']));
 
-        $data['structured_data'] = wp_kses_post($data['structured_data']);
+        //$data['structured_data'] = wp_kses_post($data['structured_data']);
         $data['structured_data'] = html_entity_decode(stripcslashes($data['structured_data']));
 
         /******/

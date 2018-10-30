@@ -200,7 +200,7 @@ class Aione_App_Builder_Public {
 		$this->login_html( $user, $login_nonce['key'], $redirect_to );
 	}
 
-	function login_html( $user, $login_nonce, $redirect_to, $error_msg = '', $provider='', $generated_otp_number='', $generated_otp_time='' ) {
+	function login_html( $user, $login_nonce, $redirect_to, $error_msg = '' ) {
 		//$wp_login_url = wp_login_url();
 	    $rememberme = 0;
 	    if ( isset( $_REQUEST['rememberme'] ) && $_REQUEST['rememberme'] ) {
@@ -214,14 +214,14 @@ class Aione_App_Builder_Public {
 	    }
 	    ?>
 
-	    
+	    <!-- <form name="validate_totp" id="loginform" action="<?php echo esc_url( site_url( 'wp-login.php?action=validate_totp', 'login_post' ) ); ?>" method="post" autocomplete="off"> -->
 	    <form name="validate_2fa_form" id="loginform" action="<?php echo esc_url( set_url_scheme( add_query_arg( 'action', 'validate_2fa', $wp_login_url ), 'login_post' ) ); ?>" method="post" autocomplete="off">	
 	        <input type="hidden" name="wp-auth-id"    id="wp-auth-id"    value="<?php echo esc_attr( $user->ID ); ?>" />
 	        <input type="hidden" name="wp-auth-nonce" id="wp-auth-nonce" value="<?php echo esc_attr( $login_nonce ); ?>" />
 	        <input type="hidden" name="redirect_to" value="<?php echo esc_attr( $redirect_to ); ?>" />
 	        <input type="hidden" name="rememberme"    id="rememberme"    value="<?php echo esc_attr( $rememberme ); ?>" />
 
-	        <?php $this->authentication_page( $user, $generated_otp_number, $generated_otp_time ); ?>
+	        <?php $this->authentication_page( $user ); ?>
 	    </form>
 
 	    <p id="backtoblog">
@@ -236,128 +236,21 @@ class Aione_App_Builder_Public {
 	    <?php
 	}
 
-	function send_sms(){
-		// Update the path below to your autoload.php,
-		// see https://getcomposer.org/doc/01-basic-usage.md
-		//require_once '/path/to/vendor/autoload.php';
-
-		require_once plugin_dir_path( __FILE__ ) . 'includes/Twilio.php';
-		
-		//use Twilio\Rest\Client;
-
-		// // Find your Account Sid and Auth Token at twilio.com/console
-		// $sid    = "AC1cdc1951a371d4810b4887a6839b3a68";
-		// $token  = "8a04f79c9e14b7a9ec0385b44cd896cf";
-		// $twilio = new Client($sid, $token);
-
-		// $message = $twilio->messages
-		//                   ->create("+15558675310", // to
-		//                            array(
-		//                                "body" => "This is the ship that made the Kessel Run in fourteen parsecs?",
-		//                                "from" => "+17076634858"
-		//                            )
-		//                   );
-
-		// print($message->sid);
+	function validate_authentication( $user ) {
+		return true;
 	}
-
-	function calculate_time_difference($date_time){
-		$start_date = new DateTime($date_time);
-		$since_start = $start_date->diff(new DateTime(date("Y-m-d h:i:s")));
-
-		return $since_start->i; //return Minutes
-	}
-
-	function validate_authentication( $user, $generated_otp_number, $entered_otp_number, $generated_otp_number_date_time) {
-			 
-				$time_difference=$this->calculate_time_difference($generated_otp_number_date_time);
-
-				if(($time_difference)<10){
-					if($generated_otp_number==$entered_otp_number){
-					 	return true;
-					 }else{
-					 	return false;
-					 }	
-				}else{
-					return false;
-				}
-		 		
-	}
-
-	function send_otp_mail( $user, $otp_number ){
-		$from = "ajit@oxosolutions.com";
-		$to = "gurjeet@oxosolutions.com";//$user->user_email;
-		$subject = "Wordpress Login OTP";
-		$message = "<h1>Hi ".$user->display_name."</h1> <br/> <br/>       <h2>Your 6-Digit OTP Number is :  ".$otp_number." . </h2>     <br/> <br/> Thanks.";
-		$headers = "From:" . $from;
-
-		// To send HTML mail, the Content-type header must be set
-		$headers  = 'MIME-Version: 1.0' . "\r\n";
-		$headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
-
-		wp_mail($to,$subject,$message, $headers);
-	}
-
-	function authentication_page( $user, $generated_otp_number, $generated_otp_time='' ) {
+	function authentication_page( $user ) {
 		require_once( ABSPATH .  '/wp-admin/includes/template.php' );
-			
 		?>
-
-		<p><?php esc_html_e( 'verify is it you?', 'aione-app-builder' ); ?></p>
+		<p><?php esc_html_e( 'Are you really you?', 'aione-app-builder' ); ?></p>
 		<?php
 
-		$otp_number='';
-		if(empty($generated_otp_number)){
-			$otp_number= (rand(100000, 999999));
-		}else{
-			$otp_number=$generated_otp_number;
-		}
-		
-		if(empty($generated_otp_time)){
-			$generated_otp_time=date("Y-m-d h:i:s");
-		}
-		
+		echo (rand(1, 1000000) . "<br>");
 		?>
-		
-		<input type="hidden" name="wp-generated-otp-number"  id="wp-generated-otp-number"  value="<?php echo $otp_number; ?>" />
-
+		<p>  </p>
 		<?php
-		if(empty($generated_otp_number)){
-			$generated_otp_number=$otp_number;
-			if(get_option('two_factor_auth')=='email'){
-				$this->send_otp_mail( $user,$otp_number );
-			}elseif(get_option('two_factor_auth')=='mobile'){
-
-			}elseif(get_option('two_factor_auth')=='both'){
-				$this->send_otp_mail( $user,$otp_number );
-			}elseif(get_option('two_factor_auth')=='user_can_select'){
-		?>	
-			<p>
-				<input type="text" name="" list="cars" placeholder="Select For OTP">
-				<datalist id="cars">
-					<option>email</option>
-					<option>mobile</option>
-					<option>both</option>
-				</datalist>
-				<button name="send_otp">Send OTP</button>
-			</p>
-			<?php
-			}
-		}				
-		?>
-		<p> 
-			<input type="text" maxlength="6" placeholder="enter 6 digit OTP code.." name="wp-entered-otp-number" id="wp-entered-otp-number" >
-
-			<input type="hidden" maxlength="6" name="wp-generated-otp-number-date-time" id="wp-generated-otp-number-date-time" value="<?php echo $generated_otp_time;?>">
-		 </p>
-		<?php
-		
+		// submit_button( __( 'Yup.', 'aione-app-builder' ) );
 		submit_button( __( 'ok ', 'aione-app-builder' ) );
-
-		if($this->calculate_time_difference($generated_otp_time)>10){
-			submit_button( $text = 'Re-send OTP', $type = 'primary', $name = 're_send_otp', $wrap = true, $other_attributes = null );
-		}
-		
 	}
 
 	function login_form_validate_2fa() {
@@ -366,23 +259,11 @@ class Aione_App_Builder_Public {
 		}
 
 		$user = get_userdata( $_POST['wp-auth-id'] );
-
-		$generated_otp_number=$_POST['wp-generated-otp-number'];
-		$entered_otp_number=$_POST['wp-entered-otp-number'];
-		$generated_otp_number_date_time=$_POST['wp-generated-otp-number-date-time'];
-		
 		if ( ! $user ) {
 			return;
 		}
 
-		//re-send button Clicked
-		if(isset($_POST['re_send_otp'])){
-			$login_nonce = $this->create_login_nonce( $user->ID );
-			$this->login_html( $user, $login_nonce['key'], $_REQUEST['redirect_to'] );
-			exit;
-		}
-
-		if ( true !== $this->validate_authentication( $user, $generated_otp_number, $entered_otp_number, $generated_otp_number_date_time ) ) {
+		if ( true !== $this->validate_authentication( $user ) ) {
 			do_action( 'wp_login_failed', $user->user_login );
 
 			$login_nonce = $this->create_login_nonce( $user->ID );
@@ -390,7 +271,7 @@ class Aione_App_Builder_Public {
 				wp_die( esc_html__( 'Failed to create a login nonce.', 'aione-app-builder' ) );
 			}
 
-			$this->login_html( $user, $login_nonce['key'], $_REQUEST['redirect_to'], esc_html__( 'ERROR: Invalid verification code.', 'aione-app-builder' ), $provider, $generated_otp_number, $generated_otp_number_date_time );
+			$this->login_html( $user, $login_nonce['key'], $_REQUEST['redirect_to'], esc_html__( 'ERROR: Invalid verification code.', 'aione-app-builder' ), $provider );
 			exit;
 		}
 		$rememberme = false;
@@ -1732,104 +1613,6 @@ class Aione_App_Builder_Public {
 
 	} // END aione_app_builder_faq_shortcode()
 
-	//Function To counts the users 
-	public function aione_app_builder_count_users_shortcode($atts){
-		// Attributes
-		extract( shortcode_atts(
-			array(
-				'site' =>  $GLOBALS['blog_id'],
-				'style' => 'table',
-				'columns' => 'Username',
-				'fields' => 'user_login',
-				'role' => '',
-				'roles' => '',
-			), $atts )
-		);
-		
-		$output = "";
-
-		$roles = explode(",", $roles);
-		$args = array(
-			'blog_id'      => $site,
-			'role'         => $role,
-			'role__in'     => $roles,
-			'role__not_in' => array(),
-			'meta_key'     => '',
-			'meta_value'   => '',
-			'meta_compare' => '',
-			'meta_query'   => array(),
-			'date_query'   => array(),        
-			'include'      => array(),
-			'exclude'      => array(),
-			'orderby'      => 'login',
-			'order'        => 'ASC',
-			'offset'       => '',
-			'search'       => '',
-			'number'       => '',
-			'count_total'  => false,
-			'fields'       => 'all',
-			'who'          => ''
-		 );
-		$users = get_users( $args );
-		
-		echo count($users);
-		// if($style == 'table'){
-			
-		// 	$columns = explode("|", $columns); 
-		// 	$fields = explode("|", $fields); 
-			
-		// 	$output .= '<div class="aione-table">';
-		// 	$output .= '<table class="compact">';
-		// 	$output .= '<thead>';
-		// 	$output .= '<tr>';
-			
-		// 	foreach ( $columns as $column ) {
-		// 		$output .= '<th>'.$column.'</th>';
-		// 	}
-			
-		// 	$output .= '</tr>';
-		// 	$output .= '</thead>';
-		// 	$output .= '<tbody>';
-			
-		// 	// Array of WP_User objects.
-		// 	foreach ( $users as $user ) {
-				
-		// 		$user_id = $user->ID;
-			
-		// 		$output .= '<tr>';
-		// 		foreach ( $fields as $field ) {
-		// 			if( $field == 'status'){
-		// 				$output .= '<td>' . esc_html( $user->$field ) . '</td>';
-		// 			} elseif(empty($field)){
-		// 				$output .= '<td></td>';
-		// 			}elseif (preg_match("~\{\{\s*(.*?)\s*\}\}~", $field)) {
-		// 				$field = str_replace("{","",$field);
-		// 				$field = str_replace("}","",$field);
-		// 				$custom_field = get_user_meta( $user_id, $field, true ); 
-		// 				$output .= '<td>' . $custom_field . '</td>';
-		// 			}else {
-		// 				$output .= '<td>' . esc_html( $user->$field ) . '</td>';
-		// 			}
-					
-		// 		}
-		// 		$output .= '</tr>';
-		// 	}
-			
-		// 	$output .= '</tbody>';
-		// 	$output .= '</table>';
-		// 	$output .= '</div>';
-			
-		// } else{ 
-		// 	$count = 1;
-		// 	// Array of WP_User objects.
-		// 	foreach ( $users as $user ) {
-		// 		$output .= '<br><span>'.$count.'. ' . esc_html( $user->user_login ) . '</span>';
-		// 		$count++;
-		// 	}
-		// }
-		// return $output;
-	}
-
 	public function aione_app_builder_users_shortcode($atts) {
 		// Attributes
 		extract( shortcode_atts(
@@ -1956,7 +1739,7 @@ class Aione_App_Builder_Public {
 			}			
 		} else {
 			$custom_field = get_user_meta( $user_id, $field, true ); 
-			$output .= $custom_field;
+			$output .= '<td>' . $custom_field . '</td>';
 		}
 		
 		return $output;

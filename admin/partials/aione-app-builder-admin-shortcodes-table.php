@@ -365,6 +365,7 @@
 					<td>Post Tags</td>
 					<td>[tags]</td>
 <td><pre>
+'texonomy' => 'post_tags', //custom texonomy
 'style' => 'list', //list,div
 'class' => ' ',
 'id' => ' '
@@ -376,6 +377,7 @@
 					<td>Post Categories</td>
 					<td>[categories]</td>
 <td><pre>
+'texonomy' => 'post_tags', //custom texonomy
 'style' => 'list', //list,div
 'class' => ' ',
 'id' => ' '

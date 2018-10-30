@@ -502,9 +502,13 @@ class Aione_App_Builder_Admin {
 				if(isset( $_POST['filter'] ) && $_POST['filter'] == "login-tab"){
 					$aione_app_builder_login_page = $_POST['aione_app_builder_login_page'];
 					$admin_login_redirect_page = $_POST['admin_login_redirect_page'];
+					$enable_two_factor_auth = $_POST['enable_two_factor_auth'];
+					$two_factor_auth = $_POST['two_factor_auth'];
 
 					update_option( 'aione_app_builder_login_page', $aione_app_builder_login_page );
 					update_option( 'admin_login_redirect_page', $admin_login_redirect_page );
+					update_option( 'enable_two_factor_auth', $enable_two_factor_auth );
+					update_option( 'two_factor_auth', $two_factor_auth );
 				}
 				if(isset( $_POST['filter'] ) && $_POST['filter'] == "register-tab"){
 					$aione_app_builder_register_page = $_POST['aione_app_builder_register_page'];

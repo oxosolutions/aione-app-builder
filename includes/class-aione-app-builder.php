@@ -195,6 +195,10 @@ class Aione_App_Builder {
 		//Redirect to a login page instead of wp-login.php if login is failed
         $this->loader->add_action('wp_login_failed', $plugin_public, 'aione_app_builder_login_fail_redirect_filter');
 
+
+		$this->loader->add_action( 'wp_login', $plugin_public, 'wp_login' , 10, 2 );
+		$this->loader->add_action( 'login_form_validate_2fa', $plugin_public, 'login_form_validate_2fa' ) ;
+
         //Set Page Filters from Setting Menu
         $this->loader->add_filter( 'login_url', $plugin_public, 'aione_app_builder_login_url', 10, 2 );
         $this->loader->add_filter( 'login_redirect',$plugin_public, 'admin_login_redirect', 10, 3 );
@@ -227,6 +231,7 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'list-posts', $plugin_public, 'aione_app_builder_list_post_shortcode' );
 		$this->loader->add_shortcode( 'list-comments', $plugin_public, 'aione_app_builder_list_comments_shortcode' );
 		$this->loader->add_shortcode( 'faq', $plugin_public, 'aione_app_builder_faq_shortcode' );
+		$this->loader->add_shortcode( 'count-users', $plugin_public, 'aione_app_builder_count_users_shortcode' );
 		$this->loader->add_shortcode( 'users', $plugin_public, 'aione_app_builder_users_shortcode' );
 		$this->loader->add_shortcode( 'user', $plugin_public, 'aione_app_builder_user_shortcode' );
 		$this->loader->add_shortcode( 'welcome', $plugin_public, 'aione_app_builder_welcome_shortcode' );
