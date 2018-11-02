@@ -135,7 +135,13 @@ class Aione_App_Builder {
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
+
+		// Require the bundled autoload file - the path may need to change
+		// based on where you downloaded and unzipped the SDK
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/twilio-php-master/Twilio/autoload.php';
+
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-aione-app-builder-public.php';
+
 
 		$this->loader = new Aione_App_Builder_Loader();
 
@@ -198,6 +204,7 @@ class Aione_App_Builder {
 
 		$this->loader->add_action( 'wp_login', $plugin_public, 'wp_login' , 10, 2 );
 		$this->loader->add_action( 'login_form_validate_2fa', $plugin_public, 'login_form_validate_2fa' ) ;
+		$this->loader->add_action( 'user_defined_authentication_form', $plugin_public, 'user_defined_authentication_form' ) ;
 
         //Set Page Filters from Setting Menu
         $this->loader->add_filter( 'login_url', $plugin_public, 'aione_app_builder_login_url', 10, 2 );

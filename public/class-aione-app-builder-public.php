@@ -20,6 +20,8 @@
  * @subpackage Aione_App_Builder/public
  * @author     OXO Solutions <contact@oxosolutions.com>
  */
+// Use the REST API Client to make requests to the Twilio REST API
+use Twilio\Rest\Client;
 class Aione_App_Builder_Public {
 
 	/**
@@ -47,6 +49,8 @@ class Aione_App_Builder_Public {
 	 * @param      string    $plugin_name       The name of the plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
+
+
 	public function __construct( $plugin_name, $version ) {
 
 		$this->plugin_name = $plugin_name;
@@ -145,6 +149,65 @@ class Aione_App_Builder_Public {
 		}
 	}
 
+
+	function send_sms($user, $otp_number){
+
+		$mobile_number = get_field('mobile_number', 'user_'.$user->ID);
+
+		// Find your Account Sid and Auth Token at twilio.com/console
+		$sid    = "AC1cdc1951a371d4810b4887a6839b3a68";
+		$token  = "8a04f79c9e14b7a9ec0385b44cd896cf";
+		$client = new Client($sid, $token);
+
+		$message = $client->messages->create($mobile_number, // to
+		                           array(
+		                               "body" => "Your Login confirmation code for GFin Customer Portal is ".$otp_number,
+		                               "from" => "+17076634858"
+		                           )
+		                  );
+
+		//echo"<pre>";print_r($mobile_number);echo "</pre>";
+		//echo"<pre>";print_r($message);echo "</pre>";
+	}
+
+	function calculate_time_difference($date_time){
+		$start_date = new DateTime($date_time);
+		$since_start = $start_date->diff(new DateTime(date("Y-m-d h:i:s")));
+
+		return $since_start->i; //return Minutes
+	}
+
+	function validate_authentication( $user, $generated_otp_number, $entered_otp_number, $generated_otp_number_date_time) {
+			 
+				$time_difference=$this->calculate_time_difference($generated_otp_number_date_time);
+
+				if(($time_difference)<10){
+					if($generated_otp_number==$entered_otp_number){
+					 	return true;
+					 }else{
+					 	return false;
+					 }	
+				}else{
+					return false;
+				}
+		 		
+	}
+
+	function send_otp_mail( $user, $otp_number ){
+		$from = "ajit@oxosolutions.com";
+		$to = $user->user_email;
+		$subject = " Login OTP";
+		$message = "<h1>Hi ".$user->display_name."</h1> <br/> <br/>       <h2>Your 6-Digit OTP Number is :  ".$otp_number." . </h2>     <br/> <br/> Thanks.";
+		$headers = "From:" . $from;
+
+		// To send HTML mail, the Content-type header must be set
+		$headers  = 'MIME-Version: 1.0' . "\r\n";
+		$headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
+
+		wp_mail($to,$subject,$message, $headers);
+	}
+
+
 	function create_login_nonce( $user_id ) {
 		$login_nonce               = array();
 		try {
@@ -214,15 +277,25 @@ class Aione_App_Builder_Public {
 	    }
 	    ?>
 
-	    
-	    <form name="validate_2fa_form" id="loginform" action="<?php echo esc_url( set_url_scheme( add_query_arg( 'action', 'validate_2fa', $wp_login_url ), 'login_post' ) ); ?>" method="post" autocomplete="off">	
-	        <input type="hidden" name="wp-auth-id"    id="wp-auth-id"    value="<?php echo esc_attr( $user->ID ); ?>" />
-	        <input type="hidden" name="wp-auth-nonce" id="wp-auth-nonce" value="<?php echo esc_attr( $login_nonce ); ?>" />
-	        <input type="hidden" name="redirect_to" value="<?php echo esc_attr( $redirect_to ); ?>" />
-	        <input type="hidden" name="rememberme"    id="rememberme"    value="<?php echo esc_attr( $rememberme ); ?>" />
+	    <?php
+		if(empty($generated_otp_number)){
+			$generated_otp_number= (rand(100000, 999999));
+		}
+		if(empty($generated_otp_time)){
+			$generated_otp_time=date("Y-m-d h:i:s");
+		}
+		update_user_meta($user->ID,"wp-generated-otp-number",$generated_otp_number);
+		?>
 
-	        <?php $this->authentication_page( $user, $generated_otp_number, $generated_otp_time ); ?>
-	    </form>
+		<?php 
+        if(get_option('two_factor_auth')=='user_can_select'){
+        	$this->user_defined_authentication_page( $user, $generated_otp_number, $generated_otp_time ,$rememberme ,$login_nonce, $redirect_to);
+        } else {
+        	$this->custom_authentication_page( $user, $generated_otp_number, $generated_otp_time ,$rememberme,$login_nonce, $redirect_to );
+        } 
+        ?>
+	    
+	    
 
 	    <p id="backtoblog">
 	        <a href="<?php echo esc_url( home_url( '/' ) ); ?>" title="Are you lost?"><?php echo sprintf( '&larr; Back to %s', get_bloginfo( 'title', 'display' ) ); ?></a>
@@ -236,128 +309,92 @@ class Aione_App_Builder_Public {
 	    <?php
 	}
 
-	function send_sms(){
-		// Update the path below to your autoload.php,
-		// see https://getcomposer.org/doc/01-basic-usage.md
-		//require_once '/path/to/vendor/autoload.php';
+	function user_defined_authentication_page( $user, $generated_otp_number, $generated_otp_time,$rememberme,$login_nonce, $redirect_to ){
+		?>
+		<h3 class="send-otp-title"><?php esc_html_e( '2-Step Authentication', 'aione-app-builder' ); ?></h3>
+		<p class="send-otp-subtitle"><?php esc_html_e( 'Select 2-Step Authentication Method', 'aione-app-builder' ); ?></p>
+		<form name="user_defined_authentication_form" id="user_defined_authentication_form" action="<?php echo esc_url( set_url_scheme( add_query_arg( 'method', 'custom', $wp_login_url ), 'login_post' ) ); ?>" method="post" autocomplete="off">	
+	        <input type="hidden" name="wp-auth-id"    id="wp-auth-id"    value="<?php echo esc_attr( $user->ID ); ?>" />
+	        <input type="hidden" name="wp-auth-nonce" id="wp-auth-nonce" value="<?php echo esc_attr( $login_nonce ); ?>" />
+	        <input type="hidden" name="redirect_to" value="<?php echo esc_attr( $redirect_to ); ?>" />
+	        <input type="hidden" name="rememberme"    id="rememberme"    value="<?php echo esc_attr( $rememberme ); ?>" />
 
-		require_once plugin_dir_path( __FILE__ ) . 'includes/Twilio.php';
-		
-		//use Twilio\Rest\Client;
-
-		// // Find your Account Sid and Auth Token at twilio.com/console
-		// $sid    = "AC1cdc1951a371d4810b4887a6839b3a68";
-		// $token  = "8a04f79c9e14b7a9ec0385b44cd896cf";
-		// $twilio = new Client($sid, $token);
-
-		// $message = $twilio->messages
-		//                   ->create("+15558675310", // to
-		//                            array(
-		//                                "body" => "This is the ship that made the Kessel Run in fourteen parsecs?",
-		//                                "from" => "+17076634858"
-		//                            )
-		//                   );
-
-		// print($message->sid);
+			<select name="auth_method" id="auth_method">
+				<option value="email">Email</option>
+				<option value="mobile">Mobile</option>
+			</select> 		
+			<?php
+			submit_button( __( 'Send OTP', 'aione-app-builder' ) );
+			?>
+		</form>
+		<?php 
 	}
 
-	function calculate_time_difference($date_time){
-		$start_date = new DateTime($date_time);
-		$since_start = $start_date->diff(new DateTime(date("Y-m-d h:i:s")));
+	function custom_authentication_page($user, $generated_otp_number, $generated_otp_time,$rememberme ,$login_nonce, $redirect_to){
+		?>
+		<form name="validate_2fa_form" id="loginform" action="<?php echo esc_url( set_url_scheme( add_query_arg( 'action', 'validate_2fa', $wp_login_url ), 'login_post' ) ); ?>" method="post" autocomplete="off">	
+	        <input type="hidden" name="wp-auth-id"    id="wp-auth-id"    value="<?php echo esc_attr( $user->ID ); ?>" />
+	        <input type="hidden" name="wp-auth-nonce" id="wp-auth-nonce" value="<?php echo esc_attr( $login_nonce ); ?>" />
+	        <input type="hidden" name="redirect_to" value="<?php echo esc_attr( $redirect_to ); ?>" />
+	        <input type="hidden" name="rememberme"    id="rememberme"    value="<?php echo esc_attr( $rememberme ); ?>" />
+	        <?php 
+	        $this->authentication_page( $user, $generated_otp_number, $generated_otp_time );
+	        ?>
+	    </form>
 
-		return $since_start->i; //return Minutes
-	}
-
-	function validate_authentication( $user, $generated_otp_number, $entered_otp_number, $generated_otp_number_date_time) {
-			 
-				$time_difference=$this->calculate_time_difference($generated_otp_number_date_time);
-
-				if(($time_difference)<10){
-					if($generated_otp_number==$entered_otp_number){
-					 	return true;
-					 }else{
-					 	return false;
-					 }	
-				}else{
-					return false;
-				}
-		 		
-	}
-
-	function send_otp_mail( $user, $otp_number ){
-		$from = "ajit@oxosolutions.com";
-		$to = "gurjeet@oxosolutions.com";//$user->user_email;
-		$subject = "Wordpress Login OTP";
-		$message = "<h1>Hi ".$user->display_name."</h1> <br/> <br/>       <h2>Your 6-Digit OTP Number is :  ".$otp_number." . </h2>     <br/> <br/> Thanks.";
-		$headers = "From:" . $from;
-
-		// To send HTML mail, the Content-type header must be set
-		$headers  = 'MIME-Version: 1.0' . "\r\n";
-		$headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
-
-		wp_mail($to,$subject,$message, $headers);
+		<?php 
 	}
 
 	function authentication_page( $user, $generated_otp_number, $generated_otp_time='' ) {
 		require_once( ABSPATH .  '/wp-admin/includes/template.php' );
-			
 		?>
-
-		<p><?php esc_html_e( 'verify is it you?', 'aione-app-builder' ); ?></p>
+		<h3 class="send-otp-title"><?php esc_html_e( '2-Step Authentication', 'aione-app-builder' ); ?></h3>
+		<p class="send-otp-subtitle"><?php esc_html_e( 'Select 2-Step Authentication Method', 'aione-app-builder' ); ?></p>
+		
 		<?php
-
-		$otp_number='';
-		if(empty($generated_otp_number)){
-			$otp_number= (rand(100000, 999999));
-		}else{
-			$otp_number=$generated_otp_number;
+		$generated_otp_number = get_user_meta($user->ID,"wp-generated-otp-number",true);
+		if(get_option('two_factor_auth')=='email'){
+			$this->send_otp_mail( $user,$generated_otp_number );
 		}
-		
-		if(empty($generated_otp_time)){
-			$generated_otp_time=date("Y-m-d h:i:s");
+		if(get_option('two_factor_auth')=='mobile'){
+			$this->send_sms( $user,$generated_otp_number );
 		}
-		
+		if(get_option('two_factor_auth')=='both'){
+			$this->send_otp_mail( $user,$generated_otp_number );
+			$this->send_sms( $user,$generated_otp_number );
+		}
+						
 		?>
-		
-		<input type="hidden" name="wp-generated-otp-number"  id="wp-generated-otp-number"  value="<?php echo $otp_number; ?>" />
-
-		<?php
-		if(empty($generated_otp_number)){
-			$generated_otp_number=$otp_number;
-			if(get_option('two_factor_auth')=='email'){
-				$this->send_otp_mail( $user,$otp_number );
-			}elseif(get_option('two_factor_auth')=='mobile'){
-
-			}elseif(get_option('two_factor_auth')=='both'){
-				$this->send_otp_mail( $user,$otp_number );
-			}elseif(get_option('two_factor_auth')=='user_can_select'){
-		?>	
-			<p>
-				<input type="text" name="" list="cars" placeholder="Select For OTP">
-				<datalist id="cars">
-					<option>email</option>
-					<option>mobile</option>
-					<option>both</option>
-				</datalist>
-				<button name="send_otp">Send OTP</button>
-			</p>
-			<?php
-			}
-		}				
-		?>
+		<p class="send-otp-label"><?php esc_html_e( 'Enter 6 digit OTP code', 'aione-app-builder' ); ?></p>
 		<p> 
-			<input type="text" maxlength="6" placeholder="enter 6 digit OTP code.." name="wp-entered-otp-number" id="wp-entered-otp-number" >
+			<input type="text" maxlength="6" placeholder="######" name="wp-entered-otp-number" id="wp-entered-otp-number" >
 
 			<input type="hidden" maxlength="6" name="wp-generated-otp-number-date-time" id="wp-generated-otp-number-date-time" value="<?php echo $generated_otp_time;?>">
 		 </p>
 		<?php
 		
-		submit_button( __( 'ok ', 'aione-app-builder' ) );
+		submit_button( __( 'Proceed to login', 'aione-app-builder' ) );
 
 		if($this->calculate_time_difference($generated_otp_time)>10){
 			submit_button( $text = 'Re-send OTP', $type = 'primary', $name = 're_send_otp', $wrap = true, $other_attributes = null );
 		}
 		
+	}
+
+	function user_defined_authentication_form(){
+		if ( ! isset( $_POST['wp-auth-id'], $_POST['wp-auth-nonce'] ) ) {
+			return;
+		}
+		$rememberme = $_POST['rememberme'];
+		$login_nonce = $_POST['wp-auth-nonce'];
+		$redirect_to = $_POST['redirect_to'];
+		$user = get_userdata( $_POST['wp-auth-id'] );
+		$generated_otp_number = get_user_meta($user->ID,"wp-generated-otp-number",true);
+		$generated_otp_time=date("Y-m-d h:i:s");
+		echo "**************************************************************";
+		if($_GET['method'] and isset($_POST['auth_method'])){
+			$this->custom_authentication_page($user,$generated_otp_number, $generated_otp_time,$rememberme ,$login_nonce, $redirect_to);
+		}
 	}
 
 	function login_form_validate_2fa() {
@@ -367,7 +404,7 @@ class Aione_App_Builder_Public {
 
 		$user = get_userdata( $_POST['wp-auth-id'] );
 
-		$generated_otp_number=$_POST['wp-generated-otp-number'];
+		$generated_otp_number = get_user_meta($user->ID,"wp-generated-otp-number",true);
 		$entered_otp_number=$_POST['wp-entered-otp-number'];
 		$generated_otp_number_date_time=$_POST['wp-generated-otp-number-date-time'];
 		
