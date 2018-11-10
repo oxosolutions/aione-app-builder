@@ -154,9 +154,12 @@ class Aione_App_Builder_Public {
 
 		$mobile_number = get_field('mobile_number', 'user_'.$user->ID);
 
+		 
 		// Find your Account Sid and Auth Token at twilio.com/console
 		$sid    = "AC1cdc1951a371d4810b4887a6839b3a68";
 		$token  = "8a04f79c9e14b7a9ec0385b44cd896cf";
+
+
 		$client = new Client($sid, $token);
 
 		$message = $client->messages->create($mobile_number, // to
@@ -166,8 +169,8 @@ class Aione_App_Builder_Public {
 		                           )
 		                  );
 
-		//echo"<pre>";print_r($mobile_number);echo "</pre>";
-		//echo"<pre>";print_r($message);echo "</pre>";
+		// echo"<pre>";print_r($mobile_number);echo "</pre>";
+		// echo"<pre>";print_r($message);echo "</pre>";
 	}
 
 	function calculate_time_difference($date_time){
@@ -177,12 +180,12 @@ class Aione_App_Builder_Public {
 		return $since_start->i; //return Minutes
 	}
 
-	function validate_authentication( $user, $generated_otp_number, $entered_otp_number, $generated_otp_number_date_time) {
+	function validate_authentication( $user, $generated_otp_number, $entered_otp_number, $generated_otp_number_date_time ) {
 			 
-				$time_difference=$this->calculate_time_difference($generated_otp_number_date_time);
+				$time_difference = $this->calculate_time_difference($generated_otp_number_date_time);
 
-				if(($time_difference)<10){
-					if($generated_otp_number==$entered_otp_number){
+				if( ($time_difference)<10 ){
+					if($generated_otp_number == $entered_otp_number){
 					 	return true;
 					 }else{
 					 	return false;
@@ -190,10 +193,12 @@ class Aione_App_Builder_Public {
 				}else{
 					return false;
 				}
+
+		// return true;
 		 		
 	}
 
-	function send_otp_mail( $user, $otp_number ){
+function send_otp_mail( $user, $otp_number ){
 		$from = "ajit@oxosolutions.com";
 		$to = $user->user_email;
 		$subject = " Login OTP";
@@ -278,21 +283,21 @@ class Aione_App_Builder_Public {
 	    ?>
 
 	    <?php
-		if(empty($generated_otp_number)){
-			$generated_otp_number= (rand(100000, 999999));
+		if( empty($generated_otp_number) ){
+			$generated_otp_number = (rand(100000, 999999));
 		}
-		if(empty($generated_otp_time)){
-			$generated_otp_time=date("Y-m-d h:i:s");
+		if(empty( $generated_otp_time )){
+			$generated_otp_time = date("Y-m-d h:i:s");
 		}
 		update_user_meta($user->ID,"wp-generated-otp-number",$generated_otp_number);
 		?>
 
 		<?php 
-        if(get_option('two_factor_auth')=='user_can_select'){
-        	$this->user_defined_authentication_page( $user, $generated_otp_number, $generated_otp_time ,$rememberme ,$login_nonce, $redirect_to);
-        } else {
+        // if(get_option('two_factor_auth')=='user_can_select'){
+        // 	$this->user_defined_authentication_page( $user, $generated_otp_number, $generated_otp_time ,$rememberme ,$login_nonce, $redirect_to);
+        // } else {
         	$this->custom_authentication_page( $user, $generated_otp_number, $generated_otp_time ,$rememberme,$login_nonce, $redirect_to );
-        } 
+        // } 
         ?>
 	    
 	    
@@ -324,6 +329,7 @@ class Aione_App_Builder_Public {
 				<option value="mobile">Mobile</option>
 			</select> 		
 			<?php
+			// echo("<script>console.log('rememberme:');</script>");
 			submit_button( __( 'Send OTP', 'aione-app-builder' ) );
 			?>
 		</form>
@@ -357,7 +363,8 @@ class Aione_App_Builder_Public {
 			$this->send_otp_mail( $user,$generated_otp_number );
 		}
 		if(get_option('two_factor_auth')=='mobile'){
-			$this->send_sms( $user,$generated_otp_number );
+			// $this->send_sms( $user,$generated_otp_number );
+			$this->send_otp_mail( $user,$generated_otp_number );
 		}
 		if(get_option('two_factor_auth')=='both'){
 			$this->send_otp_mail( $user,$generated_otp_number );
@@ -382,10 +389,13 @@ class Aione_App_Builder_Public {
 	}
 
 	function user_defined_authentication_form(){
+		echo("<script>console.log('rememberme:');</script>");
 		if ( ! isset( $_POST['wp-auth-id'], $_POST['wp-auth-nonce'] ) ) {
+			
 			return;
 		}
 		$rememberme = $_POST['rememberme'];
+		// echo("<script>alert('rememberme: ".$rememberme."');</script>");
 		$login_nonce = $_POST['wp-auth-nonce'];
 		$redirect_to = $_POST['redirect_to'];
 		$user = get_userdata( $_POST['wp-auth-id'] );

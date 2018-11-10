@@ -74,6 +74,39 @@
 					} ?> name="two_factor_auth" value="user_can_select">
 				</td>
 			</tr>
+
+			<tr>
+				<th scope='row'><label for='Select SMS Account'>Select SMS Account: </label></th>
+				<td>
+					<select name="sms_service_provider">
+						<option value="">Select SMS Service provider</option>
+						<option value="Twillio"<?php if(get_option('sms_service_provider') == 'Twillio'){ echo "selected";
+						} ?> >Twillio</option>
+					</select>
+					<p class="description">Select SMS Account from where user wants to send SMS.</p>
+				</td>
+			</tr>
+
+			<tr>
+				<th scope='row'></th>
+				<td>
+					Account SID: 
+					<input type="text" name="sms_service_provider_key"
+						value="<?php echo get_option('sms_service_provider_key'); ?> "
+					>
+				</td>
+			</tr>
+
+			<tr>
+				<th scope='row'></th>
+				<td>
+					Auth Token : 
+					
+					<input type="text" name="sms_service_provider_secret" value="<?php echo get_option('sms_service_provider_secret'); ?> "> 
+
+				</td>
+			</tr>
+
 		</tbody>
 	</table>
 
