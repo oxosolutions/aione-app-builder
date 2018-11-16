@@ -198,7 +198,7 @@ class Aione_App_Builder_Public {
 		 		
 	}
 
-function send_otp_mail( $user, $otp_number ){
+	function send_otp_mail( $user, $otp_number ){
 		$from = "ajit@oxosolutions.com";
 		$to = $user->user_email;
 		$subject = " Login OTP";
@@ -231,6 +231,37 @@ function send_otp_mail( $user, $otp_number ){
 	function delete_login_nonce( $user_id ) {
 		return delete_user_meta( $user_id, '_two_factor_nonce' );
 	}
+	function my_added_login_field(){
+		/*$page_showing = basename($_SERVER['REQUEST_URI']);
+	    print_r($_REQUEST);*/
+		if(get_option('two_factor_auth')=='user_can_select'){
+			?>
+			<p>
+		        <label for="my_extra_field">Select Authentication Method</label>
+		        <div id="user_selection">
+					<select name="auth_method" id="auth_method">
+					<option value="email">Email</option>
+					<option value="mobile">Mobile</option>
+					<option value="none">None</option>
+				</select> 
+				</div>
+		    </p>
+			<?php
+		}
+		?>
+	    
+	<?php
+	}
+	function my_login_message() {
+		/*$page_showing = basename($_SERVER['REQUEST_URI']);
+	    print_r($_REQUEST);*/
+	    $return_value = '';
+	    if($_REQUEST['error'] == 'authmethod'){
+	    	$return_value =  '<div id="login_error"><strong>You are not authorized to skip authentication method. Please select any authentication method other than "None"</stong></div>';
+	    }
+	    return $return_value;
+	}
+
 	function wp_login( $user_login, $user ) {
 		$enable_two_factor_auth = get_option('enable_two_factor_auth');
 	    if ( empty( $enable_two_factor_auth ) || $enable_two_factor_auth == "no" ) {
@@ -280,6 +311,7 @@ function send_otp_mail( $user, $otp_number ){
 	    if ( ! empty( $error_msg ) ) {
 	        echo '<div id="login_error"><strong>' . esc_html( $error_msg ) . '</strong><br /></div>';
 	    }
+	    
 	    ?>
 
 	    <?php
@@ -293,14 +325,37 @@ function send_otp_mail( $user, $otp_number ){
 		?>
 
 		<?php 
-        // if(get_option('two_factor_auth')=='user_can_select'){
-        // 	$this->user_defined_authentication_page( $user, $generated_otp_number, $generated_otp_time ,$rememberme ,$login_nonce, $redirect_to);
-        // } else {
-        	$this->custom_authentication_page( $user, $generated_otp_number, $generated_otp_time ,$rememberme,$login_nonce, $redirect_to );
-        // } 
+         if(get_option('two_factor_auth')=='user_can_select'){
+        	$method = $_REQUEST['auth_method'];
+         } else {
+         	$method ="";
+         } 
+
+         if($user){
+			if(in_array( 'subscriber', (array) $user->roles ) && $method == 'none'){
+				/*$error = new WP_Error( 'loginCaptchaError', 'Select Authentication Method' );
+				echo $error;
+				do_action( 'wp_login',$user->user_login='',$user='');
+				exit;*/
+				wp_safe_redirect( "http://aione.oxosolutions.com/oxosolutions/wp-login.php?error=authmethod" );
+				//exit;
+
+				//$this->login_html( $user, $login_nonce['key'], $_REQUEST['redirect_to'], esc_html__( 'ERROR: Select Authentication Method.', 'aione-app-builder' ) );
+				//wp_login_form();
+				/*do_action( 'wp_login_failed', $user->user_login );
+				$login_nonce = $this->create_login_nonce( $user->ID );
+				if ( ! $login_nonce ) {
+					wp_die( esc_html__( 'Failed to create a login nonce.', 'aione-app-builder' ) );
+				}
+				$this->login_html( $user="", $login_nonce['key'], $redirect_to, esc_html__( 'ERROR: Invalid verification code.', 'aione-app-builder' ) );
+				exit;*/
+			
+			} else {
+				$this->custom_authentication_page( $user, $generated_otp_number, $generated_otp_time ,$rememberme,$login_nonce, $redirect_to ,$method);
+			}
+		}
+        
         ?>
-	    
-	    
 
 	    <p id="backtoblog">
 	        <a href="<?php echo esc_url( home_url( '/' ) ); ?>" title="Are you lost?"><?php echo sprintf( '&larr; Back to %s', get_bloginfo( 'title', 'display' ) ); ?></a>
@@ -314,64 +369,53 @@ function send_otp_mail( $user, $otp_number ){
 	    <?php
 	}
 
-	function user_defined_authentication_page( $user, $generated_otp_number, $generated_otp_time,$rememberme,$login_nonce, $redirect_to ){
-		?>
-		<h3 class="send-otp-title"><?php esc_html_e( '2-Step Authentication', 'aione-app-builder' ); ?></h3>
-		<p class="send-otp-subtitle"><?php esc_html_e( 'Select 2-Step Authentication Method', 'aione-app-builder' ); ?></p>
-		<form name="user_defined_authentication_form" id="user_defined_authentication_form" action="<?php echo esc_url( set_url_scheme( add_query_arg( 'method', 'custom', $wp_login_url ), 'login_post' ) ); ?>" method="post" autocomplete="off">	
-	        <input type="hidden" name="wp-auth-id"    id="wp-auth-id"    value="<?php echo esc_attr( $user->ID ); ?>" />
-	        <input type="hidden" name="wp-auth-nonce" id="wp-auth-nonce" value="<?php echo esc_attr( $login_nonce ); ?>" />
-	        <input type="hidden" name="redirect_to" value="<?php echo esc_attr( $redirect_to ); ?>" />
-	        <input type="hidden" name="rememberme"    id="rememberme"    value="<?php echo esc_attr( $rememberme ); ?>" />
-
-			<select name="auth_method" id="auth_method">
-				<option value="email">Email</option>
-				<option value="mobile">Mobile</option>
-			</select> 		
-			<?php
-			// echo("<script>console.log('rememberme:');</script>");
-			submit_button( __( 'Send OTP', 'aione-app-builder' ) );
-			?>
-		</form>
-		<?php 
-	}
-
-	function custom_authentication_page($user, $generated_otp_number, $generated_otp_time,$rememberme ,$login_nonce, $redirect_to){
+	function custom_authentication_page($user, $generated_otp_number, $generated_otp_time,$rememberme ,$login_nonce, $redirect_to,$method){
 		?>
 		<form name="validate_2fa_form" id="loginform" action="<?php echo esc_url( set_url_scheme( add_query_arg( 'action', 'validate_2fa', $wp_login_url ), 'login_post' ) ); ?>" method="post" autocomplete="off">	
 	        <input type="hidden" name="wp-auth-id"    id="wp-auth-id"    value="<?php echo esc_attr( $user->ID ); ?>" />
 	        <input type="hidden" name="wp-auth-nonce" id="wp-auth-nonce" value="<?php echo esc_attr( $login_nonce ); ?>" />
 	        <input type="hidden" name="redirect_to" value="<?php echo esc_attr( $redirect_to ); ?>" />
 	        <input type="hidden" name="rememberme"    id="rememberme"    value="<?php echo esc_attr( $rememberme ); ?>" />
+	        <input type="hidden" name="method"    id="method"    value="<?php echo esc_attr( $method ); ?>" />
 	        <?php 
-	        $this->authentication_page( $user, $generated_otp_number, $generated_otp_time );
+	        $this->authentication_page( $user, $generated_otp_number, $generated_otp_time,$method );
 	        ?>
 	    </form>
 
 		<?php 
 	}
 
-	function authentication_page( $user, $generated_otp_number, $generated_otp_time='' ) {
+	function authentication_page( $user, $generated_otp_number, $generated_otp_time='',$method ) {
 		require_once( ABSPATH .  '/wp-admin/includes/template.php' );
+
 		?>
 		<h3 class="send-otp-title"><?php esc_html_e( '2-Step Authentication', 'aione-app-builder' ); ?></h3>
-		<p class="send-otp-subtitle"><?php esc_html_e( 'Select 2-Step Authentication Method', 'aione-app-builder' ); ?></p>
+		
 		
 		<?php
 		$generated_otp_number = get_user_meta($user->ID,"wp-generated-otp-number",true);
+		
 		if(get_option('two_factor_auth')=='email'){
 			$this->send_otp_mail( $user,$generated_otp_number );
 		}
 		if(get_option('two_factor_auth')=='mobile'){
-			// $this->send_sms( $user,$generated_otp_number );
-			$this->send_otp_mail( $user,$generated_otp_number );
+			$this->send_sms( $user,$generated_otp_number );
 		}
 		if(get_option('two_factor_auth')=='both'){
 			$this->send_otp_mail( $user,$generated_otp_number );
 			$this->send_sms( $user,$generated_otp_number );
 		}
+		if(get_option('two_factor_auth')=='user_can_select'){
+			if($method == 'email'){
+				$this->send_otp_mail( $user,$generated_otp_number );
+			}
+			if($method == 'mobile'){
+				$this->send_sms( $user,$generated_otp_number );
+			}
+		}
 						
 		?>
+		<div id="otp_box">
 		<p class="send-otp-label"><?php esc_html_e( 'Enter 6 digit OTP code', 'aione-app-builder' ); ?></p>
 		<p> 
 			<input type="text" maxlength="6" placeholder="######" name="wp-entered-otp-number" id="wp-entered-otp-number" >
@@ -381,30 +425,13 @@ function send_otp_mail( $user, $otp_number ){
 		<?php
 		
 		submit_button( __( 'Proceed to login', 'aione-app-builder' ) );
-
+		?>
+		</div>
+		<?php
 		if($this->calculate_time_difference($generated_otp_time)>10){
 			submit_button( $text = 'Re-send OTP', $type = 'primary', $name = 're_send_otp', $wrap = true, $other_attributes = null );
 		}
 		
-	}
-
-	function user_defined_authentication_form(){
-		echo("<script>console.log('rememberme:');</script>");
-		if ( ! isset( $_POST['wp-auth-id'], $_POST['wp-auth-nonce'] ) ) {
-			
-			return;
-		}
-		$rememberme = $_POST['rememberme'];
-		// echo("<script>alert('rememberme: ".$rememberme."');</script>");
-		$login_nonce = $_POST['wp-auth-nonce'];
-		$redirect_to = $_POST['redirect_to'];
-		$user = get_userdata( $_POST['wp-auth-id'] );
-		$generated_otp_number = get_user_meta($user->ID,"wp-generated-otp-number",true);
-		$generated_otp_time=date("Y-m-d h:i:s");
-		echo "**************************************************************";
-		if($_GET['method'] and isset($_POST['auth_method'])){
-			$this->custom_authentication_page($user,$generated_otp_number, $generated_otp_time,$rememberme ,$login_nonce, $redirect_to);
-		}
 	}
 
 	function login_form_validate_2fa() {

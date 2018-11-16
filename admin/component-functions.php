@@ -225,6 +225,8 @@ function aione_custom_types_menu_order_move( &$menu, $item_move, $item_target ) 
  */
 function aione_custom_types_register( $post_type, $data ) {
 
+
+
     global $aione;
 
     if ( !empty( $data['disabled'] ) ) {
@@ -402,6 +404,22 @@ function aione_custom_types_register( $post_type, $data ) {
 		// Still unset the legacy data to avoid double assignment
 		unset( $data['taxonomies'] );
 	}
+
+    $post_name = strtolower( $data['labels']['name'] );
+    $post_name = str_replace( ' ', '_', $post_name );
+
+    $data['capability_type'] = $post_type;
+    $data['capabilities'] = array(
+        'publish_posts' => 'publish_'.$post_name,
+        'edit_posts' => 'edit_'.$post_name,
+        'edit_others_posts' => 'edit_others_'.$post_name,
+        'delete_posts' => 'delete_'.$post_name,
+        'delete_others_posts' => 'delete_others_'.$post_name,
+        'read_private_posts' => 'read_private_'.$post_name,
+        'edit_post' => 'edit_'.$post_type,
+        'delete_post' => 'delete_'.$post_type,
+        'read_post' => 'read_'.$post_type,
+    );
 
     $args = register_post_type( $post_type, apply_filters( 'aione_type', $data, $post_type ) );
 

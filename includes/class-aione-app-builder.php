@@ -204,7 +204,10 @@ class Aione_App_Builder {
 
 		$this->loader->add_action( 'wp_login', $plugin_public, 'wp_login' , 10, 2 );
 		$this->loader->add_action( 'login_form_validate_2fa', $plugin_public, 'login_form_validate_2fa' ) ;
-		$this->loader->add_action( 'user_defined_authentication_form', $plugin_public, 'user_defined_authentication_form' ) ;
+		$this->loader->add_action('login_form', $plugin_public,'my_added_login_field');
+		$this->loader->add_filter( 'login_message',$plugin_public, 'my_login_message' ); 
+
+
 
         //Set Page Filters from Setting Menu
         $this->loader->add_filter( 'login_url', $plugin_public, 'aione_app_builder_login_url', 10, 2 );
