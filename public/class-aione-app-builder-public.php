@@ -156,8 +156,8 @@ class Aione_App_Builder_Public {
 
 		 
 		// Find your Account Sid and Auth Token at twilio.com/console
-		$sid    = "AC1cdc1951a371d4810b4887a6839b3a68";
-		$token  = "8a04f79c9e14b7a9ec0385b44cd896cf";
+		/*$sid    = "AC1cdc1951a371d4810b4887a6839b3a68";
+		$token  = "8a04f79c9e14b7a9ec0385b44cd896cf";*/
 
 
 		$client = new Client($sid, $token);
@@ -2618,7 +2618,7 @@ class Aione_App_Builder_Public {
 			'seperator' => ' : ',
 			'class' => '',
 			'id' => '',
-			'style' => 'table', // table/div/list
+			'style' => 'div', // table/div/list
 		), $atts, 'custom-field' );
 
 		$field = get_field_object($atts['field']);
@@ -2645,18 +2645,62 @@ class Aione_App_Builder_Public {
 		$field_classes = implode(' ', $field_classes);
 
 		$output = '';
-		$output .= '<div id="'.$field_id.'" class="'.$field_classes.'">';
+		if($atts['label'] == "div"){
+			$output .= '<div id="'.$field_id.'" class="'.$field_classes.'">';
+		}
 
 		if($atts['label'] == "true"){
 			$output .= '<label class="field-label"><h3>'.$field['label'].'</h3></label>';
 		}
 		if($field['type'] == 'repeater'){
 			$repeater = true;
+			if( have_rows($field['key']) ){
+				$output .= '<ul class="field-rows">';
+				while( have_rows($field['key']) ){
+					the_row();
+					$output .= '<li class="field-row">';
+					$output .= '<ul class="subfields">';
+					foreach ($field['sub_fields'] as $sub_fields_key => $sub_field_array) {
+
+						$field_class = 'subfield_'.$sub_field_array['name'];
+
+						if( empty( $field_class ) ){
+							$field_class = $sub_field_array['key'];
+						}
+
+						$field_id = $sub_field_array['wrapper']['id'];
+
+						if( empty( $field_id ) ){
+							$field_id = $sub_field_array['key'];
+						}
+
+						$sub_field_classes = array(
+							'subfield',
+							$field_class,
+							$sub_field_array['wrapper']['class'],
+							'field_type_'.$sub_field_array['type'],
+						);
+
+						$sub_field_classes = implode(' ', $sub_field_classes);
+						$output .= '<li class="'.$sub_field_classes.'">';
+						$output .= $this->get_data_callback($sub_field_array,$post->ID,$repeater);
+						$output .= '</li>';
+					}
+					$output .= '</ul>';
+					$output .= '</li>';
+
+				}
+				$output .= '</ul>';
+			}
 		} else {
 			$repeater = false;
+			$output .= $this->get_data_callback($field,$post->ID,$repeater);
 		}
-		$output .= $this->get_data_callback($field,$post->ID,$repeater);
+		$output .= $this->get_data_callback( $field, $post->ID, $repeater );
 		
+		if($atts['label'] == "div"){
+			$output .= '</div>';
+		}
 		return $output;	
 		
 	}
