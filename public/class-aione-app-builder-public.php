@@ -2696,7 +2696,6 @@ class Aione_App_Builder_Public {
 			$repeater = false;
 			$output .= $this->get_data_callback($field,$post->ID,$repeater);
 		}
-		$output .= $this->get_data_callback( $field, $post->ID, $repeater );
 		
 		if($atts['label'] == "div"){
 			$output .= '</div>';
