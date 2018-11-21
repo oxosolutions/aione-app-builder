@@ -2622,7 +2622,7 @@ class Aione_App_Builder_Public {
 		), $atts, 'custom-field' );
 
 		$field = get_field_object($atts['field']);
-		//echo "<pre>";print_r($field);echo "</pre>";
+		// echo "<pre>";print_r($field);echo "</pre>";
 		$field_class = 'field_'.$field['name'];
 
 		if( empty( $field_class ) ){
@@ -2683,7 +2683,7 @@ class Aione_App_Builder_Public {
 
 						$sub_field_classes = implode(' ', $sub_field_classes);
 						$output .= '<li class="'.$sub_field_classes.'">';
-						$output .= $this->get_data_callback($sub_field_array,$post->ID,$repeater);
+						$output .= $this->get_data_callback($sub_field_array,$post->ID,$repeater,$atts);
 						$output .= '</li>';
 					}
 					$output .= '</ul>';
@@ -2694,7 +2694,7 @@ class Aione_App_Builder_Public {
 			}
 		} else {
 			$repeater = false;
-			$output .= $this->get_data_callback($field,$post->ID,$repeater);
+			$output .= $this->get_data_callback($field,$post->ID,$repeater,$atts);
 		}
 		
 		if($atts['label'] == "div"){
@@ -2704,7 +2704,7 @@ class Aione_App_Builder_Public {
 		
 	}
 
-	function get_data_callback($field , $post_id , $repeater){
+	function get_data_callback($field , $post_id , $repeater, $atts){
 		$data = $this->get_field_data($field['key'],$post_id,$repeater);
 		$output = '';
 		if($data){
@@ -2909,6 +2909,19 @@ class Aione_App_Builder_Public {
 			    		$output .= '<div class="">Last Name:'.$user_info->user_lastname.'</div>';
 			    		$output .= '<div class="">Email:'.$user_info->user_email.'</div>';
 			    	}
+			    	break;
+			    case "repeater":   
+			    /*
+			    	$output .=  "<pre>";
+			    	$output .= print_r( $field, true );
+			    	$output .=  "</pre>";
+			    	*/
+
+			    	$repeater_field_key = $field['key'];
+			    	$repeater_field_label = $atts['label'];
+			    	$repeater_field_style = $atts['style'];
+
+			    	$output .= do_shortcode( '[custom-field field="'.$repeater_field_key.'" label="'.$repeater_field_label.'" style="'.$repeater_field_style.'"]' );
 			    	break;             
 			    default:
 	        	$output .= "Unknown field Type";   

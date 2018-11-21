@@ -9,3 +9,6 @@ UPDATED: Added capabilities to Custom Post types
 
 ## 1.3.0.3 20-11-2018
 FIXED: Issue with Custom Post field
+
+## 1.3.0.3 21-11-2018
+ADDED: Custom fields repeater in a reprater
