@@ -406,9 +406,9 @@ function aione_custom_types_register( $post_type, $data ) {
 	}
 
     $post_name = strtolower( $data['labels']['name'] );
-    $post_name = str_replace( ' ', '_', $post_name );
+    $post_name = 'aio_'.str_replace( ' ', '_', $post_name );
 
-    $data['capability_type'] = $post_type;
+    $data['capability_type'] = 'aione_'.$post_type;
     $data['capabilities'] = array(
         'publish_posts' => 'publish_'.$post_name,
         'edit_posts' => 'edit_'.$post_name,
