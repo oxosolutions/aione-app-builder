@@ -405,6 +405,85 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
                 ) => 'archive',
             ),
         );
+
+        $form['template_sidebar_left_enable'] = array(
+            '#type' => 'select',
+            '#label' => '<b>Enable Left Sidebar</b><br>',
+            '#name' => 'at[template_sidebar_left_enable]',
+            '#default_value' => (empty( $this->at['template_sidebar_left_enable'] ) || $this->at['template_sidebar_left_enable'] == 'default') ? 'default' : $this->at['template_sidebar_left_enable'],
+            '#inline' => false,
+            '#options' => array(
+                sprintf(
+                    '%s',
+                    __('Default', 'aione-app-builder'),
+                    __('Default', 'aione-app-builder' )
+                ) => 'default',
+                sprintf(
+                    '%s',
+                    __('Yes', 'aione-app-builder'),
+                    __('Yes', 'aione-app-builder' )
+                ) => 'yes',
+                sprintf(
+                    '%s',
+                    __('No', 'aione-app-builder'),
+                    __( 'No', 'aione-app-builder' )
+                ) => 'no',
+            ),
+        );
+
+        $sidebars = array();
+        $sidebars['default'] = __( 'Default', 'gutenbergtheme' );
+        foreach ( $GLOBALS['wp_registered_sidebars'] as $sidebar ) {
+            $sidebar_id = $sidebar['id'];
+            $sidebar_name = ucwords( $sidebar['name']);
+            $sidebars[$sidebar_name] = $sidebar_id;
+        }
+
+        $form['template_sidebar_left'] = array(
+            '#type' => 'select',
+            '#label' => '<b>Select Left Sidebar</b><br>',
+            '#name' => 'at[template_sidebar_left]',
+            '#default_value' => (empty( $this->at['template_sidebar_left'] ) || $this->at['template_sidebar_left'] == 'default') ? 'default' : $this->at['template_sidebar_left'],
+            '#inline' => false,
+            '#options' => $sidebars,
+        );
+
+
+        $form['template_sidebar_right_enable'] = array(
+            '#type' => 'select',
+            '#label' => '<b>Enable Right Sidebar</b><br>',
+            '#name' => 'at[template_sidebar_right_enable]',
+            '#default_value' => (empty( $this->at['template_sidebar_right_enable'] ) || $this->at['template_sidebar_right_enable'] == 'default') ? 'default' : $this->at['template_sidebar_right_enable'],
+            '#inline' => false,
+            '#options' => array(
+                sprintf(
+                    '%s',
+                    __('Default', 'aione-app-builder'),
+                    __('Default', 'aione-app-builder' )
+                ) => 'default',
+                sprintf(
+                    '%s',
+                    __('Yes', 'aione-app-builder'),
+                    __('Yes', 'aione-app-builder' )
+                ) => 'yes',
+                sprintf(
+                    '%s',
+                    __('No', 'aione-app-builder'),
+                    __( 'No', 'aione-app-builder' )
+                ) => 'no',
+            ),
+        );
+
+        $form['template_sidebar_right'] = array(
+            '#type' => 'select',
+            '#label' => '<b>Select Right Sidebar</b><br>',
+            '#name' => 'at[template_sidebar_right]',
+            '#default_value' => (empty( $this->at['template_sidebar_right'] ) || $this->at['template_sidebar_right'] == 'default') ? 'default' : $this->at['template_sidebar_right'],
+            '#inline' => false,
+            '#options' => $sidebars,
+        );
+
+
         $form = aione_form(__FUNCTION__, $form);
         echo $form->renderForm();
     }

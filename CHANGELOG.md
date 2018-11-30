@@ -15,3 +15,6 @@ ADDED: Custom fields repeater in a reprater
 
 ## 1.3.0.5 29-11-2018
 UPDATED: Some design improvements
+
+## 1.3.0.6 30-11-2018
+ADDED: Template custom sidebar
