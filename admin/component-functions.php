@@ -405,17 +405,17 @@ function aione_custom_types_register( $post_type, $data ) {
 		unset( $data['taxonomies'] );
 	}
 
-    $post_name = strtolower( $data['labels']['name'] );
-    $post_name = 'aio_'.str_replace( ' ', '_', $post_name );
+    // $post_name = strtolower( $data['labels']['name'] );
+    // $post_name = 'aio_'.str_replace( ' ', '_', $post_name );
 
     $data['capability_type'] = 'aione_'.$post_type;
     $data['capabilities'] = array(
-        'publish_posts' => 'publish_'.$post_name,
-        'edit_posts' => 'edit_'.$post_name,
-        'edit_others_posts' => 'edit_others_'.$post_name,
-        'delete_posts' => 'delete_'.$post_name,
-        'delete_others_posts' => 'delete_others_'.$post_name,
-        'read_private_posts' => 'read_private_'.$post_name,
+        'publish_posts' => 'publish_'.$post_type.'s',
+        'edit_posts' => 'edit_'.$post_type.'s',
+        'edit_others_posts' => 'edit_others_'.$post_type.'s',
+        'delete_posts' => 'delete_'.$post_type.'s',
+        'delete_others_posts' => 'delete_others_'.$post_type.'s',
+        'read_private_posts' => 'read_private_'.$post_type.'s',
         'edit_post' => 'edit_'.$post_type,
         'delete_post' => 'delete_'.$post_type,
         'read_post' => 'read_'.$post_type,
