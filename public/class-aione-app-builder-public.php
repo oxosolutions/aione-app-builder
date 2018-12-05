@@ -1583,37 +1583,42 @@ class Aione_App_Builder_Public {
 	} // End aione_app_builder_url_shortcode()
 
 	public function aione_app_builder_list_post_shortcode( $atts ) {
+
 		// Attributes
 		extract( shortcode_atts(
-				array(
-					'cat'       => '',
-					'cat_id'    => '',
-					'author'    => '',
-					'author_id' => '',
-					'count'     => '',
-					'id'        => '',
-					'class'     => ''	
-				), $atts )
+			array(
+				'post_type'	=> 'post',
+				'cat'		=> '',
+				'cat_id'	=> '',
+				'author'	=> '',
+				'author_id'	=> '',
+				'count'		=> '',
+				'template'		=> '',
+				'id'		=> '',
+				'class'		=> ''	
+			), $atts )
 		);
 		
 		global $theme_options, $post;
+
 		$output = "";
+
 		// WP_Query arguments
 		$args = array (
-			'post_type'              => 'post',
-			'post_status'            => 'publish',
-			'cat'                    => $cat_id,
-			'category_name'          => $cat,
-			'author'                 => $author_id,
-			'author_name'            => $author,
-			'pagination'             => false,
-			'posts_per_page'         => $count,
-			'ignore_sticky_posts'    => false,
-			'order'                  => 'DESC',
-			'orderby'                => 'date',
-			'cache_results'          => true,
-			'update_post_meta_cache' => true,
-			'update_post_term_cache' => true,
+			'post_type'					=> $post_type,
+			'post_status'				=> 'publish',
+			'cat'						=> $cat_id,
+			'category_name'				=> $cat,
+			'author'					=> $author_id,
+			'author_name'				=> $author,
+			'pagination'				=> false,
+			'posts_per_page'			=> $count,
+			'ignore_sticky_posts'		=> false,
+			'order'						=> 'DESC',
+			'orderby'					=> 'date',
+			'cache_results'				=> true,
+			'update_post_meta_cache'	=> true,
+			'update_post_term_cache'	=> true,
 		);
 
 		$resent_posts = new WP_Query($args);

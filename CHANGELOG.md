@@ -21,3 +21,6 @@ ADDED: Template custom sidebar
 
 ## 1.3.0.7 30-11-2018
 FIXED: Design Improvements and sed security fixes
+
+## 1.3.0.8 05-12-2018
+UPDATED: custom post type in list posts
