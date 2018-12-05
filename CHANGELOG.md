@@ -18,3 +18,6 @@ UPDATED: Some design improvements
 
 ## 1.3.0.6 30-11-2018
 ADDED: Template custom sidebar
+
+## 1.3.0.7 30-11-2018
+FIXED: Design Improvements and sed security fixes

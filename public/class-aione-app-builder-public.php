@@ -2393,12 +2393,18 @@ class Aione_App_Builder_Public {
 		), $atts, 'date' );
 
 		$output = '';
-		//$output = date($atts['format']);
-		$tz = $atts['time-zone'];
-		$timestamp = time();
-		$dt = new DateTime("now", new DateTimeZone($tz)); //first argument "must" be a string
-		$dt->setTimestamp($timestamp); //adjust the object to correct timestamp
-		$output .=  $dt->format($atts['format']);
+		global $post;
+
+		if ( in_the_loop() ) {
+			$output .= get_the_date();
+		} else{
+			//$output = date($atts['format']);
+			$tz = $atts['time-zone'];
+			$timestamp = time();
+			$dt = new DateTime("now", new DateTimeZone($tz)); //first argument "must" be a string
+			$dt->setTimestamp($timestamp); //adjust the object to correct timestamp
+			$output .=  $dt->format($atts['format']);
+		}
 		return $output;
 	}
 	/**
