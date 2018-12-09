@@ -1,14 +1,14 @@
 === Plugin Name ===
-Contributors: (this should be a list of wordpress.org userid's)
+Contributors: sgssandhu
 Donate link: www.oxosolutions.com
-Tags: comments, spam
+Tags: app builder, custom post type, custom texonomy
 Requires at least: 4.0.0
-Tested up to: 4.9.8
-Stable tag: 4.3
+Tested up to: 5.0
+Stable tag: 1.4.0.0
 License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License URI: http://www.gnu.org/licenses/gpl-2.0.txt
 
-Here is a short description of the plugin.  This should be no more than 150 characters.  No markup here.
+Easily create custom post types and taxonomy and connect everything together.
 
 == Description ==
 
