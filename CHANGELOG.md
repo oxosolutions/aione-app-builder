@@ -24,3 +24,6 @@ FIXED: Design Improvements and sed security fixes
 
 ## 1.3.0.8 05-12-2018
 UPDATED: custom post type in list posts
+
+## 1.4.0.0 09-12-2018
+UPDATED: Tested and updated code to meet the requirements of wordpress 5.0.
