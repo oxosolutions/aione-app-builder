@@ -199,7 +199,10 @@ class Aione_App_Builder_Public {
 	}
 
 	function send_otp_mail( $user, $otp_number ){
-		$from = "ajit@oxosolutions.com";
+		// echo("<script>console.log('PHP: ".$admin_email."');</script>");
+		$admin_email = get_option('admin_email');
+
+		$from = $admin_email;
 		$to = $user->user_email;
 		$subject = " Login OTP";
 		$message = "<h1>Hi ".$user->display_name."</h1> <br/> <br/>       <h2>Your 6-Digit OTP Number is :  ".$otp_number." . </h2>     <br/> <br/> Thanks.";
@@ -234,19 +237,21 @@ class Aione_App_Builder_Public {
 	function my_added_login_field(){
 		/*$page_showing = basename($_SERVER['REQUEST_URI']);
 	    print_r($_REQUEST);*/
-		if(get_option('two_factor_auth')=='user_can_select'){
-			?>
-			<p>
-		        <label for="my_extra_field">Select Authentication Method</label>
-		        <div id="user_selection">
-					<select name="auth_method" id="auth_method">
-					<option value="email">Email</option>
-					<option value="mobile">Mobile</option>
-					<option value="none">None</option>
-				</select> 
-				</div>
-		    </p>
-			<?php
+	    if ( get_option('enable_two_factor_auth') == 'yes' ) {
+	    	if(get_option('two_factor_auth')=='user_can_select'){
+				?>
+				<p>
+			        <label for="my_extra_field">Select Authentication Method</label>
+			        <div id="user_selection">
+						<select name="auth_method" id="auth_method">
+						<option value="email">Email</option>
+						<option value="mobile">Mobile</option>
+						<option value="none">None</option>
+					</select> 
+					</div>
+			    </p>
+				<?php
+			}
 		}
 		?>
 	    

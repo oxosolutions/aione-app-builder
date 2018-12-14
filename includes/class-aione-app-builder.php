@@ -264,6 +264,8 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'categories', $plugin_public, 'aione_app_builder_post_categories_shortcode' );
 		$this->loader->add_shortcode( 'custom-field', $plugin_public, 'aione_app_builder_post_custom_field_shortcode' );
 		$this->loader->add_shortcode( 'custom-fields', $plugin_public, 'aione_app_builder_post_custom_fields_shortcode' );
+
+		$this->loader->add_shortcode( 'profile-image', $plugin_public, 'aione_app_builder_profile_image_shortcode' );
 	}
 
 	/**
