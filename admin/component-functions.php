@@ -72,7 +72,7 @@ function aione_custom_types_default() {
         'query_var_enabled' => true,
         'query_var' => '',
         'can_export' => true,
-        'show_rest' => false,
+        'show_in_rest' => true,
         'rest_base' => '',
         'show_in_nav_menus' => true,
         'register_meta_box_cb' => '',

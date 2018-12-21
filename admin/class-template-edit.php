@@ -52,12 +52,12 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
                 'default' => 'advanced',
                 'post_types' => 'custom',
             ),
-            /*'types_applyto' => array(
+            'types_applyto' => array(
                 'callback' => array($this, 'box_applyto'),
                 'title' => __('Applied to', 'aione-app-builder'),
                 'default' => 'side',
                 'post_types' => 'custom',
-            ),*/
+            ),
 
             'submitdiv' => array(
                 'callback' => array($this, 'box_submitdiv'),
@@ -117,7 +117,11 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
 
         $custom_templates = get_option( AIONE_OPTION_NAME_TEMPLATES, array() );
         $this->at = @$custom_templates[$id];
-        
+
+       /* echo "<div style='width:66%;margin:0 auto;>'";
+        echo "<pre>";print_r($this->at);echo "</pre>";
+        echo "</div>";*/
+
         $current_user_can_edit = true;
         
         $form = $this->prepare_screen();
@@ -483,6 +487,137 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
             '#options' => $sidebars,
         );
 
+        if($this->at['template-type'] == "archive"){         
+            $form['template_posts_per_page'] = array(
+                '#type' => 'textfield',
+                '#label' => '<b>Number of posts per page</b><br>',
+                '#name' => 'at[template_posts_per_page]',
+                '#value' => isset( $this->at['template_posts_per_page'] ) ? $this->at['template_posts_per_page']:get_option( 'posts_per_page' ),
+            );
+            $form['template_posts_order_by'] = array(
+                '#type' => 'select',
+                '#label' => '<b>Posts Order By</b><br>',
+                '#name' => 'at[template_posts_order_by]',
+                '#default_value' => (empty( $this->at['template_posts_order_by'] ) ) ? 'date' : $this->at['template_posts_order_by'],
+                '#options' => array(
+                    sprintf(
+                        '%s',
+                        __('ID', 'aione-app-builder'),
+                        __('ID', 'aione-app-builder' )
+                    ) => 'ID',
+                    sprintf(
+                        '%s',
+                        __('Author', 'aione-app-builder'),
+                        __( 'Author', 'aione-app-builder' )
+                    ) => 'author',
+                    sprintf(
+                        '%s',
+                        __('Title', 'aione-app-builder'),
+                        __( 'Title', 'aione-app-builder' )
+                    ) => 'title',
+                    sprintf(
+                        '%s',
+                        __('Name', 'aione-app-builder'),
+                        __( 'Name', 'aione-app-builder' )
+                    ) => 'name',
+                    sprintf(
+                        '%s',
+                        __('Type', 'aione-app-builder'),
+                        __( 'Type', 'aione-app-builder' )
+                    ) => 'type',
+                    sprintf(
+                        '%s',
+                        __('Date', 'aione-app-builder'),
+                        __( 'Date', 'aione-app-builder' )
+                    ) => 'date',
+                    sprintf(
+                        '%s',
+                        __('Modified', 'aione-app-builder'),
+                        __( 'Modified', 'aione-app-builder' )
+                    ) => 'modified',
+                    sprintf(
+                        '%s',
+                        __('Parent', 'aione-app-builder'),
+                        __( 'Parent', 'aione-app-builder' )
+                    ) => 'parent',
+                    sprintf(
+                        '%s',
+                        __('Random', 'aione-app-builder'),
+                        __( 'Random', 'aione-app-builder' )
+                    ) => 'rand',
+                    sprintf(
+                        '%s',
+                        __('Comments', 'aione-app-builder'),
+                        __( 'Comments', 'aione-app-builder' )
+                    ) => 'comment_count',
+                    sprintf(
+                        '%s',
+                        __('Relevance', 'aione-app-builder'),
+                        __( 'Relevance', 'aione-app-builder' )
+                    ) => 'relevance',
+                    sprintf(
+                        '%s',
+                        __('Page Order', 'aione-app-builder'),
+                        __( 'Page Order', 'aione-app-builder' )
+                    ) => 'menu_order',
+                ),
+            );
+            $form['template_posts_order'] = array(
+                '#type' => 'select',
+                '#label' => '<b>Posts Order</b><br>',
+                '#name' => 'at[template_posts_order]',
+                '#default_value' => (empty( $this->at['template_posts_order'] ) ) ? 'ASC' : $this->at['template_posts_order'],
+                '#options' => array(
+                        sprintf(
+                            '%s',
+                            __('Ascending', 'aione-app-builder'),
+                            __( 'Ascending', 'aione-app-builder' )
+                        ) => 'ASC',
+                        sprintf(
+                            '%s',
+                            __('Descending', 'aione-app-builder'),
+                            __( 'Descending', 'aione-app-builder' )
+                        ) => 'DESC',
+                    ),
+            );        
+            $post_status_array = array(
+            		'publish'	=>	 'Publish',
+            		'pending'	=>	'Pending',
+            		'draft'	=>	'Draft',
+            		'auto-draft'	=>	'Auto Draft',
+            		'future'	=>	'Future',
+            		'private'	=>	'Private',
+            		'inherit'	=>	'Inherit',
+            		'trash'	=>	'Trash',
+            		'any'	=>	'Any',
+            );
+            $post_status_options = array();
+            foreach ($post_status_array as $key => $value) {
+            	$post_status_options[$key] = array(
+	                '#name' => 'at[template_posts_status][' . $key . ']',
+	                '#title' => $value,
+                    /*'#default_value' =>
+                        in_array( $post_type_slug, $supported )
+                        || array_key_exists( $post_type_slug, $supported )
+                        || ( isset( $_GET['assign_type'] ) && $_GET['assign_type'] == $post_type_slug ),*/
+                    /*'#default_value' =>
+                    	in_array( $key, $this->at['template_posts_status']),  */
+                    '#default_value' => !empty( $this->at['template_posts_status'][$key] ),	
+	                '#inline' => true,
+	                '#before' => '<li>',
+	                '#after' => '</li>',
+	            );
+            }
+            $form['template_posts_status'] = array(               
+                '#label' => '<b>Posts Status</b><br>',            
+            	'#type' => 'checkboxes',
+	            '#options' => $post_status_options,
+	            '#name' => 'at[template_posts_status]',
+	            '#inline' => true,
+	            '#before' => '<div><b>Posts Status</b><br></div><ul class="aione-list">',
+	            '#after' => '</ul>',       
+            );
+        }
 
         $form = aione_form(__FUNCTION__, $form);
         echo $form->renderForm();
@@ -623,6 +758,7 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
         }
 
         $data = $_POST['at'];
+
         $update = false;
         // Sanitize data
         $data['name'] = sanitize_text_field( $data['name'] );
@@ -716,7 +852,17 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
 
         $custom_templates[$data['slug']] = array_merge( $protected_data_check, $data );
 
+        /**********Update template post status ******************/
+        if (array_key_exists("template_posts_status",$data)){
+        	$custom_templates[$data['slug']]['template_posts_status'] = $data['template_posts_status'];
+        } else {
+        	$data['template_posts_status'] = array();
+        	$custom_templates[$data['slug']]['template_posts_status'] = $data['template_posts_status'];
+        }
+        /****************************/
+
         update_option( AIONE_OPTION_NAME_TEMPLATES, $custom_templates );
+
         // success message
         $msg = $update
             ? __( 'Template saved.', 'aione-app-builder' )

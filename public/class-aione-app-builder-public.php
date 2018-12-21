@@ -1587,7 +1587,7 @@ class Aione_App_Builder_Public {
 		}
 	} // End aione_app_builder_url_shortcode()
 
-	public function aione_app_builder_list_post_shortcode( $atts ) {
+	public function aione_app_builder_list_posts_shortcode( $atts ) {
 
 		// Attributes
 		extract( shortcode_atts(
@@ -1771,7 +1771,7 @@ class Aione_App_Builder_Public {
 		$output .= '<div class="panel-group" id="accordian-one">';
 		
 		$args = array(
-			'post_type' => 'aione_faq',
+			'post_type' => 'faqs',
 			'tax_query' => array(
 			array(
 				'taxonomy' => 'faq_category',
@@ -1923,17 +1923,17 @@ class Aione_App_Builder_Public {
 				'columns' => 'Username',
 				'fields' => 'user_login',
 				'role' => '',
-				'roles' => '',
+				'roles' => array(),
 			), $atts )
 		);
 		
 		$output = "";
 
-		$roles = explode(",", $roles);
+		
 		$args = array(
 			'blog_id'      => $site,
 			'role'         => $role,
-			'role__in'     => $roles,
+			'role__in'     => explode(",",$roles),
 			'role__not_in' => array(),
 			'meta_key'     => '',
 			'meta_value'   => '',
@@ -1952,7 +1952,7 @@ class Aione_App_Builder_Public {
 			'who'          => ''
 		 );
 		$users = get_users( $args );
-		
+		//echo "<pre>";print_r($roles);echo "</pre>";
 		if($style == 'table'){
 			
 			$columns = explode("|", $columns); 
@@ -2185,7 +2185,8 @@ class Aione_App_Builder_Public {
 		
 				
 		$blog_query = new WP_Query( $args );
-		//echo "<pre>";print_r($blog_query);echo "</pre>";
+		$output = "";
+		//echo "<pre>";print_r($args);echo "</pre>";
 		if ( $blog_query->have_posts() ) { 
 			while ( $blog_query->have_posts() ) : 
 				$blog_query->the_post(); 
@@ -2238,142 +2239,86 @@ class Aione_App_Builder_Public {
 						}
 					}
 				}
-				?>
-				<article id="post_<?php the_ID(); ?>" <?php post_class(); ?>> 
-					<div class="ar list-blog <?php echo $layout;?>">
-						<?php 
+				
+				$output .='<article id="post_'. get_the_ID().'" '. get_post_class().'> 
+					<div class="ar list-blog '. $layout.'">';
+						
 						if($has_thumbnail) { 
-						?>
-						<div class="ac s100 m50 l40">
+						
+						$output .='<div class="ac s100 m50 l40">
 							<div class="featured-image aione-rounded">
-								<?php the_post_thumbnail( 'medium' ); ?>	
+								'. get_the_post_thumbnail( $post_id,'medium' ).'	
 						    </div>
 						</div>
 						<div class="ac s100 m50 l60">
-						<?php
+						';
 						}else {
-							?>
-						<div class="ac s100 m100 l100">
-							<?php
+							
+						$output .='<div class="ac s100 m100 l100">';
+							
 						}
-						?>
-							<?php
+						
 							if($show_title) { 
-							?>
-							<header class="entry-header">
-								<?php 
-								$before = '<h1 class="entry-title">';
-								$after = '</h1>';
+							
+							$output .='<header class="entry-header">';
+								$output .= '<h1 class="entry-title">';
 								if($title_link){
-									$before .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">';
-									$after = '</a></h1>';
+									$output .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">';
+								}
+								$output .= get_the_title($before,$after);
+								if($title_link){
+									$output .= '</a>';
+								}
+								$output .= '</h1>';
+								
+								if($meta_info_combined){
+								
+								$output .='<div class="entry-meta">
+									'. $meta_info_combined .'
+								</div>';
+								
 								}
 								
-									the_title($before,$after);
-								?>
-								<?php
-								if($meta_info_combined){
-								?>
-								<div class="entry-meta">
-									<?php echo $meta_info_combined ?>
-								</div><!-- .entry-meta -->
-								<?php
-								}
-								?>
-							</header><!-- .entry-header -->
-							<?php
+							$output .='</header>';
+							
 							}
-							?>
+							
 
-							<div class="entry-content"> 
-								<?php if($excerpt){
-									echo wp_trim_words( wp_strip_all_tags( get_the_content() ), $excerpt_length, '...' );
+							$output .='<div class="entry-content"> ';
+								 if($excerpt){
+									$output .= wp_trim_words( wp_strip_all_tags( get_the_content() ), $excerpt_length, '...' );
 								} else {
-									echo wp_strip_all_tags( get_the_content() );
+									$output .= wp_strip_all_tags( get_the_content() );
 								}
-								?>
-							</div><!-- .entry-content -->
-							<?php
+								
+							$output .='</div>';
+							
 							if($read_more){
-							?>
-							<footer class="entry-footer">
-								<a class="read-more-link" href="<?php echo get_permalink(); ?>"><?php echo $read_more_text;?></a>
-							</footer>
-							<?php
+							
+							$output .='<footer class="entry-footer">
+								<a class="read-more-link" href="'. get_permalink().'">'. $read_more_text.'</a>
+							</footer>';
+							
 							}
-							?>
-						</div>
+							
+						$output .='</div>
 					</div>
-				</article>	
-				<?php
+				</article>';	
+				
 			endwhile;
 			wp_reset_postdata();
 			// Get the pagination
-			if($pagination){				
-				$this->aione_blog_pagination( $blog_query->max_num_pages, $range = 2, $blog_query );
-			}
-			
+			if($pagination){
+				$output .= aione_pagination( $blog_query );
+			}			
 		}else{
 
 		}
-		wp_reset_query();	
+		wp_reset_query();
+
+		return $output;	
 		
 	} //END aione_app_builder_blog_shortcode
-
-	function aione_blog_pagination( $pages = '', $range = 2, $current_query = '' ) {
-		global $theme_options;
-		$showitems = ($range * 2)+1;
-
-		if( $current_query == '' ) {
-			global $paged;
-			if( empty( $paged ) ) $paged = 1;
-		} else {
-			$paged = $current_query->query_vars['paged'];
-		}
-
-		if( $pages == '' ) {
-			if( $current_query == '' ) {
-				global $wp_query;
-				$pages = $wp_query->max_num_pages;
-				if(!$pages) {
-					 $pages = 1;
-				}
-			} else {
-				$pages = $current_query->max_num_pages;
-			}
-		}
-
-		 if(1 != $pages)
-		 {
-			/*if ( ( Aione()->theme_options[ 'blog_pagination_type' ] != 'Pagination' && ( is_home() || is_search() || ( get_post_type() == 'post' && ( is_author() || is_archive() ) ) ) ) ||
-				 ( Aione()->theme_options[ 'grid_pagination_type' ] != 'Pagination' && ( aione_is_portfolio_template() || is_post_type_archive( 'aione_portfolio' ) || is_tax( 'portfolio_category' ) || is_tax( 'portfolio_skills' )  || is_tax( 'portfolio_tags' ) ) )
-			) {
-				echo "<div class='pagination infinite-scroll clearfix'>";
-			} else {
-				echo "<div class='pagination clearfix'>";
-			}*/
-			echo "<div class='pagination clearfix'>";
-			 if ( $paged > 1 ) {
-			 	echo "<a class='pagination-prev' href='".get_pagenum_link($paged - 1)."'><span class='page-prev'></span><span class='page-text'>".__('Previous', 'Aione')."</span></a>";
-			 }
-
-			 for ($i=1; $i <= $pages; $i++)
-			 {
-				 if (1 != $pages &&( !($i >= $paged+$range+1 || $i <= $paged-$range-1) || $pages <= $showitems ))
-				 {
-					 echo ($paged == $i)? "<span class='current'>".$i."</span>":"<a href='".get_pagenum_link($i)."' class='inactive' >".$i."</a>";
-				 }
-			 }
-
-			 if ($paged < $pages) echo "<a class='pagination-next' href='".get_pagenum_link($paged + 1)."'><span class='page-text'>".__('Next', 'Aione')."</span><span class='page-next'></span></a>";
-			 echo "</div>\n";
-			 
-			 // Needed for Theme check
-			 ob_start();
-			 posts_nav_link();
-			 ob_get_clean();
-		 }
-	}
 
 	/**
 	* Shortcode [aione-icon]
@@ -2503,6 +2448,7 @@ class Aione_App_Builder_Public {
 		} else {
 			$content = get_the_content();
 		}
+		$content = do_shortcode($content);
 		return $content;
 	}
 	function aione_app_builder_post_featured_image_shortcode($atts){
@@ -2621,7 +2567,23 @@ class Aione_App_Builder_Public {
 	function aione_app_builder_post_custom_fields_shortcode($atts){
 
 		$output = "";
-		$output .= "WORKING!";
+		global $post;
+		$atts = shortcode_atts( array(
+			'field_group' => '',
+			'label' => "true",
+			'seperator' => ' : ',
+			'class' => '',
+			'id' => '',
+			'style' => 'div', // table/div/list
+		), $atts, 'custom-fields' );
+
+		if(function_exists('acf_get_field_groups')) {
+            $fieldGroup = acf_get_field_group($atts['field_group']);
+            $fields = acf_get_fields_by_id($atts['field_group']);
+            foreach ($fields as $key => $field) {
+            	$output .= do_shortcode('[custom-field field="'.$field['key'].'" label="'.$atts['label'].'" seperator="'.$atts['seperator'].'" class="'.$atts['class'].'" id="'.$atts['id'].'" style="'.$atts['style'].'"]');
+            }
+        }
 
 		return $output;
 	}
@@ -2661,7 +2623,7 @@ class Aione_App_Builder_Public {
 		$field_classes = implode(' ', $field_classes);
 
 		$output = '';
-		if($atts['label'] == "div"){
+		if($atts['style'] == "div"){
 			$output .= '<div id="'.$field_id.'" class="'.$field_classes.'">';
 		}
 
@@ -2953,5 +2915,163 @@ class Aione_App_Builder_Public {
 		} else {			
 			return  get_field($key,$post_id);
 		}
+	}
+
+	function aione_app_builder_upcoming_tag_shortcode($atts){
+		extract( shortcode_atts(
+			array(
+				'text'           => "Upcoming",
+			), $atts )
+		);
+		global $post;
+		$html = '';
+		$status = get_post_status( $post->ID );
+		if($status == 'future'){
+			$html .= '<div class="upcoming-tag">'.$text.'</div>';
+			return $html;
+		} else {
+			return false;
+		}
+	}
+
+	function aione_app_builder_social_icon_shortcode($atts){
+		extract( shortcode_atts(
+			array(
+				'size'       => "small",
+				'theme'           => "dark",
+				'style'           => "square",
+				'direction'       => "horizontal",
+				'labels'          => "false",
+				'facebook'        => "",
+				'twitter'         => "",
+				'youtube'         => "",
+				'googleplus'      => "",
+				'linkedin'        => "",
+				'instagram'       => "",
+				'flickr'          => "",
+				'github'          => "",
+				'pinterest'       => "",
+				'rss'             => "",
+				'tumblr'          => "",
+				'vimeo'           => "",
+				'wordpress'       => "",
+			), $atts )
+		);
+
+		$html = '';
+		$html .= '<ul class="aione-social-icons '.$size.' '.$theme.' '.$style.' '.$direction.' '.$labels.'">';
+			if($facebook != ""){
+				$html .= '<li class="facebook"><a href='.$facebook.' target="_blank"><span class="icon"></span><span class="label">Facebook</span></a></li>';
+			}
+			if($twitter != ""){
+				$html .= '<li class="twitter"><a href='.$twitter.' target="_blank"><span class="icon"></span><span class="label">Twitter</span></a></li>';
+			}
+			if($youtube != ""){
+				$html .= '<li class="youtube"><a href='.$youtube.' target="_blank"><span class="icon"></span><span class="label">Youtube</span></a></li>';
+			}
+			if($googleplus != ""){
+				$html .= '<li class="googleplus"><a href='.$googleplus.' target="_blank"><span class="icon"></span><span class="label">GooglePlus</span></a></li>';
+			}
+			if($linkedin != ""){
+				$html .= '<li class="linkedin"><a href='.$linkedin.' target="_blank"><span class="icon"></span><span class="label">Linkedin</span></a></li>';
+			}
+			if($instagram != ""){
+				$html .= '<li class="instagram"><a href='.$instagram.' target="_blank"><span class="icon"></span><span class="label">Instagram</span></a></li>';
+			}
+			if($flickr != ""){
+				$html .= '<li class="flickr"><a href='.$flickr.' target="_blank"><span class="icon"></span><span class="label">Flickr</span></a></li>';
+			}
+			if($github != ""){
+				$html .= '<li class="github"><a href='.$github.' target="_blank"><span class="icon"></span><span class="label">Github</span></a></li>';
+			}
+			if($pinterest != ""){
+				$html .= '<li class="pinterest"><a href='.$pinterest.' target="_blank"><span class="icon"></span><span class="label">Pinterest</span></a></li>';
+			}
+			if($rss != ""){
+				$html .= '<li class="rss"><a href='.$rss.' target="_blank"><span class="icon"></span><span class="label">RSS</span></a></li>';
+			}
+			if($tumblr != ""){
+				$html .= '<li class="tumblr"><a href='.$tumblr.' target="_blank"><span class="icon"></span><span class="label">Tumblr</span></a></li>';
+			}
+			if($vimeo != ""){
+				$html .= '<li class="vimeo"><a href='.$vimeo.' target="_blank"><span class="icon"></span><span class="label">Vimeo</span></a></li>';
+			}
+			if($wordpress != ""){
+				$html .= '<li class="wordpress"><a href='.$wordpress.' target="_blank"><span class="icon"></span><span class="label">Wordpress</span></a></li>';
+			}
+			
+		$html .= '</ul>';
+		return $html;
+	}
+
+	function aione_app_builder_social_share_shortcode($atts){
+		extract( shortcode_atts(
+			array(
+				'size'       => "small",
+				'theme'           => "dark",
+				'style'           => "square",
+				'direction'       => "horizontal",
+				'labels'          => "false",
+				'facebook'        => "",
+				'twitter'         => "",				
+				'googleplus'      => "",
+				'linkedin'        => "",				
+				'pinterest'       => "",
+				'reddit'             => "",
+				'tumblr'          => "",
+			), $atts )
+		);
+
+		$html = '';
+		$html .= '<ul class="aione-social-icons '.$size.' '.$theme.' '.$style.' '.$direction.' '.$labels.'">';
+			if($facebook == "true"){
+				$facebook_url = '
+					https://www.facebook.com/sharer/sharer.php?u='.rawurlencode( get_the_permalink() ).'&title='.get_the_title();
+				$html .= '<li class="facebook"><a href='.$facebook_url.' target="_blank"><span class="icon"></span><span class="label">Facebook</span></a></li>';
+			}
+			if($twitter == "true"){
+				$twitter_url = '
+					http://twitter.com/share?text=' . get_the_title() . '&url=' . rawurlencode( get_the_permalink() );
+				$html .= '<li class="twitter"><a href='.$twitter_url.' target="_blank"><span class="icon"></span><span class="label">Twitter</span></a></li>';
+			}
+			
+			if($googleplus != ""){
+				$googleplus_url = '
+					https://plus.google.com/share?url=' . rawurlencode( get_the_permalink() );
+				$html .= '<li class="googleplus"><a href='.$googleplus_url.' target="_blank"><span class="icon"></span><span class="label">GooglePlus</span></a></li>';
+			}
+			if($linkedin == "true"){
+				$linkedin_url = '
+					https://www.linkedin.com/shareArticle?mini=true&url=' . rawurlencode( get_the_permalink() ) . '&title=' . get_the_title();
+				$html .= '<li class="linkedin"><a href='.$linkedin_url.' target="_blank"><span class="icon"></span><span class="label">Linkedin</span></a></li>';
+			}
+			
+			if($pinterest == "true"){
+				if ( has_post_thumbnail() ) {
+					$thumbnail_id = get_post_thumbnail_id( $post->ID );
+					$thumbnail    = $thumbnail_id ? current( wp_get_attachment_image_src( $thumbnail_id, 'large', true ) ) : '';
+				} else {
+					$thumbnail = null;
+				}
+
+				// Generate the Pinterest URL.
+				$pinterest_url = '
+					https://pinterest.com/pin/create/button/?&url=' . rawurlencode( get_the_permalink() ) . '&description=' . get_the_title() . '&media=' . esc_url( $thumbnail );
+				$html .= '<li class="pinterest"><a href='.$pinterest_url.' target="_blank"><span class="icon"></span><span class="label">Pinterest</span></a></li>';
+			}
+			if($reddit == "true"){
+				$reddit_url = '
+					http://www.reddit.com/submit?url=' . rawurlencode( get_the_permalink() ) . '&title=' . get_the_title();
+				$html .= '<li class="reddit"><a href='.$reddit_url.' target="_blank"><span class="icon"></span><span class="label">Reddit</span></a></li>';
+			}
+			if($tumblr == "true"){
+				$tumblr_url = '
+					https://www.tumblr.com/widgets/share/tool?canonicalUrl=' . rawurlencode( get_the_permalink() ) . '&title=' . get_the_title();
+				$html .= '<li class="tumblr"><a href='.$tumblr_url.' target="_blank"><span class="icon"></span><span class="label">Tumblr</span></a></li>';
+			}
+			
+			
+		$html .= '</ul>';
+		return $html;
 	}
 }

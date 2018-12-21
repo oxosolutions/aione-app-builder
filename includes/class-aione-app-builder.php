@@ -238,7 +238,7 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'change-password', $plugin_public, 'aione_app_builder_change_password_shortcode' );
 		$this->loader->add_shortcode( 'home_url', $plugin_public, 'aione_app_builder_home_url_shortcode' );
 		$this->loader->add_shortcode( 'url', $plugin_public, 'aione_app_builder_url_shortcode' );
-		$this->loader->add_shortcode( 'list-posts', $plugin_public, 'aione_app_builder_list_post_shortcode' );
+		$this->loader->add_shortcode( 'list-posts', $plugin_public, 'aione_app_builder_list_posts_shortcode' );
 		$this->loader->add_shortcode( 'list-comments', $plugin_public, 'aione_app_builder_list_comments_shortcode' );
 		$this->loader->add_shortcode( 'faq', $plugin_public, 'aione_app_builder_faq_shortcode' );
 		$this->loader->add_shortcode( 'count-users', $plugin_public, 'aione_app_builder_count_users_shortcode' );
@@ -266,6 +266,10 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'custom-fields', $plugin_public, 'aione_app_builder_post_custom_fields_shortcode' );
 
 		$this->loader->add_shortcode( 'profile-image', $plugin_public, 'aione_app_builder_profile_image_shortcode' );
+
+		$this->loader->add_shortcode( 'upcoming-tag', $plugin_public, 'aione_app_builder_upcoming_tag_shortcode' );
+		$this->loader->add_shortcode( 'social-icon', $plugin_public, 'aione_app_builder_social_icon_shortcode' );
+		$this->loader->add_shortcode( 'social-share', $plugin_public, 'aione_app_builder_social_share_shortcode' );
 	}
 
 	/**

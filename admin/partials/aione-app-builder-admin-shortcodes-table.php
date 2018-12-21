@@ -150,6 +150,11 @@
 				<tr>
 					<td>Home URL</td>
 					<td>[home_url]</td>
+<td></td>
+				</tr>
+				<tr>
+					<td>URL</td>
+					<td>[url]</td>
 <td><pre>
 'type'           => '',
 'id'             => '0',
@@ -157,13 +162,6 @@
 'title'          => '',
 'action'         => '',
 'class'          => '',
-</pre></td>
-				</tr>
-				<tr>
-					<td>URL</td>
-					<td>[url]</td>
-<td><pre>
-'id'             => '',
 </pre></td>
 				</tr>
 				<tr>
@@ -193,15 +191,7 @@
 'class'          => ''						
 </pre></td>
 				</tr>
-				<tr>
-					<td>Frequently Asked Questions</td>
-					<td>[faq]</td>
-<td><pre>
-'category'       => '',
-'id'             => '',
-'class'          => '',					
-</pre></td>
-				</tr>
+				
 				<tr>
 					<td>Register Form</td>
 					<td>[register]</td>
@@ -281,9 +271,6 @@
 'meta_tags'			=> 'yes', //yes/no. Default=yes
 'read_more'			=> 'yes', //yes/no. Default=yes
 'read_more_text'			=> 'Read More..', 
-'layout'			=> 'list',  // list,grid,timeline
-'blog_grid_columns'			=> '3',  // 
-'blog_grid_column_spacing'	=> '40',
 'pagination'	=> 'yes',
 </pre></td>
 				</tr>
@@ -340,7 +327,7 @@
 					<td>Post Content</td>
 					<td>[content]</td>
 <td><pre>
-'expert' => 'true', //false
+'expert' => 'false', //true
 'expert-length' => '20',
 'more-text' => 'Read More...'
 'class' => ' ',
@@ -401,8 +388,64 @@
 					<td>Custom Field</td>
 					<td>[custom-fields]</td>
 <td><pre>
+'field_group' => '82', 
 'label' => 'true', //false
 'seperator' => ' : ',
+</pre>
+</td>
+</td>
+				</tr>
+				<tr>
+					<td>Upcoming Tag</td>
+					<td>[upcoming-tag]</td>
+<td><pre>
+'text' => 'Upcoming',
+</pre>
+</td>
+</td>
+				</tr>
+				<tr>
+					<td>Social Icons</td>
+					<td>[social-icon]</td>
+<td><pre>
+'size' => 'small', // medium,large,xlarge
+'style' => 'square', // rounded,circle
+'direction' => 'horizontal', // vertical
+'theme' => 'colored', // dark,dark-solid,dark-outline,light bg-black,light-solid bg-black,light-outline bg-black
+'labels' => "false" // true
+'facebook' => 'www.facebook.com'
+'twitter' => 'www.twitter.com'
+'youtube' => 'www.youtube.com'
+'googleplus' => ''
+'linkedin' => ''
+'instagram' => ''
+'flickr' => ''
+'github' => ''
+'pinterest' => ''
+'rss' => ''
+'tumblr' => ''
+'vimeo' => ''
+'wordpress' => ''
+</pre>
+</td>
+</td>
+				</tr>
+				<tr>
+					<td>Social Share</td>
+					<td>[social-share]</td>
+<td><pre>
+'size' => 'small', // medium,large,xlarge
+'style' => 'square', // rounded,circle
+'direction' => 'horizontal', // vertical
+'theme' => 'colored', // dark,dark-solid,dark-outline,light bg-black,light-solid bg-black,light-outline bg-black
+'labels' => "false" // true
+'facebook' => "false" // true
+'twitter' => "false" // true
+'googleplus' => "false" // true
+'linkedin' => "false" // true
+'pinterest' => "false" // true
+'reddit' => "false" // true
+'tumblr' => "false" // true
 </pre>
 </td>
 </td>

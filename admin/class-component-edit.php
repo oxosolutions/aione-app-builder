@@ -761,8 +761,9 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
             '#type' => 'checkbox',
             '#name' => 'ct[show_in_rest]',
             '#default_value' => !empty( $this->ct['show_in_rest'] ),
+            '#value' => !empty( $this->ct['show_in_rest'] ),
             '#title' => __( 'show_in_rest', 'aione-app-builder' ),
-            '#description' => __( 'Whether to expose this post type in the REST API.', 'aione-app-builder' ) . '<br />' . __( 'Default: false.', 'aione-app-builder' ),
+            '#description' => __( 'Whether to expose this post type in the REST API.', 'aione-app-builder' ) . '<br />' . __( 'Default: true.', 'aione-app-builder' ),
             '#inline' => true,
         );
 

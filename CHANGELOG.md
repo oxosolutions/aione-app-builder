@@ -27,3 +27,6 @@ UPDATED: custom post type in list posts
 
 ## 1.4.0.0 09-12-2018
 UPDATED: Tested and updated code to meet the requirements of wordpress 5.0.
+
+## 1.4.0.1 21-12-2018
+UPDATED: updated shortcodes and custom template functionality
