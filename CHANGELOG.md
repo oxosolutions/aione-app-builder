@@ -30,3 +30,6 @@ UPDATED: Tested and updated code to meet the requirements of wordpress 5.0.
 
 ## 1.4.0.1 21-12-2018
 UPDATED: updated shortcodes and custom template functionality
+
+## 1.4.0.2 22-12-2018
+FIXED: Custom field shortcode layout issue fixed

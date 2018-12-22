@@ -1319,12 +1319,12 @@ class Aione_App_Builder_Public {
 		return $output;
 	}
 
-	public function aione_app_builder_profile_shortcode ($attr, $content = null){
+	public function aione_app_builder_profile_shortcode ($attr=null, $content = null){
 		$defaults = array(
 			
 		);
 		extract( shortcode_atts( $defaults, $attr ) );
-		$output = "";
+		$output = "888888888";
 		if(is_user_logged_in() ) {
 			$user = wp_get_current_user();
 			$user_id = $user->ID;
@@ -2675,7 +2675,7 @@ class Aione_App_Builder_Public {
 			$output .= $this->get_data_callback($field,$post->ID,$repeater,$atts);
 		}
 		
-		if($atts['label'] == "div"){
+		if($atts['style'] == "div"){
 			$output .= '</div>';
 		}
 		return $output;	
