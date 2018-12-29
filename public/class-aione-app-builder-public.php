@@ -1324,7 +1324,7 @@ class Aione_App_Builder_Public {
 			
 		);
 		extract( shortcode_atts( $defaults, $attr ) );
-		$output = "888888888";
+		$output = "";
 		if(is_user_logged_in() ) {
 			$user = wp_get_current_user();
 			$user_id = $user->ID;
