@@ -2750,8 +2750,21 @@ class Aione_App_Builder_Public {
 			        $output .= $data;
 			        break;         
 			    case "gallery":
-			        foreach ($data as  $gallery) {
-						$output .= '<img src="'.$gallery['url'].'"/>';
+			    	$field_classes = explode(' ', trim( $field['wrapper']['class'] ) );
+
+					if( is_array(  $field_classes ) && in_array( 'aione-images' , $field_classes ) ){
+						foreach ($data as  $gallery) {
+							$output .= '<a href="'.$gallery['link'].'">';
+							$output .= '<img src="'.$gallery['url'].'"/>';
+							$output .= '</a>';
+							// $output .= $gallery['caption'];
+							// $output .= $gallery['description'];
+						}
+					} else {
+
+						foreach ($data as  $gallery) {
+							$output .= '<img src="'.$gallery['url'].'"/>';
+						}
 					}
 			        break; 
 			    case "select":
