@@ -19,6 +19,7 @@ function aione_custom_taxonomies_default() {
         'show_ui' => true,
         'show_tagcloud' => true,
         'show_admin_column' => false,
+        'show_in_rest' => true,
         'update_count_callback' => '',
         'query_var_enabled' => true,
         'query_var' => '',
@@ -224,7 +225,7 @@ function aione_custom_taxonomies_register( $taxonomy, $data ) {
     } else {
         $data['rewrite'] = false;
     }
-
+    $data['show_in_rest'] = !empty( $data['show_in_rest'] );
     // meta_box_cb
     if ( isset( $data['meta_box_cb']['disabled'] ) ) {
         $data['meta_box_cb'] = false;
@@ -235,7 +236,13 @@ function aione_custom_taxonomies_register( $taxonomy, $data ) {
     }
 
     // Force removing capabilities here
-    unset( $data['capabilities'] );
+    //unset( $data['capabilities'] );
+    $data['capabilities'] = array(
+        'manage_terms' => 'manage_'.$taxonomy,
+        'edit_terms' => 'edit_'.$taxonomy,
+        'delete_terms' => 'delete_'.$taxonomy,
+        'assign_terms' => 'assign_'.$taxonomy,
+    );
 
     $object_types_filtered = apply_filters( 'aione_taxonomy_objects', $object_types, $taxonomy );
     $taxonomy_args = apply_filters( 'aione_taxonomy_data', $data, $taxonomy, $object_types );

@@ -85,7 +85,7 @@ function aione_custom_types_default() {
  * Inits custom types.
  */
 function aione_custom_types_init() {
-	$post_type_option = new Aione_App_Builder_Admin_Components_Utils();
+    $post_type_option = new Aione_App_Builder_Admin_Components_Utils();
     $custom_types = $post_type_option->get_components();
     if ( !empty( $custom_types ) ) {
         foreach ( $custom_types as $post_type => $data ) {
@@ -112,21 +112,21 @@ function aione_custom_types_init() {
 }
 
 function aione_menu_order( $menu ) {
-	$post_type_option = new Aione_App_Builder_Admin_Components_Utils();
-	$custom_types = $post_type_option->get_components();
+    $post_type_option = new Aione_App_Builder_Admin_Components_Utils();
+    $custom_types = $post_type_option->get_components();
 
-	if ( !empty( $custom_types ) ) {
-		foreach( $custom_types as $post_type => $data ) {
-			if( empty( $data )
+    if ( !empty( $custom_types ) ) {
+        foreach( $custom_types as $post_type => $data ) {
+            if( empty( $data )
                 || !isset( $data['menu_position'] )
-				|| strpos( $data['menu_position'],'--aione-add-menu-after--' ) === false )
-				continue;
+                || strpos( $data['menu_position'],'--aione-add-menu-after--' ) === false )
+                continue;
 
-			// at this point we have not only an integer as menu position
-			$target_url = explode( '--aione-add-menu-after--', $data['menu_position'] );
+            // at this point we have not only an integer as menu position
+            $target_url = explode( '--aione-add-menu-after--', $data['menu_position'] );
 
-			if( !isset( $target_url[1] ) || empty( $target_url[1] ) )
-				continue;
+            if( !isset( $target_url[1] ) || empty( $target_url[1] ) )
+                continue;
 
             $target_url = $target_url[1];
 
@@ -159,10 +159,10 @@ function aione_menu_order( $menu ) {
 
                 unset( $reordered[$current_url] );
             }
-		}
-	}
+        }
+    }
 
-	return $menu;
+    return $menu;
 }
 
 /**
@@ -364,51 +364,53 @@ function aione_custom_types_register( $post_type, $data ) {
         unset($data['menu_icon']);
     }
 
-	// do not handle taxonomy assignments if we have customised taxonomies stored
-	$stored_taxonomies = get_option( AIONE_OPTION_NAME_TAXONOMIES, array() );
-	if( isset( $data['taxonomies'] ) && !empty( $stored_taxonomies ) ) {
+    // do not handle taxonomy assignments if we have customised taxonomies stored
+    $stored_taxonomies = get_option( AIONE_OPTION_NAME_TAXONOMIES, array() );
+    if( isset( $data['taxonomies'] ) && !empty( $stored_taxonomies ) ) {
 
-		// Because of the types-676 bug, we're going to make an extra check and fix the problem.
-		// It costs us some performance but we can consider this a temporary fix. This bug has affected
-		// mainly users who update regularly, so we can afford to remove it after few versions.
+        // Because of the types-676 bug, we're going to make an extra check and fix the problem.
+        // It costs us some performance but we can consider this a temporary fix. This bug has affected
+        // mainly users who update regularly, so we can afford to remove it after few versions.
 
-		// Important note here is that $data['taxonomies'] keeps being updated, so we're not risking any data loss.
-		$legacy_taxonomy_list = $data['taxonomies'];
+        // Important note here is that $data['taxonomies'] keeps being updated, so we're not risking any data loss.
+        $legacy_taxonomy_list = $data['taxonomies'];
 
-		// Compile a list of taxonomy slugs from the new data source (taxonomy definitions)
-		$current_taxonomy_list = array();
-		foreach( $stored_taxonomies as $stored_taxonomy_slug => $stored_taxonomy ) {
-			if( isset( $stored_taxonomy['supports'] )
-				&& is_array( $stored_taxonomy['supports'] )
-				&& in_array( $post_type, array_keys( $stored_taxonomy['supports'] ) )
-			) {
-				$current_taxonomy_list[] = $stored_taxonomy['slug'];
-			}
-		}
+        // Compile a list of taxonomy slugs from the new data source (taxonomy definitions)
+        $current_taxonomy_list = array();
+        foreach( $stored_taxonomies as $stored_taxonomy_slug => $stored_taxonomy ) {
+            if( isset( $stored_taxonomy['supports'] )
+                && is_array( $stored_taxonomy['supports'] )
+                && in_array( $post_type, array_keys( $stored_taxonomy['supports'] ) )
+            ) {
+                $current_taxonomy_list[] = $stored_taxonomy['slug'];
+            }
+        }
 
-		// If $current_taxonomy_list is a subset of $legacy_taxonomy_list, it is an indication of buggy update
-		// routine in Types 1.9 or 1.9.1.
-		$is_failed_update = ( array_intersect( $current_taxonomy_list, $legacy_taxonomy_list ) == $current_taxonomy_list );
-		if( $is_failed_update ) {
+        // If $current_taxonomy_list is a subset of $legacy_taxonomy_list, it is an indication of buggy update
+        // routine in Types 1.9 or 1.9.1.
+        $is_failed_update = ( array_intersect( $current_taxonomy_list, $legacy_taxonomy_list ) == $current_taxonomy_list );
+        if( $is_failed_update ) {
 
-			// Mirror assignments from the "legacy" source
-			foreach( $legacy_taxonomy_list as $missed_taxonomy_slug ) {
-				if( isset( $stored_taxonomies[ $missed_taxonomy_slug ] ) ) {
-					$stored_taxonomies[ $missed_taxonomy_slug ][ 'supports' ][ $post_type ] = 1;;
-				}
-			}
+            // Mirror assignments from the "legacy" source
+            foreach( $legacy_taxonomy_list as $missed_taxonomy_slug ) {
+                if( isset( $stored_taxonomies[ $missed_taxonomy_slug ] ) ) {
+                    $stored_taxonomies[ $missed_taxonomy_slug ][ 'supports' ][ $post_type ] = 1;;
+                }
+            }
 
-			update_option( AIONE_OPTION_NAME_TAXONOMIES, $stored_taxonomies );
-		}
+            update_option( AIONE_OPTION_NAME_TAXONOMIES, $stored_taxonomies );
+        }
 
-		// Still unset the legacy data to avoid double assignment
-		unset( $data['taxonomies'] );
-	}
+        // Still unset the legacy data to avoid double assignment
+        unset( $data['taxonomies'] );
+    }
 
     // $post_name = strtolower( $data['labels']['name'] );
     // $post_name = 'aio_'.str_replace( ' ', '_', $post_name );
 
-    $data['capability_type'] = 'aione_'.$post_type;
+    //$data['capability_type'] = $post_type;
+    $data['capability_type'] = array($post_type, $post_type.'s');
+    $data['map_meta_cap'] =  true;
     $data['capabilities'] = array(
         'publish_posts' => 'publish_'.$post_type.'s',
         'edit_posts' => 'edit_'.$post_type.'s',
@@ -420,21 +422,6 @@ function aione_custom_types_register( $post_type, $data ) {
         'delete_post' => 'delete_'.$post_type,
         'read_post' => 'read_'.$post_type,
     );
-
-    
-    /*$data['capabilities'] = array(
-        'publish_posts' => 'publish_'.$post_type.'s',
-        'edit_posts' => 'edit_'.$post_type.'s',
-        'edit_others_posts' => 'edit_others_'.$post_type.'s',
-        'delete_posts' => 'delete_'.$post_type.'s',
-        'delete_others_posts' => 'delete_others_'.$post_type.'s',
-        'read_private_posts' => 'read_private_'.$post_type.'s',
-        'edit_post' => 'edit_'.$post_type,
-        'delete_post' => 'delete_'.$post_type,
-        'read_post' => 'read_'.$post_type,
-    );
-    $data['capability_type'] = $post_type;
-    $data['map_meta_cap'] =  true;*/
 
     $args = register_post_type( $post_type, apply_filters( 'aione_type', $data, $post_type ) );
 
@@ -501,15 +488,15 @@ function aione_filter_type( $data, $post_type ) {
  * @since unknown
  */
 function aione_get_active_custom_types() {
-	$post_type_option = new Aione_App_Builder_Admin_Components_Utils();
-	$types = $post_type_option->get_components();
-	foreach ( $types as $type => $data ) {
-		if ( ! empty( $data['disabled'] ) ) {
-			unset( $types[ $type ] );
-		}
-	}
+    $post_type_option = new Aione_App_Builder_Admin_Components_Utils();
+    $types = $post_type_option->get_components();
+    foreach ( $types as $type => $data ) {
+        if ( ! empty( $data['disabled'] ) ) {
+            unset( $types[ $type ] );
+        }
+    }
 
-	return $types;
+    return $types;
 }
 
 
@@ -531,7 +518,7 @@ function aione_dashboard_glance_items($elements)
     //wp_register_style( 'aione-fix-wordpress-core', WPCF_EMBEDDED_RES_RELPATH . '/css/fix-wordpress-core.css', array(), WPCF_VERSION );
    // wp_enqueue_style( 'wpcf-fix-wordpress-core' );
 
-	$post_type_option = new Aione_App_Builder_Admin_Components_Utils();
+    $post_type_option = new Aione_App_Builder_Admin_Components_Utils();
     $custom_types = $post_type_option->get_components();
     if ( empty( $custom_types ) ) {
         return $elements;
@@ -593,7 +580,7 @@ function aione_dashboard_glance_items($elements)
 function aione_filter_enter_title_here($enter_title_here, $post)
 {
     if ( is_object($post) && isset( $post->post_type) ) {
-	    $post_type_option = new Aione_App_Builder_Admin_Components_Utils();
+        $post_type_option = new Aione_App_Builder_Admin_Components_Utils();
         $custom_types = $post_type_option->get_components();
         if (
             true
@@ -638,7 +625,7 @@ function aione_get_array_key_search_in_sub( $array, $search ) {
  */
 function aione_rename_build_in_post_types_menu() {
 
-	$post_type_option = new Aione_App_Builder_Admin_Components_Utils();
+    $post_type_option = new Aione_App_Builder_Admin_Components_Utils();
     $custom_types = $post_type_option->get_components();
 
     if ( !empty( $custom_types ) ) {
@@ -712,7 +699,7 @@ add_action( 'admin_menu', 'aione_rename_build_in_post_types_menu' );
  */
 function aione_rename_build_in_post_types() {
     global $wp_post_types;
-	$post_type_option = new Aione_App_Builder_Admin_Components_Utils();
+    $post_type_option = new Aione_App_Builder_Admin_Components_Utils();
     $custom_types = $post_type_option->get_components();
 
     if ( !empty( $custom_types ) ) {
@@ -762,7 +749,7 @@ add_action( 'init', 'aione_rename_build_in_post_types' );
  * Visibility of inbuild types
  */
 function aione_visibility_build_in_types() {
-	$post_type_option = new Aione_App_Builder_Admin_Components_Utils();
+    $post_type_option = new Aione_App_Builder_Admin_Components_Utils();
     $custom_types = $post_type_option->get_components();
 
     // Type: Posts

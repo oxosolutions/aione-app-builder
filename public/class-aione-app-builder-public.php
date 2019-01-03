@@ -2508,6 +2508,40 @@ class Aione_App_Builder_Public {
 		return $output;
 	}
 
+	function aione_app_builder_post_attached_media_shortcode($atts){
+		global $post;
+		$atts = shortcode_atts( array(
+			'class' => '',
+			'id' => '',
+			'width' => '',
+			'height' => '',
+		), $atts, 'attached-media' );
+		$output = "";
+		$type = get_post_mime_type( $post->ID );
+		$media = wp_get_attachment_url( $post->ID );
+		switch ($type) {
+		    case 'image/jpeg':
+		    case 'image/png':
+		    case 'image/gif':
+		      $output .= '<img src="'.$media.'" width="'.$width.'" height="'.$height.'" class="'.$class.'" id="'.$id.'"/>'; 
+		      break;
+		    case 'video/mpeg':
+		    case 'video/mp4': 
+		    case 'video/quicktime':
+		      $output .= '<video width="'.$width.'" height="'.$height.'" controls>
+				  <source src="'.$media.'" type="'.$type.'">
+				</video>'; 
+		      break;
+		    case 'text/csv':
+		    case 'text/plain': 
+		    case 'text/xml':
+		      $output .= 'CSV/Plain/XML view not supported'; 
+		    default:
+		      $output .= 'Unknown File type';
+		  }
+		return $output;
+	}
+
 	function aione_app_builder_post_tags_shortcode($atts){
 		global $post;
 		$atts = shortcode_atts( array(

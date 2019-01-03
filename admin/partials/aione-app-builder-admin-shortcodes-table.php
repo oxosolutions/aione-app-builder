@@ -349,6 +349,18 @@
 </td>
 				</tr>
 				<tr>
+					<td>Attached Media</td>
+					<td>[attached-media]</td>
+<td><pre>
+'width' => '',
+'height' => '',
+'class' => '',
+'id' => ' ',
+</pre>
+</td>
+</td>
+				</tr>
+				<tr>
 					<td>Post Tags</td>
 					<td>[tags]</td>
 <td><pre>
