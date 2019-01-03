@@ -33,3 +33,6 @@ UPDATED: updated shortcodes and custom template functionality
 
 ## 1.4.0.2 22-12-2018
 FIXED: Custom field shortcode layout issue fixed
+
+## 1.4.0.3 03-01-2019
+ADDED: Custom template for media
