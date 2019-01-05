@@ -93,15 +93,15 @@ class Aione_App_Builder_Admin {
 		$this->menifest = array(
 			"dir" => "ltr",
 			"lang" => "en",
-		    "name" => "Aione Framework",
+		    "name" => "Website",
 		    "scope" => "/",
-		    "display" => "fullscreen",
-		    "start_url" => "/index.html",
+		    "display" => "standalone",
+		    "start_url" => ".",
 		    "short_name" => "Aione",
-		    "theme_color" => "#e6e6f2",
-		    "description" => "Aione framework code playground to edit html code and live preview the output",
+		    "theme_color" => "#1570a6",
+		    "description" => "Website Description",
 		    "orientation" => "any",
-		    "background_color" => "#168dc5",
+		    "background_color" => "#1570a6",
 		    "related_applications" => [],
 		    "prefer_related_applications" => false,
 		    "icons" => array()
@@ -558,7 +558,7 @@ class Aione_App_Builder_Admin {
 		$pwa_name = ($pwa_settings['pwa_app_name']) ? $pwa_settings['pwa_app_name'] : $site_title;
 		$short_name = ($pwa_settings['pwa_short_name']) ? $pwa_settings['pwa_short_name'] : $site_short_name;
 		$description = ($pwa_settings['pwa_description']) ? $pwa_settings['pwa_description'] : get_bloginfo('description');
-		$theme_color = ($pwa_settings['pwa_theme_color']) ? $pwa_settings['pwa_theme_color'] : "#2196F3";
+		$theme_color = ($pwa_settings['pwa_theme_color']) ? $pwa_settings['pwa_theme_color'] : "#323a45";
 		$background_color = ($pwa_settings['pwa_background_color']) ? $pwa_settings['pwa_background_color'] : "#2196F3";
 		$scope = ($pwa_settings['pwa_scope']) ? $pwa_settings['pwa_scope'] : "";
 		$start_url = ($pwa_settings['pwa_start_url']) ? $pwa_settings['pwa_start_url'] : trailingslashit( get_bloginfo('url') );
@@ -588,11 +588,11 @@ class Aione_App_Builder_Admin {
 				</tr>
 				<tr>
 				<th scope="row"><label for="theme_color">Theme Color</label></th>
-				<td><input placeholder="" id="theme_color" name="theme_color" type="color" class="regular-text" value="'.$theme_color.'"></td>
+				<td><input placeholder="" id="theme_color" name="theme_color" type="text" class="regular-text" value="'.$theme_color.'"></td>
 				</tr>
 				<tr>
 				<th scope="row"><label for="background_color">Background Color</label></th>
-				<td><input placeholder="" id="background_color" name="background_color" type="color" class="regular-text" value="'.$background_color.'"></td>
+				<td><input placeholder="" id="background_color" name="background_color" type="text" class="regular-text" value="'.$background_color.'"></td>
 				</tr>
 				<tr>
 				<th scope="row"><label for="display">Display Mode</label></th>
@@ -748,8 +748,8 @@ class Aione_App_Builder_Admin {
 			$option_array["pwa_background_color"] = $_POST['background_color'];
 			$option_array["pwa_display"] = $_POST['display'];
 			$option_array["pwa_orientation"] = $_POST['orientation'];
-			$option_array["pwa_scope"] = trailingslashit($_POST['scope']);
-			$option_array["pwa_start_url"] = trailingslashit($_POST['start_url']);
+			$option_array["pwa_scope"] = $_POST['scope'];
+			$option_array["pwa_start_url"] = $_POST['start_url'];
 			if($_FILES["icon"]["name"]) {
 				$new_icon_name = 'icon.png';
 			    $option_array["pwa_icon"] = $new_icon_name;

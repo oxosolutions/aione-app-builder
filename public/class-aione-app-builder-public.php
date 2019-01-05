@@ -2761,7 +2761,11 @@ function logout_redirect(){
 				break;    
 				case "password":
 				$output .= $data;
-				break;			 
+				break;
+				case "date_picker":
+				$format = $field['display_format'];
+				$output .= date($format,strtotime($data));
+				break;				 
 				case "image":
 				if($field['return_format'] == "array"){
 					$src =  $data['url'];
