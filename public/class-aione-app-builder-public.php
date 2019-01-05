@@ -113,7 +113,7 @@ class Aione_App_Builder_Public {
 	   if ( !empty($referrer) && !strstr($referrer,'wp-login') && !strstr($referrer,'wp-admin') ) {
 	      wp_redirect( $referrer . '?login=failed' );  // let's append some information (login=failed) to the URL for the theme to use
 	      exit;
-	   }
+	  }
 	}
 
 	//change default Login url 
@@ -154,7 +154,7 @@ class Aione_App_Builder_Public {
 
 		$mobile_number = get_field('mobile_number', 'user_'.$user->ID);
 
-		 
+		
 		// Find your Account Sid and Auth Token at twilio.com/console
 		/*$sid    = "AC1cdc1951a371d4810b4887a6839b3a68";
 		$token  = "8a04f79c9e14b7a9ec0385b44cd896cf";*/
@@ -163,11 +163,11 @@ class Aione_App_Builder_Public {
 		$client = new Client($sid, $token);
 
 		$message = $client->messages->create($mobile_number, // to
-		                           array(
-		                               "body" => "Your Login confirmation code for GFin Customer Portal is ".$otp_number,
-		                               "from" => "+17076634858"
-		                           )
-		                  );
+			array(
+				"body" => "Your Login confirmation code for GFin Customer Portal is ".$otp_number,
+				"from" => "+17076634858"
+			)
+		);
 
 		// echo"<pre>";print_r($mobile_number);echo "</pre>";
 		// echo"<pre>";print_r($message);echo "</pre>";
@@ -181,21 +181,21 @@ class Aione_App_Builder_Public {
 	}
 
 	function validate_authentication( $user, $generated_otp_number, $entered_otp_number, $generated_otp_number_date_time ) {
-			 
-				$time_difference = $this->calculate_time_difference($generated_otp_number_date_time);
+		
+		$time_difference = $this->calculate_time_difference($generated_otp_number_date_time);
 
-				if( ($time_difference)<10 ){
-					if($generated_otp_number == $entered_otp_number){
-					 	return true;
-					 }else{
-					 	return false;
-					 }	
-				}else{
-					return false;
-				}
+		if( ($time_difference)<10 ){
+			if($generated_otp_number == $entered_otp_number){
+				return true;
+			}else{
+				return false;
+			}	
+		}else{
+			return false;
+		}
 
 		// return true;
-		 		
+		
 	}
 
 	function send_otp_mail( $user, $otp_number ){
@@ -236,47 +236,47 @@ class Aione_App_Builder_Public {
 	}
 	function my_added_login_field(){
 		/*$page_showing = basename($_SERVER['REQUEST_URI']);
-	    print_r($_REQUEST);*/
-	    if ( get_option('enable_two_factor_auth') == 'yes' ) {
-	    	if(get_option('two_factor_auth')=='user_can_select'){
+		print_r($_REQUEST);*/
+		if ( get_option('enable_two_factor_auth') == 'yes' ) {
+			if(get_option('two_factor_auth')=='user_can_select'){
 				?>
 				<p>
-			        <label for="my_extra_field">Select Authentication Method</label>
-			        <div id="user_selection">
+					<label for="my_extra_field">Select Authentication Method</label>
+					<div id="user_selection">
 						<select name="auth_method" id="auth_method">
-						<option value="email">Email</option>
-						<option value="mobile">Mobile</option>
-						<option value="none">None</option>
-					</select> 
+							<option value="email">Email</option>
+							<option value="mobile">Mobile</option>
+							<option value="none">None</option>
+						</select> 
 					</div>
-			    </p>
+				</p>
 				<?php
 			}
 		}
 		?>
-	    
-	<?php
+		
+		<?php
 	}
 	function my_login_message() {
 		/*$page_showing = basename($_SERVER['REQUEST_URI']);
-	    print_r($_REQUEST);*/
-	    $return_value = '';
-	    if($_REQUEST['error'] == 'authmethod'){
-	    	$return_value =  '<div id="login_error"><strong>You are not authorized to skip authentication method. Please select any authentication method other than "None"</stong></div>';
-	    }
-	    return $return_value;
+		print_r($_REQUEST);*/
+		$return_value = '';
+		if($_REQUEST['error'] == 'authmethod'){
+			$return_value =  '<div id="login_error"><strong>You are not authorized to skip authentication method. Please select any authentication method other than "None"</stong></div>';
+		}
+		return $return_value;
 	}
 
 	function wp_login( $user_login, $user ) {
 		$enable_two_factor_auth = get_option('enable_two_factor_auth');
-	    if ( empty( $enable_two_factor_auth ) || $enable_two_factor_auth == "no" ) {
-	        return;
-	    }
+		if ( empty( $enable_two_factor_auth ) || $enable_two_factor_auth == "no" ) {
+			return;
+		}
 
-	    wp_clear_auth_cookie();
+		wp_clear_auth_cookie();
 
-	    $this->show_two_factor_login( $user );
-	    exit;
+		$this->show_two_factor_login( $user );
+		exit;
 	}
 
 	function show_two_factor_login( $user ) {
@@ -306,20 +306,20 @@ class Aione_App_Builder_Public {
 
 	function login_html( $user, $login_nonce, $redirect_to, $error_msg = '', $provider='', $generated_otp_number='', $generated_otp_time='' ) {
 		//$wp_login_url = wp_login_url();
-	    $rememberme = 0;
-	    if ( isset( $_REQUEST['rememberme'] ) && $_REQUEST['rememberme'] ) {
-	        $rememberme = 1;
-	    }
+		$rememberme = 0;
+		if ( isset( $_REQUEST['rememberme'] ) && $_REQUEST['rememberme'] ) {
+			$rememberme = 1;
+		}
 
-	    login_header();
+		login_header();
 
-	    if ( ! empty( $error_msg ) ) {
-	        echo '<div id="login_error"><strong>' . esc_html( $error_msg ) . '</strong><br /></div>';
-	    }
-	    
-	    ?>
+		if ( ! empty( $error_msg ) ) {
+			echo '<div id="login_error"><strong>' . esc_html( $error_msg ) . '</strong><br /></div>';
+		}
+		
+		?>
 
-	    <?php
+		<?php
 		if( empty($generated_otp_number) ){
 			$generated_otp_number = (rand(100000, 999999));
 		}
@@ -330,13 +330,13 @@ class Aione_App_Builder_Public {
 		?>
 
 		<?php 
-         if(get_option('two_factor_auth')=='user_can_select'){
-        	$method = $_REQUEST['auth_method'];
-         } else {
-         	$method ="";
-         } 
+		if(get_option('two_factor_auth')=='user_can_select'){
+			$method = $_REQUEST['auth_method'];
+		} else {
+			$method ="";
+		} 
 
-         if($user){
+		if($user){
 			if(in_array( 'subscriber', (array) $user->roles ) && $method == 'none'){
 				/*$error = new WP_Error( 'loginCaptchaError', 'Select Authentication Method' );
 				echo $error;
@@ -354,174 +354,174 @@ class Aione_App_Builder_Public {
 				}
 				$this->login_html( $user="", $login_nonce['key'], $redirect_to, esc_html__( 'ERROR: Invalid verification code.', 'aione-app-builder' ) );
 				exit;*/
-			
+				
 			} else {
 				$this->custom_authentication_page( $user, $generated_otp_number, $generated_otp_time ,$rememberme,$login_nonce, $redirect_to ,$method);
 			}
 		}
-        
-        ?>
-
-	    <p id="backtoblog">
-	        <a href="<?php echo esc_url( home_url( '/' ) ); ?>" title="Are you lost?"><?php echo sprintf( '&larr; Back to %s', get_bloginfo( 'title', 'display' ) ); ?></a>
-	    </p>
-
-	    <?php
-	    do_action( 'login_footer' ); ?>
-	    <div class="clear"></div>
-	    </body>
-	    </html>
-	    <?php
-	}
-
-	function custom_authentication_page($user, $generated_otp_number, $generated_otp_time,$rememberme ,$login_nonce, $redirect_to,$method){
-		?>
-		<form name="validate_2fa_form" id="loginform" action="<?php echo esc_url( set_url_scheme( add_query_arg( 'action', 'validate_2fa', $wp_login_url ), 'login_post' ) ); ?>" method="post" autocomplete="off">	
-	        <input type="hidden" name="wp-auth-id"    id="wp-auth-id"    value="<?php echo esc_attr( $user->ID ); ?>" />
-	        <input type="hidden" name="wp-auth-nonce" id="wp-auth-nonce" value="<?php echo esc_attr( $login_nonce ); ?>" />
-	        <input type="hidden" name="redirect_to" value="<?php echo esc_attr( $redirect_to ); ?>" />
-	        <input type="hidden" name="rememberme"    id="rememberme"    value="<?php echo esc_attr( $rememberme ); ?>" />
-	        <input type="hidden" name="method"    id="method"    value="<?php echo esc_attr( $method ); ?>" />
-	        <?php 
-	        $this->authentication_page( $user, $generated_otp_number, $generated_otp_time,$method );
-	        ?>
-	    </form>
-
-		<?php 
-	}
-
-	function authentication_page( $user, $generated_otp_number, $generated_otp_time='',$method ) {
-		require_once( ABSPATH .  '/wp-admin/includes/template.php' );
-
-		?>
-		<h3 class="send-otp-title"><?php esc_html_e( '2-Step Authentication', 'aione-app-builder' ); ?></h3>
 		
-		
+		?>
+
+		<p id="backtoblog">
+			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" title="Are you lost?"><?php echo sprintf( '&larr; Back to %s', get_bloginfo( 'title', 'display' ) ); ?></a>
+		</p>
+
 		<?php
-		$generated_otp_number = get_user_meta($user->ID,"wp-generated-otp-number",true);
-		
-		if(get_option('two_factor_auth')=='email'){
-			$this->send_otp_mail( $user,$generated_otp_number );
-		}
-		if(get_option('two_factor_auth')=='mobile'){
-			$this->send_sms( $user,$generated_otp_number );
-		}
-		if(get_option('two_factor_auth')=='both'){
-			$this->send_otp_mail( $user,$generated_otp_number );
-			$this->send_sms( $user,$generated_otp_number );
-		}
-		if(get_option('two_factor_auth')=='user_can_select'){
-			if($method == 'email'){
-				$this->send_otp_mail( $user,$generated_otp_number );
-			}
-			if($method == 'mobile'){
-				$this->send_sms( $user,$generated_otp_number );
-			}
-		}
-						
+		do_action( 'login_footer' ); ?>
+		<div class="clear"></div>
+	</body>
+	</html>
+	<?php
+}
+
+function custom_authentication_page($user, $generated_otp_number, $generated_otp_time,$rememberme ,$login_nonce, $redirect_to,$method){
+	?>
+	<form name="validate_2fa_form" id="loginform" action="<?php echo esc_url( set_url_scheme( add_query_arg( 'action', 'validate_2fa', $wp_login_url ), 'login_post' ) ); ?>" method="post" autocomplete="off">	
+		<input type="hidden" name="wp-auth-id"    id="wp-auth-id"    value="<?php echo esc_attr( $user->ID ); ?>" />
+		<input type="hidden" name="wp-auth-nonce" id="wp-auth-nonce" value="<?php echo esc_attr( $login_nonce ); ?>" />
+		<input type="hidden" name="redirect_to" value="<?php echo esc_attr( $redirect_to ); ?>" />
+		<input type="hidden" name="rememberme"    id="rememberme"    value="<?php echo esc_attr( $rememberme ); ?>" />
+		<input type="hidden" name="method"    id="method"    value="<?php echo esc_attr( $method ); ?>" />
+		<?php 
+		$this->authentication_page( $user, $generated_otp_number, $generated_otp_time,$method );
 		?>
-		<div id="otp_box">
+	</form>
+
+	<?php 
+}
+
+function authentication_page( $user, $generated_otp_number, $generated_otp_time='',$method ) {
+	require_once( ABSPATH .  '/wp-admin/includes/template.php' );
+
+	?>
+	<h3 class="send-otp-title"><?php esc_html_e( '2-Step Authentication', 'aione-app-builder' ); ?></h3>
+	
+	
+	<?php
+	$generated_otp_number = get_user_meta($user->ID,"wp-generated-otp-number",true);
+	
+	if(get_option('two_factor_auth')=='email'){
+		$this->send_otp_mail( $user,$generated_otp_number );
+	}
+	if(get_option('two_factor_auth')=='mobile'){
+		$this->send_sms( $user,$generated_otp_number );
+	}
+	if(get_option('two_factor_auth')=='both'){
+		$this->send_otp_mail( $user,$generated_otp_number );
+		$this->send_sms( $user,$generated_otp_number );
+	}
+	if(get_option('two_factor_auth')=='user_can_select'){
+		if($method == 'email'){
+			$this->send_otp_mail( $user,$generated_otp_number );
+		}
+		if($method == 'mobile'){
+			$this->send_sms( $user,$generated_otp_number );
+		}
+	}
+	
+	?>
+	<div id="otp_box">
 		<p class="send-otp-label"><?php esc_html_e( 'Enter 6 digit OTP code', 'aione-app-builder' ); ?></p>
 		<p> 
 			<input type="text" maxlength="6" placeholder="######" name="wp-entered-otp-number" id="wp-entered-otp-number" >
 
 			<input type="hidden" maxlength="6" name="wp-generated-otp-number-date-time" id="wp-generated-otp-number-date-time" value="<?php echo $generated_otp_time;?>">
-		 </p>
+		</p>
 		<?php
 		
 		submit_button( __( 'Proceed to login', 'aione-app-builder' ) );
 		?>
-		</div>
-		<?php
-		if($this->calculate_time_difference($generated_otp_time)>10){
-			submit_button( $text = 'Re-send OTP', $type = 'primary', $name = 're_send_otp', $wrap = true, $other_attributes = null );
-		}
-		
+	</div>
+	<?php
+	if($this->calculate_time_difference($generated_otp_time)>10){
+		submit_button( $text = 'Re-send OTP', $type = 'primary', $name = 're_send_otp', $wrap = true, $other_attributes = null );
+	}
+	
+}
+
+function login_form_validate_2fa() {
+	if ( ! isset( $_POST['wp-auth-id'], $_POST['wp-auth-nonce'] ) ) {
+		return;
 	}
 
-	function login_form_validate_2fa() {
-		if ( ! isset( $_POST['wp-auth-id'], $_POST['wp-auth-nonce'] ) ) {
-			return;
-		}
+	$user = get_userdata( $_POST['wp-auth-id'] );
 
-		$user = get_userdata( $_POST['wp-auth-id'] );
-
-		$generated_otp_number = get_user_meta($user->ID,"wp-generated-otp-number",true);
-		$entered_otp_number=$_POST['wp-entered-otp-number'];
-		$generated_otp_number_date_time=$_POST['wp-generated-otp-number-date-time'];
-		
-		if ( ! $user ) {
-			return;
-		}
+	$generated_otp_number = get_user_meta($user->ID,"wp-generated-otp-number",true);
+	$entered_otp_number=$_POST['wp-entered-otp-number'];
+	$generated_otp_number_date_time=$_POST['wp-generated-otp-number-date-time'];
+	
+	if ( ! $user ) {
+		return;
+	}
 
 		//re-send button Clicked
-		if(isset($_POST['re_send_otp'])){
-			$login_nonce = $this->create_login_nonce( $user->ID );
-			$this->login_html( $user, $login_nonce['key'], $_REQUEST['redirect_to'] );
-			exit;
-		}
-
-		if ( true !== $this->validate_authentication( $user, $generated_otp_number, $entered_otp_number, $generated_otp_number_date_time ) ) {
-			do_action( 'wp_login_failed', $user->user_login );
-
-			$login_nonce = $this->create_login_nonce( $user->ID );
-			if ( ! $login_nonce ) {
-				wp_die( esc_html__( 'Failed to create a login nonce.', 'aione-app-builder' ) );
-			}
-
-			$this->login_html( $user, $login_nonce['key'], $_REQUEST['redirect_to'], esc_html__( 'ERROR: Invalid verification code.', 'aione-app-builder' ), $provider, $generated_otp_number, $generated_otp_number_date_time );
-			exit;
-		}
-		$rememberme = false;
-		if ( isset( $_REQUEST['rememberme'] ) && $_REQUEST['rememberme'] ) {
-			$rememberme = true;
-		}
-
-		wp_set_auth_cookie( $user->ID, $rememberme );
-
-		$redirect_to = apply_filters( 'login_redirect', $_REQUEST['redirect_to'], $_REQUEST['redirect_to'], $user );
-		wp_safe_redirect( $redirect_to );
-
+	if(isset($_POST['re_send_otp'])){
+		$login_nonce = $this->create_login_nonce( $user->ID );
+		$this->login_html( $user, $login_nonce['key'], $_REQUEST['redirect_to'] );
 		exit;
 	}
 
+	if ( true !== $this->validate_authentication( $user, $generated_otp_number, $entered_otp_number, $generated_otp_number_date_time ) ) {
+		do_action( 'wp_login_failed', $user->user_login );
+
+		$login_nonce = $this->create_login_nonce( $user->ID );
+		if ( ! $login_nonce ) {
+			wp_die( esc_html__( 'Failed to create a login nonce.', 'aione-app-builder' ) );
+		}
+
+		$this->login_html( $user, $login_nonce['key'], $_REQUEST['redirect_to'], esc_html__( 'ERROR: Invalid verification code.', 'aione-app-builder' ), $provider, $generated_otp_number, $generated_otp_number_date_time );
+		exit;
+	}
+	$rememberme = false;
+	if ( isset( $_REQUEST['rememberme'] ) && $_REQUEST['rememberme'] ) {
+		$rememberme = true;
+	}
+
+	wp_set_auth_cookie( $user->ID, $rememberme );
+
+	$redirect_to = apply_filters( 'login_redirect', $_REQUEST['redirect_to'], $_REQUEST['redirect_to'], $user );
+	wp_safe_redirect( $redirect_to );
+
+	exit;
+}
+
 
 	//change default Register url
-	function aione_app_builder_register_url( $register_url ) {
-		$aione_app_builder_register_page = get_option('aione_app_builder_register_page');
-		if(isset($aione_app_builder_register_page)){
-			if(!empty($aione_app_builder_register_page)){
-				return get_permalink($aione_app_builder_register_page);
-			} else {
-				return $register_url;
-			}
+function aione_app_builder_register_url( $register_url ) {
+	$aione_app_builder_register_page = get_option('aione_app_builder_register_page');
+	if(isset($aione_app_builder_register_page)){
+		if(!empty($aione_app_builder_register_page)){
+			return get_permalink($aione_app_builder_register_page);
 		} else {
 			return $register_url;
 		}
+	} else {
+		return $register_url;
 	}
+}
 	//change default lost password url
-	function aione_app_builder_lostpassword_url($lostpassword_url, $redirect) {
-		$aione_app_builder_forgot_password_page = get_option('aione_app_builder_forgot_password_page');
-		if(isset($aione_app_builder_forgot_password_page)){
-			if(!empty($aione_app_builder_forgot_password_page)){
-				return get_permalink($aione_app_builder_forgot_password_page);
-			} else {
-				return $lostpassword_url;
-			}
+function aione_app_builder_lostpassword_url($lostpassword_url, $redirect) {
+	$aione_app_builder_forgot_password_page = get_option('aione_app_builder_forgot_password_page');
+	if(isset($aione_app_builder_forgot_password_page)){
+		if(!empty($aione_app_builder_forgot_password_page)){
+			return get_permalink($aione_app_builder_forgot_password_page);
 		} else {
 			return $lostpassword_url;
 		}
+	} else {
+		return $lostpassword_url;
 	}
+}
 	// After logout redirect
-	function logout_redirect(){
-		$logout_redirect_page = get_option('logout_redirect_page');
-		if(isset($logout_redirect_page)){
-			if(!empty($logout_redirect_page)){
-				wp_redirect(get_permalink($logout_redirect_page) );
-				exit();
-			}
+function logout_redirect(){
+	$logout_redirect_page = get_option('logout_redirect_page');
+	if(isset($logout_redirect_page)){
+		if(!empty($logout_redirect_page)){
+			wp_redirect(get_permalink($logout_redirect_page) );
+			exit();
 		}
 	}
+}
 
 	/**
 	*
@@ -531,11 +531,11 @@ class Aione_App_Builder_Public {
 
 	public function aione_app_builder_login_link_shortcode( $atts ) {
 		extract( shortcode_atts(
-				array(
-					'class'           => '',
-					'text'           => 'Login'
-				), $atts )
-		);
+			array(
+				'class'           => '',
+				'text'           => 'Login'
+			), $atts )
+	);
 		$output = "";
 		if ( !is_user_logged_in() ) {
 			$output .= '<div id="login_link" class="user-links login-link '.$class.'">';
@@ -547,11 +547,11 @@ class Aione_App_Builder_Public {
 
 	public function aione_app_builder_register_link_shortcode( $atts ) {
 		extract( shortcode_atts(
-				array(
-					'class'           => '',
-					'text'           => 'Sign up'
-				), $atts )
-		);
+			array(
+				'class'           => '',
+				'text'           => 'Sign up'
+			), $atts )
+	);
 		$output = "";
 		
 		if ( !is_user_logged_in() ) {
@@ -564,11 +564,11 @@ class Aione_App_Builder_Public {
 
 	public function aione_app_builder_reset_password_link_shortcode( $atts ) {
 		extract( shortcode_atts(
-				array(
-					'class'           => '',
-					'text'           => 'Reset Password'
-				), $atts )
-		);
+			array(
+				'class'           => '',
+				'text'           => 'Reset Password'
+			), $atts )
+	);
 		$output = "";
 		
 		if ( !is_user_logged_in() ) {
@@ -581,11 +581,11 @@ class Aione_App_Builder_Public {
 
 	public function aione_app_builder_account_link_shortcode( $atts ) {
 		extract( shortcode_atts(
-				array(
-					'class'           => '',
-					'text'           => 'Account'
-				), $atts )
-		);
+			array(
+				'class'           => '',
+				'text'           => 'Account'
+			), $atts )
+	);
 
 		$admin_login_redirect_page_link = "#";
 
@@ -608,11 +608,11 @@ class Aione_App_Builder_Public {
 
 	public function aione_app_builder_dashboard_link_shortcode( $atts ) {
 		extract( shortcode_atts(
-				array(
-					'class'           => '',
-					'text'           => 'Dashboard'
-				), $atts )
-		);
+			array(
+				'class'           => '',
+				'text'           => 'Dashboard'
+			), $atts )
+	);
 		$output = "";
 
 		$output .= '<div id="dashboard_link" class="user-links dashboard-link '.$class.'">';
@@ -625,11 +625,11 @@ class Aione_App_Builder_Public {
 
 	public function aione_app_builder_logout_link_shortcode( $atts ) {
 		extract( shortcode_atts(
-				array(
-					'class'           => '',
-					'text'           => 'Logout'
-				), $atts )
-		);
+			array(
+				'class'           => '',
+				'text'           => 'Logout'
+			), $atts )
+	);
 		$output = "";
 		
 		if ( is_user_logged_in() ) {
@@ -675,12 +675,12 @@ class Aione_App_Builder_Public {
 		if ( is_null( $content ) || is_feed() ){
 			return '';
 		}
-			
+		
 		if ( !empty( $capability ) ) {
 			$caps = explode( ',', $capability );
 			foreach ( $caps as $cap ) {
 				if ( current_user_can( trim( $cap ) ) )
-				return do_shortcode( $content );
+					return do_shortcode( $content );
 			}
 		}
 
@@ -688,7 +688,7 @@ class Aione_App_Builder_Public {
 			$roles = explode( ',', $role );
 			foreach ( $roles as $role ) {
 				if ( current_user_can( trim( $role ) ) )
-				return do_shortcode( $content );
+					return do_shortcode( $content );
 			}
 		}
 		return '';
@@ -699,20 +699,20 @@ class Aione_App_Builder_Public {
 	public function aione_app_builder_login_shortcode( $atts, $content = null ) {
 		extract( shortcode_atts(
 			array(
-			'echo'           => false,
-			'redirect'       => get_option('admin_login_redirect_page'), 
-			'form_id'        => 'loginform',
-			'label_username' => __( 'Username' ),
-			'label_password' => __( 'Password' ),
-			'label_remember' => __( 'Remember Me' ),
-			'label_log_in'   => __( 'Login' ),
-			'id_username'    => 'user_login',
-			'id_password'    => 'user_pass',
-			'id_remember'    => 'rememberme',
-			'id_submit'      => 'wp-submit',
-			'social_login'      => 'no',
+				'echo'           => false,
+				'redirect'       => get_option('admin_login_redirect_page'), 
+				'form_id'        => 'loginform',
+				'label_username' => __( 'Username' ),
+				'label_password' => __( 'Password' ),
+				'label_remember' => __( 'Remember Me' ),
+				'label_log_in'   => __( 'Login' ),
+				'id_username'    => 'user_login',
+				'id_password'    => 'user_pass',
+				'id_remember'    => 'rememberme',
+				'id_submit'      => 'wp-submit',
+				'social_login'      => 'no',
 			), $atts )
-		);
+	);
 
 		$output = "";
 		$login = (isset($_GET['login']) ? $_GET['login'] : null);
@@ -747,7 +747,7 @@ class Aione_App_Builder_Public {
 			// check if wordpress-social-login is activeted
 			if ( $social_login == "yes" && is_plugin_active( 'wordpress-social-login/wp-social-login.php' ) ) {
 			  //wordpress-social-login plugin is activated
-			  
+				
 				$output .= '<div class="aione-social-login">';
 				//$output .= do_action( 'wordpress_social_login' );
 				$output .= do_shortcode( '[wordpress_social_login]' );
@@ -773,7 +773,7 @@ class Aione_App_Builder_Public {
 				} 
 				</style>
 				';
-			  
+				
 			}
 			
 		} else {
@@ -792,264 +792,264 @@ class Aione_App_Builder_Public {
 
 	public function aione_app_builder_register_shortcode( $atts, $content = null ) {
 			// Attributes
-			extract( shortcode_atts(
-				array(
-					'echo'           => false,
-					'captcha'        => true,
-					'form_id'        => 'aione_registration_form',
-					'show_firstname' => 'yes',
-					'show_lastname' 	=> 'yes',
-					'label_firstname' => __( 'First Name' ),
-					'label_lastname' => __( 'Last Name' ),
-					'label_username' => __( 'Username' ),
-					'label_email' => __( 'Email Address' ),
-					'label_password' => __( 'Password' ),
-					'label_password_again' => __( 'Password Again' ),
-					'label_submit' => __( 'Register' ),
-					'placeholder_firstname' => __( 'Enter Your First Name' ),
-					'placeholder_laststname' => __( 'Enter Your Last Name' ),
-					'placeholder_username' => __( 'Enter Your Username' ),
-					'placeholder_email' => __( 'Enter Your Email Address' ),
-					'role' => get_option('default_role'),
-				), $atts )
-			);
+		extract( shortcode_atts(
+			array(
+				'echo'           => false,
+				'captcha'        => true,
+				'form_id'        => 'aione_registration_form',
+				'show_firstname' => 'yes',
+				'show_lastname' 	=> 'yes',
+				'label_firstname' => __( 'First Name' ),
+				'label_lastname' => __( 'Last Name' ),
+				'label_username' => __( 'Username' ),
+				'label_email' => __( 'Email Address' ),
+				'label_password' => __( 'Password' ),
+				'label_password_again' => __( 'Password Again' ),
+				'label_submit' => __( 'Register' ),
+				'placeholder_firstname' => __( 'Enter Your First Name' ),
+				'placeholder_laststname' => __( 'Enter Your Last Name' ),
+				'placeholder_username' => __( 'Enter Your Username' ),
+				'placeholder_email' => __( 'Enter Your Email Address' ),
+				'role' => get_option('default_role'),
+			), $atts )
+	);
 
-			$args = array(
-					'echo'						=> $echo,
-					'captcha'                   => $captcha,
-					'form_id'					=> $form_id,
-					'show_firstname'			=> $show_firstname,
-					'show_lastname'				=> $show_lastname,
-					'label_firstname'			=> $label_firstname,
-					'label_lastname'			=> $label_lastname,
-					'label_username'			=> $label_username,
-					'label_email'				=> $label_email,
-					'label_password'			=> $label_password,
-					'label_password_again'		=> $label_password_again,
-					'label_submit'				=> $label_submit,
-					'placeholder_firstname'		=> $placeholder_firstname,
-					'placeholder_laststname'	=> $placeholder_laststname,
-					'placeholder_username'		=> $placeholder_username,
-					'placeholder_email'			=> $placeholder_email,
-					'role' 						=> $role,
-				);
-				
-			
+		$args = array(
+			'echo'						=> $echo,
+			'captcha'                   => $captcha,
+			'form_id'					=> $form_id,
+			'show_firstname'			=> $show_firstname,
+			'show_lastname'				=> $show_lastname,
+			'label_firstname'			=> $label_firstname,
+			'label_lastname'			=> $label_lastname,
+			'label_username'			=> $label_username,
+			'label_email'				=> $label_email,
+			'label_password'			=> $label_password,
+			'label_password_again'		=> $label_password_again,
+			'label_submit'				=> $label_submit,
+			'placeholder_firstname'		=> $placeholder_firstname,
+			'placeholder_laststname'	=> $placeholder_laststname,
+			'placeholder_username'		=> $placeholder_username,
+			'placeholder_email'			=> $placeholder_email,
+			'role' 						=> $role,
+		);
+		
+		
 
-			$output = "";
+		$output = "";
 			// only show the registration form to non-logged-in members
-			if(!is_user_logged_in()) {
-				global $aione_load_css;
+		if(!is_user_logged_in()) {
+			global $aione_load_css;
 				// set this to true so the CSS is loaded
-				$aione_load_css = true;
+			$aione_load_css = true;
 				// check to make sure user registration is enabled
-				$registration_enabled = get_option('users_can_register');
-				
+			$registration_enabled = get_option('users_can_register');
+			
 				// only show the registration form if allowed
-				if($registration_enabled) {
-					$errors = array();
-					
+			if($registration_enabled) {
+				$errors = array();
+				
 					// load from post
 
-					if( isset($_POST['action']) && $_POST['action'] == 'add_new'){
-						$user_login		= $_POST["aione_user_login"];
-						$user_email		= $_POST["aione_user_email"];
-						$user_pass		= $_POST["aione_user_pass"];
-						$pass_confirm 	= $_POST["aione_user_pass_confirm"];
-						$user_first		= $_POST["aione_user_fname"];
-						$user_last		= $_POST["aione_user_lname"];
+				if( isset($_POST['action']) && $_POST['action'] == 'add_new'){
+					$user_login		= $_POST["aione_user_login"];
+					$user_email		= $_POST["aione_user_email"];
+					$user_pass		= $_POST["aione_user_pass"];
+					$pass_confirm 	= $_POST["aione_user_pass_confirm"];
+					$user_first		= $_POST["aione_user_fname"];
+					$user_last		= $_POST["aione_user_lname"];
 
-						
-						if($captcha == true){
-							if (class_exists('ReallySimpleCaptcha'))  {
-								$captcha_value= $_POST['captcha_value'];
-								$prefix = $_POST['captcha_prefix'];
-								$captcha_instance_check = new ReallySimpleCaptcha();
-								$is_captcha_correct = $captcha_instance_check->check( $prefix, $captcha_value);
-								
-								if(!$is_captcha_correct){
-									$errors[] = 'Wrong Captcha value';
-								}
-							}
-						}
-						
-						// this is required for username checks
-						if($user_email == '') {
-							//empty email
-							$errors[] = 'Email address field can not be empty.';
-						} else {
-							if(!is_email($user_email)) {
-								//invalid email
-								$errors[] = 'Email address you have entered is invalid. Enter a valid email address.';
-							}
-							if(email_exists($user_email)) {
-								//Email address already registered
-								$errors[] = 'Email already registered. You can reset your password instead.';
-							}
-						}
 					
-						if($user_login == '') {
-							// empty username
-						   $errors[] = 'Username cannot be empty. Please enter a username';
-						} else {
+					if($captcha == true){
+						if (class_exists('ReallySimpleCaptcha'))  {
+							$captcha_value= $_POST['captcha_value'];
+							$prefix = $_POST['captcha_prefix'];
+							$captcha_instance_check = new ReallySimpleCaptcha();
+							$is_captcha_correct = $captcha_instance_check->check( $prefix, $captcha_value);
 							
-							$pattern = '/^[a-z0-9]+$/';
-							if(!preg_match($pattern, $user_login)){
-								$errors[] = 'The username you have entered is invalid. Please enter at least 6 alphanumeric characters in lowercase. Special characters and white spaces are not allowed.'; 
-							} else{	
-								if(!validate_username($user_login)) {
-									// invalid username
-									$errors[] = 'Username you have entered is invalid. ';
-								}
+							if(!$is_captcha_correct){
+								$errors[] = 'Wrong Captcha value';
 							}
-
-
-							if(username_exists($user_login)) {
-								// Username already registered
-								$errors[] = 'Username already taken. Try something else.';
-							}				
 						}
-
-						if($user_pass == '') {
-							//Empty password
-							$errors[] = 'Please enter a password';
+					}
+					
+						// this is required for username checks
+					if($user_email == '') {
+							//empty email
+						$errors[] = 'Email address field can not be empty.';
+					} else {
+						if(!is_email($user_email)) {
+								//invalid email
+							$errors[] = 'Email address you have entered is invalid. Enter a valid email address.';
 						}
-
-						if($user_pass != $pass_confirm) {
-							// passwords do not match
-							$errors[] = 'Passwords do not match';
+						if(email_exists($user_email)) {
+								//Email address already registered
+							$errors[] = 'Email already registered. You can reset your password instead.';
 						}
-						if($user_first == '') {
-							//Empty password
-							$errors[] = 'First name can not be empry. Humans do have names.';
-						}
-
-						if(!empty($user_first) && !preg_match('/^[a-zA-Z\s]+$/', $user_first) ) {
-							//Invalid Mobile
-							$errors[] = 'Invalid first name. Numbers not allowed.';
-						}
+					}
+					
+					if($user_login == '') {
+							// empty username
+						$errors[] = 'Username cannot be empty. Please enter a username';
+					} else {
 						
-						if(!empty($user_last) && !preg_match('/^[a-zA-Z\s]+$/', $user_last) ) {
-							//Invalid Mobile
-							$errors[] = 'Invalid last name. Numbers not allowed.';
+						$pattern = '/^[a-z0-9]+$/';
+						if(!preg_match($pattern, $user_login)){
+							$errors[] = 'The username you have entered is invalid. Please enter at least 6 alphanumeric characters in lowercase. Special characters and white spaces are not allowed.'; 
+						} else{	
+							if(!validate_username($user_login)) {
+									// invalid username
+								$errors[] = 'Username you have entered is invalid. ';
+							}
 						}
+
+
+						if(username_exists($user_login)) {
+								// Username already registered
+							$errors[] = 'Username already taken. Try something else.';
+						}				
+					}
+
+					if($user_pass == '') {
+							//Empty password
+						$errors[] = 'Please enter a password';
+					}
+
+					if($user_pass != $pass_confirm) {
+							// passwords do not match
+						$errors[] = 'Passwords do not match';
+					}
+					if($user_first == '') {
+							//Empty password
+						$errors[] = 'First name can not be empry. Humans do have names.';
+					}
+
+					if(!empty($user_first) && !preg_match('/^[a-zA-Z\s]+$/', $user_first) ) {
+							//Invalid Mobile
+						$errors[] = 'Invalid first name. Numbers not allowed.';
+					}
+					
+					if(!empty($user_last) && !preg_match('/^[a-zA-Z\s]+$/', $user_last) ) {
+							//Invalid Mobile
+						$errors[] = 'Invalid last name. Numbers not allowed.';
+					}
 					
 						// only create the user in if there are no errors
-						if(empty($errors)) {
-							global $wp_roles;
-							$roles = wp_roles()->get_names();
-							if(array_key_exists($role,$roles)){
-								$user_role = $role;
-							} else {
-								$user_role = get_option('default_role');
-							}
-							
-							$new_user_id = wp_insert_user(array(
-									'user_login'		=> $user_login,
-									'user_pass'	 		=> $user_pass,
-									'user_email'		=> $user_email,
-									'first_name'		=> $user_first,
-									'last_name'			=> $user_last,
-									'user_registered'		=> date('Y-m-d H:i:s'),
-									'role'			=> $user_role
-								)
-							);
-							if(is_int($new_user_id)) {
-								if(isset($_POST['fields'])){
-									$custom_fields = $_POST['fields'];
-									foreach($custom_fields as $custom_field_key => $custom_field){
-										update_field($custom_field_key , $custom_field, "user_".$new_user_id);
-									}
-								
+					if(empty($errors)) {
+						global $wp_roles;
+						$roles = wp_roles()->get_names();
+						if(array_key_exists($role,$roles)){
+							$user_role = $role;
+						} else {
+							$user_role = get_option('default_role');
+						}
+						
+						$new_user_id = wp_insert_user(array(
+							'user_login'		=> $user_login,
+							'user_pass'	 		=> $user_pass,
+							'user_email'		=> $user_email,
+							'first_name'		=> $user_first,
+							'last_name'			=> $user_last,
+							'user_registered'		=> date('Y-m-d H:i:s'),
+							'role'			=> $user_role
+						)
+					);
+						if(is_int($new_user_id)) {
+							if(isset($_POST['fields'])){
+								$custom_fields = $_POST['fields'];
+								foreach($custom_fields as $custom_field_key => $custom_field){
+									update_field($custom_field_key , $custom_field, "user_".$new_user_id);
 								}
 								
-								$output .= 'Thank you for registering.';
-						
-								
-							} else {
-								$errors[] = 'Some error occurred. Please contact Administrator.';
 							}
+							
+							$output .= 'Thank you for registering.';
+							
+							
 						} else {
-							foreach($errors as $error){
-								$output .=  '<div style="color:#cc0000;text-align:center;padding:10px">'.$error.'</div>';
-							}
-							//$output .= $this->aione_show_errors($errors);
-							$output .= $this->aione_app_builder_user_registration_form($args);
+							$errors[] = 'Some error occurred. Please contact Administrator.';
 						}
 					} else {
+						foreach($errors as $error){
+							$output .=  '<div style="color:#cc0000;text-align:center;padding:10px">'.$error.'</div>';
+						}
+							//$output .= $this->aione_show_errors($errors);
 						$output .= $this->aione_app_builder_user_registration_form($args);
 					}
 				} else {
-					$output .= __('User registration is not enabled!');
+					$output .= $this->aione_app_builder_user_registration_form($args);
 				}
 			} else {
-					$output .= __('You are already logged in!');
+				$output .= __('User registration is not enabled!');
 			}
-			return $output;
+		} else {
+			$output .= __('You are already logged in!');
+		}
+		return $output;
 		} //END aione_app_builder_register_shortcode()
 
 		public function aione_app_builder_user_registration_form($args) {
-		if($args['captcha'] == true){
-			if (class_exists('ReallySimpleCaptcha'))  {
-				
-				$captcha_instance = new ReallySimpleCaptcha();
-				$captcha_instance->cleanup($minutes = 30);
+			if($args['captcha'] == true){
+				if (class_exists('ReallySimpleCaptcha'))  {
 					
-				$captcha_instance->chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';	
-				$captcha_instance->bg = array( 255, 255, 255 );
-				$captcha_instance->fg = array( 21, 141, 197 );
-				$captcha_instance->img_size = array( 205, 40 );
-				$captcha_instance->base = array( 20, 30 );
-				$captcha_instance->font_size = 22;
-				$captcha_instance->char_length = 6;
-				$captcha_instance->font_char_width = 28;
+					$captcha_instance = new ReallySimpleCaptcha();
+					$captcha_instance->cleanup($minutes = 30);
+					
+					$captcha_instance->chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';	
+					$captcha_instance->bg = array( 255, 255, 255 );
+					$captcha_instance->fg = array( 21, 141, 197 );
+					$captcha_instance->img_size = array( 205, 40 );
+					$captcha_instance->base = array( 20, 30 );
+					$captcha_instance->font_size = 22;
+					$captcha_instance->char_length = 6;
+					$captcha_instance->font_char_width = 28;
 				//$upload_dir = wp_upload_dir();
 				//$captcha_instance->tmp_dir = $upload_dir['basedir'].'/captcha/';
-				
-			}	
-		}
-		
+					
+				}	
+			}
+			
 			$html_before_fields = '';
 			$html_before_fields .= '
 			
 			<form id="'.$args['form_id'].'" class="aione-registration-form aione-form form acf-form" action="'.get_permalink().'" method="post">
-				<div class="postbox acf_postbox no_box">';
+			<div class="postbox acf_postbox no_box">';
 
-				if($args['show_firstname'] == 'yes'){
+			if($args['show_firstname'] == 'yes'){
 
-					$html_before_fields .= '<div class="aione-form-field field field-type-text">
-						<p class="label"><label for="aione_user_fname">'.$args['label_firstname'].'<span class="required">*</span></label></p>
-						<div class="acf-input-wrap"><input name="aione_user_fname" id="aione_user_fname" class="textbox large" type="text" placeholder="'.$args['placeholder_firstname'].'" value="" minlength="2" maxlength="200" required /></div>
-					</div>';
-				}
-
-				if($args['show_lastname'] == 'yes'){
-
-					$html_before_fields .= '<div class="aione-form-field field field-type-text">
-						<p class="label"><label for="aione_user_lname">'.$args['label_lastname'].'</label></p>
-						<div class="acf-input-wrap"><input name="aione_user_lname" id="aione_user_lname" class="textbox large" type="text" placeholder="'.$args['placeholder_laststname'].'" value=""/></div>
-					</div>';
-				}
-
-				
 				$html_before_fields .= '<div class="aione-form-field field field-type-text">
-					<p class="label"><label for="aione_user_login">'.$args['label_username'].'<span class="required">*</span></label></p>
-					<div class="acf-input-wrap"><input name="aione_user_login" id="aione_user_login" class="textbox large required" type="text" placeholder="'.$args['placeholder_username'].'" value="" minlength="6" maxlength="50" required/></div>
-				</div>
-				<div class="aione-form-field field field-type-text">
-					<p class="label"><label for="aione_user_email">'.$args['label_email'].'<span class="required">*</span></label></p>
-					<div class="acf-input-wrap"><input name="aione_user_email" id="aione_user_email" class="textbox large required" type="email" placeholder="'.$args['placeholder_email'].'" value="" required /></div>
-				</div>
+				<p class="label"><label for="aione_user_fname">'.$args['label_firstname'].'<span class="required">*</span></label></p>
+				<div class="acf-input-wrap"><input name="aione_user_fname" id="aione_user_fname" class="textbox large" type="text" placeholder="'.$args['placeholder_firstname'].'" value="" minlength="2" maxlength="200" required /></div>
+				</div>';
+			}
 
-				<div class="aione-form-field field field-type-text">
-					<p class="label"><label for="password">'.$args['label_password'].'<span class="required">*</span></label></p>
-					<div class="acf-input-wrap"><input name="aione_user_pass" id="password" class="textbox large required" type="password" minlength="6" required /></div>
-				</div>
+			if($args['show_lastname'] == 'yes'){
 
-				<div class="aione-form-field field field-type-text">
-					<p class="label"><label for="password_again">'.$args['label_password_again'].'<span class="required">*</span></label></p>
-					<div class="acf-input-wrap"><input name="aione_user_pass_confirm" id="password_again" class="textbox large required" type="password" minlength="6" required/></div>
-				</div>
+				$html_before_fields .= '<div class="aione-form-field field field-type-text">
+				<p class="label"><label for="aione_user_lname">'.$args['label_lastname'].'</label></p>
+				<div class="acf-input-wrap"><input name="aione_user_lname" id="aione_user_lname" class="textbox large" type="text" placeholder="'.$args['placeholder_laststname'].'" value=""/></div>
+				</div>';
+			}
+
+			
+			$html_before_fields .= '<div class="aione-form-field field field-type-text">
+			<p class="label"><label for="aione_user_login">'.$args['label_username'].'<span class="required">*</span></label></p>
+			<div class="acf-input-wrap"><input name="aione_user_login" id="aione_user_login" class="textbox large required" type="text" placeholder="'.$args['placeholder_username'].'" value="" minlength="6" maxlength="50" required/></div>
+			</div>
+			<div class="aione-form-field field field-type-text">
+			<p class="label"><label for="aione_user_email">'.$args['label_email'].'<span class="required">*</span></label></p>
+			<div class="acf-input-wrap"><input name="aione_user_email" id="aione_user_email" class="textbox large required" type="email" placeholder="'.$args['placeholder_email'].'" value="" required /></div>
+			</div>
+
+			<div class="aione-form-field field field-type-text">
+			<p class="label"><label for="password">'.$args['label_password'].'<span class="required">*</span></label></p>
+			<div class="acf-input-wrap"><input name="aione_user_pass" id="password" class="textbox large required" type="password" minlength="6" required /></div>
+			</div>
+
+			<div class="aione-form-field field field-type-text">
+			<p class="label"><label for="password_again">'.$args['label_password_again'].'<span class="required">*</span></label></p>
+			<div class="acf-input-wrap"><input name="aione_user_pass_confirm" id="password_again" class="textbox large required" type="password" minlength="6" required/></div>
+			</div>
 
 			';
 			if($args['captcha'] == true){
@@ -1062,26 +1062,26 @@ class Aione_App_Builder_Public {
 					$captcha_image_url =  plugin_dir_url(dirname(__FILE__))."library/really-simple-captcha/tmp/".$image_name;
 
 					//$blog_template = intval($_GET['template']);
-						
+					
 					$html_before_fields .= '<div class="aione-form-field field field-type-text">
-							<p class="label"><label for="register_form_captcha_value">Captcha<span class="required">*</span></label></p>
-							<div class="register_form_captcha_image">
-							<img src="'.$captcha_image_url.'" />
-							</div> 
-							<div class="acf-input-wrap"><input name="captcha_value" id="register_form_captcha_value" type="text" placeholder="Enter Captcha Here" value="" class="textbox large required" >
-							<input name="captcha_prefix" type="hidden" value="'.$prefix.'" >
-							</div>
-						
-						</div>
-						';
+					<p class="label"><label for="register_form_captcha_value">Captcha<span class="required">*</span></label></p>
+					<div class="register_form_captcha_image">
+					<img src="'.$captcha_image_url.'" />
+					</div> 
+					<div class="acf-input-wrap"><input name="captcha_value" id="register_form_captcha_value" type="text" placeholder="Enter Captcha Here" value="" class="textbox large required" >
+					<input name="captcha_prefix" type="hidden" value="'.$prefix.'" >
+					</div>
+					
+					</div>
+					';
 				}
 			}
 			$html_after_fields = '<div class="aione-form-field field">
-				<input type="hidden" name="action" value="add_new">
-				<input type="submit" value="'.$args['label_submit'].'">
+			<input type="hidden" name="action" value="add_new">
+			<input type="submit" value="'.$args['label_submit'].'">
 			</div>
 			<script>
-				jQuery("#'.$args['form_id'].'").validate();
+			jQuery("#'.$args['form_id'].'").validate();
 			</script>
 
 			<style>
@@ -1098,9 +1098,13 @@ class Aione_App_Builder_Public {
 			';
 			
 			$field_groups = get_option('aione_app_builder_registration_custom_field_groups');
+			if($field_groups == ""){
+				$field_groups = 0;
+			}
 			if(!is_array($field_groups)){
 				$field_groups = array($field_groups);
 			}
+			
 			$options = array(
 				'post_id'	            => 'new_post',
 				'form'                  => false,
@@ -1113,7 +1117,7 @@ class Aione_App_Builder_Public {
 				'submit_value'	        => 'Submit',
 				'updated_message'	    => 'Registered Successfully',
 			);
-
+			
 			ob_start();
 			acf_form($options);
 			$output .= ob_get_contents();
@@ -1122,165 +1126,119 @@ class Aione_App_Builder_Public {
 		} // END aione_app_builder_user_registration_form()
 
 		public function aione_app_builder_reset_password_shortcode( $atts ) {
-		$output = "";
-		$errors = array();
-		$success_messages = array();
-		
-		if( isset($action) && !empty($action) ){
-			if( isset($_POST['email']) ){
-				if(empty($email)) {
-					$errors[] = 'Please enter email address';
-				}
-				if(!is_email($email)) {
-					$errors[] = 'Invalid email';
-				}
-				if(!email_exists($email)) {
-					$errors[] = 'Email address does not exist';
-				}
-				if ( empty($errors) ) {
-					$user = get_user_by( 'email', $email );
-					$user_id = $user->ID;
-					$activation_key = wp_generate_password( 8, false );
-					$update_error = wp_update_user( array( 'ID' => $user_id, 'user_pass' => esc_attr( $activation_key ) ) );
-					$user_notification = aione_app_builder_forget_password_notification($user_id, $activation_key);
-					if(is_int($update_error) && $user_notification){
-						$success_messages[] = "Password reset email sent.";
-						$success_messages[] = "Please also check spam folder.";
+			$output = "";
+			$errors = array();
+			$success_messages = array();
+			
+			if( isset($action) && !empty($action) ){
+				if( isset($_POST['email']) ){
+					if(empty($email)) {
+						$errors[] = 'Please enter email address';
 					}
+					if(!is_email($email)) {
+						$errors[] = 'Invalid email';
+					}
+					if(!email_exists($email)) {
+						$errors[] = 'Email address does not exist';
+					}
+					if ( empty($errors) ) {
+						$user = get_user_by( 'email', $email );
+						$user_id = $user->ID;
+						$activation_key = wp_generate_password( 8, false );
+						$update_error = wp_update_user( array( 'ID' => $user_id, 'user_pass' => esc_attr( $activation_key ) ) );
+						$user_notification = aione_app_builder_forget_password_notification($user_id, $activation_key);
+						if(is_int($update_error) && $user_notification){
+							$success_messages[] = "Password reset email sent.";
+							$success_messages[] = "Please also check spam folder.";
+						}
+					}
+				}
+				
+				if ( !empty($errors) ) {
+					$output .= '<div class="aione_errors"><ul>';
+					foreach($errors as $error){
+						$output .= '<li class="error"><strong>' . __('Error') . '</strong>: ' . $error . '</li>';
+					}
+					$output .= '</ul></div>';
+				}
+				if ( !empty($success_messages) ) {
+					$output .= '<div class="aione_success"><ul>';
+					foreach($success_messages as $success_message){
+						$output .= '<li class="success">' . $success_message . '</li>';
+					}
+					$output .= '</ul></div>';
 				}
 			}
 			
-			if ( !empty($errors) ) {
-				$output .= '<div class="aione_errors"><ul>';
-				foreach($errors as $error){
-					$output .= '<li class="error"><strong>' . __('Error') . '</strong>: ' . $error . '</li>';
-				}
-				$output .= '</ul></div>';
-			}
-			if ( !empty($success_messages) ) {
-				$output .= '<div class="aione_success"><ul>';
-				foreach($success_messages as $success_message){
-					$output .= '<li class="success">' . $success_message . '</li>';
-				}
-				$output .= '</ul></div>';
-			}
+			$output .= '<form method="post" class="login-signup" id="login-signup" action="'.get_permalink().'">';
+			$output .= '<p class="forgot-password-user">';
+			$output .= '<label for="email">Your Email Address<span class="required">*</span></label>';
+			$output .= '<input class="text-input field-long" name="email" type="email" id="email">';
+			$output .= '</p>';
+			$output .= '<p class="reset-password">';
+			$output .= '<input name="reset-password" type="submit" class="field-long submit btn button-primary button application-button" value="Reset Password">';
+			$output .= '<input name="action" type="hidden" value="'.$action.'">';
+			$output .= '</p>';
+			$output .= '</form>';
+			
+			return $output;
 		}
-		
-		$output .= '<form method="post" class="login-signup" id="login-signup" action="'.get_permalink().'">';
-		$output .= '<p class="forgot-password-user">';
-		$output .= '<label for="email">Your Email Address<span class="required">*</span></label>';
-		$output .= '<input class="text-input field-long" name="email" type="email" id="email">';
-		$output .= '</p>';
-		$output .= '<p class="reset-password">';
-		$output .= '<input name="reset-password" type="submit" class="field-long submit btn button-primary button application-button" value="Reset Password">';
-		$output .= '<input name="action" type="hidden" value="'.$action.'">';
-		$output .= '</p>';
-		$output .= '</form>';
-		
-		return $output;
-	}
 
-	public function aione_app_builder_account_shortcode ($attr, $content = null){
-		extract( shortcode_atts(
-			array(
+		public function aione_app_builder_account_shortcode ($attr, $content = null){
+			extract( shortcode_atts(
+				array(
 			'pages'    => 'yes', // yes/no
 			'sub_pages'    => 'no', // yes/no
 			'layout_menu'    => 'vertical',// horizontal/vertical
 			'layout_content'    => 'box',// box/table/list
-			), $attr )
+		), $attr )
 		);
 
-		
-		$attr_menu = array(
+			
+			$attr_menu = array(
 			'pages'    => $pages, // yes/no
 			'sub_pages'    => $sub_pages, // yes/no
 			'layout'    => $layout_menu,// horizontal/vertical
 		);
 
-		$attr_content = array(
+			$attr_content = array(
 			'pages'    => $pages, // yes/no
 			'sub_pages'    => $sub_pages, // yes/no
 			'layout'    => $layout_content,// horizontal/vertical
 		);
-		$output = "";
-		if(is_user_logged_in() ){
-			$output .= $this->aione_app_builder_account_menu_shortcode($attr_menu);	
-			$output .= $this->aione_app_builder_account_content_shortcode($attr_content);
-		} else {
-			$output .="";
-		}
+			$output = "";
+			if(is_user_logged_in() ){
+				$output .= $this->aione_app_builder_account_menu_shortcode($attr_menu);	
+				$output .= $this->aione_app_builder_account_content_shortcode($attr_content);
+			} else {
+				$output .="";
+			}
 			
-		return $output;
-	}
+			return $output;
+		}
 
-	public function aione_app_builder_account_menu_shortcode ($attr, $content = null){
+		public function aione_app_builder_account_menu_shortcode ($attr, $content = null){
 		// Attributes
-		extract( shortcode_atts(
-			array(
+			extract( shortcode_atts(
+				array(
 			'pages'    => 'yes', // yes/no
 			'sub_pages'    => 'no', // yes/no
 			'layout'    => 'vertical',// horizontal/vertical
-			), $attr )
+		), $attr )
 		);
 
-		$output = "";
-		if(is_user_logged_in() ) {
-			$output .= '<div id="account_menu" class="account-menu '.$layout.'" >';
-			$output .= '<ul class="account-menu-list" id="account_menu_list">';
+			$output = "";
+			if(is_user_logged_in() ) {
+				$output .= '<div id="account_menu" class="account-menu '.$layout.'" >';
+				$output .= '<ul class="account-menu-list" id="account_menu_list">';
 
-			if($pages == 'yes'){
-				$output .= '<li><a href="?action=account">Account</a></li>';
-				$output .= '<li><a href="?action=profile">View Profile</a></li>';
-				$output .= '<li><a href="?action=edit-profile">Edit Profile</a></li>';
-				$output .= '<li><a href="?action=change-password">Change Password</a></li>';
-			}
-
-			if($sub_pages == 'yes'){
-				$post_id = get_the_ID();
-				$post_ancestors = get_ancestors( $post_id, 'page' );
-				$post_parent    = end( $post_ancestors );
-				if ( $post_parent ) {
-					$children = wp_list_pages( sprintf( 'title_li=&child_of=%s&echo=0', $post_parent ) );
-				} else {
-					$children = wp_list_pages( sprintf( 'title_li=&child_of=%s&echo=0', $post_id ) );
-				}
-				if ( $children ) {
-					$output .= $children;
-				}
-			}
-
-			$output .= '</ul>';
-			$output .= '</div>';
-		} else {
-			$output .= "";
-		}
-		return $output;
-	}
-
-	public function aione_app_builder_account_content_shortcode ($attr, $content = null){
-		extract( shortcode_atts(
-			array(
-			'pages'    => 'yes', // yes/no
-			'sub_pages'    => 'no', // yes/no
-			'layout'    => 'box',// box/table/list
-			), $attr )
-		);
-
-		$output = "";
-		if(is_user_logged_in()) {
-			$action = $_GET['action'];
-			if(!isset($action)){
-				$action = "account";
-			}
-			if($action == "account"){
-				$output .='<div class="account-content-outer" id="account_content_outer">';
-				$output .='<div class="account-content" id="account_content">';
-				$output .='<ul class="account-items '.$layout.'">';
 				if($pages == 'yes'){
-					$output .='<li><a class="account-item" href="?action=profile">View Profile</a></li>';
-					$output .='<li><a class="account-item" href="?action=edit-profile">Edit Profile</a></li>';
-					$output .='<li><a class="account-item" href="?action=change-password">Change Password</a></li>';
+					$output .= '<li><a href="?action=account">Account</a></li>';
+					$output .= '<li><a href="?action=profile">View Profile</a></li>';
+					$output .= '<li><a href="?action=edit-profile">Edit Profile</a></li>';
+					$output .= '<li><a href="?action=change-password">Change Password</a></li>';
 				}
+
 				if($sub_pages == 'yes'){
 					$post_id = get_the_ID();
 					$post_ancestors = get_ancestors( $post_id, 'page' );
@@ -1293,13 +1251,59 @@ class Aione_App_Builder_Public {
 					if ( $children ) {
 						$output .= $children;
 					}
-
 				}
 
-				$output .='<div style="clear:both;"></div>';
-				$output .='</ul>';
-				$output .='	</div>';
-				$output .='</div>';
+				$output .= '</ul>';
+				$output .= '</div>';
+			} else {
+				$output .= "";
+			}
+			return $output;
+		}
+
+		public function aione_app_builder_account_content_shortcode ($attr, $content = null){
+			extract( shortcode_atts(
+				array(
+			'pages'    => 'yes', // yes/no
+			'sub_pages'    => 'no', // yes/no
+			'layout'    => 'box',// box/table/list
+		), $attr )
+		);
+
+			$output = "";
+			if(is_user_logged_in()) {
+				$action = $_GET['action'];
+				if(!isset($action)){
+					$action = "account";
+				}
+				if($action == "account"){
+					$output .='<div class="account-content-outer" id="account_content_outer">';
+					$output .='<div class="account-content" id="account_content">';
+					$output .='<ul class="account-items '.$layout.'">';
+					if($pages == 'yes'){
+						$output .='<li><a class="account-item" href="?action=profile">View Profile</a></li>';
+						$output .='<li><a class="account-item" href="?action=edit-profile">Edit Profile</a></li>';
+						$output .='<li><a class="account-item" href="?action=change-password">Change Password</a></li>';
+					}
+					if($sub_pages == 'yes'){
+						$post_id = get_the_ID();
+						$post_ancestors = get_ancestors( $post_id, 'page' );
+						$post_parent    = end( $post_ancestors );
+						if ( $post_parent ) {
+							$children = wp_list_pages( sprintf( 'title_li=&child_of=%s&echo=0', $post_parent ) );
+						} else {
+							$children = wp_list_pages( sprintf( 'title_li=&child_of=%s&echo=0', $post_id ) );
+						}
+						if ( $children ) {
+							$output .= $children;
+						}
+
+					}
+
+					$output .='<div style="clear:both;"></div>';
+					$output .='</ul>';
+					$output .='	</div>';
+					$output .='</div>';
 			}	// Action = Account
 			
 			if($action == "profile"){
@@ -1335,46 +1339,46 @@ class Aione_App_Builder_Public {
 			
 
 			$output .='<div class="account-content-outer" id="account_content_outer">
-				<div class="account-content-title-heading-center"><h4>'.$username.' Profile</h4></div>';
-				$output .= '<ul class="aione-list theme-solid small" id="account_content_profile">
-				<li><div class="user-detail-label">ID</div>
-				<div class="user-detail-value">'.$user_id.'</div>
-				<div class="clear"></div></li>
-				<li><div class="user-detail-label">First Name</div>
-				<div class="user-detail-value">'.$value['first_name'][0].'</div>
-				<div class="clear"></div></li>
-				<li><div class="user-detail-label">Last name</div>
-				<div class="user-detail-value">'.$value['last_name'][0].'</div>
-				<div class="clear"></div></li>
-				<li><div class="user-detail-label">Email</div>
-				<div class="user-detail-value">'.$user->user_email.'</div>
-				<div class="clear"></div></li>
-				';
+			<div class="account-content-title-heading-center"><h4>'.$username.' Profile</h4></div>';
+			$output .= '<ul class="aione-list theme-solid small" id="account_content_profile">
+			<li><div class="user-detail-label">ID</div>
+			<div class="user-detail-value">'.$user_id.'</div>
+			<div class="clear"></div></li>
+			<li><div class="user-detail-label">First Name</div>
+			<div class="user-detail-value">'.$value['first_name'][0].'</div>
+			<div class="clear"></div></li>
+			<li><div class="user-detail-label">Last name</div>
+			<div class="user-detail-value">'.$value['last_name'][0].'</div>
+			<div class="clear"></div></li>
+			<li><div class="user-detail-label">Email</div>
+			<div class="user-detail-value">'.$user->user_email.'</div>
+			<div class="clear"></div></li>
+			';
+			
+			$field_groups = get_option('aione_app_builder_registration_custom_field_groups');
+			if(!is_array($field_groups)){
+				$field_groups = array($field_groups);
+			}
+			
+			foreach($field_groups as $field_group_key => $field_group){
+				$fields = apply_filters('acf/field_group/get_fields',array(), $field_group);
 				
-				$field_groups = get_option('aione_app_builder_registration_custom_field_groups');
-				if(!is_array($field_groups)){
-					$field_groups = array($field_groups);
+				foreach($fields as $fields_key => $field){
+					$field_key = $field['key'];
+					$field_data = get_field($field_key , "user_".$user_id);
+					if(is_array($field_data)){
+						$field_data = implode(",",$field_data);
+					}
+					$output .= '<li><div class="user-detail-label">'.$field['label'].'</div>';
+					$output .= '<div class="user-detail-value">'.$field_data.'</div>
+					<div class="clear"></div></li>';
 				}
 				
-				 foreach($field_groups as $field_group_key => $field_group){
-					$fields = apply_filters('acf/field_group/get_fields',array(), $field_group);
-					
-					foreach($fields as $fields_key => $field){
-						$field_key = $field['key'];
-						$field_data = get_field($field_key , "user_".$user_id);
-						if(is_array($field_data)){
-							$field_data = implode(",",$field_data);
-						}
-						$output .= '<li><div class="user-detail-label">'.$field['label'].'</div>';
-						$output .= '<div class="user-detail-value">'.$field_data.'</div>
-						<div class="clear"></div></li>';
-					}
-					
-					
-				} 
 				
-           $output .= '</ul>
-						</div>';
+			} 
+			
+			$output .= '</ul>
+			</div>';
 			
 		} else {
 			$output .= "";
@@ -1398,58 +1402,58 @@ class Aione_App_Builder_Public {
 			$action = $_GET['action'];
 			
 			//if($action == "edit-profile") {
-				
-				if(isset($_POST['update_profile'])  && $_POST['update_profile'] == 'update_profile'){
-					$first_name = $_POST['aione_user_fname'];
-					$last_name = $_POST['aione_user_lname'];
-					$custom_fields = $_POST['fields'];
-					wp_update_user( array( 'ID' => $user_id, 'first_name' => $first_name, 'last_name' => $last_name  ) );
-					foreach($custom_fields as $custom_field_key => $custom_field){
-						update_field($custom_field_key , $custom_field, "user_".$user_id);
-					}
-					
+			
+			if(isset($_POST['update_profile'])  && $_POST['update_profile'] == 'update_profile'){
+				$first_name = $_POST['aione_user_fname'];
+				$last_name = $_POST['aione_user_lname'];
+				$custom_fields = $_POST['fields'];
+				wp_update_user( array( 'ID' => $user_id, 'first_name' => $first_name, 'last_name' => $last_name  ) );
+				foreach($custom_fields as $custom_field_key => $custom_field){
+					update_field($custom_field_key , $custom_field, "user_".$user_id);
 				}
-				$output .= '<h3 class="account-content-title-heading-center">Edit Profile</h3>';
-				$html_before_fields = "";
-				$html_before_fields .= '
-					<form id="aione_edit_profile_form" class="aione-edit-profile-form aione-form form acf-form" action="'.get_permalink().'?action=edit-profile" method="post">
-				';
-				$html_before_fields .= '<div class="aione-form-field field field-type-text">
-							<p class="label"><label for="aione_user_fname">First Name</label></p>
-							<div class="acf-input-wrap"><input name="aione_user_fname" id="aione_user_fname" class="textbox large" type="text" placeholder="" value="'.$value['first_name'][0].'"/></div>
-						</div>';
-				$html_before_fields .= '<div class="aione-form-field field field-type-text">
-							<p class="label"><label for="aione_user_lname">Last Name</label></p>
-							<div class="acf-input-wrap"><input name="aione_user_lname" id="aione_user_lname" class="textbox large" type="text" placeholder="" value="'.$value['last_name'][0].'"/></div>
-						</div>';		
 				
-				$html_after_fields = '<div class="aione-form-field field">
-					<input type="hidden" name="update_profile" value="update_profile">
-					<input type="submit" value="Update">
-				</div>
-				';
-				
-				$field_groups = get_option('aione_app_builder_registration_custom_field_groups');
-				if(!is_array($field_groups)){
-					$field_groups = array($field_groups);
-				}
-				$options = array(
-					'post_id'	            => 'user_'.$user_id,
-					'form'                  => false,
-					'field_groups'          => $field_groups,
-					'post_title'            => false,
-					'post_content'          => false,
-					'html_before_fields'    => $html_before_fields,
-					'html_after_fields'     => $html_after_fields,
-					'instruction_placement' => 'field',
-					'submit_value'	        => 'Submit',
-					'updated_message'	    => 'Updated Successfully',
-				);
+			}
+			$output .= '<h3 class="account-content-title-heading-center">Edit Profile</h3>';
+			$html_before_fields = "";
+			$html_before_fields .= '
+			<form id="aione_edit_profile_form" class="aione-edit-profile-form aione-form form acf-form" action="'.get_permalink().'?action=edit-profile" method="post">
+			';
+			$html_before_fields .= '<div class="aione-form-field field field-type-text">
+			<p class="label"><label for="aione_user_fname">First Name</label></p>
+			<div class="acf-input-wrap"><input name="aione_user_fname" id="aione_user_fname" class="textbox large" type="text" placeholder="" value="'.$value['first_name'][0].'"/></div>
+			</div>';
+			$html_before_fields .= '<div class="aione-form-field field field-type-text">
+			<p class="label"><label for="aione_user_lname">Last Name</label></p>
+			<div class="acf-input-wrap"><input name="aione_user_lname" id="aione_user_lname" class="textbox large" type="text" placeholder="" value="'.$value['last_name'][0].'"/></div>
+			</div>';		
+			
+			$html_after_fields = '<div class="aione-form-field field">
+			<input type="hidden" name="update_profile" value="update_profile">
+			<input type="submit" value="Update">
+			</div>
+			';
+			
+			$field_groups = get_option('aione_app_builder_registration_custom_field_groups');
+			if(!is_array($field_groups)){
+				$field_groups = array($field_groups);
+			}
+			$options = array(
+				'post_id'	            => 'user_'.$user_id,
+				'form'                  => false,
+				'field_groups'          => $field_groups,
+				'post_title'            => false,
+				'post_content'          => false,
+				'html_before_fields'    => $html_before_fields,
+				'html_after_fields'     => $html_after_fields,
+				'instruction_placement' => 'field',
+				'submit_value'	        => 'Submit',
+				'updated_message'	    => 'Updated Successfully',
+			);
 
-				ob_start();
-				acf_form($options);
-				$output .= ob_get_contents();
-				ob_end_clean();
+			ob_start();
+			acf_form($options);
+			$output .= ob_get_contents();
+			ob_end_clean();
 			//}
 		} else {
 			$output .= "";
@@ -1460,9 +1464,9 @@ class Aione_App_Builder_Public {
 	public function aione_app_builder_change_password_shortcode( $atts ) {
 		// Attributes
 		extract( shortcode_atts(
-				array(
-				), $atts )
-		);
+			array(
+			), $atts )
+	);
 		$output = "";
 		$errors = array();
 
@@ -1496,7 +1500,7 @@ class Aione_App_Builder_Public {
 					$output .= 'You will be redirected to login page in <span id="redirectcountdown">10</span> seconds.';
 					$output .= '</div>';
 
-				   $output .= "<script type='text/javascript'>jQuery(window).ready( function() { var time = 10; setInterval( function() { time--; if (time >= 0){ jQuery('#redirectcountdown').html(time);} if (time === 0) { window.location = '".home_url( '/' )."';} }, 1000 );});</script>";
+					$output .= "<script type='text/javascript'>jQuery(window).ready( function() { var time = 10; setInterval( function() { time--; if (time >= 0){ jQuery('#redirectcountdown').html(time);} if (time === 0) { window.location = '".home_url( '/' )."';} }, 1000 );});</script>";
 				}
 			} else {
 				if ( empty($_POST['current_pass']) ) {
@@ -1519,25 +1523,25 @@ class Aione_App_Builder_Public {
 			$output .= '</ul></div>';
 		}
 		if(is_user_logged_in()) {
-		$output .= '<h3 class="account-content-title-heading-center">Change Password</h3>';
-		$output .= '<form method="post" class="aione-change-password-form aione-form form acf-form" id="aione-change-password-form" action="">';
-		$output .= '<div class="aione-form-field field field-type-text">
-					<p class="label"><label for="current_pass">Current Password<span class="required">*</span></label></p>
-					<div class="acf-input-wrap"><input name="current_pass" id="current_pass" class="text-input field-long" type="password" /></div>
-				</div>';
-		$output .= '<div class="aione-form-field field field-type-text">
-					<p class="label"><label for="pass1">New Password<span class="required">*</span></label></p>
-					<div class="acf-input-wrap"><input name="pass1" id="pass1" class="text-input field-long" type="password" /></div>
-				</div>';
-		$output .= '<div class="aione-form-field field field-type-text">
-					<p class="label"><label for="pass2">New Password<span class="required">*</span></label></p>
-					<div class="acf-input-wrap"><input name="pass2" id="pass2" class="text-input field-long" type="password" /></div>
-				</div>';
-		
-		$output .= '<input name="updateuser" type="submit" id="updateuser" class="field-long submit btn button-primary button application-button" value="Change Password">';
-		$output .= '<input name="action" type="hidden" id="action" value="changepassword">';
-		$output .= '</form>';
-	   }
+			$output .= '<h3 class="account-content-title-heading-center">Change Password</h3>';
+			$output .= '<form method="post" class="aione-change-password-form aione-form form acf-form" id="aione-change-password-form" action="">';
+			$output .= '<div class="aione-form-field field field-type-text">
+			<p class="label"><label for="current_pass">Current Password<span class="required">*</span></label></p>
+			<div class="acf-input-wrap"><input name="current_pass" id="current_pass" class="text-input field-long" type="password" /></div>
+			</div>';
+			$output .= '<div class="aione-form-field field field-type-text">
+			<p class="label"><label for="pass1">New Password<span class="required">*</span></label></p>
+			<div class="acf-input-wrap"><input name="pass1" id="pass1" class="text-input field-long" type="password" /></div>
+			</div>';
+			$output .= '<div class="aione-form-field field field-type-text">
+			<p class="label"><label for="pass2">New Password<span class="required">*</span></label></p>
+			<div class="acf-input-wrap"><input name="pass2" id="pass2" class="text-input field-long" type="password" /></div>
+			</div>';
+			
+			$output .= '<input name="updateuser" type="submit" id="updateuser" class="field-long submit btn button-primary button application-button" value="Change Password">';
+			$output .= '<input name="action" type="hidden" id="action" value="changepassword">';
+			$output .= '</form>';
+		}
 		return $output;
 	} // END aione_app_builder_change_password_shortcode()
 
@@ -1555,7 +1559,7 @@ class Aione_App_Builder_Public {
 				'action' => '',
 				'class' => '',
 			), $atts )
-		);
+	);
 		
 		if(!$id && !$path && !$title && !$action){
 			return home_url();
@@ -1602,7 +1606,7 @@ class Aione_App_Builder_Public {
 				'id'		=> '',
 				'class'		=> ''	
 			), $atts )
-		);
+	);
 		
 		global $theme_options, $post;
 
@@ -1630,32 +1634,32 @@ class Aione_App_Builder_Public {
 		
 		if($resent_posts->have_posts()){
 			$output .= '<ul class="list-posts">';
-				while($resent_posts->have_posts()){
-					$resent_posts->the_post(); 
-					$output .= '<li>';
-						if(has_post_thumbnail()){
-							$output .= '<div class="post-image">';
-							$output .= '<a href="'.get_permalink().'">';
-							$output .= 	get_the_post_thumbnail($post->ID,'tabs-img');
-							$output .= '</a>';
-							$output .= '</div>';
-						} else {
-							$output .= '<div class="post-image">';
-							$output .= '<a href="'.get_permalink().'">';
-							$output .= 	'<img width="52" height="50" src="'.plugin_dir_url( __FILE__ ).'/assets/images/placeholder_grey_52x50.png" class="attachment-tabs-img wp-post-image" alt="'.get_the_title().'" >';
-							$output .= '</a>';
-							$output .= '</div>';						
-						}
-						$output .= '<div class="post-holder">';
-							$output .= '<a href="'.get_permalink().'" class="post-title">'.get_the_title().'</a>';
-							$output .= '<div class="post-meta">';
-							$output .= 	get_the_time($theme_options['date_format']);
-							$output .= '</div>';
-						$output .= '</div>';
-						$output .= '<div class="aione-clearfix"></div>';
-					$output .= '</li>';
-					
+			while($resent_posts->have_posts()){
+				$resent_posts->the_post(); 
+				$output .= '<li>';
+				if(has_post_thumbnail()){
+					$output .= '<div class="post-image">';
+					$output .= '<a href="'.get_permalink().'">';
+					$output .= 	get_the_post_thumbnail($post->ID,'tabs-img');
+					$output .= '</a>';
+					$output .= '</div>';
+				} else {
+					$output .= '<div class="post-image">';
+					$output .= '<a href="'.get_permalink().'">';
+					$output .= 	'<img width="52" height="50" src="'.plugin_dir_url( __FILE__ ).'/assets/images/placeholder_grey_52x50.png" class="attachment-tabs-img wp-post-image" alt="'.get_the_title().'" >';
+					$output .= '</a>';
+					$output .= '</div>';						
 				}
+				$output .= '<div class="post-holder">';
+				$output .= '<a href="'.get_permalink().'" class="post-title">'.get_the_title().'</a>';
+				$output .= '<div class="post-meta">';
+				$output .= 	get_the_time($theme_options['date_format']);
+				$output .= '</div>';
+				$output .= '</div>';
+				$output .= '<div class="aione-clearfix"></div>';
+				$output .= '</li>';
+				
+			}
 			$output .= '</ul>';
 			wp_reset_postdata();
 		}  else {
@@ -1667,31 +1671,31 @@ class Aione_App_Builder_Public {
 	public function aione_app_builder_list_comments_shortcode( $atts ) {
 		// Attributes
 		extract( shortcode_atts(
-				array(
-					'count'           => '',
-					'id'           => '',
-					'class'           => ''
-					
-				), $atts )
-		);
+			array(
+				'count'           => '',
+				'id'           => '',
+				'class'           => ''
+				
+			), $atts )
+	);
 		
 		global $theme_options, $post;
 		
 		$output = "";
 		$number = $count;
 		
-	$args = array(
-		'include_unapproved' => '',
-		'fields' => '',
-		'ID' => '',
-		'comment__in' => '',
-		'comment__not_in' => '',
-		'karma' => '',
-		'number' => $number,
-		'offset' => '',
-		'orderby' => '',
-		'order' => 'DESC',
-		'parent' => '',
+		$args = array(
+			'include_unapproved' => '',
+			'fields' => '',
+			'ID' => '',
+			'comment__in' => '',
+			'comment__not_in' => '',
+			'karma' => '',
+			'number' => $number,
+			'offset' => '',
+			'orderby' => '',
+			'order' => 'DESC',
+			'parent' => '',
 		'post_ID' => '', // ignored (use post_id instead)
 		'post_id' => 0,
 		'post__in' => '',
@@ -1713,7 +1717,7 @@ class Aione_App_Builder_Public {
 		'meta_query' => '',
 		'date_query' => null, // See WP_Date_Query
 	);
-	$the_comments = get_comments( $args );
+		$the_comments = get_comments( $args );
 
 		if($the_comments){
 			$output .= '<ul class="list-posts resent-comments">';
@@ -1750,19 +1754,19 @@ class Aione_App_Builder_Public {
 				'id' => '',
 				'class' => '',
 			), $atts)
-		);
+	);
 		
 		$output = '';
 		if (!$category){
-		return '';
+			return '';
 			$portfolio_category = get_terms('faq_category');
 			if ($portfolio_category){
-			$output .= '<ul class="faq-tabs clearfix">';
-			$output .= '<li class="active"><a data-filter="*" href="#">' . __('All', 'Aione') . '</a></li>';
-			foreach ($portfolio_category as $portfolio_cat){
-				$output .= '<li><a data-filter=" ' . urldecode($portfolio_cat->slug) .'"href="#">' . $portfolio_cat->name . '</a></li>';
-			}
-			$output .= '</ul>';
+				$output .= '<ul class="faq-tabs clearfix">';
+				$output .= '<li class="active"><a data-filter="*" href="#">' . __('All', 'Aione') . '</a></li>';
+				foreach ($portfolio_category as $portfolio_cat){
+					$output .= '<li><a data-filter=" ' . urldecode($portfolio_cat->slug) .'"href="#">' . $portfolio_cat->name . '</a></li>';
+				}
+				$output .= '</ul>';
 			}
 		} 
 		
@@ -1773,19 +1777,19 @@ class Aione_App_Builder_Public {
 		$args = array(
 			'post_type' => 'faqs',
 			'tax_query' => array(
-			array(
-				'taxonomy' => 'faq_category',
-				'field'    => 'slug',
-				'terms'    => $category,
+				array(
+					'taxonomy' => 'faq_category',
+					'field'    => 'slug',
+					'terms'    => $category,
+				),
 			),
-		),
 			'nopaging' => true
 		);
 		$gallery = new WP_Query($args);
 		$count = 0;
 		while($gallery->have_posts()): $gallery->the_post();
-	  
-		
+			
+			
 			$count++;
 			$item_classes = '';
 			$item_cats = get_the_terms($post->ID, 'faq_category');
@@ -1828,7 +1832,7 @@ class Aione_App_Builder_Public {
 				'role' => '',
 				'roles' => '',
 			), $atts )
-		);
+	);
 		
 		$output = "";
 
@@ -1853,33 +1857,33 @@ class Aione_App_Builder_Public {
 			'count_total'  => false,
 			'fields'       => 'all',
 			'who'          => ''
-		 );
+		);
 		$users = get_users( $args );
 		
 		echo count($users);
 		// if($style == 'table'){
-			
+		
 		// 	$columns = explode("|", $columns); 
 		// 	$fields = explode("|", $fields); 
-			
+		
 		// 	$output .= '<div class="aione-table">';
 		// 	$output .= '<table class="compact">';
 		// 	$output .= '<thead>';
 		// 	$output .= '<tr>';
-			
+		
 		// 	foreach ( $columns as $column ) {
 		// 		$output .= '<th>'.$column.'</th>';
 		// 	}
-			
+		
 		// 	$output .= '</tr>';
 		// 	$output .= '</thead>';
 		// 	$output .= '<tbody>';
-			
+		
 		// 	// Array of WP_User objects.
 		// 	foreach ( $users as $user ) {
-				
+		
 		// 		$user_id = $user->ID;
-			
+		
 		// 		$output .= '<tr>';
 		// 		foreach ( $fields as $field ) {
 		// 			if( $field == 'status'){
@@ -1894,15 +1898,15 @@ class Aione_App_Builder_Public {
 		// 			}else {
 		// 				$output .= '<td>' . esc_html( $user->$field ) . '</td>';
 		// 			}
-					
+		
 		// 		}
 		// 		$output .= '</tr>';
 		// 	}
-			
+		
 		// 	$output .= '</tbody>';
 		// 	$output .= '</table>';
 		// 	$output .= '</div>';
-			
+		
 		// } else{ 
 		// 	$count = 1;
 		// 	// Array of WP_User objects.
@@ -1925,7 +1929,7 @@ class Aione_App_Builder_Public {
 				'role' => '',
 				'roles' => array(),
 			), $atts )
-		);
+	);
 		
 		$output = "";
 
@@ -1950,7 +1954,7 @@ class Aione_App_Builder_Public {
 			'count_total'  => false,
 			'fields'       => 'all',
 			'who'          => ''
-		 );
+		);
 		$users = get_users( $args );
 		//echo "<pre>";print_r($roles);echo "</pre>";
 		if($style == 'table'){
@@ -1975,7 +1979,7 @@ class Aione_App_Builder_Public {
 			foreach ( $users as $user ) {
 				
 				$user_id = $user->ID;
-			
+				
 				$output .= '<tr>';
 				foreach ( $fields as $field ) {
 					if( $field == 'status'){
@@ -2023,7 +2027,7 @@ class Aione_App_Builder_Public {
 				'field' => 'user_login', //key of field and custom field to be dispayed
 				'field_type' => 'field', //field/meta
 			), $atts )
-		);
+	);
 		
 		$user = get_user_by('id', $user_id);
 
@@ -2058,7 +2062,7 @@ class Aione_App_Builder_Public {
 				'id' => '', 
 				'user_id' => $userid, // ID of user
 			), $atts )
-		);
+	);
 		
 		$user = get_user_by('id', $user_id);
 
@@ -2119,16 +2123,16 @@ class Aione_App_Builder_Public {
 				'read_more_text'   		=> $theme_options['blog_archive_read_more_text'], //Text. Default is Read More
 				'layout' 			  	=> $theme_options['blog_archive_layout'], // list,grid,timeline. Default =list
 			), $atts )
-		);
+	);
 
 		//setting up categories to be used .Transform slugs to ids
 		$cat_ids ='';
 		$categories = explode( ',' , $cat_slug );
 		if ( isset( $categories ) && 
-			 $categories 
+			$categories 
 		) {
 			foreach ( $categories as $category ) {
-			
+				
 				$id_obj = get_category_by_slug( $category );
 				
 				if ( $id_obj ) {
@@ -2183,7 +2187,7 @@ class Aione_App_Builder_Public {
 		( $meta_tags == "yes" || $meta_tags == "1" ) ? ( $meta_tags = TRUE ) : ( $meta_tags = FALSE );
 		( $pagination == "yes" ) ? ( $pagination = TRUE ) : ( $pagination = FALSE );
 		
-				
+		
 		$blog_query = new WP_Query( $args );
 		$output = "";
 		//echo "<pre>";print_r($args);echo "</pre>";
@@ -2241,68 +2245,68 @@ class Aione_App_Builder_Public {
 				}
 				
 				$output .='<article id="post_'. get_the_ID().'" '. get_post_class().'> 
-					<div class="ar list-blog '. $layout.'">';
-						
-						if($has_thumbnail) { 
-						
-						$output .='<div class="ac s100 m50 l40">
-							<div class="featured-image aione-rounded">
-								'. get_the_post_thumbnail( $post_id,'medium' ).'	
-						    </div>
-						</div>
-						<div class="ac s100 m50 l60">
-						';
-						}else {
-							
-						$output .='<div class="ac s100 m100 l100">';
-							
-						}
-						
-							if($show_title) { 
-							
-							$output .='<header class="entry-header">';
-								$output .= '<h1 class="entry-title">';
-								if($title_link){
-									$output .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">';
-								}
-								$output .= get_the_title($before,$after);
-								if($title_link){
-									$output .= '</a>';
-								}
-								$output .= '</h1>';
-								
-								if($meta_info_combined){
-								
-								$output .='<div class="entry-meta">
-									'. $meta_info_combined .'
-								</div>';
-								
-								}
-								
-							$output .='</header>';
-							
-							}
-							
-
-							$output .='<div class="entry-content"> ';
-								 if($excerpt){
-									$output .= wp_trim_words( wp_strip_all_tags( get_the_content() ), $excerpt_length, '...' );
-								} else {
-									$output .= wp_strip_all_tags( get_the_content() );
-								}
-								
-							$output .='</div>';
-							
-							if($read_more){
-							
-							$output .='<footer class="entry-footer">
-								<a class="read-more-link" href="'. get_permalink().'">'. $read_more_text.'</a>
-							</footer>';
-							
-							}
-							
-						$output .='</div>
+				<div class="ar list-blog '. $layout.'">';
+				
+				if($has_thumbnail) { 
+					
+					$output .='<div class="ac s100 m50 l40">
+					<div class="featured-image aione-rounded">
+					'. get_the_post_thumbnail( $post_id,'medium' ).'	
 					</div>
+					</div>
+					<div class="ac s100 m50 l60">
+					';
+				}else {
+					
+					$output .='<div class="ac s100 m100 l100">';
+					
+				}
+				
+				if($show_title) { 
+					
+					$output .='<header class="entry-header">';
+					$output .= '<h1 class="entry-title">';
+					if($title_link){
+						$output .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">';
+					}
+					$output .= get_the_title($before,$after);
+					if($title_link){
+						$output .= '</a>';
+					}
+					$output .= '</h1>';
+					
+					if($meta_info_combined){
+						
+						$output .='<div class="entry-meta">
+						'. $meta_info_combined .'
+						</div>';
+						
+					}
+					
+					$output .='</header>';
+					
+				}
+				
+
+				$output .='<div class="entry-content"> ';
+				if($excerpt){
+					$output .= wp_trim_words( wp_strip_all_tags( get_the_content() ), $excerpt_length, '...' );
+				} else {
+					$output .= wp_strip_all_tags( get_the_content() );
+				}
+				
+				$output .='</div>';
+				
+				if($read_more){
+					
+					$output .='<footer class="entry-footer">
+					<a class="read-more-link" href="'. get_permalink().'">'. $read_more_text.'</a>
+					</footer>';
+					
+				}
+				
+				$output .='</div>
+				</div>
 				</article>';	
 				
 			endwhile;
@@ -2389,19 +2393,19 @@ class Aione_App_Builder_Public {
 
 		$output = '';
 		//if(isset($_POST['submit'])){
-			echo "<pre>";print_r($_POST);echo "</pre>";
+		echo "<pre>";print_r($_POST);echo "</pre>";
 		//}
 		$output .= acf_form(array(
-					  'id' => $atts['id'],
-					  'post_id'		=> 'new_post',
-					  'post_title'	=> true,
-					  'post_content'	=> true,
-					  'submit_value'		=> 'Submit',
-					  'new_post' => array(
-			            'post_type' => $atts['type'],
-			            'post_status' => $atts['status']
-			         ),
-				));
+			'id' => $atts['id'],
+			'post_id'		=> 'new_post',
+			'post_title'	=> true,
+			'post_content'	=> true,
+			'submit_value'		=> 'Submit',
+			'new_post' => array(
+				'post_type' => $atts['type'],
+				'post_status' => $atts['status']
+			),
+		));
 		return $output;
 	}
 
@@ -2457,8 +2461,10 @@ class Aione_App_Builder_Public {
 			'size' => 'full',
 			'class' => '',
 			'id' => '',
+			'placeholder' => 'true',
+			'placeholder_image' => plugin_dir_url( __FILE__ ) . 'images/user.svg',
 			'return' => 'image',// image/url/width/height/alt
-		), $atts, 'aione-post-feature-image' );
+		), $atts, 'featured-image' );
 		$output = "";
 		if ( has_post_thumbnail($post->ID) ) {
 			$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ),  $atts['size']);
@@ -2494,51 +2500,65 @@ class Aione_App_Builder_Public {
 			*/
 
 			if( $atts['return'] == 'image' ){
-        		$output .= '<img class="'.$atts['class'].'" id="'.$atts['id'].'" src="'.$featured_image_url.'" alt="'.$featured_image_meta_alt.'" width="'.$featured_image_width.'"/>';
+				$output .= '<img class="'.$atts['class'].'" id="'.$atts['id'].'" src="'.$featured_image_url.'" alt="'.$featured_image_meta_alt.'" width="'.$featured_image_width.'"/>';
 			} elseif( $atts['return'] == 'url' ){
-        		$output .= $featured_image_url;
+				$output .= $featured_image_url;
 			} elseif( $atts['return'] == 'width' ){
-        		$output .= $featured_image_width;
+				$output .= $featured_image_width;
 			} elseif( $atts['return'] == 'height' ){
-        		$output .= $featured_image_height;
+				$output .= $featured_image_height;
 			} elseif( $atts['return'] == 'alt' ){
-        		$output .= $featured_image_meta_alt;
+				$output .= $featured_image_meta_alt;
 			}
-        }
+		} else {
+			if($atts['placeholder'] == 'true'){
+				$output .= '<img class="'.$atts['class'].'" id="'.$atts['id'].'" src="'.$atts['placeholder_image'].'" />';
+			}
+		}
 		return $output;
 	}
 
 	function aione_app_builder_post_attached_media_shortcode($atts){
 		global $post;
-		$atts = shortcode_atts( array(
-			'class' => '',
-			'id' => '',
-			'width' => '',
-			'height' => '',
-		), $atts, 'attached-media' );
+		extract( shortcode_atts( array(
+				'class' => '',
+				'id' => '',
+				'width' => '',
+				'height' => '',
+				'caption' => 'true',
+			), $atts, 'attached-media' )
+		);
 		$output = "";
 		$type = get_post_mime_type( $post->ID );
 		$media = wp_get_attachment_url( $post->ID );
+		$caption_text = wp_get_attachment_caption( $post->ID );
+		
 		switch ($type) {
-		    case 'image/jpeg':
-		    case 'image/png':
-		    case 'image/gif':
-		      $output .= '<img src="'.$media.'" width="'.$width.'" height="'.$height.'" class="'.$class.'" id="'.$id.'"/>'; 
-		      break;
-		    case 'video/mpeg':
-		    case 'video/mp4': 
-		    case 'video/quicktime':
-		      $output .= '<video width="'.$width.'" height="'.$height.'" controls>
-				  <source src="'.$media.'" type="'.$type.'">
-				</video>'; 
-		      break;
-		    case 'text/csv':
-		    case 'text/plain': 
-		    case 'text/xml':
-		      $output .= 'CSV/Plain/XML view not supported'; 
-		    default:
-		      $output .= 'Unknown File type';
-		  }
+			case 'image/jpeg':
+			case 'image/png':
+			case 'image/gif':
+			$output .= '<img src="'.$media.'" width="'.$width.'" height="'.$height.'" class="'.$class.'" id="'.$id.'"/>';
+			if($caption == 'true'){				
+				$output .= '<div class="caption">'.$caption_text.'</div>';
+			}
+			break;
+			case 'video/mpeg':
+			case 'video/mp4': 
+			case 'video/quicktime':
+			$output .= '<video width="'.$width.'" height="'.$height.'" controls>
+			<source src="'.$media.'" type="'.$type.'">
+			</video>'; 
+			if($caption == 'true'){	
+				$output .= '<div class="caption">'.$caption_text.'</div>';
+			}
+			break;
+			case 'text/csv':
+			case 'text/plain': 
+			case 'text/xml':
+			$output .= 'CSV/Plain/XML view not supported'; 
+			default:
+			$output .= 'Unknown File type';
+		}
 		return $output;
 	}
 
@@ -2574,9 +2594,9 @@ class Aione_App_Builder_Public {
 		$output = "";
 
 		$args = array(
-		    'orderby' => 'name', 
-		    'order' => 'ASC', 
-		    'fields' => 'all'
+			'orderby' => 'name', 
+			'order' => 'ASC', 
+			'fields' => 'all'
 		);
 		$post_terms = wp_get_post_terms( $post_id, $texonomy, $args ); 
 		
@@ -2589,11 +2609,11 @@ class Aione_App_Builder_Public {
 				$child_element = "span";
 			}
 			$output .= '<'.$parent_element.' class="'.$class.'" id="'.$id.'">';
-		    foreach( $post_terms as $term ) {
-		    	$term_link = get_term_link( $term);
-			    $output .= '<'.$child_element.'><a href="' . esc_url( $term_link ) . '">' . $term->name . '</a></'.$child_element.'>';
-		    }
-		    $output .= '</'.$parent_element.'>';
+			foreach( $post_terms as $term ) {
+				$term_link = get_term_link( $term);
+				$output .= '<'.$child_element.'><a href="' . esc_url( $term_link ) . '">' . $term->name . '</a></'.$child_element.'>';
+			}
+			$output .= '</'.$parent_element.'>';
 		}
 		return $output;
 	}
@@ -2612,12 +2632,12 @@ class Aione_App_Builder_Public {
 		), $atts, 'custom-fields' );
 
 		if(function_exists('acf_get_field_groups')) {
-            $fieldGroup = acf_get_field_group($atts['field_group']);
-            $fields = acf_get_fields_by_id($atts['field_group']);
-            foreach ($fields as $key => $field) {
-            	$output .= do_shortcode('[custom-field field="'.$field['key'].'" label="'.$atts['label'].'" seperator="'.$atts['seperator'].'" class="'.$atts['class'].'" id="'.$atts['id'].'" style="'.$atts['style'].'"]');
-            }
-        }
+			$fieldGroup = acf_get_field_group($atts['field_group']);
+			$fields = acf_get_fields_by_id($atts['field_group']);
+			foreach ($fields as $key => $field) {
+				$output .= do_shortcode('[custom-field field="'.$field['key'].'" label="'.$atts['label'].'" seperator="'.$atts['seperator'].'" class="'.$atts['class'].'" id="'.$atts['id'].'" style="'.$atts['style'].'"]');
+			}
+		}
 
 		return $output;
 	}
@@ -2722,220 +2742,220 @@ class Aione_App_Builder_Public {
 		if($data){
 			switch ($field['type']) {
 				case "text":
-			        $output .= $data;
-			        break;
-			    case "textarea":
-			        $output .= $data;
-			        break;
-			    case "number":
-			        $output .= $data;
-			        break;
-			    case "range":
-			        $output .= $data;
-			        break;    
-			    case "email":
-			        $output .= $data;
-			        break; 
-			    case "url":
-			        $output .= '<a href="'.$data.'">'.$data.'</a>';
-			        break;    
-			    case "password":
-			        $output .= $data;
-			        break;			 
-			    case "image":
-			    	if($field['return_format'] == "array"){
-			    		$src =  $data['url'];
-					} elseif($field['return_format'] == "url"){
-						$src =  $data;
-					} else {
-						$image_url = wp_get_attachment_url( $data );
-						$src =  $image_url;
-					}
-					$output .= '<img src="'.$src.'"/>';
-			        break; 
+				$output .= $data;
+				break;
+				case "textarea":
+				$output .= $data;
+				break;
+				case "number":
+				$output .= $data;
+				break;
+				case "range":
+				$output .= $data;
+				break;    
+				case "email":
+				$output .= $data;
+				break; 
+				case "url":
+				$output .= '<a href="'.$data.'">'.$data.'</a>';
+				break;    
+				case "password":
+				$output .= $data;
+				break;			 
+				case "image":
+				if($field['return_format'] == "array"){
+					$src =  $data['url'];
+				} elseif($field['return_format'] == "url"){
+					$src =  $data;
+				} else {
+					$image_url = wp_get_attachment_url( $data );
+					$src =  $image_url;
+				}
+				$output .= '<img src="'.$src.'"/>';
+				break; 
 
-			    case "file":
+				case "file":
 
-			    	if( $field['return_format'] == "array" ){
-						if( $data['type'] == 'audio' ){
-							$file_type = $data['subtype'];
-							if( $file_type == 'mpeg' ){
-								$file_type = 'mp3';
-							}
-							$output .= do_shortcode('[audio '.$file_type.'="'.$data['url'].'"][/audio]');
-						} elseif( $data['type'] == 'video' ){
-							$output .= do_shortcode('[video width="'.$data['width'].'" height="'.$data['height'].'" '.$data['subtype'].'="'.$data['url'].'"][/video]');
-						}else {
-							$output .= '<img src="'.$data['icon'].'"/><div><a href="'.$data['url'].'">'.$data['filename'].'</a></div>';
+				if( $field['return_format'] == "array" ){
+					if( $data['type'] == 'audio' ){
+						$file_type = $data['subtype'];
+						if( $file_type == 'mpeg' ){
+							$file_type = 'mp3';
 						}
-					} elseif($field['return_format'] == "url"){
-						$field = get_field_object($key);
-						$output .= $data;
-					} else {
-						$file_url = wp_get_attachment_url( $data );
-						$field = get_field_object($key);
-						$output .= '<div><a href="'.$file_url.'"><button class="aione-button">'.$field['label'].'</button></a>';
+						$output .= do_shortcode('[audio '.$file_type.'="'.$data['url'].'"][/audio]');
+					} elseif( $data['type'] == 'video' ){
+						$output .= do_shortcode('[video width="'.$data['width'].'" height="'.$data['height'].'" '.$data['subtype'].'="'.$data['url'].'"][/video]');
+					}else {
+						$output .= '<img src="'.$data['icon'].'"/><div><a href="'.$data['url'].'">'.$data['filename'].'</a></div>';
 					}
-			        break;
-			    case "wysiwyg":
-			        $output .= $data;
-			        break; 
-			    case "oembed":
-			        $output .= $data;
-			        break;         
-			    case "gallery":
-			    	$field_classes = explode(' ', trim( $field['wrapper']['class'] ) );
+				} elseif($field['return_format'] == "url"){
+					$field = get_field_object($key);
+					$output .= $data;
+				} else {
+					$file_url = wp_get_attachment_url( $data );
+					$field = get_field_object($key);
+					$output .= '<div><a href="'.$file_url.'"><button class="aione-button">'.$field['label'].'</button></a>';
+				}
+				break;
+				case "wysiwyg":
+				$output .= $data;
+				break; 
+				case "oembed":
+				$output .= $data;
+				break;         
+				case "gallery":
+				$field_classes = explode(' ', trim( $field['wrapper']['class'] ) );
 
-					if( is_array(  $field_classes ) && in_array( 'aione-images' , $field_classes ) ){
-						foreach ($data as  $gallery) {
-							$output .= '<a href="'.$gallery['link'].'">';
-							$output .= '<img src="'.$gallery['url'].'"/>';
-							$output .= '</a>';
+				if( is_array(  $field_classes ) && in_array( 'aione-images' , $field_classes ) ){
+					foreach ($data as  $gallery) {
+						$output .= '<a href="'.$gallery['link'].'">';
+						$output .= '<img src="'.$gallery['url'].'"/>';
+						$output .= '</a>';
 							// $output .= $gallery['caption'];
 							// $output .= $gallery['description'];
-						}
-					} else {
+					}
+				} else {
 
-						foreach ($data as  $gallery) {
-							$output .= '<img src="'.$gallery['url'].'"/>';
-						}
+					foreach ($data as  $gallery) {
+						$output .= '<img src="'.$gallery['url'].'"/>';
 					}
-			        break; 
-			    case "select":
-			        if($field['multiple'] == '1'){ 
-						if($field['return_format'] == "value" || $field['return_format'] == "label"){
-							$output .= implode(",", $data);
-						} else {
-							foreach ($data as $value) {	
-								$output .= $value['label']." ";
-							}
-						}
-					} else {
-						if($field['return_format'] == "array" ){ 
-							$output .= $data['label'];
-						} else {						
-							$output .= $data;
-						}
-					}
-			        break; 
-			    case "checkbox":
-			        if($field['return_format'] == "value" || $field['return_format'] == "label"){
+				}
+				break; 
+				case "select":
+				if($field['multiple'] == '1'){ 
+					if($field['return_format'] == "value" || $field['return_format'] == "label"){
 						$output .= implode(",", $data);
 					} else {
 						foreach ($data as $value) {	
 							$output .= $value['label']." ";
 						}
 					}
-			        break;
-			    case "radio":
-			        if($field['return_format'] == "array"){
+				} else {
+					if($field['return_format'] == "array" ){ 
 						$output .= $data['label'];
-					} else {
+					} else {						
 						$output .= $data;
 					}
-			        break;
-			    case "button_group":
-			        if($field['return_format'] == "array"){
-						$output .= $data['label'];
-					} else {
-						$output .= $data;
+				}
+				break; 
+				case "checkbox":
+				if($field['return_format'] == "value" || $field['return_format'] == "label"){
+					$output .= implode(",", $data);
+				} else {
+					foreach ($data as $value) {	
+						$output .= $value['label']." ";
 					}
-			        break;
-			    case "true_false":
-			    	if($data == "1"){			    		
-			        	$output .= "True";
-			    	}
-			        break;
-			    case "link":
-			    	if($field['return_format'] == "array"){			    		
-			        	$output .= '<a href="'.$data['url'].'" target="'.$data['target'].'">'.$data['title'].'</a>';
-			    	} else {
-			    		$output .= '<a href="'.$data.'" target="">'.$data.'</a>';
-			    	}
-			        break; 
-			    case "post_object":
-			    	if($field['multiple'] == '1'){
-			    		if($field['return_format'] == "object"){
-			    			foreach ($data as $key => $value) {
-			    				$output .= '<div class="">Title : '.$value->post_title.'</div>';
-				    			$output .= '<div class="">Content : '.$value->post_content.'</div>';
-			    			}				    		
-				    	} else {
-				    		foreach ($data as $key => $value) {
-				    			$value = get_post($value);
-				    			$output .= '<div class="">Title : '.$value->post_title.'</div>';
-				    			$output .= '<div class="">Content : '.$value->post_content.'</div>';
-				    		}
-				    	}
-			    	} else {			    	
-				    	if($field['return_format'] == "object"){
-				    		$output .= '<div class="">Title : '.$data->post_title.'</div>';
-				    		$output .= '<div class="">Content : '.$data->post_content.'</div>';
-				    	} else {
-				    		$data = get_post($data);
-				    		$output .= '<div class="">Title : '.$data->post_title.'</div>';
-				    		$output .= '<div class="">Content : '.$data->post_content.'</div>';
-				    	}	
-			    	}
-			        break;
-			    case "page_link":
-			    	if($field['multiple'] == '1'){
-			    		foreach ($data as $key => $value) {
-			    			$output .= '<a href="'.$value.'" target="">'.$value.'</a>';
-			    		}			    		
-			    	} else {
-			    		$output .= '<a href="'.$data.'" target="">'.$data.'</a>';
-			    	}			    	
-			        break;
-			    case "relationship":			    
-			    	if($field['return_format'] == "object"){
-			    		$output .= '<div class="">Title : '.$data[0]->post_title.'</div>';
-			    		$output .= '<div class="">Content : '.$data[0]->post_content.'</div>';
-			    	} else { 
-			    		$data = get_post($data[0]);
-			    		$output .= '<div class="">Title : '.$data->post_title.'</div>';
-			    		$output .= '<div class="">Content : '.$data->post_content.'</div>';
-			    	}		    	
-			        break; 
-			    case "taxonomy":   
-			    	if($field['return_format'] == "object"){			    		
-			    		if($field['field_type']=="radio" || $field['field_type']=="select"){
-			    			$output .= $data->name;
-			    		} else {
-			    			foreach ($data as $value) {
-			    				$output .= $value->name." ";
-			    			}
-			    		}
-			    	} else {
-			    		if($field['field_type']=="radio" || $field['field_type']=="select"){
-			    			$term = get_term( $data );
-			    			$output .= $term->name;
-			    		} else {
-			    			foreach ($data as $value) {
-			    				$term = get_term( $value );
-			    				$output .= $term->name." ";
-			    			}
-			    		}
-			    	}	    	
-			        break; 
-			    case "user":   
+				}
+				break;
+				case "radio":
+				if($field['return_format'] == "array"){
+					$output .= $data['label'];
+				} else {
+					$output .= $data;
+				}
+				break;
+				case "button_group":
+				if($field['return_format'] == "array"){
+					$output .= $data['label'];
+				} else {
+					$output .= $data;
+				}
+				break;
+				case "true_false":
+				if($data == "1"){			    		
+					$output .= "True";
+				}
+				break;
+				case "link":
+				if($field['return_format'] == "array"){			    		
+					$output .= '<a href="'.$data['url'].'" target="'.$data['target'].'">'.$data['title'].'</a>';
+				} else {
+					$output .= '<a href="'.$data.'" target="">'.$data.'</a>';
+				}
+				break; 
+				case "post_object":
+				if($field['multiple'] == '1'){
+					if($field['return_format'] == "object"){
+						foreach ($data as $key => $value) {
+							$output .= '<div class="">Title : '.$value->post_title.'</div>';
+							$output .= '<div class="">Content : '.$value->post_content.'</div>';
+						}				    		
+					} else {
+						foreach ($data as $key => $value) {
+							$value = get_post($value);
+							$output .= '<div class="">Title : '.$value->post_title.'</div>';
+							$output .= '<div class="">Content : '.$value->post_content.'</div>';
+						}
+					}
+				} else {			    	
+					if($field['return_format'] == "object"){
+						$output .= '<div class="">Title : '.$data->post_title.'</div>';
+						$output .= '<div class="">Content : '.$data->post_content.'</div>';
+					} else {
+						$data = get_post($data);
+						$output .= '<div class="">Title : '.$data->post_title.'</div>';
+						$output .= '<div class="">Content : '.$data->post_content.'</div>';
+					}	
+				}
+				break;
+				case "page_link":
+				if($field['multiple'] == '1'){
+					foreach ($data as $key => $value) {
+						$output .= '<a href="'.$value.'" target="">'.$value.'</a>';
+					}			    		
+				} else {
+					$output .= '<a href="'.$data.'" target="">'.$data.'</a>';
+				}			    	
+				break;
+				case "relationship":			    
+				if($field['return_format'] == "object"){
+					$output .= '<div class="">Title : '.$data[0]->post_title.'</div>';
+					$output .= '<div class="">Content : '.$data[0]->post_content.'</div>';
+				} else { 
+					$data = get_post($data[0]);
+					$output .= '<div class="">Title : '.$data->post_title.'</div>';
+					$output .= '<div class="">Content : '.$data->post_content.'</div>';
+				}		    	
+				break; 
+				case "taxonomy":   
+				if($field['return_format'] == "object"){			    		
+					if($field['field_type']=="radio" || $field['field_type']=="select"){
+						$output .= $data->name;
+					} else {
+						foreach ($data as $value) {
+							$output .= $value->name." ";
+						}
+					}
+				} else {
+					if($field['field_type']=="radio" || $field['field_type']=="select"){
+						$term = get_term( $data );
+						$output .= $term->name;
+					} else {
+						foreach ($data as $value) {
+							$term = get_term( $value );
+							$output .= $term->name." ";
+						}
+					}
+				}	    	
+				break; 
+				case "user":   
 			    	//echo "<pre>";print_r($data);echo "</pre>";
-			    	if($field['return_format'] == "object"){
-			    		$output .= '<div class="">First Name:'.$data->user_firstname.'</div>';
-			    		$output .= '<div class="">Last Name:'.$data->user_lastname.'</div>';
-			    		$output .= '<div class="">Email:'.$data->user_email.'</div>';
-			    	} else if ($field['return_format'] == "array"){
-			    		$output .= '<div class="">First Name:'.$data['user_firstname'].'</div>';
-			    		$output .= '<div class="">Last Name:'.$data['user_lastname'].'</div>';
-			    		$output .= '<div class="">Email:'.$data['user_email'].'</div>';
-			    	} else {
-			    		$user_info = get_userdata($data);
-			    		$output .= '<div class="">First Name:'.$user_info->user_firstname.'</div>';
-			    		$output .= '<div class="">Last Name:'.$user_info->user_lastname.'</div>';
-			    		$output .= '<div class="">Email:'.$user_info->user_email.'</div>';
-			    	}
-			    	break;
-			    case "repeater":   
+				if($field['return_format'] == "object"){
+					$output .= '<div class="">First Name:'.$data->user_firstname.'</div>';
+					$output .= '<div class="">Last Name:'.$data->user_lastname.'</div>';
+					$output .= '<div class="">Email:'.$data->user_email.'</div>';
+				} else if ($field['return_format'] == "array"){
+					$output .= '<div class="">First Name:'.$data['user_firstname'].'</div>';
+					$output .= '<div class="">Last Name:'.$data['user_lastname'].'</div>';
+					$output .= '<div class="">Email:'.$data['user_email'].'</div>';
+				} else {
+					$user_info = get_userdata($data);
+					$output .= '<div class="">First Name:'.$user_info->user_firstname.'</div>';
+					$output .= '<div class="">Last Name:'.$user_info->user_lastname.'</div>';
+					$output .= '<div class="">Email:'.$user_info->user_email.'</div>';
+				}
+				break;
+				case "repeater":   
 			    /*
 			    	$output .=  "<pre>";
 			    	$output .= print_r( $field, true );
@@ -2948,8 +2968,8 @@ class Aione_App_Builder_Public {
 
 			    	$output .= do_shortcode( '[custom-field field="'.$repeater_field_key.'" label="'.$repeater_field_label.'" style="'.$repeater_field_style.'"]' );
 			    	break;             
-			    default:
-	        	$output .= "Unknown field Type";   
+			    	default:
+			    	$output .= "Unknown field Type";   
 			} //switch
 		} // if $data
 
@@ -2969,7 +2989,7 @@ class Aione_App_Builder_Public {
 			array(
 				'text'           => "Upcoming",
 			), $atts )
-		);
+	);
 		global $post;
 		$html = '';
 		$status = get_post_status( $post->ID );
@@ -3003,50 +3023,50 @@ class Aione_App_Builder_Public {
 				'vimeo'           => "",
 				'wordpress'       => "",
 			), $atts )
-		);
+	);
 
 		$html = '';
 		$html .= '<ul class="aione-social-icons '.$size.' '.$theme.' '.$style.' '.$direction.' '.$labels.'">';
-			if($facebook != ""){
-				$html .= '<li class="facebook"><a href='.$facebook.' target="_blank"><span class="icon"></span><span class="label">Facebook</span></a></li>';
-			}
-			if($twitter != ""){
-				$html .= '<li class="twitter"><a href='.$twitter.' target="_blank"><span class="icon"></span><span class="label">Twitter</span></a></li>';
-			}
-			if($youtube != ""){
-				$html .= '<li class="youtube"><a href='.$youtube.' target="_blank"><span class="icon"></span><span class="label">Youtube</span></a></li>';
-			}
-			if($googleplus != ""){
-				$html .= '<li class="googleplus"><a href='.$googleplus.' target="_blank"><span class="icon"></span><span class="label">GooglePlus</span></a></li>';
-			}
-			if($linkedin != ""){
-				$html .= '<li class="linkedin"><a href='.$linkedin.' target="_blank"><span class="icon"></span><span class="label">Linkedin</span></a></li>';
-			}
-			if($instagram != ""){
-				$html .= '<li class="instagram"><a href='.$instagram.' target="_blank"><span class="icon"></span><span class="label">Instagram</span></a></li>';
-			}
-			if($flickr != ""){
-				$html .= '<li class="flickr"><a href='.$flickr.' target="_blank"><span class="icon"></span><span class="label">Flickr</span></a></li>';
-			}
-			if($github != ""){
-				$html .= '<li class="github"><a href='.$github.' target="_blank"><span class="icon"></span><span class="label">Github</span></a></li>';
-			}
-			if($pinterest != ""){
-				$html .= '<li class="pinterest"><a href='.$pinterest.' target="_blank"><span class="icon"></span><span class="label">Pinterest</span></a></li>';
-			}
-			if($rss != ""){
-				$html .= '<li class="rss"><a href='.$rss.' target="_blank"><span class="icon"></span><span class="label">RSS</span></a></li>';
-			}
-			if($tumblr != ""){
-				$html .= '<li class="tumblr"><a href='.$tumblr.' target="_blank"><span class="icon"></span><span class="label">Tumblr</span></a></li>';
-			}
-			if($vimeo != ""){
-				$html .= '<li class="vimeo"><a href='.$vimeo.' target="_blank"><span class="icon"></span><span class="label">Vimeo</span></a></li>';
-			}
-			if($wordpress != ""){
-				$html .= '<li class="wordpress"><a href='.$wordpress.' target="_blank"><span class="icon"></span><span class="label">Wordpress</span></a></li>';
-			}
-			
+		if($facebook != ""){
+			$html .= '<li class="facebook"><a href='.$facebook.' target="_blank"><span class="icon"></span><span class="label">Facebook</span></a></li>';
+		}
+		if($twitter != ""){
+			$html .= '<li class="twitter"><a href='.$twitter.' target="_blank"><span class="icon"></span><span class="label">Twitter</span></a></li>';
+		}
+		if($youtube != ""){
+			$html .= '<li class="youtube"><a href='.$youtube.' target="_blank"><span class="icon"></span><span class="label">Youtube</span></a></li>';
+		}
+		if($googleplus != ""){
+			$html .= '<li class="googleplus"><a href='.$googleplus.' target="_blank"><span class="icon"></span><span class="label">GooglePlus</span></a></li>';
+		}
+		if($linkedin != ""){
+			$html .= '<li class="linkedin"><a href='.$linkedin.' target="_blank"><span class="icon"></span><span class="label">Linkedin</span></a></li>';
+		}
+		if($instagram != ""){
+			$html .= '<li class="instagram"><a href='.$instagram.' target="_blank"><span class="icon"></span><span class="label">Instagram</span></a></li>';
+		}
+		if($flickr != ""){
+			$html .= '<li class="flickr"><a href='.$flickr.' target="_blank"><span class="icon"></span><span class="label">Flickr</span></a></li>';
+		}
+		if($github != ""){
+			$html .= '<li class="github"><a href='.$github.' target="_blank"><span class="icon"></span><span class="label">Github</span></a></li>';
+		}
+		if($pinterest != ""){
+			$html .= '<li class="pinterest"><a href='.$pinterest.' target="_blank"><span class="icon"></span><span class="label">Pinterest</span></a></li>';
+		}
+		if($rss != ""){
+			$html .= '<li class="rss"><a href='.$rss.' target="_blank"><span class="icon"></span><span class="label">RSS</span></a></li>';
+		}
+		if($tumblr != ""){
+			$html .= '<li class="tumblr"><a href='.$tumblr.' target="_blank"><span class="icon"></span><span class="label">Tumblr</span></a></li>';
+		}
+		if($vimeo != ""){
+			$html .= '<li class="vimeo"><a href='.$vimeo.' target="_blank"><span class="icon"></span><span class="label">Vimeo</span></a></li>';
+		}
+		if($wordpress != ""){
+			$html .= '<li class="wordpress"><a href='.$wordpress.' target="_blank"><span class="icon"></span><span class="label">Wordpress</span></a></li>';
+		}
+		
 		$html .= '</ul>';
 		return $html;
 	}
@@ -3067,57 +3087,57 @@ class Aione_App_Builder_Public {
 				'reddit'             => "",
 				'tumblr'          => "",
 			), $atts )
-		);
+	);
 
 		$html = '';
 		$html .= '<ul class="aione-social-icons '.$size.' '.$theme.' '.$style.' '.$direction.' '.$labels.'">';
-			if($facebook == "true"){
-				$facebook_url = '
-					https://www.facebook.com/sharer/sharer.php?u='.rawurlencode( get_the_permalink() ).'&title='.get_the_title();
-				$html .= '<li class="facebook"><a href='.$facebook_url.' target="_blank"><span class="icon"></span><span class="label">Facebook</span></a></li>';
+		if($facebook == "true"){
+			$facebook_url = '
+			https://www.facebook.com/sharer/sharer.php?u='.rawurlencode( get_the_permalink() ).'&title='.get_the_title();
+			$html .= '<li class="facebook"><a href='.$facebook_url.' target="_blank"><span class="icon"></span><span class="label">Facebook</span></a></li>';
+		}
+		if($twitter == "true"){
+			$twitter_url = '
+			http://twitter.com/share?text=' . get_the_title() . '&url=' . rawurlencode( get_the_permalink() );
+			$html .= '<li class="twitter"><a href='.$twitter_url.' target="_blank"><span class="icon"></span><span class="label">Twitter</span></a></li>';
+		}
+		
+		if($googleplus != ""){
+			$googleplus_url = '
+			https://plus.google.com/share?url=' . rawurlencode( get_the_permalink() );
+			$html .= '<li class="googleplus"><a href='.$googleplus_url.' target="_blank"><span class="icon"></span><span class="label">GooglePlus</span></a></li>';
+		}
+		if($linkedin == "true"){
+			$linkedin_url = '
+			https://www.linkedin.com/shareArticle?mini=true&url=' . rawurlencode( get_the_permalink() ) . '&title=' . get_the_title();
+			$html .= '<li class="linkedin"><a href='.$linkedin_url.' target="_blank"><span class="icon"></span><span class="label">Linkedin</span></a></li>';
+		}
+		
+		if($pinterest == "true"){
+			if ( has_post_thumbnail() ) {
+				$thumbnail_id = get_post_thumbnail_id( $post->ID );
+				$thumbnail    = $thumbnail_id ? current( wp_get_attachment_image_src( $thumbnail_id, 'large', true ) ) : '';
+			} else {
+				$thumbnail = null;
 			}
-			if($twitter == "true"){
-				$twitter_url = '
-					http://twitter.com/share?text=' . get_the_title() . '&url=' . rawurlencode( get_the_permalink() );
-				$html .= '<li class="twitter"><a href='.$twitter_url.' target="_blank"><span class="icon"></span><span class="label">Twitter</span></a></li>';
-			}
-			
-			if($googleplus != ""){
-				$googleplus_url = '
-					https://plus.google.com/share?url=' . rawurlencode( get_the_permalink() );
-				$html .= '<li class="googleplus"><a href='.$googleplus_url.' target="_blank"><span class="icon"></span><span class="label">GooglePlus</span></a></li>';
-			}
-			if($linkedin == "true"){
-				$linkedin_url = '
-					https://www.linkedin.com/shareArticle?mini=true&url=' . rawurlencode( get_the_permalink() ) . '&title=' . get_the_title();
-				$html .= '<li class="linkedin"><a href='.$linkedin_url.' target="_blank"><span class="icon"></span><span class="label">Linkedin</span></a></li>';
-			}
-			
-			if($pinterest == "true"){
-				if ( has_post_thumbnail() ) {
-					$thumbnail_id = get_post_thumbnail_id( $post->ID );
-					$thumbnail    = $thumbnail_id ? current( wp_get_attachment_image_src( $thumbnail_id, 'large', true ) ) : '';
-				} else {
-					$thumbnail = null;
-				}
 
 				// Generate the Pinterest URL.
-				$pinterest_url = '
-					https://pinterest.com/pin/create/button/?&url=' . rawurlencode( get_the_permalink() ) . '&description=' . get_the_title() . '&media=' . esc_url( $thumbnail );
-				$html .= '<li class="pinterest"><a href='.$pinterest_url.' target="_blank"><span class="icon"></span><span class="label">Pinterest</span></a></li>';
-			}
-			if($reddit == "true"){
-				$reddit_url = '
-					http://www.reddit.com/submit?url=' . rawurlencode( get_the_permalink() ) . '&title=' . get_the_title();
-				$html .= '<li class="reddit"><a href='.$reddit_url.' target="_blank"><span class="icon"></span><span class="label">Reddit</span></a></li>';
-			}
-			if($tumblr == "true"){
-				$tumblr_url = '
-					https://www.tumblr.com/widgets/share/tool?canonicalUrl=' . rawurlencode( get_the_permalink() ) . '&title=' . get_the_title();
-				$html .= '<li class="tumblr"><a href='.$tumblr_url.' target="_blank"><span class="icon"></span><span class="label">Tumblr</span></a></li>';
-			}
-			
-			
+			$pinterest_url = '
+			https://pinterest.com/pin/create/button/?&url=' . rawurlencode( get_the_permalink() ) . '&description=' . get_the_title() . '&media=' . esc_url( $thumbnail );
+			$html .= '<li class="pinterest"><a href='.$pinterest_url.' target="_blank"><span class="icon"></span><span class="label">Pinterest</span></a></li>';
+		}
+		if($reddit == "true"){
+			$reddit_url = '
+			http://www.reddit.com/submit?url=' . rawurlencode( get_the_permalink() ) . '&title=' . get_the_title();
+			$html .= '<li class="reddit"><a href='.$reddit_url.' target="_blank"><span class="icon"></span><span class="label">Reddit</span></a></li>';
+		}
+		if($tumblr == "true"){
+			$tumblr_url = '
+			https://www.tumblr.com/widgets/share/tool?canonicalUrl=' . rawurlencode( get_the_permalink() ) . '&title=' . get_the_title();
+			$html .= '<li class="tumblr"><a href='.$tumblr_url.' target="_blank"><span class="icon"></span><span class="label">Tumblr</span></a></li>';
+		}
+		
+		
 		$html .= '</ul>';
 		return $html;
 	}

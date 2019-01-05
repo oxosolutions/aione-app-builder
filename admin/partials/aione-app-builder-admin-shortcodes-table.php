@@ -343,6 +343,8 @@
 'size' => 'full',
 'class' => '',
 'id' => ' ',
+'placeholder' => 'true', //false
+'placeholder_image' => '', //url of the image
 'return' => 'image' // image/url/width/height/alt
 </pre>
 </td>
@@ -354,6 +356,7 @@
 <td><pre>
 'width' => '',
 'height' => '',
+'caption' => 'true', //false
 'class' => '',
 'id' => ' ',
 </pre>

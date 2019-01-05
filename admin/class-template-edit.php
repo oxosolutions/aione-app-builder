@@ -672,18 +672,16 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
             $options[$post_type_slug] = array(
                 '#name' => 'at[component][' . $post_type_slug . ']',
                 '#title' => $post_type->labels->name,
-               // '#default_value' =>( ! empty( $this->at['post_type'][ $post_type_slug ] ) ),
-                /*'#default_value' =>
+                '#default_value' =>
                     in_array( $post_type_slug, $supported )
                     || array_key_exists( $post_type_slug, $supported )
-                    || ( isset( $_GET['assign_type'] ) && $_GET['assign_type'] == $post_type_slug ),*/
-                    '#default_value' =>
-                        in_array( $post_type_slug, $supported )
-                        || array_key_exists( $post_type_slug, $supported )
-                        || ( isset( $_GET['assign_type'] ) && $_GET['assign_type'] == $post_type_slug ),
+                    || ( isset( $_GET['assign_type'] ) && $_GET['assign_type'] == $post_type_slug ),
                 '#inline' => true,
                 '#before' => '<li>',
                 '#after' => '</li>',
+                '#attributes' => array(                
+                    'disabled' => 'disabled',
+                ),
             );
         }
 
@@ -696,9 +694,16 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
             '#inline' => true,
             '#before' => '<ul class="aione-list">',
             '#after' => '</ul>',
+            
         );
         $form = aione_form(__FUNCTION__, $form);
         echo $form->renderForm();
+
+        /*if(!empty($supported)){            
+            echo implode(",", array_keys($supported));
+        } else {
+            echo "This template is not applied to any post/component type.";
+        }*/
         
     }
 
