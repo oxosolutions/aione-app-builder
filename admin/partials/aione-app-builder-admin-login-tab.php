@@ -7,6 +7,19 @@
 		<form action='' method='post'>
 			<table class='form-table'>
 				<tbody>
+
+					<tr>
+						<th scope='row'><label for='aione_app_builder_login_page_captcha'>Show Captcha on Login Page</label></th>
+						<td>Yes: <input type="radio" name="enable_login_page_captcha" value="yes" <?php if(get_option('enable_login_page_captcha') == 'yes') {
+							echo "checked";
+						} ?>>
+						No: <input type="radio" name="enable_login_page_captcha" value="no" <?php if(get_option('enable_login_page_captcha') == 'no') {
+							echo "checked";
+						} ?>>
+						</td>
+					</tr>
+
+					
 					<tr>
 						<th scope='row'><label for='aione_app_builder_login_page'>Login Page</label></th>
 						<td><?php wp_dropdown_pages(array('name' => 'aione_app_builder_login_page','show_option_none' => 'Select Login Page','id' => 'aione_app_builder_login_page','selected'=> get_option('aione_app_builder_login_page'))); ?>
@@ -37,6 +50,35 @@
 						echo "checked";
 					} ?>  value="no">
 				</td>
+			</tr>
+
+			<tr>
+				<th scope='row'><label for='aione_app_builder_login_page_tfa_role'>Select Role to apply TFA</label></th>
+				<td><?php 
+				//wp_dropdown_roles(); 
+				global $wp_roles;
+    			$roles = $wp_roles->get_names();
+    			$login_page_tfa_role = get_option('login_page_tfa_role',array());
+    			?>
+    			<div class="wp-tab-panel"> <ul>
+    			<?php	
+    			foreach ($roles as $key => $value) {
+    				if(in_array($key, $login_page_tfa_role)){
+    					$checked = "checked";
+    				} else{
+    					$checked = "";
+    				}
+    			?>
+    				<li><label>
+    					<input type="checkbox" name="login_page_tfa_role[]" value="<?php echo $key;?>" <?php echo $checked;?>>
+    					<?php echo $value;?>
+    				</label></li>
+    			<?php		        
+			    }
+				?>
+				</ul></div>
+						<p class="description">Select the role you wish to apply Two Factor Auth. <br></p>
+					</td>
 			</tr>
 
 			<tr>

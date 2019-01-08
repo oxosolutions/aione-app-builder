@@ -142,6 +142,9 @@ class Aione_App_Builder {
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-aione-app-builder-public.php';
 
+		if (!class_exists('ReallySimpleCaptcha')) {
+			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'really-simple-captcha.php';
+		}
 
 		$this->loader = new Aione_App_Builder_Loader();
 
@@ -201,12 +204,21 @@ class Aione_App_Builder {
 		//Redirect to a login page instead of wp-login.php if login is failed
         $this->loader->add_action('wp_login_failed', $plugin_public, 'aione_app_builder_login_fail_redirect_filter');
 
-
+        /**********TFA Backend**************/
 		$this->loader->add_action( 'wp_login', $plugin_public, 'wp_login' , 10, 2 );
 		$this->loader->add_action( 'login_form_validate_2fa', $plugin_public, 'login_form_validate_2fa' ) ;
 		$this->loader->add_action('login_form', $plugin_public,'my_added_login_field');
 		$this->loader->add_filter( 'login_message',$plugin_public, 'my_login_message' ); 
+		/**********TFA Frontend**************/
+		//$this->loader->add_action( 'init', $plugin_public,'frontend_login_process' );
+		$this->loader->add_action( 'init', $plugin_public, 'login_form_validate_2fa' ) ;
+		$this->loader->add_filter('aione_login_form_otp_screen',$plugin_public,'login_html',10,3);
+		$this->loader->add_filter('tfa_selection',$plugin_public,'my_added_login_field_frontend',10,2);
 
+		// Captcha
+		$this->loader->add_action('login_form', $plugin_public,'aione_login_form_captcha');
+		$this->loader->add_filter('login_form_middle',$plugin_public,'aione_login_form_captcha_custom',10,2);
+		$this->loader->add_filter('wp_authenticate_user',$plugin_public,'aione_validate_login_captcha',10,3);
 
 
         //Set Page Filters from Setting Menu

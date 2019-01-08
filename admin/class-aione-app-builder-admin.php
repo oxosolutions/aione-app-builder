@@ -500,17 +500,21 @@ class Aione_App_Builder_Admin {
 				exit;
 			} else {
 				if(isset( $_POST['filter'] ) && $_POST['filter'] == "login-tab"){
+					$enable_login_page_captcha = $_POST['enable_login_page_captcha'];
 					$aione_app_builder_login_page = $_POST['aione_app_builder_login_page'];
 					$admin_login_redirect_page = $_POST['admin_login_redirect_page'];
 					$enable_two_factor_auth = $_POST['enable_two_factor_auth'];
+					$login_page_tfa_role = $_POST['login_page_tfa_role'];
 					$two_factor_auth = $_POST['two_factor_auth'];
 					$sms_service_provider = $_POST['sms_service_provider'];
 					$sms_service_provider_key = $_POST['sms_service_provider_key'];
 					$sms_service_provider_secret = $_POST['sms_service_provider_secret'];
 
+					update_option( 'enable_login_page_captcha', $enable_login_page_captcha );
 					update_option( 'aione_app_builder_login_page', $aione_app_builder_login_page );
 					update_option( 'admin_login_redirect_page', $admin_login_redirect_page );
 					update_option( 'enable_two_factor_auth', $enable_two_factor_auth );
+					update_option( 'login_page_tfa_role', $login_page_tfa_role );
 					update_option( 'two_factor_auth', $two_factor_auth );
 					update_option( 'sms_service_provider', $sms_service_provider );
 					update_option( 'sms_service_provider_key', $sms_service_provider_key );

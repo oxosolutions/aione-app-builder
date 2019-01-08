@@ -1050,6 +1050,7 @@ body.wp-admin .aione-ui-dialog.aione-filter-dialog .ui-dialog-titlebar {
     border-bottom: none;
 }
 
+/*
 .aione-tabs > div {
     display: none;
 }
@@ -1060,8 +1061,7 @@ body.wp-admin .aione-ui-dialog.aione-filter-dialog .ui-dialog-titlebar {
 
 .aione-tabs div.hidden:first-child {
     display: none;
-}
-
+*/
 .aione-fields-group-conditions-description {
     display: none;
 }

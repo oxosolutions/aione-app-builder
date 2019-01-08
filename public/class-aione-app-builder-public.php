@@ -217,7 +217,7 @@ class Aione_App_Builder_Public {
 
 
 	function create_login_nonce( $user_id ) {
-		$login_nonce               = array();
+		$login_nonce  = array();
 		try {
 			$login_nonce['key'] = bin2hex( random_bytes( 32 ) );
 		} catch (Exception $ex) {
@@ -235,8 +235,6 @@ class Aione_App_Builder_Public {
 		return delete_user_meta( $user_id, '_two_factor_nonce' );
 	}
 	function my_added_login_field(){
-		/*$page_showing = basename($_SERVER['REQUEST_URI']);
-		print_r($_REQUEST);*/
 		if ( get_option('enable_two_factor_auth') == 'yes' ) {
 			if(get_option('two_factor_auth')=='user_can_select'){
 				?>
@@ -257,9 +255,27 @@ class Aione_App_Builder_Public {
 		
 		<?php
 	}
+	function my_added_login_field_frontend(){ 
+		$output = "";
+		if ( get_option('enable_two_factor_auth') == 'yes' ) {
+			if(get_option('two_factor_auth')=='user_can_select'){
+				
+				$output .= '<p>
+					<label for="my_extra_field">Select Authentication Method</label>
+					<div id="user_selection">
+						<select name="auth_method" id="auth_method">
+							<option value="email">Email</option>
+							<option value="mobile">Mobile</option>
+							<option value="none">None</option>
+						</select> 
+					</div>
+					</p>
+				';
+			}
+		}
+		return $output;
+	}
 	function my_login_message() {
-		/*$page_showing = basename($_SERVER['REQUEST_URI']);
-		print_r($_REQUEST);*/
 		$return_value = '';
 		if($_REQUEST['error'] == 'authmethod'){
 			$return_value =  '<div id="login_error"><strong>You are not authorized to skip authentication method. Please select any authentication method other than "None"</stong></div>';
@@ -300,8 +316,8 @@ class Aione_App_Builder_Public {
 			$redirect_to = admin_url();
 		}
 
-
 		$this->login_html( $user, $login_nonce['key'], $redirect_to );
+		
 	}
 
 	function login_html( $user, $login_nonce, $redirect_to, $error_msg = '', $provider='', $generated_otp_number='', $generated_otp_time='' ) {
@@ -311,15 +327,12 @@ class Aione_App_Builder_Public {
 			$rememberme = 1;
 		}
 
-		login_header();
+		do_action('login_header');
 
 		if ( ! empty( $error_msg ) ) {
 			echo '<div id="login_error"><strong>' . esc_html( $error_msg ) . '</strong><br /></div>';
 		}
 		
-		?>
-
-		<?php
 		if( empty($generated_otp_number) ){
 			$generated_otp_number = (rand(100000, 999999));
 		}
@@ -327,9 +340,7 @@ class Aione_App_Builder_Public {
 			$generated_otp_time = date("Y-m-d h:i:s");
 		}
 		update_user_meta($user->ID,"wp-generated-otp-number",$generated_otp_number);
-		?>
-
-		<?php 
+		
 		if(get_option('two_factor_auth')=='user_can_select'){
 			$method = $_REQUEST['auth_method'];
 		} else {
@@ -337,27 +348,12 @@ class Aione_App_Builder_Public {
 		} 
 
 		if($user){
-			if(in_array( 'subscriber', (array) $user->roles ) && $method == 'none'){
-				/*$error = new WP_Error( 'loginCaptchaError', 'Select Authentication Method' );
-				echo $error;
-				do_action( 'wp_login',$user->user_login='',$user='');
-				exit;*/
+			/*if(in_array( 'subscriber', (array) $user->roles ) && $method == 'none'){
 				wp_safe_redirect( "http://aione.oxosolutions.com/oxosolutions/wp-login.php?error=authmethod" );
-				//exit;
-
-				//$this->login_html( $user, $login_nonce['key'], $_REQUEST['redirect_to'], esc_html__( 'ERROR: Select Authentication Method.', 'aione-app-builder' ) );
-				//wp_login_form();
-				/*do_action( 'wp_login_failed', $user->user_login );
-				$login_nonce = $this->create_login_nonce( $user->ID );
-				if ( ! $login_nonce ) {
-					wp_die( esc_html__( 'Failed to create a login nonce.', 'aione-app-builder' ) );
-				}
-				$this->login_html( $user="", $login_nonce['key'], $redirect_to, esc_html__( 'ERROR: Invalid verification code.', 'aione-app-builder' ) );
-				exit;*/
 				
-			} else {
+			} else {*/
 				$this->custom_authentication_page( $user, $generated_otp_number, $generated_otp_time ,$rememberme,$login_nonce, $redirect_to ,$method);
-			}
+			//}
 		}
 		
 		?>
@@ -372,7 +368,7 @@ class Aione_App_Builder_Public {
 	</body>
 	</html>
 	<?php
-}
+	}
 
 function custom_authentication_page($user, $generated_otp_number, $generated_otp_time,$rememberme ,$login_nonce, $redirect_to,$method){
 	?>
@@ -694,9 +690,245 @@ function logout_redirect(){
 		return '';
 	} // aione_app_builder_access_check_shortcode ()
 
-	
-
 	public function aione_app_builder_login_shortcode( $atts, $content = null ) {
+		$admin_login_redirect_page = get_option('admin_login_redirect_page');
+		$enable_two_factor_auth = get_option('enable_two_factor_auth');
+		if(isset($admin_login_redirect_page)){
+			if(!empty($admin_login_redirect_page)){
+				$custom_redirect =  get_permalink($admin_login_redirect_page);
+			} else {
+				$custom_redirect =  admin_url();
+			}
+		}else {
+			$custom_redirect =  admin_url();
+		}
+		extract( shortcode_atts(
+			array(
+				'echo'           => false,
+				'redirect'       => $custom_redirect, 
+				'form_id'        => 'loginform',
+				'label_username' => __( 'Username' ),
+				'label_password' => __( 'Password' ),
+				'label_remember' => __( 'Remember Me' ),
+				'label_log_in'   => __( 'Login' ),
+				'id_username'    => 'user_login',
+				'id_password'    => 'user_pass',
+				'id_remember'    => 'rememberme',
+				'id_submit'      => 'wp-submit',
+				'social_login'      => 'no',
+			), $atts )
+		);
+		
+		$output = "";
+
+		if (isset($_POST['username']) && isset($_POST['password'])) { 
+				$creds = array();
+			    $creds['user_login'] = $_POST['username'];
+			    $creds['user_password'] = $_POST['password'];
+			    $creds['user_rememberme'] = $_POST['rememberme'];
+
+			    
+			    //$user = wp_authenticate($creds['user_login'], $creds['user_password']);
+			    $user = apply_filters( 'authenticate', null, $creds['user_login'], $creds['user_password'] );
+			    echo "<pre>";print_r($user);echo "</pre>";
+			    if ( is_wp_error($user) ) { 
+			      $output .=  '<div style="color:#cc0000;text-align:center;padding:10px">Something went wrong.Please try again.</div>';
+			    } else { 
+			    	if( empty($generated_otp_number) ){
+						$generated_otp_number = (rand(100000, 999999));
+					}
+					if(empty( $generated_otp_time )){
+						$generated_otp_time = date("Y-m-d h:i:s");
+					}
+					update_user_meta($user->ID,"wp-generated-otp-number",$generated_otp_number);
+
+			    	if ( empty( $enable_two_factor_auth ) || $enable_two_factor_auth == "no" ) {
+			    		if (isset($_POST['redirect_to']) && $_POST['redirect_to']) {
+					        wp_redirect($_POST['redirect_to']);
+					        exit;
+					      }
+			    	} else {
+			    		$login_page_tfa_role = get_option('login_page_tfa_role',array());
+			    		echo "<pre>";print_r($login_page_tfa_role);echo "</pre>";
+			    		$otp_page = array();
+			    		foreach ($login_page_tfa_role as $value) {
+			    			if(in_array($value, (array) $user->roles)){
+			    				$otp_page[] = "true";
+			    			}
+			    		}
+			    		echo "<pre>";print_r($otp_page);echo "</pre>";
+			    		//if(in_array("true", $otp_page)){ echo "In array";
+			    			$this->show_two_factor_login( $user );			    		
+			    		/*} else { echo "OUT array";
+			    			wp_redirect($_POST['redirect_to']);
+					        exit;
+			    		}*/
+			    	}
+			    }
+			    
+			}
+
+		$login = (isset($_GET['login']) ? $_GET['login'] : null);
+		$errors = array();
+		if(isset($login) && $login == 'failed' ){
+			$output .=  '<div style="color:#cc0000;text-align:center;padding:10px">Something went wrong.Please try again.</div>';
+		}
+
+		$args = array(
+			'echo'           => $echo,
+			'redirect'       => $redirect, 
+			'form_id'        => $form_id,
+			'label_username' => $label_username,
+			'label_password' => $label_password,
+			'label_remember' => $label_remember,
+			'label_log_in'   => $label_log_in,
+			'id_username'    => $id_username,
+			'id_password'    => $id_password,
+			'id_remember'    => $id_remember,
+			'id_submit'      => $id_submit,
+			'remember'	     => empty( $instance['remember'] ) ? true : false,
+			'value_username' => esc_attr( $instance['value_username'] ),
+			'value_remember' => !empty( $instance['value_remember'] ) ? true : false
+		);
+		if ( !is_user_logged_in() ) {
+			if($user){
+				if ( is_wp_error($user) ) {
+					$output .= '<div id="aione-login-wrap" class="aione-user-forms">';			
+					$output .= $this->frontend_login_form( apply_filters( 'frontend_login_form_args', $args ) );
+					$output .= '</div>';
+				}
+			} else {
+				$output .= '<div id="aione-login-wrap" class="aione-user-forms">';			
+				$output .= $this->frontend_login_form( apply_filters( 'frontend_login_form_args', $args ) );
+				$output .= '</div>';
+			}			
+		
+		} else {
+			$output .= '<div class="center-align">';
+			$output .= 'You are already logged in! ';
+			$output .= '<a href="'.wp_logout_url().'" title="Logout" class="aione-common-button">Logout</a>';
+			$output .= '</div>';
+		}
+		
+		return $output;
+
+
+	} // End aione_login_form_shortcode().
+
+	function frontend_login_form( $args = array() ) {
+		$defaults = array(
+			'echo' => false,
+			'redirect' => admin_url(),
+			'form_id' => 'loginform',
+			'label_username' => __( 'Username or Email Address' ),
+			'label_password' => __( 'Password' ),
+			'label_remember' => __( 'Remember Me' ),
+			'label_log_in' => __( 'Log In' ),
+			'id_username' => 'user_login',
+			'id_password' => 'user_pass',
+			'id_remember' => 'rememberme',
+			'id_submit' => 'wp-submit',
+			'remember' => true,
+			'value_username' => '',
+			'value_remember' => false,
+
+		);
+
+		/**
+		 * Filters the default login form output arguments.
+		 */
+		$args = wp_parse_args( $args, apply_filters( 'login_form_defaults', $defaults ) );
+
+		/**
+		 * Filters content to display at the top of the login form.
+		 */
+		$login_form_top = apply_filters( 'login_form_top', '', $args );
+
+		/**
+		 * Filters content to display in the middle of the login form.
+		 */
+		$login_form_middle = apply_filters( 'login_form_middle', '', $args );
+
+		/**
+		 * Filters content to display at the bottom of the login form.
+		 */
+		$login_form_bottom = apply_filters( 'login_form_bottom', '', $args );
+		/**
+		 * Filters content to display TFA selection at the bottom of the login form.
+		 */
+		$login_form_tfa_selection = apply_filters( 'tfa_selection', '', $args );
+
+		$form = '
+			<form name="' . $args['form_id'] . '" id="' . $args['form_id'] . '" action=""  method="post">
+				' . $login_form_top . '
+				<p class="login-username">
+					<label for="' . esc_attr( $args['id_username'] ) . '">' . esc_html( $args['label_username'] ) . '</label>
+					<input type="text" name="username" id="' . esc_attr( $args['id_username'] ) . '" class="input" value="' . esc_attr( $args['value_username'] ) . '" size="20" />
+				</p>
+				<p class="login-password">
+					<label for="' . esc_attr( $args['id_password'] ) . '">' . esc_html( $args['label_password'] ) . '</label>
+					<input type="password" name="password" id="' . esc_attr( $args['id_password'] ) . '" class="input" value="" size="20" />
+				</p>
+				' . $login_form_middle . '
+				' . $login_form_tfa_selection . '
+				' . ( $args['remember'] ? '<p class="login-remember"><label><input name="rememberme" type="checkbox" id="' . esc_attr( $args['id_remember'] ) . '" value="forever"' . ( $args['value_remember'] ? ' checked="checked"' : '' ) . ' /> ' . esc_html( $args['label_remember'] ) . '</label></p>' : '' ) . '
+				<p class="login-submit">
+					<input type="submit" name="wp-submit" id="' . esc_attr( $args['id_submit'] ) . '" class="button button-primary" value="' . esc_attr( $args['label_log_in'] ) . '" />
+					<input type="hidden" name="redirect_to" value="' . esc_url( $args['redirect'] ) . '" />
+				</p>
+				'. wp_nonce_field( 'aione_login_nonce', 'CSRFToken-aione', true, false ) .'
+				' . $login_form_bottom . '
+			</form>';
+
+		/*if ( $args['echo'] )
+			echo $form;
+		else
+			return $form;*/
+		ob_start();		
+		$form .= ob_get_contents();
+		ob_end_clean();
+		return $form;	
+	}
+
+	/*function frontend_login_process(){
+		$output = "";
+		$enable_two_factor_auth = get_option('enable_two_factor_auth');
+		if (isset($_POST['CSRFToken-aione']) && wp_verify_nonce($_POST['CSRFToken-aione'], 'aione_login_nonce')) {
+			if (isset($_POST['username']) && isset($_POST['password'])) {
+				$creds = array();
+			    $creds['user_login'] = $_POST['username'];
+			    $creds['user_password'] = $_POST['password'];
+			    $creds['user_rememberme'] = $_POST['rememberme'];
+
+			    $user = wp_authenticate($creds['user_login'], $creds['user_password']);
+
+			    if ( is_wp_error($user) ) {
+			      do_action( 'wp_login_failed', $user->user_login );
+			    } else {
+			    	if( empty($generated_otp_number) ){
+						$generated_otp_number = (rand(100000, 999999));
+					}
+					if(empty( $generated_otp_time )){
+						$generated_otp_time = date("Y-m-d h:i:s");
+					}
+					update_user_meta($user->ID,"wp-generated-otp-number",$generated_otp_number);
+
+			    	if ( empty( $enable_two_factor_auth ) || $enable_two_factor_auth == "no" ) {
+			    		if (isset($_POST['redirect_to']) && $_POST['redirect_to']) {
+					        wp_redirect($_POST['redirect_to']);
+					        exit;
+					      }
+			    	} else {
+			    		$this->show_two_factor_login( $user );			    		
+			    	}
+			    }
+			    
+			}
+		}	
+			
+	}*/
+
+	/*public function aione_app_builder_login_shortcode( $atts, $content = null ) {
 		extract( shortcode_atts(
 			array(
 				'echo'           => false,
@@ -712,7 +944,7 @@ function logout_redirect(){
 				'id_submit'      => 'wp-submit',
 				'social_login'      => 'no',
 			), $atts )
-	);
+		);
 
 		$output = "";
 		$login = (isset($_GET['login']) ? $_GET['login'] : null);
@@ -788,7 +1020,7 @@ function logout_redirect(){
 		return $output;
 
 
-	} // End aione_login_form_shortcode()
+	} // End aione_login_form_shortcode()*/
 
 	public function aione_app_builder_register_shortcode( $atts, $content = null ) {
 			// Attributes
@@ -1059,9 +1291,10 @@ function logout_redirect(){
 					$image_name = $captcha_instance->generate_image( $prefix, $word );
 					//$captcha_image_url =  $upload_dir['baseurl'].'/captcha/'.$image_name;
 					//$captcha_image_url = plugins_url();
-					$captcha_image_url =  plugin_dir_url(dirname(__FILE__))."library/really-simple-captcha/tmp/".$image_name;
+					//$captcha_image_url =  plugin_dir_url(dirname(__FILE__))."library/really-simple-captcha/tmp/".$image_name;
+					$captcha_image_url =  plugin_dir_url(dirname(__FILE__))."tmp/".$image_name;
 
-					//$blog_template = intval($_GET['template']);
+					
 					
 					$html_before_fields .= '<div class="aione-form-field field field-type-text">
 					<p class="label"><label for="register_form_captcha_value">Captcha<span class="required">*</span></label></p>
@@ -3145,4 +3378,67 @@ function logout_redirect(){
 		$html .= '</ul>';
 		return $html;
 	}
+
+	/**************Login Form Captcha **************************/
+	function aione_login_form_captcha(){
+		$enabled_login_captcha = get_option("enable_login_page_captcha");
+		if($enabled_login_captcha == "yes"){
+			if(class_exists('ReallySimpleCaptcha'))
+			  {
+			    $captcha_instance = new ReallySimpleCaptcha();
+			    $word = $captcha_instance->generate_random_word();
+			    $prefix = mt_rand();
+			    $captchaimg = $captcha_instance->generate_image( $prefix, $word );
+			    $imgpath = plugin_dir_url(dirname(__FILE__))."tmp/".$captchaimg;
+			    ?>
+
+			    <input type="hidden" name="aione_captcha_prefix" value="<?php echo $prefix; ?>"/>
+			    <label for="aione_captcha_answer">Captcha</label>
+			    <div><img src="<?php echo $imgpath; ?>" /></div>  <input name="aione_captcha_answer" type="text" />
+			    <?php
+			}
+		}
+	}
+	function aione_login_form_captcha_custom(){
+		$output = "";
+		$enabled_login_captcha = get_option("enable_login_page_captcha");
+		if($enabled_login_captcha == "yes"){
+			if(class_exists('ReallySimpleCaptcha'))
+			  {
+			    $captcha_instance = new ReallySimpleCaptcha();
+			    $word = $captcha_instance->generate_random_word();
+			    $prefix = mt_rand();
+			    $captchaimg = $captcha_instance->generate_image( $prefix, $word );
+			    $imgpath = plugin_dir_url(dirname(__FILE__))."tmp/".$captchaimg;
+			    
+			    $output .='<input type="hidden" name="aione_captcha_prefix" value="'.$prefix.'"/>
+			    <label for="aione_captcha_answer">Captcha</label>
+			    <div><img src="'.$imgpath.'" /></div>  <input name="aione_captcha_answer" type="text" />
+			    ';
+			}
+		}
+		return $output;
+	}
+	function aione_validate_login_captcha($user, $password) {
+		$return_value = $user;
+		$enabled_login_captcha = get_option("enable_login_page_captcha");
+		if($enabled_login_captcha == "yes"){
+			if(class_exists('ReallySimpleCaptcha'))
+			{
+				$captcha_instance = new ReallySimpleCaptcha();
+				$prefix = $_POST['aione_captcha_prefix'];
+				if(!$captcha_instance->check( $prefix, $_POST['aione_captcha_answer'] ))
+					{
+					  // if there is a mis-match
+					  $return_value = new WP_Error( 'loginCaptchaError', 'Captcha Error. Please try again.' );
+					}
+
+				// remember to remove the prefix
+				$captcha_instance->remove( $prefix );
+			}
+		}
+		return $return_value;
+	}
+
+	/**************Login Form Captcha End**************************/
 }
