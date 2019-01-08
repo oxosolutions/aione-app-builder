@@ -721,52 +721,53 @@ function logout_redirect(){
 		
 		$output = "";
 
-		if (isset($_POST['username']) && isset($_POST['password'])) { 
-				$creds = array();
-			    $creds['user_login'] = $_POST['username'];
-			    $creds['user_password'] = $_POST['password'];
-			    $creds['user_rememberme'] = $_POST['rememberme'];
+		/*if (isset($_POST['username']) && isset($_POST['password'])) { 
+			$creds = array();
+		    $creds['user_login'] = $_POST['username'];
+		    $creds['user_password'] = $_POST['password'];
+		    $creds['user_rememberme'] = $_POST['rememberme'];
 
-			    
-			    //$user = wp_authenticate($creds['user_login'], $creds['user_password']);
-			    $user = apply_filters( 'authenticate', null, $creds['user_login'], $creds['user_password'] );
-			    echo "<pre>";print_r($user);echo "</pre>";
-			    if ( is_wp_error($user) ) { 
-			      $output .=  '<div style="color:#cc0000;text-align:center;padding:10px">Something went wrong.Please try again.</div>';
-			    } else { 
-			    	if( empty($generated_otp_number) ){
-						$generated_otp_number = (rand(100000, 999999));
-					}
-					if(empty( $generated_otp_time )){
-						$generated_otp_time = date("Y-m-d h:i:s");
-					}
-					update_user_meta($user->ID,"wp-generated-otp-number",$generated_otp_number);
+		    
+		    //$user = wp_authenticate($creds['user_login'], $creds['user_password']);
+		    $user = apply_filters( 'authenticate', null, $creds['user_login'], $creds['user_password'] );
+		    echo "<pre>";print_r($user);echo "</pre>";
+		    if ( is_wp_error($user) ) { 
+		      $output .=  '<div style="color:#cc0000;text-align:center;padding:10px">Something went wrong.Please try again.</div>';
+		    } else { 
+		    	if( empty($generated_otp_number) ){
+					$generated_otp_number = (rand(100000, 999999));
+				}
+				if(empty( $generated_otp_time )){
+					$generated_otp_time = date("Y-m-d h:i:s");
+				}
+				update_user_meta($user->ID,"wp-generated-otp-number",$generated_otp_number);
 
-			    	if ( empty( $enable_two_factor_auth ) || $enable_two_factor_auth == "no" ) {
-			    		if (isset($_POST['redirect_to']) && $_POST['redirect_to']) {
-					        wp_redirect($_POST['redirect_to']);
-					        exit;
-					      }
-			    	} else {
-			    		$login_page_tfa_role = get_option('login_page_tfa_role',array());
-			    		echo "<pre>";print_r($login_page_tfa_role);echo "</pre>";
-			    		$otp_page = array();
-			    		foreach ($login_page_tfa_role as $value) {
-			    			if(in_array($value, (array) $user->roles)){
-			    				$otp_page[] = "true";
-			    			}
-			    		}
-			    		echo "<pre>";print_r($otp_page);echo "</pre>";
-			    		//if(in_array("true", $otp_page)){ echo "In array";
-			    			$this->show_two_factor_login( $user );			    		
-			    		/*} else { echo "OUT array";
-			    			wp_redirect($_POST['redirect_to']);
-					        exit;
-			    		}*/
-			    	}
-			    }
-			    
+		    	if ( empty( $enable_two_factor_auth ) || $enable_two_factor_auth == "no" ) {
+		    		if (isset($_POST['redirect_to']) && $_POST['redirect_to']) {
+				        wp_redirect($_POST['redirect_to']);
+				        exit;
+				    }
+		    	} else {
+		    		$login_page_tfa_role = get_option('login_page_tfa_role',array());
+		    		echo "<pre>";print_r($login_page_tfa_role);echo "</pre>";
+		    		$otp_page = array();
+		    		foreach ($login_page_tfa_role as $value) {
+		    			if(in_array($value, (array) $user->roles)){
+		    				$otp_page[] = "true";
+		    			}
+		    		}
+		    		echo "<pre>";print_r($otp_page);echo "</pre>";
+		    		echo "<pre>";print_r($_POST['redirect_to']);echo "</pre>";
+		    		if(in_array("true", $otp_page)){ echo "In array";
+		    			$this->show_two_factor_login( $user );			    		
+		    		} else { echo "OUT array";
+		    			wp_redirect($_POST['redirect_to']);
+				        exit;
+		    		}
+		    	}
 			}
+			    
+		}*/
 
 		$login = (isset($_GET['login']) ? $_GET['login'] : null);
 		$errors = array();
