@@ -118,12 +118,21 @@
 			</tr>
 
 			<tr>
+				<th scope='row'><label for='login_page_otp_mobile_field'>Mobile Number Meta Key</label></th>
+				<td>
+					<input type="text" name="login_page_otp_mobile_field" value="<?php echo get_option('login_page_otp_mobile_field');?>">
+				</td>
+			</tr>
+
+			<tr>
 				<th scope='row'><label for='Select SMS Account'>Select SMS Account: </label></th>
 				<td>
 					<select name="sms_service_provider">
 						<option value="">Select SMS Service provider</option>
-						<option value="Twillio"<?php if(get_option('sms_service_provider') == 'Twillio'){ echo "selected";
+						<option value="twillio"<?php if(get_option('sms_service_provider') == 'twillio'){ echo "selected";
 						} ?> >Twillio</option>
+						<option value="msgclub"<?php if(get_option('sms_service_provider') == 'msgclub'){ echo "selected";
+						} ?> >MsgClub</option>
 					</select>
 					<p class="description">Select SMS Account from where user wants to send SMS.</p>
 				</td>
@@ -132,9 +141,9 @@
 			<tr>
 				<th scope='row'></th>
 				<td>
-					Account SID: 
-					<input type="text" name="sms_service_provider_key"
-						value="<?php echo get_option('sms_service_provider_key'); ?> "
+					Twillio Account SID: 
+					<input type="text" name="twillio_sms_service_provider_key"
+						value="<?php echo get_option('twillio_sms_service_provider_key'); ?> "
 					>
 				</td>
 			</tr>
@@ -142,9 +151,25 @@
 			<tr>
 				<th scope='row'></th>
 				<td>
-					Auth Token : 
-					
-					<input type="text" name="sms_service_provider_secret" value="<?php echo get_option('sms_service_provider_secret'); ?> "> 
+					Twillio Auth Token : 					
+					<input type="text" name="twillio_sms_service_provider_secret" value="<?php echo get_option('twillio_sms_service_provider_secret'); ?> "> 
+
+				</td>
+			</tr>
+			<tr>
+				<th scope='row'></th>
+				<td>
+					Twillio Sender Phone Number : 					
+					<input type="text" name="twillio_sms_service_provider_phone_number" value="<?php echo get_option('twillio_sms_service_provider_phone_number'); ?> "> 
+
+				</td>
+			</tr>
+
+			<tr>
+				<th scope='row'></th>
+				<td>
+					MsgClub Auth Key : 					
+					<input type="text" name="msgclub_sms_service_provider_key" value="<?php echo get_option('msgclub_sms_service_provider_key'); ?> "> 
 
 				</td>
 			</tr>

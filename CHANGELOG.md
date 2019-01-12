@@ -36,3 +36,13 @@ FIXED: Custom field shortcode layout issue fixed
 
 ## 1.4.0.3 03-01-2019
 ADDED: Custom template for media
+
+## 1.4.0.3 08-01-2019
+ADDED: captche for login and signup pages
+
+## 1.4.0.3 08-01-2019
+UPDATED: Login shortcode 
+ADDED: 2 step authentication 
+
+## 1.4.0.6 12-01-2019
+ADDED: added template support for list posts shortcode

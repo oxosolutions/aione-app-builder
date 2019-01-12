@@ -506,9 +506,12 @@ class Aione_App_Builder_Admin {
 					$enable_two_factor_auth = $_POST['enable_two_factor_auth'];
 					$login_page_tfa_role = $_POST['login_page_tfa_role'];
 					$two_factor_auth = $_POST['two_factor_auth'];
+					$login_page_otp_mobile_field = $_POST['login_page_otp_mobile_field'];
 					$sms_service_provider = $_POST['sms_service_provider'];
-					$sms_service_provider_key = $_POST['sms_service_provider_key'];
-					$sms_service_provider_secret = $_POST['sms_service_provider_secret'];
+					$twillio_sms_service_provider_key = str_replace(' ', '',$_POST['twillio_sms_service_provider_key']);
+					$twillio_sms_service_provider_secret = str_replace(' ', '',$_POST['twillio_sms_service_provider_secret']);
+					$twillio_sms_service_provider_phone_number = $_POST['twillio_sms_service_provider_phone_number'];
+					$msgclub_sms_service_provider_key = str_replace(' ', '', $_POST['msgclub_sms_service_provider_key']);
 
 					update_option( 'enable_login_page_captcha', $enable_login_page_captcha );
 					update_option( 'aione_app_builder_login_page', $aione_app_builder_login_page );
@@ -516,9 +519,12 @@ class Aione_App_Builder_Admin {
 					update_option( 'enable_two_factor_auth', $enable_two_factor_auth );
 					update_option( 'login_page_tfa_role', $login_page_tfa_role );
 					update_option( 'two_factor_auth', $two_factor_auth );
+					update_option( 'login_page_otp_mobile_field', $login_page_otp_mobile_field );
 					update_option( 'sms_service_provider', $sms_service_provider );
-					update_option( 'sms_service_provider_key', $sms_service_provider_key );
-					update_option( 'sms_service_provider_secret', $sms_service_provider_secret );
+					update_option( 'twillio_sms_service_provider_key', $twillio_sms_service_provider_key );
+					update_option( 'twillio_sms_service_provider_secret', $twillio_sms_service_provider_secret );
+					update_option( 'twillio_sms_service_provider_phone_number', $twillio_sms_service_provider_phone_number );
+					update_option( 'msgclub_sms_service_provider_key', $msgclub_sms_service_provider_key );
 				}
 				if(isset( $_POST['filter'] ) && $_POST['filter'] == "register-tab"){
 					$aione_app_builder_register_page = $_POST['aione_app_builder_register_page'];

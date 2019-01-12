@@ -208,11 +208,10 @@ class Aione_App_Builder {
 		$this->loader->add_action( 'wp_login', $plugin_public, 'wp_login' , 10, 2 );
 		$this->loader->add_action( 'login_form_validate_2fa', $plugin_public, 'login_form_validate_2fa' ) ;
 		$this->loader->add_action('login_form', $plugin_public,'my_added_login_field');
-		$this->loader->add_filter( 'login_message',$plugin_public, 'my_login_message' ); 
+		//$this->loader->add_filter( 'login_message',$plugin_public, 'my_login_message' ); 
 		/**********TFA Frontend**************/
 		$this->loader->add_action( 'init', $plugin_public,'frontend_login_process' );
 		$this->loader->add_action( 'init', $plugin_public, 'login_form_validate_2fa' ) ;
-		$this->loader->add_filter('aione_login_form_otp_screen',$plugin_public,'login_html',10,3);
 		$this->loader->add_filter('tfa_selection',$plugin_public,'my_added_login_field_frontend',10,2);
 
 		// Captcha
