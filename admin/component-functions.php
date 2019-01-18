@@ -421,11 +421,32 @@ function aione_custom_types_register( $post_type, $data ) {
         'edit_post' => 'edit_'.$post_type,
         'delete_post' => 'delete_'.$post_type,
         'read_post' => 'read_'.$post_type,
+
+        'delete_private_posts' => 'delete_private_'.$post_type.'s',
+        'delete_published_posts' => 'delete_published_'.$post_type.'s',
+        'edit_private_posts' => 'edit_private_'.$post_type.'s',
+        'edit_published_posts' => 'edit_published_'.$post_type.'s',
     );
 
-    $args = register_post_type( $post_type, apply_filters( 'aione_type', $data, $post_type ) );
+    $role = get_role('administrator');  
+    if($role){             
+        $role->add_cap( 'publish_'.$post_type.'s' );
+        $role->add_cap( 'edit_'.$post_type.'s' );
+        $role->add_cap( 'edit_others_'.$post_type.'s' );
+        $role->add_cap( 'delete_'.$post_type.'s' );
+        $role->add_cap( 'delete_others_'.$post_type.'s' );
+        $role->add_cap( 'read_private_'.$post_type.'s' );
+        $role->add_cap( 'edit_'.$post_type );
+        $role->add_cap( 'delete_'.$post_type );
+        $role->add_cap( 'read_'.$post_type );
 
-    //echo "<pre>";print_r($data);echo "</pre>";
+        $role->add_cap( 'delete_private_'.$post_type.'s' );
+        $role->add_cap( 'delete_published_'.$post_type.'s' );
+        $role->add_cap( 'edit_private_'.$post_type.'s' );
+        $role->add_cap( 'edit_published_'.$post_type.'s' );
+    }
+
+    $args = register_post_type( $post_type, apply_filters( 'aione_type', $data, $post_type ) );
 
     do_action( 'aione_type_registered', $args );
 }
