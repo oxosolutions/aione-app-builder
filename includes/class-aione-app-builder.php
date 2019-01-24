@@ -261,7 +261,6 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'icon', $plugin_public, 'aione_app_builder_aione_icon_shortcode' );
 		$this->loader->add_shortcode( 'date', $plugin_public, 'aione_app_builder_date_shortcode' );
 		$this->loader->add_shortcode( 'info', $plugin_public, 'aione_app_builder_info_shortcode' );
-		$this->loader->add_shortcode( 'aione-form', $plugin_public, 'aione_app_builder_form_shortcode' );
 
 		// POST SHORTCODES
 
@@ -282,6 +281,8 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'upcoming-tag', $plugin_public, 'aione_app_builder_upcoming_tag_shortcode' );
 		$this->loader->add_shortcode( 'social-icon', $plugin_public, 'aione_app_builder_social_icon_shortcode' );
 		$this->loader->add_shortcode( 'social-share', $plugin_public, 'aione_app_builder_social_share_shortcode' );
+
+		$this->loader->add_shortcode( 'add-new', $plugin_public, 'aione_app_builder_add_new_shortcode' );
 	}
 
 	/**
