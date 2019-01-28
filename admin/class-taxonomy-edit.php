@@ -496,6 +496,13 @@ class Aione_Admin_Edit_Taxonomy extends Aione_Admin_Page
                     '#description' => __( 'Whether to allow the Tag Cloud widget to use this taxonomy.', 'aione-app-builder' ) . '<br />' . __( 'Default: if not set, defaults to value of show_ui argument.', 'aione-app-builder' ),
                     '#inline' => true,
                 ),
+                'show_in_rest' => array(
+                    '#name' => 'ct[show_in_rest]',
+                    '#default_value' => !empty( $this->ct['show_in_rest'] ),
+                    '#title' => __( 'show_in_rest', 'aione-app-builder' ),
+                    '#description' => __( 'Whether to expose this post type in the REST API.', 'aione-app-builder' ) . '<br />' . __( 'Default: true.', 'aione-app-builder' ),
+                    '#inline' => true,
+                ),
             ),
         );
         //if ( wpcf_compare_wp_version( '3.5', '>=' )) {
