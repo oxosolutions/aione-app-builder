@@ -207,9 +207,9 @@ class Aione_App_Builder_Admin {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/aione-app-builder-admin.js', array( 'jquery' ), $this->version, false );
 
 		$screen = get_current_screen();
-		
+		//echo "<pre>";print_r($screen);echo "</pre>";
 		$aione_admin_pages = array(
-			'dashboard',
+			//'dashboard',
 			'toplevel_page_aione-dashboard',
 			'aione-app-builder_page_aione-shortcodes',
 			'aione-app-builder_page_aione-settings'

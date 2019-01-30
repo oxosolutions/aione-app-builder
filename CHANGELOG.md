@@ -46,3 +46,9 @@ ADDED: 2 step authentication
 
 ## 1.4.0.6 12-01-2019
 ADDED: added template support for list posts shortcode
+
+## 1.4.0.7 18-01-2019
+FIXED: CSS
+
+## 1.4.0.8 29-01-2019
+FIXED: CSS
