@@ -178,6 +178,7 @@
 'author'         => '',
 'author_id'      => '',
 'count'          => '',
+'template'       => '', // slug of aione template
 'id'             => '',
 'class'          => ''	
 </pre></td>
@@ -393,6 +394,7 @@
 <td><pre>
 'field' => 'field_5bc5a7afa60b0', //acf field_key
 'label' => 'true', //false
+'template' => '', //slug of aione template (work only if field type is Post Object)
 'seperator' => ' : ',
 
 </pre>

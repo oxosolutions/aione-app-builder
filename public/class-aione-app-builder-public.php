@@ -1921,7 +1921,7 @@ class Aione_App_Builder_Public {
 				'id'			=> '',
 				'class'			=> ''	
 			), $atts )
-	);
+		);
 		
 		global $theme_options, $post;
 
@@ -1958,9 +1958,15 @@ class Aione_App_Builder_Public {
 				$is_template = true;
 			}
 		}
-		
+
+		$id_attribute ='';
+		if( !empty($id) ){
+			$id_attribute = 'id="'.$id.'"';
+		}
+
+		//echo "<pre>";print_r($is_template);echo "</pre>";
 		if($resent_posts->have_posts()){
-			$output .= '<ul class="list-posts">';
+			$output .= '<ul '.$id_attribute.' class="list-posts '.$class.'">';
 			while($resent_posts->have_posts()){
 				$resent_posts->the_post(); 
 				$output .= '<li>';
@@ -1987,7 +1993,7 @@ class Aione_App_Builder_Public {
 					$output .= 	get_the_time($theme_options['date_format']);
 					$output .= '</div>';
 					$output .= '</div>';
-					$output .= '<div class="aione-clearfix"></div>';
+					$output .= '<div class="clear"></div>';
 					$output .= '</li>';
 				
 				}
@@ -1995,7 +2001,7 @@ class Aione_App_Builder_Public {
 			$output .= '</ul>';
 			wp_reset_postdata();
 		}  else {
-			$output .= '<h5 class="font-size-16 aligncenter">No Posts Available.</h5>';
+			$output .= '<h5 class="font-size-16 align-center">No Posts Available.</h5>';
 		}
 		return $output;
 	} // END aione_app_builder_list_post_shortcode()
@@ -2951,6 +2957,7 @@ class Aione_App_Builder_Public {
 			'field' => '',
 			'label' => "true",
 			'seperator' => ' : ',
+			'template' => '',
 			'class' => '',
 			'id' => '',
 			'style' => 'div', // table/div/list
@@ -2958,6 +2965,7 @@ class Aione_App_Builder_Public {
 
 		$field = get_field_object($atts['field']);
 		// echo "<pre>";print_r($field);echo "</pre>";
+
 		$field_class = 'field_'.$field['name'];
 
 		if( empty( $field_class ) ){
@@ -3181,27 +3189,85 @@ class Aione_App_Builder_Public {
 				}
 				break; 
 				case "post_object":
-				if($field['multiple'] == '1'){
+				$post_template = $atts['template'];
+
+				$aione_templates 		= get_option( 'aione-templates' );
+				$post_template_array 		= $aione_templates[$post_template];
+
+				if($field['multiple'] == '1'){				
+					
 					if($field['return_format'] == "object"){
 						foreach ($data as $key => $value) {
-							$output .= '<div class="">Title : '.$value->post_title.'</div>';
-							$output .= '<div class="">Content : '.$value->post_content.'</div>';
+
+							if( !empty( $post_template ) && $post_template_array ){
+								global $post;
+								/*$post_type = get_post_type( $value->ID );
+
+								$posts = get_posts( 
+									array( 
+										'include' => array( $value->ID ), 
+										'post_type' => $post_type
+									) 
+								);
+
+								if ( $posts ) {
+									foreach ( $posts as $post ) : 
+										setup_postdata( $post ); 
+										$output .= do_shortcode( $post_template_array['content'] );
+									endforeach;
+									wp_reset_postdata();
+								}*/
+
+								$post = get_post($value->ID);
+								setup_postdata( $post ); 
+								$output .= do_shortcode( $post_template_array['content'] );
+								wp_reset_postdata();
+
+							} else {
+								$output .= '<div class="post-title">'.$value->post_title.'</div>';
+								$output .= '<div class="post-content">'.do_shortcode( $value->post_content ).'</div>';
+							}							
 						}				    		
 					} else {
 						foreach ($data as $key => $value) {
-							$value = get_post($value);
-							$output .= '<div class="">Title : '.$value->post_title.'</div>';
-							$output .= '<div class="">Content : '.$value->post_content.'</div>';
+							if( !empty( $post_template ) && $post_template_array ){
+								global $post;
+								$post = get_post($value);
+								setup_postdata( $post ); 
+								$output .= do_shortcode( $post_template_array['content'] );
+								wp_reset_postdata();
+							} else {
+								$value = get_post($value);
+								$output .= '<div class="post-title">'.$value->post_title.'</div>';
+								$output .= '<div class="post-content">'.do_shortcode( $value->post_content ).'</div>';
+							}
+							
 						}
 					}
 				} else {			    	
 					if($field['return_format'] == "object"){
-						$output .= '<div class="">Title : '.$data->post_title.'</div>';
-						$output .= '<div class="">Content : '.$data->post_content.'</div>';
+						if( !empty( $post_template ) && $post_template_array ){
+							global $post;
+							$post = get_post($data);
+							setup_postdata( $post ); 
+							$output .= do_shortcode( $post_template_array['content'] );
+							wp_reset_postdata();
+						} else {
+							$output .= '<div class="post-title">'.$data->post_title.'</div>';
+							$output .= '<div class="post-content">'.do_shortcode( $data->post_content ).'</div>';
+						}						
 					} else {
-						$data = get_post($data);
-						$output .= '<div class="">Title : '.$data->post_title.'</div>';
-						$output .= '<div class="">Content : '.$data->post_content.'</div>';
+						if( !empty( $post_template ) && $post_template_array ){
+							global $post;
+							$post = get_post($data);
+							setup_postdata( $post ); 
+							$output .= do_shortcode( $post_template_array['content'] );
+							wp_reset_postdata();
+						} else {
+							$data = get_post($data);
+							$output .= '<div class="post-title">'.$data->post_title.'</div>';
+							$output .= '<div class="post-content">'.do_shortcode( $data->post_content ).'</div>';
+						}
 					}	
 				}
 				break;
@@ -3585,5 +3651,7 @@ class Aione_App_Builder_Public {
 
 
 	}
+
+	
 
 }

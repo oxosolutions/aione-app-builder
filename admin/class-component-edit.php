@@ -1251,7 +1251,7 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
                     /**
                      * update option "wpcf-custom-taxonomies"
                      */
-                    $aione_custom_taxonomies = get_option( AIONE_OPTION_NAME_TAXONOMIES, true );
+                    $aione_custom_taxonomies = get_option( AIONE_OPTION_NAME_TAXONOMIES, array() );
                     if ( is_array( $aione_custom_taxonomies ) ) {
                         $update_aione_custom_taxonomies = false;
                         foreach( $aione_custom_taxonomies as $key => $value ) {
@@ -1301,7 +1301,7 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
          /**
          * Sync with template
          */
-        $aione_custom_templates = get_option( AIONE_OPTION_NAME_TEMPLATES, true );
+        $aione_custom_templates = get_option( AIONE_OPTION_NAME_TEMPLATES, array() );
         foreach ( $aione_custom_templates as $slug => $template_array ) {
             if ( isset( $data['single_template'] ) && !empty( $data['single_template'] ) &&  ($slug == $data['single_template'] ) ) { 
                 $aione_custom_templates[$slug]['component'][$data['slug']] = 1;

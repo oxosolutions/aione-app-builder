@@ -52,3 +52,9 @@ FIXED: CSS
 
 ## 1.4.0.8 29-01-2019
 FIXED: CSS
+
+## 1.4.0.9 16-02-2019
+FIXED: Bug Removed in Add Template
+
+## 1.4.0.10 21-02-2019
+UPDATED: updated list-posts shortcode
