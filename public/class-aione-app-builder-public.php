@@ -3313,20 +3313,40 @@ class Aione_App_Builder_Public {
 				break; 
 				case "user":   
 			    	//echo "<pre>";print_r($data);echo "</pre>";
-				if($field['return_format'] == "object"){
-					$output .= '<div class="">First Name:'.$data->user_firstname.'</div>';
-					$output .= '<div class="">Last Name:'.$data->user_lastname.'</div>';
-					$output .= '<div class="">Email:'.$data->user_email.'</div>';
-				} else if ($field['return_format'] == "array"){
-					$output .= '<div class="">First Name:'.$data['user_firstname'].'</div>';
-					$output .= '<div class="">Last Name:'.$data['user_lastname'].'</div>';
-					$output .= '<div class="">Email:'.$data['user_email'].'</div>';
+				if($field['multiple'] == '1'){
+					foreach ($data as $key => $value) {
+						if($field['return_format'] == "object"){
+							$output .= '<div class="">First Name:'.$value->user_firstname.'</div>';
+							$output .= '<div class="">Last Name:'.$value->user_lastname.'</div>';
+							$output .= '<div class="">Email:'.$value->user_email.'</div>';
+						} else if ($field['return_format'] == "array"){
+							$output .= '<div class="">First Name:'.$value['user_firstname'].'</div>';
+							$output .= '<div class="">Last Name:'.$value['user_lastname'].'</div>';
+							$output .= '<div class="">Email:'.$value['user_email'].'</div>';
+						} else {
+							$user_info = get_userdata($value);
+							$output .= '<div class="">First Name:'.$user_info->user_firstname.'</div>';
+							$output .= '<div class="">Last Name:'.$user_info->user_lastname.'</div>';
+							$output .= '<div class="">Email:'.$user_info->user_email.'</div>';
+						}
+					}
 				} else {
-					$user_info = get_userdata($data);
-					$output .= '<div class="">First Name:'.$user_info->user_firstname.'</div>';
-					$output .= '<div class="">Last Name:'.$user_info->user_lastname.'</div>';
-					$output .= '<div class="">Email:'.$user_info->user_email.'</div>';
+					if($field['return_format'] == "object"){
+						$output .= '<div class="">First Name:'.$data->user_firstname.'</div>';
+						$output .= '<div class="">Last Name:'.$data->user_lastname.'</div>';
+						$output .= '<div class="">Email:'.$data->user_email.'</div>';
+					} else if ($field['return_format'] == "array"){
+						$output .= '<div class="">First Name:'.$data['user_firstname'].'</div>';
+						$output .= '<div class="">Last Name:'.$data['user_lastname'].'</div>';
+						$output .= '<div class="">Email:'.$data['user_email'].'</div>';
+					} else {
+						$user_info = get_userdata($data);
+						$output .= '<div class="">First Name:'.$user_info->user_firstname.'</div>';
+						$output .= '<div class="">Last Name:'.$user_info->user_lastname.'</div>';
+						$output .= '<div class="">Email:'.$user_info->user_email.'</div>';
+					}
 				}
+				
 				break;
 				case "repeater":   
 			    /*
