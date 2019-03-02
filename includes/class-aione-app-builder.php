@@ -262,6 +262,9 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'date', $plugin_public, 'aione_app_builder_date_shortcode' );
 		$this->loader->add_shortcode( 'info', $plugin_public, 'aione_app_builder_info_shortcode' );
 
+
+		$this->loader->add_shortcode( 'variable', $plugin_public, 'aione_app_builder_variable_shortcode' );
+
 		// POST SHORTCODES
 
 		// Post ID $post->ID

@@ -160,8 +160,7 @@
 'id'             => '0',
 'path'           => '',
 'title'          => '',
-'action'         => '',
-'class'          => '',
+'action'         => 'logout',
 </pre></td>
 				</tr>
 				<tr>
@@ -242,8 +241,6 @@
 					<td>[welcome]</td>
 <td><pre>
 'user_id'        => CURRENT_LOGGED_IN_USER, // ID of user
-'class'          => 'user_login', //CSS Class
-'id'     => 'field', //CSS Id
 </pre></td>
 				</tr>
 				<tr>

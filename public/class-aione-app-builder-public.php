@@ -1966,6 +1966,9 @@ class Aione_App_Builder_Public {
 
 		//echo "<pre>";print_r($is_template);echo "</pre>";
 		if($resent_posts->have_posts()){
+			if( $is_template ){
+				$output .= '<div class="aione-template type-archive '.$template.'">';
+			}
 			$output .= '<ul '.$id_attribute.' class="list-posts '.$class.'">';
 			while($resent_posts->have_posts()){
 				$resent_posts->the_post(); 
@@ -1999,7 +2002,11 @@ class Aione_App_Builder_Public {
 				}
 			}
 			$output .= '</ul>';
+			if( $is_template ){
+				$output .= '</div>';
+			}
 			wp_reset_postdata();
+			$output .= aione_pagination($resent_posts);
 		}  else {
 			$output .= '<h5 class="font-size-16 align-center">No Posts Available.</h5>';
 		}
@@ -2021,6 +2028,12 @@ class Aione_App_Builder_Public {
 		
 		$output = "";
 		$number = $count;
+		
+		$id_attribute ='';
+		if( !empty($id) ){
+			$id_attribute = 'id="'.$id.'"';
+		}
+
 		
 		$args = array(
 			'include_unapproved' => '',
@@ -2058,7 +2071,7 @@ class Aione_App_Builder_Public {
 		$the_comments = get_comments( $args );
 
 		if($the_comments){
-			$output .= '<ul class="list-posts resent-comments">';
+			$output .= '<ul '.$id_attribute.' class="list-posts resent-comments '.$class.'">';
 			foreach($the_comments as $comment) {
 				$output .= '<li>';
 				$output .= '<div class="post-image">';
@@ -2404,6 +2417,8 @@ class Aione_App_Builder_Public {
 		
 		$user = get_user_by('id', $user_id);
 
+
+
 		$output = "<span>Welcome </span>";
 
 		$displayname = $user->user_displayname;
@@ -2581,8 +2596,12 @@ class Aione_App_Builder_Public {
 						}
 					}
 				}
-				
-				$output .='<article id="post_'. get_the_ID().'" '. get_post_class().'> 
+				$id_attribute ='';
+					if( !empty($id) ){
+						$id_attribute = 'id="'.$id.'"';
+					}
+				$output .='<div '.$id_attribute.' class="'.$class.'">
+				<article id="'.$id.' post_'. get_the_ID().'" '. get_post_class().'> 
 				<div class="ar list-blog '. $layout.'">';
 				
 				if($has_thumbnail) { 
@@ -2645,7 +2664,8 @@ class Aione_App_Builder_Public {
 				
 				$output .='</div>
 				</div>
-				</article>';	
+				</article>
+				</div>';	
 				
 			endwhile;
 			wp_reset_postdata();
@@ -2739,10 +2759,16 @@ class Aione_App_Builder_Public {
 			'class' => '',
 			'id' => '',
 		), $atts, 'aione-post-title' );
+
+		$id_attribute ='';
+		if( !empty($atts['id']) ){
+			$id_attribute = 'id="'.$atts['id'].'"';
+		}
+
 		if($atts['link'] == "true"){
-			$title = '<a href="'.get_permalink().'">'.get_the_title().'</a>';
+			$title = '<a '.$id_attribute.' class="'.$atts['class'].'" href="'.get_permalink().'">'.get_the_title().'</a>';
 		} else {
-			$title = get_the_title();
+			$title = '<div '.$id_attribute.' class="'.$atts['class'].'">'.get_the_title().'</div>';
 		}
 		
 		return $title;
@@ -2756,12 +2782,18 @@ class Aione_App_Builder_Public {
 			'class' => '',
 			'id' => '',
 		), $atts, 'aione-post-content' );
+
+		$id_attribute ='';
+		if( !empty($atts['id']) ){
+			$id_attribute = 'id="'.$atts['id'].'"';
+		}
+
 		if($atts['expert'] == "true"){
 			$content = wp_trim_words( get_the_content(), $atts['expert-length'], $atts['more-text'] );
 		} else {
 			$content = get_the_content();
 		}
-		$content = do_shortcode($content);
+		$content = '<div '.$id_attribute.' class="'.$atts['class'].'">'.do_shortcode($content).'</div>';
 		return $content;
 	}
 	function aione_app_builder_post_featured_image_shortcode($atts){
@@ -2775,6 +2807,10 @@ class Aione_App_Builder_Public {
 			'return' => 'image',// image/url/width/height/alt
 		), $atts, 'featured-image' );
 		$output = "";
+		$id_attribute ='';
+		if( !empty($id) ){
+			$id_attribute = 'id="'.$id.'"';
+		}
 		if ( has_post_thumbnail($post->ID) ) {
 			$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ),  $atts['size']);
 			$featured_image_url = $featured_image[0];
@@ -2809,7 +2845,7 @@ class Aione_App_Builder_Public {
 			*/
 
 			if( $atts['return'] == 'image' ){
-				$output .= '<img class="'.$atts['class'].'" id="'.$atts['id'].'" src="'.$featured_image_url.'" alt="'.$featured_image_meta_alt.'" width="'.$featured_image_width.'"/>';
+				$output .= '<img class="'.$atts['class'].'" '.$id_attribute.' src="'.$featured_image_url.'" alt="'.$featured_image_meta_alt.'" width="'.$featured_image_width.'"/>';
 			} elseif( $atts['return'] == 'url' ){
 				$output .= $featured_image_url;
 			} elseif( $atts['return'] == 'width' ){
@@ -2821,7 +2857,7 @@ class Aione_App_Builder_Public {
 			}
 		} else {
 			if($atts['placeholder'] == 'true'){
-				$output .= '<img class="'.$atts['class'].'" id="'.$atts['id'].'" src="'.$atts['placeholder_image'].'" />';
+				$output .= '<img class="'.$atts['class'].'" '.$id_attribute.' src="'.$atts['placeholder_image'].'" />';
 			}
 		}
 		return $output;
@@ -2841,12 +2877,15 @@ class Aione_App_Builder_Public {
 		$type = get_post_mime_type( $post->ID );
 		$media = wp_get_attachment_url( $post->ID );
 		$caption_text = wp_get_attachment_caption( $post->ID );
-		
+		$id_attribute ='';
+		if( !empty($id) ){
+			$id_attribute = 'id="'.$id.'"';
+		}
 		switch ($type) {
 			case 'image/jpeg':
 			case 'image/png':
 			case 'image/gif':
-			$output .= '<img src="'.$media.'" width="'.$width.'" height="'.$height.'" class="'.$class.'" id="'.$id.'"/>';
+			$output .= '<img src="'.$media.'" width="'.$width.'" height="'.$height.'" class="'.$class.'" '.$id_attribute.'/>';
 			if($caption == 'true'){				
 				$output .= '<div class="caption">'.$caption_text.'</div>';
 			}
@@ -2854,7 +2893,7 @@ class Aione_App_Builder_Public {
 			case 'video/mpeg':
 			case 'video/mp4': 
 			case 'video/quicktime':
-			$output .= '<video width="'.$width.'" height="'.$height.'" controls>
+			$output .= '<video width="'.$width.'" height="'.$height.'" controls class="'.$class.'" '.$id_attribute.'>
 			<source src="'.$media.'" type="'.$type.'">
 			</video>'; 
 			if($caption == 'true'){	
@@ -2908,7 +2947,10 @@ class Aione_App_Builder_Public {
 			'fields' => 'all'
 		);
 		$post_terms = wp_get_post_terms( $post_id, $texonomy, $args ); 
-		
+		$id_attribute ='';
+		if( !empty($id) ){
+			$id_attribute = 'id="'.$id.'"';
+		}
 		if ( $post_terms ) {
 			if($style == 'list'){
 				$parent_element = "ul";
@@ -2917,7 +2959,7 @@ class Aione_App_Builder_Public {
 				$parent_element = "div";
 				$child_element = "span";
 			}
-			$output .= '<'.$parent_element.' class="'.$class.'" id="'.$id.'">';
+			$output .= '<'.$parent_element.' class="'.$class.'" '.$id_attribute.'>';
 			foreach( $post_terms as $term ) {
 				$term_link = get_term_link( $term);
 				$output .= '<'.$child_element.'><a href="' . esc_url( $term_link ) . '">' . $term->name . '</a></'.$child_element.'>';
@@ -2926,6 +2968,22 @@ class Aione_App_Builder_Public {
 		}
 		return $output;
 	}
+
+
+	function aione_app_builder_variable_shortcode($atts){
+
+		$atts = shortcode_atts( array(
+			'parameter' => '',
+			'type' => 'request', //get/post/request
+		), $atts, 'variable' );
+
+		$variable = $_REQUEST[$atts['parameter']];
+
+
+		return $variable;
+
+	}
+
 
 	function aione_app_builder_post_custom_fields_shortcode($atts){
 
@@ -2952,18 +3010,30 @@ class Aione_App_Builder_Public {
 	}
 
 	function aione_app_builder_post_custom_field_shortcode($atts){
+		
 		global $post;
+
 		$atts = shortcode_atts( array(
+			'post_id' => '',
 			'field' => '',
 			'label' => "true",
 			'seperator' => ' : ',
 			'template' => '',
 			'class' => '',
 			'id' => '',
-			'style' => 'div', // table/div/list
+			'style' => 'div', // table/div/list/ Leave empty for no html
 		), $atts, 'custom-field' );
 
-		$field = get_field_object($atts['field']);
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+
+		if( !empty( $atts['post_id'] ) && get_post_status ( $atts['post_id'] ) ){
+			$post_id = $atts['post_id'];
+		} else {
+			$post_id = $post->ID;
+		}
+
+		$field = get_field_object( $atts['field'] );
 		// echo "<pre>";print_r($field);echo "</pre>";
 
 		$field_class = 'field_'.$field['name'];
@@ -2980,6 +3050,7 @@ class Aione_App_Builder_Public {
 
 		$field_classes = array(
 			'field',
+			$atts['class'],
 			$field_class,
 			$field['wrapper']['class'],
 			'field_type_'.$field['type'],
@@ -3026,7 +3097,7 @@ class Aione_App_Builder_Public {
 
 						$sub_field_classes = implode(' ', $sub_field_classes);
 						$output .= '<li class="'.$sub_field_classes.'">';
-						$output .= $this->get_data_callback($sub_field_array,$post->ID,$repeater,$atts);
+						$output .= $this->get_data_callback($sub_field_array,$post_id,$repeater,$atts);
 						$output .= '</li>';
 					}
 					$output .= '</ul>';
@@ -3037,7 +3108,7 @@ class Aione_App_Builder_Public {
 			}
 		} else {
 			$repeater = false;
-			$output .= $this->get_data_callback($field,$post->ID,$repeater,$atts);
+			$output .= $this->get_data_callback($field,$post_id,$repeater,$atts);
 		}
 		
 		if($atts['style'] == "div"){
@@ -3047,11 +3118,29 @@ class Aione_App_Builder_Public {
 		
 	}
 
+	function clean_shortcode_parameters( $atts ){
+
+		foreach ($atts as $parameter_key => $parameter_value) {
+
+			$parameter =  $parameter_value;
+			$parameter = str_replace("{{","[", $parameter );
+			$parameter = str_replace("}}","]", $parameter );
+
+			$parameter = do_shortcode( $parameter );
+
+			$atts[$parameter_key] = $parameter;
+
+		}
+
+		return $atts;
+	}
+
 	function get_data_callback($field , $post_id , $repeater, $atts){
 		$data = $this->get_field_data($field['key'],$post_id,$repeater);
+		
 		$output = '';
 		if($data){
-			switch ($field['type']) {
+			switch ($field['type']) { 
 				case "text":
 				$output .= $data;
 				break;
@@ -3076,7 +3165,10 @@ class Aione_App_Builder_Public {
 				case "date_picker":
 				$format = $field['display_format'];
 				$output .= date($format,strtotime($data));
-				break;				 
+				break;	
+				case "color_picker":
+				$output .= $data;
+				break;			 
 				case "image":
 				if($field['return_format'] == "array"){
 					$src =  $data['url'];
