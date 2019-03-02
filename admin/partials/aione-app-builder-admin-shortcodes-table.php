@@ -178,6 +178,7 @@
 'author_id'      => '',
 'count'          => '',
 'template'       => '', // slug of aione template
+'pagination'     => 'yes', // no
 'id'             => '',
 'class'          => ''	
 </pre></td>

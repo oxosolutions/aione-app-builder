@@ -1918,6 +1918,7 @@ class Aione_App_Builder_Public {
 				'order'			=> 'DESC',
 				'orderby'		=> 'date',
 				'template'		=> '',
+				'pagination'	=> 'yes',
 				'id'			=> '',
 				'class'			=> ''	
 			), $atts )
@@ -2006,7 +2007,9 @@ class Aione_App_Builder_Public {
 				$output .= '</div>';
 			}
 			wp_reset_postdata();
-			$output .= aione_pagination($resent_posts);
+			if($pagination == 'yes'){				
+				$output .= aione_pagination($resent_posts);
+			}
 		}  else {
 			$output .= '<h5 class="font-size-16 align-center">No Posts Available.</h5>';
 		}
