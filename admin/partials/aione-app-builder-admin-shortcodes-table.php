@@ -172,11 +172,15 @@
 					<td>List Posts</td>
 					<td>[list-posts]</td>
 <td><pre>
+'post_type'      => 'post',
+'status'		=> 'publish',
 'cat'            => '',
 'cat_id'         => '',
 'author'         => '',
 'author_id'      => '',
 'count'          => '',
+'order'			=> 'DESC',
+'orderby'		=> 'date',
 'template'       => '', // slug of aione template
 'pagination'     => 'yes', // no
 'id'             => '',

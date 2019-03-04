@@ -3037,7 +3037,7 @@ class Aione_App_Builder_Public {
 		}
 
 		$field = get_field_object( $atts['field'] );
-		// echo "<pre>";print_r($field);echo "</pre>";
+		
 
 		$field_class = 'field_'.$field['name'];
 
@@ -3062,6 +3062,15 @@ class Aione_App_Builder_Public {
 		$field_classes = implode(' ', $field_classes);
 
 		$output = '';
+
+		/*
+
+		$output .= "<pre>";
+		$output .= print_r( $field, true );
+		$output .="</pre>";
+		*/
+
+
 		if($atts['style'] == "div"){
 			$output .= '<div id="'.$field_id.'" class="'.$field_classes.'">';
 		}
@@ -3464,29 +3473,33 @@ class Aione_App_Builder_Public {
 		return $output;
 	}
 
-	function get_field_data($key , $post_id, $repeater = false){
-		if($repeater == true){
-			return get_sub_field($key,$post_id);
+	function get_field_data( $key , $post_id, $repeater = false ){
+		if( $repeater == true ){
+			return get_sub_field( $key, $post_id );
 		} else {			
-			return  get_field($key,$post_id);
+			return  get_field( $key, $post_id );
 		}
 	}
 
-	function aione_app_builder_upcoming_tag_shortcode($atts){
+	function aione_app_builder_upcoming_tag_shortcode( $atts ){
+		
 		extract( shortcode_atts(
 			array(
 				'text'           => "Upcoming",
 			), $atts )
-	);
+		);
+
 		global $post;
 		$html = '';
 		$status = get_post_status( $post->ID );
+
 		if($status == 'future'){
 			$html .= '<div class="upcoming-tag">'.$text.'</div>';
 			return $html;
 		} else {
 			return false;
 		}
+
 	}
 
 	function aione_app_builder_social_icon_shortcode($atts){
@@ -3511,7 +3524,7 @@ class Aione_App_Builder_Public {
 				'vimeo'           => "",
 				'wordpress'       => "",
 			), $atts )
-	);
+		);
 
 		$html = '';
 		$html .= '<ul class="aione-social-icons '.$size.' '.$theme.' '.$style.' '.$direction.' '.$labels.'">';
