@@ -2374,31 +2374,42 @@ class Aione_App_Builder_Public {
 		$user = wp_get_current_user();
 		$userid = $user->ID;
 
-		// Attributes
-		extract( shortcode_atts(
-			array(
-				'user_id' => $userid, // ID of user
-				'field' => 'user_login', //key of field and custom field to be dispayed
-				'field_type' => 'field', //field/meta
-			), $atts )
-	);
-		
-		$user = get_user_by('id', $user_id);
+		$atts = shortcode_atts( array(
+			'user_id' => $userid, // ID of user
+			'field' => 'user_login', //key of field and custom field to be dispayed
+			'field_type' => 'field', //field/meta
+		), $atts, 'user' );
 
-		/*echo "<pre>";
-		print_r($user);
-		echo "</pre>";*/
+		$atts = $this->clean_shortcode_parameters( $atts );
 
 		$output = "";
-		if($field_type == 'field'){
-			if($field == 'user_pass'){
+		// $output .= '<br>=='.$atts['user_id'];
+		
+		$user = get_user_by( 'id', $atts['user_id'] );
+		$user = $user->data;
+
+		/*
+
+		
+		echo "<pre>";
+		print_r($user);
+		echo "</pre>";
+
+		*/
+
+		$field = $atts['field'];
+		
+
+		if( $atts['field_type'] == 'field' ){
+
+			if( $field == 'user_pass' ){
 				$output .= '';
 			} else {
 				$output .= $user->$field;
-			}			
+			}
+
 		} else {
-			$custom_field = get_user_meta( $user_id, $field, true ); 
-			$output .= $custom_field;
+			$output .= get_user_meta( $atts['user_id'], $atts['field'], true ); 
 		}
 		
 		return $output;
@@ -2761,17 +2772,27 @@ class Aione_App_Builder_Public {
 			'link' => "true",
 			'class' => '',
 			'id' => '',
+			'style' => 'div', // h1-h6,span
 		), $atts, 'aione-post-title' );
 
+		$title ='';
 		$id_attribute ='';
 		if( !empty($atts['id']) ){
 			$id_attribute = 'id="'.$atts['id'].'"';
 		}
 
-		if($atts['link'] == "true"){
-			$title = '<a '.$id_attribute.' class="'.$atts['class'].'" href="'.get_permalink().'">'.get_the_title().'</a>';
+		if($atts['style'] == '') {
+			$title .= get_the_title();
 		} else {
-			$title = '<div '.$id_attribute.' class="'.$atts['class'].'">'.get_the_title().'</div>';
+			if($atts['link'] == "true"){
+				$title .= '<'.$atts['style'].' '.$id_attribute.' class="'.$atts['class'].'">';
+				$title .= '<a href="'.get_permalink().'">'.get_the_title().'</a>';
+				$title .= '</'.$atts['style'].'>';
+			} else {
+				$title .= '<'.$atts['style'].' '.$id_attribute.' class="'.$atts['class'].'">';
+				$title .= get_the_title();
+				$title .= '</'.$atts['style'].'>';
+			}
 		}
 		
 		return $title;
@@ -3018,6 +3039,7 @@ class Aione_App_Builder_Public {
 
 		$atts = shortcode_atts( array(
 			'post_id' => '',
+			'type' => 'post',
 			'field' => '',
 			'label' => "true",
 			'seperator' => ' : ',
@@ -3148,7 +3170,12 @@ class Aione_App_Builder_Public {
 	}
 
 	function get_data_callback($field , $post_id , $repeater, $atts){
-		$data = $this->get_field_data($field['key'],$post_id,$repeater);
+
+		if( $atts['type'] == 'user' ){ 
+			$post_id = 'user_'.$post_id;
+		}
+
+		$data = $this->get_field_data( $field['key'], $post_id, $repeater, $atts);
 		
 		$output = '';
 		if($data){
@@ -3416,38 +3443,48 @@ class Aione_App_Builder_Public {
 				}	    	
 				break; 
 				case "user":   
-			    	//echo "<pre>";print_r($data);echo "</pre>";
-				if($field['multiple'] == '1'){
+			   	// echo "<pre>";print_r($data);echo "</pre>";
+				if( $field['multiple'] == '1' ){
+					$users = array();
 					foreach ($data as $key => $value) {
 						if($field['return_format'] == "object"){
+							// $output .= "<br>Object:";
+							// $output .= $value->ID;
+							$users[] = $value->ID;
+							/*
 							$output .= '<div class="">First Name:'.$value->user_firstname.'</div>';
 							$output .= '<div class="">Last Name:'.$value->user_lastname.'</div>';
 							$output .= '<div class="">Email:'.$value->user_email.'</div>';
+							*/
 						} else if ($field['return_format'] == "array"){
+							// $output .= "<br>Array:";
+							$users[] = $value['ID'];
+							/*
 							$output .= '<div class="">First Name:'.$value['user_firstname'].'</div>';
 							$output .= '<div class="">Last Name:'.$value['user_lastname'].'</div>';
 							$output .= '<div class="">Email:'.$value['user_email'].'</div>';
+							*/
 						} else {
-							$user_info = get_userdata($value);
+							// $output .= "<br>ID:";
+							// $user_info = get_userdata($value);
+							// $output .= $value;
+							$users[] =  $value;
+							/*
 							$output .= '<div class="">First Name:'.$user_info->user_firstname.'</div>';
 							$output .= '<div class="">Last Name:'.$user_info->user_lastname.'</div>';
 							$output .= '<div class="">Email:'.$user_info->user_email.'</div>';
+							*/
 						}
 					}
+
+					$output .= implode( $users, ',');
 				} else {
-					if($field['return_format'] == "object"){
-						$output .= '<div class="">First Name:'.$data->user_firstname.'</div>';
-						$output .= '<div class="">Last Name:'.$data->user_lastname.'</div>';
-						$output .= '<div class="">Email:'.$data->user_email.'</div>';
-					} else if ($field['return_format'] == "array"){
-						$output .= '<div class="">First Name:'.$data['user_firstname'].'</div>';
-						$output .= '<div class="">Last Name:'.$data['user_lastname'].'</div>';
-						$output .= '<div class="">Email:'.$data['user_email'].'</div>';
+					if( $field['return_format'] == "object" ){
+						$output .= $data->ID;
+					} else if ( $field['return_format'] == "array" ){
+						$output .= $data['ID'];
 					} else {
-						$user_info = get_userdata($data);
-						$output .= '<div class="">First Name:'.$user_info->user_firstname.'</div>';
-						$output .= '<div class="">Last Name:'.$user_info->user_lastname.'</div>';
-						$output .= '<div class="">Email:'.$user_info->user_email.'</div>';
+						$output .= $data;
 					}
 				}
 				
@@ -3474,11 +3511,13 @@ class Aione_App_Builder_Public {
 	}
 
 	function get_field_data( $key , $post_id, $repeater = false ){
+
 		if( $repeater == true ){
 			return get_sub_field( $key, $post_id );
 		} else {			
 			return  get_field( $key, $post_id );
 		}
+
 	}
 
 	function aione_app_builder_upcoming_tag_shortcode( $atts ){
