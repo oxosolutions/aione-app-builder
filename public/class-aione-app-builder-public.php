@@ -3194,6 +3194,23 @@ class Aione_App_Builder_Public {
 		return $atts;
 	}
 
+
+	function human_readable_date( $date, $format='' ){
+
+		$output = "";
+		$date = strtotime( $date );
+		$now = current_time( 'timestamp', 1 );
+		
+		if( $date < $now){
+			$output .= human_time_diff( $date,  $now) . ' ago';
+		} else{
+			$output .= 'after ' . human_time_diff( $date,  $now);
+		}
+
+		return $output;
+	}
+
+
 	function get_data_callback($field , $post_id , $repeater, $atts){
 
 		if( $atts['type'] == 'user' ){ 
@@ -3203,33 +3220,57 @@ class Aione_App_Builder_Public {
 		$data = $this->get_field_data( $field['key'], $post_id, $repeater, $atts);
 		
 		$output = '';
+
+		// $output .= "<br>Field Type = ".$field['type'];
+
 		if($data){
-			switch ($field['type']) { 
+			switch ( $field['type'] ) { 
+
 				case "text":
 				$output .= $data;
 				break;
+
 				case "textarea":
 				$output .= $data;
 				break;
+
 				case "number":
 				$output .= $data;
 				break;
+
 				case "range":
 				$output .= $data;
-				break;    
+				break;
+
 				case "email":
 				$output .= $data;
-				break; 
+				break;
+
 				case "url":
 				$output .= '<a href="'.$data.'">'.$data.'</a>';
-				break;    
+				break;
+
 				case "password":
 				$output .= $data;
 				break;
+
 				case "date_picker":
 				$format = $field['display_format'];
 				$output .= date($format,strtotime($data));
+				break;
+
+				case "date_time_picker":
+				$display_format = $field['display_format'];
+				$return_format = $field['return_format'];
+
+				if( strpos( $field['wrapper']['class'], 'human') !== false){
+					$output .= $this->human_readable_date($data, $return_format);
+				} else{
+					$output .= date( $return_format, strtotime( $data ) );
+				}
 				break;	
+
+				
 				case "color_picker":
 				$output .= $data;
 				break;			 

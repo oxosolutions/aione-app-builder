@@ -411,7 +411,7 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
                     '<b>%s</b> - %s',
                     __('User', 'aione-app-builder'),
                     __( 'template design for User/Users', 'aione-app-builder' )
-                ) => 'archive',
+                ) => 'user',
             ),
         );
 

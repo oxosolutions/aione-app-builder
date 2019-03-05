@@ -915,3 +915,27 @@ function aione_admin_dashboard_template_box(){
         
     return $output;
 }
+
+
+function aione_admin_validation_messages( $method = false, $sprintf = '' ) {
+    $messages = array(
+        'required' => __( 'This field is required.', 'aione-app-builder' ),
+        'email' => __( 'Please enter a valid email address.', 'aione-app-builder' ),
+        'url' => __( 'Please enter a valid URL address.', 'aione-app-builder' ),
+        'date' => __( 'Please enter a valid date.', 'aione-app-builder' ),
+        'digits' => __( 'Please enter numeric data.', 'aione-app-builder' ),
+        'number' => __( 'Please enter numeric data.', 'aione-app-builder' ),
+        'alphanumeric' => __( 'Letters, numbers, spaces or underscores only please.', 'aione-app-builder' ),
+        'nospecialchars' => __( 'Letters, numbers, spaces, underscores and dashes only please.', 'aione-app-builder' ),
+        'rewriteslug' => __( 'Letters, numbers, slashes, underscores and dashes only please.', 'aione-app-builder' ),
+        'negativeTimestamp' => __( 'Please enter a date after 1 January 1970.', 'aione-app-builder' ),
+        'maxlength' => sprintf( __( 'Maximum of %s characters exceeded.', 'aione-app-builder' ), strval( $sprintf ) ),
+        'minlength' => sprintf( __( 'Minimum of %s characters has not been reached.', 'aione-app-builder' ), strval( $sprintf ) ),
+        
+        'skype' => __( 'Letters, numbers, dashes, underscores, commas and periods only please.', 'aione-app-builder' ),
+    );
+    if ( $method ) {
+        return isset( $messages[$method] ) ? $messages[$method] : '';
+    }
+    return $messages;
+}

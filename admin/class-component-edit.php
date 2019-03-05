@@ -107,7 +107,6 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
     public function form()
     {
         $this->save();
-
         
 	    // Flush rewrite rules if we're asked to do so.
 	    //
@@ -295,6 +294,7 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
         $attributes = array();
         if ( !empty( $_POST['ct']['slug'] ) ) {
             $reserved = $this->aione_is_reserved_name( sanitize_text_field( $_POST['ct']['slug'] ), 'post_type' );
+
             if ( is_wp_error( $reserved ) ) {
                 $attributes = array(
                     'class' => 'aione-form-error',
@@ -531,10 +531,10 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
         $form['visibility-edit-end'] = array(
             '#type' => 'markup',
             '#markup' => '<p>
- <a href="#visibility" class="save-post-visibility hide-if-no-js button">OK</a>
- <a href="#visibility" class="cancel-post-visibility hide-if-no-js button-cancel">Cancel</a>
-</p>
-</div>',
+             <a href="#visibility" class="save-post-visibility hide-if-no-js button">OK</a>
+             <a href="#visibility" class="cancel-post-visibility hide-if-no-js button-cancel">Cancel</a>
+            </p>
+            </div>',
             '_builtin' => true,
         );
 
