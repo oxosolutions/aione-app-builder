@@ -407,6 +407,11 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
                     __('Archive', 'aione-app-builder'),
                     __( 'template design for archive view of post', 'aione-app-builder' )
                 ) => 'archive',
+                sprintf(
+                    '<b>%s</b> - %s',
+                    __('User', 'aione-app-builder'),
+                    __( 'template design for User/Users', 'aione-app-builder' )
+                ) => 'archive',
             ),
         );
 

@@ -2273,33 +2273,36 @@ class Aione_App_Builder_Public {
 	}
 
 	public function aione_app_builder_users_shortcode($atts) {
-		// Attributes
-		extract( shortcode_atts(
-			array(
-				'site' =>  $GLOBALS['blog_id'],
-				'style' => 'table',
-				'columns' => 'Username',
-				'fields' => 'user_login',
-				'role' => '',
-				'roles' => array(),
-			), $atts )
-	);
-		
-		$output = "";
 
+		// Attributes
+		$atts = shortcode_atts( array(
+			'site'		=>  $GLOBALS['blog_id'],
+			'style'		=> 'table',
+			'columns'	=> 'Username',
+			'fields'	=> 'user_login',
+			'include'	=> array(),
+			'exclude'	=> array(),
+			'template'	=> '',
+			'role'		=> '',
+			'roles'		=> array(),
+		), $atts, 'users' );
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+		$output = "";
 		
 		$args = array(
-			'blog_id'      => $site,
-			'role'         => $role,
-			'role__in'     => explode(",",$roles),
+			'blog_id'      => $atts['site'],
+			'role'         => $atts['role'],
+			'role__in'     => explode(",",$atts['roles']),
 			'role__not_in' => array(),
 			'meta_key'     => '',
 			'meta_value'   => '',
 			'meta_compare' => '',
 			'meta_query'   => array(),
 			'date_query'   => array(),        
-			'include'      => array(),
-			'exclude'      => array(),
+			'include'      => explode(",",$atts['include']),
+			'exclude'      => explode(",",$atts['exclude']),
 			'orderby'      => 'login',
 			'order'        => 'ASC',
 			'offset'       => '',
@@ -2309,62 +2312,89 @@ class Aione_App_Builder_Public {
 			'fields'       => 'all',
 			'who'          => ''
 		);
+
 		$users = get_users( $args );
 		//echo "<pre>";print_r($roles);echo "</pre>";
-		if($style == 'table'){
-			
-			$columns = explode("|", $columns); 
-			$fields = explode("|", $fields); 
-			
-			$output .= '<div class="aione-table">';
-			$output .= '<table class="compact">';
-			$output .= '<thead>';
-			$output .= '<tr>';
-			
-			foreach ( $columns as $column ) {
-				$output .= '<th>'.$column.'</th>';
-			}
-			
-			$output .= '</tr>';
-			$output .= '</thead>';
-			$output .= '<tbody>';
-			
-			// Array of WP_User objects.
-			foreach ( $users as $user ) {
-				
-				$user_id = $user->ID;
-				
-				$output .= '<tr>';
-				foreach ( $fields as $field ) {
-					if( $field == 'status'){
-						$output .= '<td>' . esc_html( $user->$field ) . '</td>';
-					} elseif(empty($field)){
-						$output .= '<td></td>';
-					}elseif (preg_match("~\{\{\s*(.*?)\s*\}\}~", $field)) {
-						$field = str_replace("{","",$field);
-						$field = str_replace("}","",$field);
-						$custom_field = get_user_meta( $user_id, $field, true ); 
-						$output .= '<td>' . $custom_field . '</td>';
-					}else {
-						$output .= '<td>' . esc_html( $user->$field ) . '</td>';
-					}
-					
-				}
-				$output .= '</tr>';
-			}
-			
-			$output .= '</tbody>';
-			$output .= '</table>';
-			$output .= '</div>';
-			
-		} else{ 
-			$count = 1;
-			// Array of WP_User objects.
-			foreach ( $users as $user ) {
-				$output .= '<br><span>'.$count.'. ' . esc_html( $user->user_login ) . '</span>';
-				$count++;
-			}
+
+
+		$template = $atts['template'];
+
+
+		if( !empty( $template ) ){
+			$aione_templates		= get_option( 'aione-templates' );
+			$aione_template_array 	= $aione_templates[$template];
+			$aione_template_content = $aione_template_array['content'];
 		}
+		
+		if( !empty( $aione_template_content ) ){
+			$output .= '<div class="users aione-table">';
+
+			foreach ( $users as $user ) {
+				$template_content = $aione_template_content;
+				$template_content = str_replace("{{user_id}}", $user->ID, $template_content );
+				$output .= do_shortcode( $template_content );
+			}
+
+			$output .= '</div>';
+		} else {
+			if($style == 'table'){
+			
+				$columns = explode("|", $atts['columns']); 
+				$fields = explode("|", $atts['fields']); 
+				
+				$output .= '<div class="users aione-table">';
+				$output .= '<table class="compact">';
+				$output .= '<thead>';
+				$output .= '<tr>';
+				
+				foreach ( $columns as $column ) {
+					$output .= '<th>'.$column.'</th>';
+				}
+				
+				$output .= '</tr>';
+				$output .= '</thead>';
+				$output .= '<tbody>';
+				
+				// Array of WP_User objects.
+				foreach ( $users as $user ) {
+					
+					$user_id = $user->ID;
+					
+					$output .= '<tr>';
+					foreach ( $fields as $field ) {
+						if( $field == 'status'){
+							$output .= '<td>' . esc_html( $user->$field ) . '</td>';
+						} elseif(empty($field)){
+							$output .= '<td></td>';
+						}elseif (preg_match("~\{\{\s*(.*?)\s*\}\}~", $field)) {
+							$field = str_replace("{","",$field);
+							$field = str_replace("}","",$field);
+							$custom_field = get_user_meta( $user_id, $field, true ); 
+							$output .= '<td>' . $custom_field . '</td>';
+						}else {
+							$output .= '<td>' . esc_html( $user->$field ) . '</td>';
+						}
+						
+					}
+					$output .= '</tr>';
+				}
+				
+				$output .= '</tbody>';
+				$output .= '</table>';
+				$output .= '</div>';
+				
+			} else{ 
+				$count = 1;
+				// Array of WP_User objects.
+				foreach ( $users as $user ) {
+					$output .= '<br><span>'.$count.'. ' . esc_html( $user->user_login ) . '</span>';
+					$count++;
+				}
+			}
+
+
+		}
+
 		return $output;
 		
 	} // END aione_app_builder_users_shortcode
@@ -2375,41 +2405,46 @@ class Aione_App_Builder_Public {
 		$userid = $user->ID;
 
 		$atts = shortcode_atts( array(
-			'user_id' => $userid, // ID of user
-			'field' => 'user_login', //key of field and custom field to be dispayed
-			'field_type' => 'field', //field/meta
+			'user_id'		=> $userid, // ID of user
+			'field'			=> 'user_login', //key of field and custom field to be dispayed
+			'field_type'	=> 'field', //field/meta
+			'template'		=> '', //field/meta
 		), $atts, 'user' );
 
-		$atts = $this->clean_shortcode_parameters( $atts );
-
 		$output = "";
-		// $output .= '<br>=='.$atts['user_id'];
+
+		$atts = $this->clean_shortcode_parameters( $atts );
 		
 		$user = get_user_by( 'id', $atts['user_id'] );
 		$user = $user->data;
 
-		/*
-
-		
-		echo "<pre>";
-		print_r($user);
-		echo "</pre>";
-
-		*/
-
 		$field = $atts['field'];
+
+		$template = $atts['template'];
+
+		if( !empty( $template ) ){
+			$aione_templates		= get_option( 'aione-templates' );
+			$aione_template_array 	= $aione_templates[$template];
+			$aione_template_content = $aione_template_array['content'];
+		}
 		
+		if( !empty( $aione_template_content ) ){
 
-		if( $atts['field_type'] == 'field' ){
+			$output .= do_shortcode( $aione_template_content );
+		} else{
 
-			if( $field == 'user_pass' ){
-				$output .= '';
+			if( $atts['field_type'] == 'field' ){
+
+				if( $field == 'user_pass' ){
+					$output .= '';
+				} else {
+					$output .= $user->$field;
+				}
+
 			} else {
-				$output .= $user->$field;
+				$output .= get_user_meta( $atts['user_id'], $atts['field'], true ); 
 			}
 
-		} else {
-			$output .= get_user_meta( $atts['user_id'], $atts['field'], true ); 
 		}
 		
 		return $output;
@@ -2772,27 +2807,17 @@ class Aione_App_Builder_Public {
 			'link' => "true",
 			'class' => '',
 			'id' => '',
-			'style' => 'div', // h1-h6,span
 		), $atts, 'aione-post-title' );
 
-		$title ='';
 		$id_attribute ='';
 		if( !empty($atts['id']) ){
 			$id_attribute = 'id="'.$atts['id'].'"';
 		}
 
-		if($atts['style'] == '') {
-			$title .= get_the_title();
+		if($atts['link'] == "true"){
+			$title = '<a '.$id_attribute.' class="'.$atts['class'].'" href="'.get_permalink().'">'.get_the_title().'</a>';
 		} else {
-			if($atts['link'] == "true"){
-				$title .= '<'.$atts['style'].' '.$id_attribute.' class="'.$atts['class'].'">';
-				$title .= '<a href="'.get_permalink().'">'.get_the_title().'</a>';
-				$title .= '</'.$atts['style'].'>';
-			} else {
-				$title .= '<'.$atts['style'].' '.$id_attribute.' class="'.$atts['class'].'">';
-				$title .= get_the_title();
-				$title .= '</'.$atts['style'].'>';
-			}
+			$title = '<div '.$id_attribute.' class="'.$atts['class'].'">'.get_the_title().'</div>';
 		}
 		
 		return $title;
