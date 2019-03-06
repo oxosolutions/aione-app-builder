@@ -2051,7 +2051,7 @@ class Aione_App_Builder_Public {
 			'order' => 'DESC',
 			'parent' => '',
 		'post_ID' => '', // ignored (use post_id instead)
-		'post_id' => 0,
+		'post_id' => $post->ID,
 		'post__in' => '',
 		'post__not_in' => '',
 		'post_author' => '',
@@ -2075,7 +2075,7 @@ class Aione_App_Builder_Public {
 
 		if($the_comments){
 			$output .= '<ul '.$id_attribute.' class="list-posts resent-comments '.$class.'">';
-			foreach($the_comments as $comment) {
+			foreach($the_comments as $comment) { //echo "<pre>";print_r($comment);echo "</pre>";
 				$output .= '<li>';
 				$output .= '<div class="post-image">';
 				$output .= '<a>';
@@ -2085,9 +2085,10 @@ class Aione_App_Builder_Public {
 				$output .= '<div class="post-holder">';
 				$output .= strip_tags($comment->comment_author) . ' says:';
 				$output .= '<div class="post-meta">';
-				$output .= '<a class="comment-text-side" href="' . get_permalink($comment->ID).'#comment-' .$comment->comment_ID . '" title="'.strip_tags($comment->comment_author) .' on '.$comment->post_title .'">';
-				$output .= strip_tags($comment->com_excerpt);
-				$output .= '...</a>';
+				/*$output .= '<a class="comment-text-side" href="' . get_permalink($comment->ID).'#comment-' .$comment->comment_ID . '" title="'.strip_tags($comment->comment_author) .' on '.$comment->post_title .'">';
+				$output .= strip_tags($comment->comment_content);
+				$output .= '</a>';*/
+				$output .= strip_tags($comment->comment_content);
 				$output .= '</div>';
 				$output .= '</div>';
 				$output .= '<div class="aione-clearfix"></div>';
@@ -2753,6 +2754,7 @@ class Aione_App_Builder_Public {
 	* 
 	*/
 	function aione_app_builder_date_shortcode( $atts ) {
+
 		$atts = shortcode_atts( array(
 			'format' => 'jS F Y h:i:s',
 			'time-zone' => 'Asia/Kolkata',
@@ -2762,7 +2764,11 @@ class Aione_App_Builder_Public {
 		global $post;
 
 		if ( in_the_loop() ) {
-			$output .= get_the_date();
+			if( $atts['format'] == 'human'){
+				$output .=  $this->human_readable_date( get_the_date() );
+			} else{
+				$output .= get_the_date();
+			}
 		} else{
 			//$output = date($atts['format']);
 			$tz = $atts['time-zone'];
@@ -2770,7 +2776,12 @@ class Aione_App_Builder_Public {
 			$dt = new DateTime("now", new DateTimeZone($tz)); //first argument "must" be a string
 			$dt->setTimestamp($timestamp); //adjust the object to correct timestamp
 			$output .=  $dt->format($atts['format']);
+
 		}
+
+		
+
+
 		return $output;
 	}
 	/**
