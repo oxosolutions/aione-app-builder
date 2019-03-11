@@ -2273,7 +2273,7 @@ class Aione_App_Builder_Public {
 		// return $output;
 	}
 
-	public function aione_app_builder_users_shortcode($atts) {
+	public function aione_app_builder_users_shortcode( $atts ) {
 
 		// Attributes
 		$atts = shortcode_atts( array(
@@ -2295,15 +2295,15 @@ class Aione_App_Builder_Public {
 		$args = array(
 			'blog_id'      => $atts['site'],
 			'role'         => $atts['role'],
-			'role__in'     => explode(",",$atts['roles']),
+			'role__in'     => explode( ",", $atts['roles'] ),
 			'role__not_in' => array(),
 			'meta_key'     => '',
 			'meta_value'   => '',
 			'meta_compare' => '',
 			'meta_query'   => array(),
 			'date_query'   => array(),        
-			'include'      => explode(",",$atts['include']),
-			'exclude'      => explode(",",$atts['exclude']),
+			'include'      => explode( ",", $atts['include'] ),
+			'exclude'      => explode( ",", $atts['exclude'] ),
 			'orderby'      => 'login',
 			'order'        => 'ASC',
 			'offset'       => '',
@@ -2327,18 +2327,18 @@ class Aione_App_Builder_Public {
 			$aione_template_content = $aione_template_array['content'];
 		}
 		
-		if( !empty( $aione_template_content ) ){
+		if( !empty( $aione_template_content ) ) {
 			$output .= '<div class="users aione-table">';
 
 			foreach ( $users as $user ) {
 				$template_content = $aione_template_content;
-				$template_content = str_replace("{{user_id}}", $user->ID, $template_content );
+				$template_content = str_replace( "{{user_id}}", $user->ID, $template_content );
 				$output .= do_shortcode( $template_content );
 			}
 
 			$output .= '</div>';
 		} else {
-			if($style == 'table'){
+			if($atts['style'] == 'table') {
 			
 				$columns = explode("|", $atts['columns']); 
 				$fields = explode("|", $atts['fields']); 
@@ -2856,6 +2856,20 @@ class Aione_App_Builder_Public {
 		$content = '<div '.$id_attribute.' class="'.$atts['class'].'">'.do_shortcode($content).'</div>';
 		return $content;
 	}
+
+	function aione_app_builder_author_shortcode( $atts ) {
+		
+		global $post;
+		$atts = shortcode_atts( array(
+			'class' => '',
+			'id' => '',
+		), $atts, 'author' );
+
+		$author_id =  get_the_author_meta( 'ID' );
+
+		return $author_id;
+	}
+
 	function aione_app_builder_post_featured_image_shortcode($atts){
 		global $post;
 		$atts = shortcode_atts( array(
@@ -3881,7 +3895,7 @@ class Aione_App_Builder_Public {
 		*/
 
 
-	acf_form_head(); 
+		acf_form_head(); 
 
 
 		ob_start();
@@ -3891,11 +3905,11 @@ class Aione_App_Builder_Public {
 
 		return $output;
 
-
-
-
 	}
 
+	/************************************/
+
+	
 	
 
 }

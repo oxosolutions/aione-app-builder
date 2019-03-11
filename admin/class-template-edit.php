@@ -622,6 +622,27 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
 	            '#before' => '<div><b>Posts Status</b><br></div><ul class="aione-list">',
 	            '#after' => '</ul>',       
             );
+           /* $form['template_filter_enable'] = array(
+                '#type' => 'radios',
+                '#title' => '<b>Enable Filters</b><br>',
+                '#label' => '<b>Enable Filters</b><br>',
+                '#name' => 'at[template_filter_enable]',
+                '#default_value' => (empty( $this->at['template_filter_enable'] ) || $this->at['template_filter_enable'] == 'no') ? 'no' : $this->at['template_filter_enable'],
+                '#inline' => false,
+                '#options' => array(
+                    sprintf(
+                        '%s',
+                        __('Yes', 'aione-app-builder'),
+                        __('Yes', 'aione-app-builder' )
+                    ) => 'yes',
+                    sprintf(
+                        '%s',
+                        __('No', 'aione-app-builder'),
+                        __( 'No', 'aione-app-builder' )
+                    ) => 'no',
+                ),
+            );*/
+            
         }
 
         $form = aione_form(__FUNCTION__, $form);
