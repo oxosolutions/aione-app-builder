@@ -470,6 +470,19 @@
 </td>
 </td>
 				</tr>
+				<tr>
+					<td>Add New Post Form at Frontend</td>
+					<td>[add-new]</td>
+<td><pre>
+'type' => 'post', // page, any custom pot type
+'title' => 'true', // false
+'content' => 'true', // false
+'status' => 'publish', // draft,pending, all wordpres post status
+'id' => 'add_new_form', // css id name
+</pre>
+</td>
+</td>
+				</tr>
 			</tbody>
 		</table>
 	</div>

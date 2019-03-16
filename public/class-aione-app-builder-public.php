@@ -2016,6 +2016,8 @@ class Aione_App_Builder_Public {
 		return $output;
 	} // END aione_app_builder_list_post_shortcode()
 
+
+
 	public function aione_app_builder_list_comments_shortcode( $atts ) {
 		// Attributes
 		extract( shortcode_atts(
@@ -2039,38 +2041,38 @@ class Aione_App_Builder_Public {
 
 		
 		$args = array(
-			'include_unapproved' => '',
-			'fields' => '',
-			'ID' => '',
-			'comment__in' => '',
-			'comment__not_in' => '',
-			'karma' => '',
-			'number' => $number,
-			'offset' => '',
-			'orderby' => '',
-			'order' => 'DESC',
-			'parent' => '',
-		'post_ID' => '', // ignored (use post_id instead)
-		'post_id' => $post->ID,
-		'post__in' => '',
-		'post__not_in' => '',
-		'post_author' => '',
-		'post_name' => '',
-		'post_parent' => '',
-		'post_status' => '',
-		'post_type' => '',
-		'status' => 'all',
-		'type' => '',
-		'type__in' => '',
-		'type__not_in' => '',
-		'user_id' => '',
-		'search' => '',
-		'count' => false,
-		'meta_key' => '',
-		'meta_value' => '',
-		'meta_query' => '',
-		'date_query' => null, // See WP_Date_Query
-	);
+			'include_unapproved'=> '',
+			'fields'			=> '',
+			'ID'				=> '',
+			'comment__in'		=> '',
+			'comment__not_in'	=> '',
+			'karma'				=> '',
+			'number'			=> $number,
+			'offset'			=> '',
+			'orderby'			=> '',
+			'order'				=> 'DESC',
+			'parent'			=> '',
+			'post_ID'			=> '', // ignored (use post_id instead)
+			'post_id'			=> $post->ID,
+			'post__in'			=> '',
+			'post__not_in'		=> '',
+			'post_author'		=> '',
+			'post_name'			=> '',
+			'post_parent'		=> '',
+			'post_status'		=> '',
+			'post_type'			=> '',
+			'status'			=> 'all',
+			'type'				=> '',
+			'type__in'			=> '',
+			'type__not_in'		=> '',
+			'user_id'			=> '',
+			'search'			=> '',
+			'count'				=> false,
+			'meta_key'			=> '',
+			'meta_value'		=> '',
+			'meta_query'		=> '',
+			'date_query'		=> null, // See WP_Date_Query
+		);
 		$the_comments = get_comments( $args );
 
 		if($the_comments){
@@ -2799,59 +2801,97 @@ class Aione_App_Builder_Public {
 	}
 
 	public function aione_app_builder_post_id_shortcode( $attr, $content = null ) {
+
 		global $post;
-		$output = "";
-		$output .= $post->ID;
+
+		$output = $post->ID;
+
 		return $output;
 	}
 
 	public function aione_app_builder_post_link_shortcode( $attr, $content = null ) {
+
 		global $post;
-		$output = "";
-		$output .= get_permalink( $post->ID );
-		return $output;
+
+		$atts = shortcode_atts( array(
+			'post_id'	=>	$post->ID,
+		), $atts, 'post-id' );
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+		/*
+		
+		echo "<pre>";
+		print_r( $atts['post_id']);
+		echo "</pre>";
+		*/
+
+		$output = get_permalink( $atts['post_id'] );
+
+		return $output; 
 	}
 
-	function aione_app_builder_post_title_shortcode($atts){
+
+	function aione_app_builder_post_title_shortcode( $atts ) {
+
 		global $post;
+		
 		$atts = shortcode_atts( array(
-			'link' => "true",
-			'class' => '',
-			'id' => '',
-		), $atts, 'aione-post-title' );
+			'link'		=>	"true",
+			'post_id'	=>	$post->ID,
+			'class'		=>	'',
+			'id'		=>	'',
+		), $atts, 'title' );
+
+		$atts = $this->clean_shortcode_parameters( $atts );
 
 		$id_attribute ='';
 		if( !empty($atts['id']) ){
 			$id_attribute = 'id="'.$atts['id'].'"';
 		}
 
+		$post_id = $atts['post_id'];
+
+		$post_object = get_post( $post_id ); 
+		$post_title = $post_object->post_title; 
+
 		if($atts['link'] == "true"){
-			$title = '<a '.$id_attribute.' class="'.$atts['class'].'" href="'.get_permalink().'">'.get_the_title().'</a>';
+			$title = '<a '.$id_attribute.' class="'.$atts['class'].'" href="'.get_permalink( $post_id ).'">'.$post_title.'</a>';
 		} else {
-			$title = '<div '.$id_attribute.' class="'.$atts['class'].'">'.get_the_title().'</div>';
+			$title = '<div '.$id_attribute.' class="'.$atts['class'].'">'.$post_title.'</div>';
 		}
 		
 		return $title;
 	}
-	function aione_app_builder_post_content_shortcode($atts){
+
+	function aione_app_builder_post_content_shortcode( $atts ) {
+
 		global $post;
 		$atts = shortcode_atts( array(
-			'expert' => "false",
-			'expert-length' => "20",
-			'more-text' => "...",
-			'class' => '',
-			'id' => '',
-		), $atts, 'aione-post-content' );
+			'expert'		=> "false",
+			'expert-length'	=> "20",
+			'more-text'		=> "...",
+			'post_id'		=> $post->ID,
+			'class'			=> '',
+			'id'			=> '',
+		), $atts, 'content' );
+
+		$atts = $this->clean_shortcode_parameters( $atts );
 
 		$id_attribute ='';
 		if( !empty($atts['id']) ){
 			$id_attribute = 'id="'.$atts['id'].'"';
 		}
 
+		$post_id = $atts['post_id'];
+
+		$post_object = get_post( $post_id ); 
+		$post_content = $post_object->post_content; 
+
 		if($atts['expert'] == "true"){
-			$content = wp_trim_words( get_the_content(), $atts['expert-length'], $atts['more-text'] );
+			$content = wp_trim_words( $post_content, $atts['expert-length'], $atts['more-text'] );
 		} else {
-			$content = get_the_content();
+			$content = $post_content;
 		}
 		$content = '<div '.$id_attribute.' class="'.$atts['class'].'">'.do_shortcode($content).'</div>';
 		return $content;
@@ -3088,15 +3128,15 @@ class Aione_App_Builder_Public {
 		global $post;
 
 		$atts = shortcode_atts( array(
-			'post_id' => '',
-			'type' => 'post',
-			'field' => '',
-			'label' => "true",
-			'seperator' => ' : ',
-			'template' => '',
-			'class' => '',
-			'id' => '',
-			'style' => 'div', // table/div/list/ Leave empty for no html
+			'post_id'	=> $post->ID,
+			'type'		=> 'post',
+			'field'		=> '',
+			'label'		=> "true",
+			'seperator'	=> ' : ',
+			'template'	=> '',
+			'class'		=> '',
+			'id'		=> '',
+			'style'		=> 'div', // table/div/list/ Leave empty for no html
 		), $atts, 'custom-field' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
@@ -3300,6 +3340,7 @@ class Aione_App_Builder_Public {
 				$output .= $data;
 				break;			 
 				case "image":
+				// echo " CASE IMAGE";
 				if($field['return_format'] == "array"){
 					$src =  $data['url'];
 				} elseif($field['return_format'] == "url"){
@@ -3862,30 +3903,32 @@ class Aione_App_Builder_Public {
 
 
 		$options = array(
-			'id'			=> $id,
-			'post_id'		=> 'new_post',
-			'new_post' => array(
-				'post_type' => $type,
-				'post_status' => $status
-			),
-			'post_title'	=> $title,
-			'post_content'	=> $content,
-			'form'	=> true,
-			'form_attributes' => array(),
-			'return' => '',
-			'html_before_fields' => '',
-			'html_after_fields' => '',
-			'submit_value' => __("Submit", 'aione-app-builder'),
-			'updated_message' => __("Post updated", 'aione-app-builder'),
-			'label_placement' => 'top', // top/left
+			'id'					=> $id,
+			'post_id'				=> 'new_post',
+			'new_post' 				=> array(
+										'post_type' => $type,
+										'post_status' => $status
+									),
+			'post_title'			=> $title,
+			'post_content'			=> $content,
+			'field_groups'			=> explode( ',' , $groups ),
+			'fields'				=> $fields,
+			'form'					=> true,
+			'form_attributes' 		=> array(),
+			'return' 				=> '',
+			'html_before_fields' 	=> '',
+			'html_after_fields' 	=> '',
+			'submit_value' 			=> __("Submit", 'aione-app-builder'),
+			'updated_message' 		=> __("Post updated", 'aione-app-builder'),
+			'label_placement' 		=> 'top', // top/left
 			'instruction_placement' => 'label', // label/field
-			'field_el' => 'div',
-			'uploader' => 'wp',
+			'field_el' 				=> 'div',
+			'uploader' 				=> 'wp',
 			'html_updated_message'	=> '<div id="message" class="updated"><p>%s</p></div>',
 			'html_submit_button'	=> '<input type="submit" class="acf-button button button-primary button-large" value="%s" />',
 			'html_submit_spinner'	=> '<span class="acf-spinner"></span>',
-			'honeypot' => true,
-			'kses'			=> true,
+			'honeypot' 				=> true,
+			'kses'					=> true,
 		);
 		/*
 		
