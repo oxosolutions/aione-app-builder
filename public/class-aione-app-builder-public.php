@@ -1903,13 +1903,13 @@ class Aione_App_Builder_Public {
 		}
 	} // End aione_app_builder_url_shortcode()
 
-	public function aione_app_builder_list_posts_shortcode( $atts ) {
+	public function aione_app_builder_post_count_shortcode( $atts ) {
 
 		// Attributes
-		extract( shortcode_atts(
+		shortcode_atts(
 			array(
 				'post_type'		=> 'post',
-				'status'		=> 'publish',
+				'status'		=> array('publish'),
 				'cat'			=> '',
 				'cat_id'		=> '',
 				'author'		=> '',
@@ -1921,36 +1921,99 @@ class Aione_App_Builder_Public {
 				'pagination'	=> 'yes',
 				'id'			=> '',
 				'class'			=> ''	
-			), $atts )
+			), $atts, 'posts'
 		);
+
+		$atts = $this->clean_shortcode_parameters( $atts );
 		
 		global $theme_options, $post;
 
 		$output = "";
 
-		$status = explode(',',$status);
+		$status = explode(',',$atts['status']);
 
 		// WP_Query arguments
 		$args = array (
-			'post_type'					=> $post_type,
-			'post_status'				=> $status,
-			'cat'						=> $cat_id,
-			'category_name'				=> $cat,
-			'author'					=> $author_id,
-			'author_name'				=> $author,
-			'pagination'				=> false,
-			'posts_per_page'			=> $count,
-			'ignore_sticky_posts'		=> false,
-			'order'						=> $order,
-			'orderby'					=> $orderby,
-			'cache_results'				=> true,
-			'update_post_meta_cache'	=> true,
-			'update_post_term_cache'	=> true,
+			'post_type'				=> $atts['post_type'],
+			'post_status'			=> $status,
+			'cat'					=> $atts['cat_id'],
+			'category_name'			=> $atts['cat'],
+			'author'				=> $atts['author_id'],
+			'author_name'			=> $atts['author'],
+			'pagination'			=> false,
+			'posts_per_page'		=> $atts['count'],
+			'ignore_sticky_posts'	=> false,
+			'order'					=> $atts['order'],
+			'orderby'				=> $atts['orderby'],
+			'cache_results'			=> true,
+			'update_post_meta_cache'=> true,
+			'update_post_term_cache'=> true,
+		);
+
+		$posts = new WP_Query($args);
+		//echo "<pre>";print_r($posts);echo "</pre>";
+		$output = $posts->post_count;
+			
+		return $output;
+	} // END aione_app_builder_post_count_shortcode()
+
+	public function aione_app_builder_posts_shortcode( $atts ) {
+
+		// Attributes
+		shortcode_atts(
+			array(
+				'post_type'		=> 'post',
+				'status'		=> 'publish',
+				'cat'			=> '',
+				'cat_id'		=> '',
+				'author'		=> '',
+				'author_id'		=> '',
+				'meta_key'		=> '',
+				'meta_value'	=> '',
+				'meta_query'	=> '',
+				'count'			=> '',
+				'order'			=> 'DESC',
+				'orderby'		=> 'date',
+				'template'		=> '',
+				'pagination'	=> 'yes',
+				'id'			=> '',
+				'class'			=> ''	
+			), $atts, 'posts'
+		);
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+		
+		global $theme_options, $post;
+
+		$output = "";
+
+		$status = explode(',',$atts['status']);
+
+		// WP_Query arguments
+		$args = array (
+			'post_type'				=> $atts['post_type'],
+			'post_status'			=> $atts['status'],
+			'cat'					=> $atts['cat_id'],
+			'category_name'			=> $atts['cat'],
+			'author'				=> $atts['author_id'],
+			'author_name'			=> $atts['author'],
+			'meta_key'				=> $atts['meta_key'],
+			'meta_value'			=> $atts['meta_value'],
+			'pagination'			=> false,
+			'posts_per_page'		=> $atts['count'],
+			'ignore_sticky_posts'	=> false,
+			'order'					=> $atts['order'],
+			'orderby'				=> $atts['orderby'],
+			'cache_results'			=> true,
+			'update_post_meta_cache'=> true,
+			'update_post_term_cache'=> true,
 		);
 
 		$resent_posts = new WP_Query($args);
 
 		$is_template = false;
+
+		$template = $atts['template'];
 
 		if( !empty( $template ) ) {
 			$aione_templates = @get_option( 'aione-templates' );
@@ -1966,12 +2029,12 @@ class Aione_App_Builder_Public {
 		}
 
 		//echo "<pre>";print_r($is_template);echo "</pre>";
-		if($resent_posts->have_posts()){
+		if( $resent_posts->have_posts() ){
 			if( $is_template ){
 				$output .= '<div class="aione-template type-archive '.$template.'">';
 			}
 			$output .= '<ul '.$id_attribute.' class="list-posts '.$class.'">';
-			while($resent_posts->have_posts()){
+			while( $resent_posts->have_posts() ){
 				$resent_posts->the_post(); 
 				$output .= '<li>';
 				if( $is_template ){
@@ -2008,13 +2071,67 @@ class Aione_App_Builder_Public {
 			}
 			wp_reset_postdata();
 			if($pagination == 'yes'){				
-				$output .= aione_pagination($resent_posts);
+				$output .= aione_pagination( $resent_posts );
 			}
 		}  else {
 			$output .= '<h5 class="font-size-16 align-center">No Posts Available.</h5>';
 		}
 		return $output;
-	} // END aione_app_builder_list_post_shortcode()
+	} // END aione_app_builder_posts_shortcode()
+
+	public function aione_app_builder_post_shortcode( $atts ) {
+
+		// Attributes
+		shortcode_atts(
+			array(
+				'post_id'		=> 'null',
+				'template'		=> '',
+				'id'			=> '',
+				'class'			=> ''	
+			), $atts, 'post'
+		);
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+		
+		global $theme_options, $post;
+
+		$output = "";
+
+		$post =  get_post( $atts['post_id'] );
+
+		$is_template = false;
+
+		$template = $atts['template'];
+
+		if( !empty( $template ) ) {
+			$aione_templates = @get_option( 'aione-templates' );
+			$aione_template = @$aione_templates[$template]['content'];
+			if( !empty( $aione_template ) ){
+				$is_template = true;
+			}
+		}
+
+		$id_attribute ='';
+		if( !empty($id) ){
+			$id_attribute = 'id="'.$id.'"';
+		}
+
+
+		if( get_post_status ( $post_id ) ){
+
+			if( $is_template ){
+				$output .= '<div '.$id_attribute.' class="aione-post '.$template.' '.$class.'">';
+				$output .= do_shortcode( $aione_template );
+				$output .= '</div>';
+			} else{
+				$output .= '<h5 class="font-size-16 align-center">template does not exist</h5>';
+			}
+		} else{
+			$output .= '<h5 class="font-size-16 align-center">Post does not exist</h5>';
+		}
+		
+		return $output;
+	} // END aione_app_builder_post_shortcode()
 
 
 
@@ -2182,18 +2299,22 @@ class Aione_App_Builder_Public {
 		// Attributes
 		extract( shortcode_atts(
 			array(
-				'site' =>  $GLOBALS['blog_id'],
-				'style' => 'table',
-				'columns' => 'Username',
-				'fields' => 'user_login',
-				'role' => '',
-				'roles' => '',
+				'site' 		=>  $GLOBALS['blog_id'],
+				'style' 	=> 'table',
+				'columns' 	=> 'Username',
+				'fields' 	=> 'user_login',
+				'role' 		=> '',
+				'roles' 	=> '',
 			), $atts )
 	);
 		
 		$output = "";
-
-		$roles = explode(",", $roles);
+		
+		if(!empty($roles)){
+			$roles = explode(",", $roles);
+		} else {
+			$roles = array();
+		}
 		$args = array(
 			'blog_id'      => $site,
 			'role'         => $role,
@@ -2217,7 +2338,8 @@ class Aione_App_Builder_Public {
 		);
 		$users = get_users( $args );
 		
-		echo count($users);
+		//echo count($users);
+		return count($users);
 		// if($style == 'table'){
 		
 		// 	$columns = explode("|", $columns); 
@@ -2410,7 +2532,6 @@ class Aione_App_Builder_Public {
 		$atts = shortcode_atts( array(
 			'user_id'		=> $userid, // ID of user
 			'field'			=> 'user_login', //key of field and custom field to be dispayed
-			'field_type'	=> 'field', //field/meta
 			'template'		=> '', //field/meta
 		), $atts, 'user' );
 
@@ -2432,27 +2553,38 @@ class Aione_App_Builder_Public {
 		}
 		
 		if( !empty( $aione_template_content ) ){
-
 			$output .= do_shortcode( $aione_template_content );
 		} else{
-
-			if( $atts['field_type'] == 'field' ){
-
-				if( $field == 'user_pass' ){
-					$output .= '';
-				} else {
-					$output .= $user->$field;
-				}
-
+			if( $field == 'user_pass' ){
+				$output .= '';
 			} else {
-				$output .= get_user_meta( $atts['user_id'], $atts['field'], true ); 
+				$output .= $user->$field;
 			}
-
 		}
 		
 		return $output;
 		
 	} // END aione_app_builder_user_shortcode
+
+	public function aione_app_builder_user_meta_shortcode( $atts ) {
+		
+		$user = wp_get_current_user();
+		$userid = $user->ID;
+
+		$atts = shortcode_atts( array(
+			'user_id'		=> $userid, // ID of user
+			'field'			=> 'user_login', //key of field and custom field to be dispayed
+		), $atts, 'user' );
+
+		$output = "";
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+		$output .= get_user_meta( $atts['user_id'], $atts['field'], true ); 
+		
+		return $output;
+		
+	} // END aione_app_builder_user_meta_shortcode
 
 	function aione_app_builder_welcome_shortcode($atts){
 		$user = wp_get_current_user();
@@ -3883,35 +4015,44 @@ class Aione_App_Builder_Public {
 	*/
 	function aione_app_builder_add_new_shortcode(  $atts, $content = null ) {
 		// Attributes
-		extract( shortcode_atts(
+		shortcode_atts(
 			array(
 				'type'				=> 'post',
 				'title'				=> true,
 				'content'			=> true,
 				'status'			=> 'publish',
-				'groups'			=> false,
+				'field_groups'		=> false,
 				'fields'			=> false,
 				'class'				=> 'add-new-form',
 				'id'				=> 'add_new_form',
-			), $atts, 'add-new' )
-		);
+			), $atts, 'add_new' );
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+		if( !empty( $atts['field_groups'] ) ){	
+			$field_groups = explode( ',', $atts['field_groups'] );
+		} else {
+			$field_groups = false;
+		}
+
+		if( !empty( $atts['fields'] ) ){	
+			$fields = explode( ',', $atts['fields'] );
+		} else {
+			$fields = false;
+		}
 
 		$output = '';
-		//if(isset($_POST['submit'])){
-		//echo "<pre>";print_r($_POST);echo "</pre>";
-		//}
-
 
 		$options = array(
-			'id'					=> $id,
+			'id'					=> $atts['id'],
 			'post_id'				=> 'new_post',
 			'new_post' 				=> array(
-										'post_type' => $type,
-										'post_status' => $status
-									),
-			'post_title'			=> $title,
-			'post_content'			=> $content,
-			'field_groups'			=> explode( ',' , $groups ),
+				'post_type'			=> $atts['type'],
+				'post_status'		=> $atts['status']
+			),
+			'post_title'			=> $atts['title'],
+			'post_content'			=> $atts['content'],
+			'field_groups'			=> $field_groups,
 			'fields'				=> $fields,
 			'form'					=> true,
 			'form_attributes' 		=> array(),
@@ -3930,16 +4071,8 @@ class Aione_App_Builder_Public {
 			'honeypot' 				=> true,
 			'kses'					=> true,
 		);
-		/*
-		
-		$output .= '<pre>';
-		$output .= print_r( $options, true );
-		$output .= '</pre>';
-		*/
-
 
 		acf_form_head(); 
-
 
 		ob_start();
 		acf_form( $options );
@@ -3950,9 +4083,79 @@ class Aione_App_Builder_Public {
 
 	}
 
-	/************************************/
 
-	
-	
+
+	/**
+	* Add New Post Shortcode
+	*/
+	function aione_app_builder_edit_shortcode(  $atts, $content = null ) {
+		// Attributes
+		shortcode_atts(
+			array(
+				'post_id'			=> null,
+				'title'				=> true,
+				'content'			=> true,
+				'status'			=> 'publish',
+				'field_groups'		=> false,
+				'fields'			=> false,
+				'class'				=> 'edit-post-form',
+				'id'				=> 'edit_post_form',
+			), $atts, 'edit' );
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+		$output = '';
+
+		if( !empty( $atts['field_groups'] ) ){	
+			$field_groups = explode( ',', $atts['field_groups'] );
+		} else {
+			$field_groups = false;
+		}
+
+		if( !empty( $atts['fields'] ) ){	
+			$fields = explode( ',', $atts['fields'] );
+		} else {
+			$fields = false;
+		}
+		/*
+		echo "<pre>";
+		print_r( );
+		echo "</pre>";
+		*/
+
+		$options = array(
+			'id'					=> $atts['id'],
+			'post_id'				=> $atts['post_id'],
+			'post_title'			=> $atts['title'],
+			'post_content'			=> $atts['content'],
+			'field_groups'			=> $field_groups,
+			'fields'				=> $fields,
+			'form'					=> true,
+			'form_attributes' 		=> array(),
+			'return' 				=> '',
+			'html_before_fields' 	=> '',
+			'html_after_fields' 	=> '',
+			'submit_value' 			=> __("Submit", 'aione-app-builder'),
+			'updated_message' 		=> __("Post updated", 'aione-app-builder'),
+			'label_placement' 		=> 'top', // top/left
+			'instruction_placement' => 'label', // label/field
+			'field_el' 				=> 'div',
+			'uploader' 				=> 'wp',
+			'html_updated_message'	=> '<div id="message" class="updated"><p>%s</p></div>',
+			'html_submit_button'	=> '<input type="submit" class="acf-button button button-primary button-large" value="%s" />',
+			'html_submit_spinner'	=> '<span class="acf-spinner"></span>',
+			'honeypot' 				=> true,
+			'kses'					=> true,
+		);
+
+		acf_form_head(); 
+
+		ob_start();
+		acf_form( $options );
+		$output .= ob_get_contents();
+		ob_end_clean();
+
+		return $output;
+	}
 
 }
