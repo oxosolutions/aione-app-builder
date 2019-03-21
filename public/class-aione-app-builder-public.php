@@ -1864,12 +1864,12 @@ class Aione_App_Builder_Public {
 	public function aione_app_builder_url_shortcode( $atts ) {
 		extract( shortcode_atts(
 			array(
-				'type' => '',
-				'id' => '0',
-				'path' => '',
-				'title' => '',
-				'action' => '',
-				'class' => '',
+				'type' 		=> '',
+				'id' 		=> '0',
+				'path' 		=> '',
+				'title' 	=> '',
+				'action' 	=> '',
+				'class' 	=> '',
 			), $atts )
 	);
 		
@@ -1908,19 +1908,20 @@ class Aione_App_Builder_Public {
 		// Attributes
 		shortcode_atts(
 			array(
-				'post_type'		=> 'post',
-				'status'		=> array('publish'),
-				'cat'			=> '',
-				'cat_id'		=> '',
-				'author'		=> '',
-				'author_id'		=> '',
-				'count'			=> '',
-				'order'			=> 'DESC',
-				'orderby'		=> 'date',
-				'template'		=> '',
-				'pagination'	=> 'yes',
-				'id'			=> '',
-				'class'			=> ''	
+				'post_type'			=> 'post',
+				'status'			=> array('publish'),
+				'cat'				=> '',
+				'cat_id'			=> '',
+				'author'			=> '',
+				'author_id'			=> '',
+				'posts_per_page'	=> '99999999999',
+				'post_count'		=> '999999999',
+				'order'				=> 'DESC',
+				'orderby'			=> 'date',
+				'template'			=> '',
+				'pagination'		=> 'yes',
+				'id'				=> '',
+				'class'				=> ''	
 			), $atts, 'posts'
 		);
 
@@ -1930,7 +1931,15 @@ class Aione_App_Builder_Public {
 
 		$output = "";
 
-		$status = explode(',',$atts['status']);
+		if( !empty( $atts['status'] ) ){
+			$status = explode( ',', $atts['status'] );
+		}
+		/*
+		echo "<pre>";
+		print_r( $atts );
+		echo "</pre>";
+		*/
+
 
 		// WP_Query arguments
 		$args = array (
@@ -1941,7 +1950,8 @@ class Aione_App_Builder_Public {
 			'author'				=> $atts['author_id'],
 			'author_name'			=> $atts['author'],
 			'pagination'			=> false,
-			'posts_per_page'		=> $atts['count'],
+			'posts_per_page'		=> $atts['posts_per_page'],
+			'post_count'			=> $atts['post_count'],
 			'ignore_sticky_posts'	=> false,
 			'order'					=> $atts['order'],
 			'orderby'				=> $atts['orderby'],
@@ -1950,9 +1960,26 @@ class Aione_App_Builder_Public {
 			'update_post_term_cache'=> true,
 		);
 
-		$posts = new WP_Query($args);
-		//echo "<pre>";print_r($posts);echo "</pre>";
-		$output = $posts->post_count;
+		/*
+
+
+		echo "<pre>";
+		print_r( $args );
+		echo "</pre>";
+		*/
+
+
+
+		$posts = new WP_Query( $args );
+		/*
+
+		echo "<pre>";
+		print_r( $posts );
+		echo "</pre>";
+		*/
+
+
+		$output = $posts->found_posts;
 			
 		return $output;
 	} // END aione_app_builder_post_count_shortcode()
@@ -2950,13 +2977,6 @@ class Aione_App_Builder_Public {
 		), $atts, 'post-id' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
-
-		/*
-		
-		echo "<pre>";
-		print_r( $atts['post_id']);
-		echo "</pre>";
-		*/
 
 		$output = get_permalink( $atts['post_id'] );
 
