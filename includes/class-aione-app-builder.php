@@ -335,6 +335,8 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'add-new', $plugin_public, 'aione_app_builder_add_new_shortcode' );
 
 		
+		
+		
 	}
 
 	/**
