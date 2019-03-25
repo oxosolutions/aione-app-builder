@@ -1984,29 +1984,31 @@ class Aione_App_Builder_Public {
 		return $output;
 	} // END aione_app_builder_post_count_shortcode()
 
+
+
 	public function aione_app_builder_posts_shortcode( $atts ) {
 
 		// Attributes
-		shortcode_atts(
-			array(
-				'post_type'		=> 'post',
-				'status'		=> 'publish',
-				'cat'			=> '',
-				'cat_id'		=> '',
-				'author'		=> '',
-				'author_id'		=> '',
-				'meta_key'		=> '',
-				'meta_value'	=> '',
-				'meta_query'	=> '',
-				'count'			=> '',
-				'order'			=> 'DESC',
-				'orderby'		=> 'date',
-				'template'		=> '',
-				'pagination'	=> 'yes',
-				'id'			=> '',
-				'class'			=> ''	
-			), $atts, 'posts'
-		);
+		shortcode_atts( array(
+			'post_type'			=> 'post',
+			'status'			=> 'publish',
+			'cat'				=> '',
+			'cat_id'			=> '',
+			'author'			=> '',
+			'author_id'			=> '',
+			'meta_key'			=> '',
+			'meta_value'		=> '',
+			'meta_query'		=> '',
+			'count'				=> '',
+			'offset'				=> '',
+			'posts_per_page'	=> '',
+			'order'				=> 'DESC',
+			'orderby'			=> 'date',
+			'template'			=> '',
+			'pagination'		=> 'yes',
+			'id'				=> '',
+			'class'				=> ''	
+		), $atts, 'posts');
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 		
@@ -2015,6 +2017,21 @@ class Aione_App_Builder_Public {
 		$output = "";
 
 		$status = explode(',',$atts['status']);
+
+
+
+		// $big = 999999999; // need an unlikely integer
+	    $current_page = get_query_var('paged');
+	    // $total_pages = $wp_query->max_num_pages;
+
+	    if( $current_page > 0 ){
+	    	$atts['offset'] = $atts['posts_per_page'] * ( $current_page - 1);
+
+	    }
+
+
+	    // $output .= '<br>PAGE = '.$current_page;
+
 
 		// WP_Query arguments
 		$args = array (
@@ -2026,8 +2043,8 @@ class Aione_App_Builder_Public {
 			'author_name'			=> $atts['author'],
 			'meta_key'				=> $atts['meta_key'],
 			'meta_value'			=> $atts['meta_value'],
-			'pagination'			=> false,
-			'posts_per_page'		=> $atts['count'],
+			'posts_per_page'		=> $atts['posts_per_page'],
+			'offset'				=> $atts['offset'],
 			'ignore_sticky_posts'	=> false,
 			'order'					=> $atts['order'],
 			'orderby'				=> $atts['orderby'],
@@ -2036,7 +2053,7 @@ class Aione_App_Builder_Public {
 			'update_post_term_cache'=> true,
 		);
 
-		$resent_posts = new WP_Query($args);
+		$posts = new WP_Query($args);
 
 		$is_template = false;
 
@@ -2056,13 +2073,13 @@ class Aione_App_Builder_Public {
 		}
 
 		//echo "<pre>";print_r($is_template);echo "</pre>";
-		if( $resent_posts->have_posts() ){
+		if( $posts->have_posts() ){
 			if( $is_template ){
 				$output .= '<div class="aione-template type-archive '.$template.'">';
 			}
 			$output .= '<ul '.$id_attribute.' class="list-posts '.$class.'">';
-			while( $resent_posts->have_posts() ){
-				$resent_posts->the_post(); 
+			while( $posts->have_posts() ){
+				$posts->the_post(); 
 				$output .= '<li>';
 				if( $is_template ){
 					$output .= do_shortcode( $aione_template );
@@ -2093,34 +2110,36 @@ class Aione_App_Builder_Public {
 				}
 			}
 			$output .= '</ul>';
+
 			if( $is_template ){
 				$output .= '</div>';
 			}
+
 			wp_reset_postdata();
-			if($pagination == 'yes'){				
-				$output .= aione_pagination( $resent_posts );
+
+			if( $atts['pagination'] == 'yes' ) {				
+				$output .= aione_pagination( $posts );
 			}
+
 		}  else {
 			$output .= '<h5 class="font-size-16 align-center">No Posts Available.</h5>';
 		}
 		return $output;
 	} // END aione_app_builder_posts_shortcode()
 
-	public function aione_app_builder_post_shortcode( $atts ) {
+	public function aione_app_builder_post_shortcode( $atts, $content = null ) {
+		
+		global $post, $theme_options;
 
 		// Attributes
-		shortcode_atts(
-			array(
-				'post_id'		=> 'null',
-				'template'		=> '',
-				'id'			=> '',
-				'class'			=> ''	
-			), $atts, 'post'
-		);
+		$atts = shortcode_atts( array(
+			'post_id'	=> $post->ID,
+			'template'	=> '',
+			'id'		=> '',
+			'class'		=> ''	
+		), $atts, 'post_meta' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
-		
-		global $theme_options, $post;
 
 		$output = "";
 
@@ -2466,7 +2485,7 @@ class Aione_App_Builder_Public {
 		);
 
 		$users = get_users( $args );
-		//echo "<pre>";print_r($roles);echo "</pre>";
+		//echo "<pre>";print_r($users);echo "</pre>";
 
 
 		$template = $atts['template'];
@@ -2596,22 +2615,34 @@ class Aione_App_Builder_Public {
 	public function aione_app_builder_user_meta_shortcode( $atts ) {
 		
 		$user = wp_get_current_user();
-		$userid = $user->ID;
+		$current_user_id = $user->ID;
 
 		$atts = shortcode_atts( array(
-			'user_id'		=> $userid, // ID of user
-			'field'			=> 'user_login', //key of field and custom field to be dispayed
-		), $atts, 'user' );
-
-		$output = "";
+			'user_id'		=> $current_user_id, // ID of user
+			'field'			=> 'first_name', //key of field and custom field to be dispayed
+			'show_label'	=> 'no', //show field label
+			'class'			=> '',
+			'id'			=> '',
+			'style'			=> '',
+		), $atts, 'user_meta' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 
-		$output .= get_user_meta( $atts['user_id'], $atts['field'], true ); 
-		
-		return $output;
-		
+		$output = "";
+
+		$field = get_field_object( $atts['field'], 'user_'.$atts['user_id'] );
+
+		if( $field ){
+			$shortcode = '[post_meta post_id="user_'.$atts['user_id'].'" field="'.$field['key'].'" show_label="'.$atts['show_label'].'" class="'.$atts['class'].'" id="'.$atts['id'].'" style="'.$atts['style'].'"]';
+			$output .=  do_shortcode( $shortcode );
+		} else {
+			$output .= get_user_meta( $atts['user_id'], $atts['field'], true ); 
+		}
+ 
+		return $output;	
 	} // END aione_app_builder_user_meta_shortcode
+
+
 
 	function aione_app_builder_welcome_shortcode($atts){
 		$user = wp_get_current_user();
@@ -3243,8 +3274,10 @@ class Aione_App_Builder_Public {
 			'type' => 'request', //get/post/request
 		), $atts, 'variable' );
 
-		$variable = $_REQUEST[$atts['parameter']];
+		$atts = $this->clean_shortcode_parameters( $atts );
 
+		$variable = $_REQUEST[$atts['parameter']];
+		$variable = trim( $variable );
 
 		return $variable;
 
@@ -3275,34 +3308,43 @@ class Aione_App_Builder_Public {
 		return $output;
 	}
 
-	function aione_app_builder_post_custom_field_shortcode($atts){
+	function aione_app_builder_post_meta_shortcode( $atts ) {
 		
 		global $post;
 
 		$atts = shortcode_atts( array(
-			'post_id'	=> $post->ID,
-			'type'		=> 'post',
-			'field'		=> '',
-			'label'		=> "true",
-			'seperator'	=> ' : ',
-			'template'	=> '',
-			'class'		=> '',
-			'id'		=> '',
-			'style'		=> 'div', // table/div/list/ Leave empty for no html
-		), $atts, 'custom-field' );
+			'post_id'		=> $post->ID,
+			'field'			=> '',
+			'show_label'	=> 'no',
+			'template'		=> '',
+			'class'			=> '',
+			'id'			=> '',
+			'style'			=> 'div', // table/div/list/ Leave empty for no html
+		), $atts, 'post_meta' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 
+		$output = '';
+		
 
-		if( !empty( $atts['post_id'] ) && get_post_status ( $atts['post_id'] ) ){
+		/*
+		if( get_post_status( $atts['post_id'] ) ){
 			$post_id = $atts['post_id'];
 		} else {
 			$post_id = $post->ID;
 		}
+		*/
 
-		$field = get_field_object( $atts['field'] );
+		$post_id = $atts['post_id'];
+
+		$field = get_field_object( $atts['field'], $post_id );
+
+		if( empty( $field)  ){
+			// return get_user_meta( $atts['user_id'], $atts['field'], true ); 
+			return get_post_meta( $post_id, $atts['field'], true );
+		} 
+
 		
-
 		$field_class = 'field_'.$field['name'];
 
 		if( empty( $field_class ) ){
@@ -3325,21 +3367,11 @@ class Aione_App_Builder_Public {
 
 		$field_classes = implode(' ', $field_classes);
 
-		$output = '';
-
-		/*
-
-		$output .= "<pre>";
-		$output .= print_r( $field, true );
-		$output .="</pre>";
-		*/
-
-
 		if($atts['style'] == "div"){
 			$output .= '<div id="'.$field_id.'" class="'.$field_classes.'">';
 		}
 
-		if($atts['label'] == "true"){
+		if($atts['show_label'] == "yes"){
 			$output .= '<label class="field-label"><h3>'.$field['label'].'</h3></label>';
 		}
 		if($field['type'] == 'repeater'){
@@ -3384,7 +3416,7 @@ class Aione_App_Builder_Public {
 			}
 		} else {
 			$repeater = false;
-			$output .= $this->get_data_callback($field,$post_id,$repeater,$atts);
+			$output .= $this->get_data_callback( $field, $post_id, $repeater, $atts );
 		}
 		
 		if($atts['style'] == "div"){
@@ -3392,89 +3424,60 @@ class Aione_App_Builder_Public {
 		}
 		return $output;	
 		
-	}
+	} // END aione_app_builder_post_meta_shortcode
 
-	function clean_shortcode_parameters( $atts ){
-
-		foreach ($atts as $parameter_key => $parameter_value) {
-
-			$parameter =  $parameter_value;
-			$parameter = str_replace("{{","[", $parameter );
-			$parameter = str_replace("}}","]", $parameter );
-
-			$parameter = do_shortcode( $parameter );
-
-			$atts[$parameter_key] = $parameter;
-
-		}
-
-		return $atts;
-	}
-
-
-	function human_readable_date( $date, $format='' ){
-
-		$output = "";
-		$date = strtotime( $date );
-		$now = current_time( 'timestamp', 1 );
-		
-		if( $date < $now){
-			$output .= human_time_diff( $date,  $now) . ' ago';
-		} else{
-			$output .= 'after ' . human_time_diff( $date,  $now);
-		}
-
-		return $output;
-	}
 
 
 	function get_data_callback($field , $post_id , $repeater, $atts){
-
-		if( $atts['type'] == 'user' ){ 
-			$post_id = 'user_'.$post_id;
-		}
 
 		$data = $this->get_field_data( $field['key'], $post_id, $repeater, $atts);
 		
 		$output = '';
 
-		// $output .= "<br>Field Type = ".$field['type'];
-
-		if($data){
+		if( $data ){
+			
 			switch ( $field['type'] ) { 
 
 				case "text":
 				$output .= $data;
 				break;
 
+
 				case "textarea":
 				$output .= $data;
 				break;
+
 
 				case "number":
 				$output .= $data;
 				break;
 
+
 				case "range":
 				$output .= $data;
 				break;
+
 
 				case "email":
 				$output .= $data;
 				break;
 
+
 				case "url":
 				$output .= '<a href="'.$data.'">'.$data.'</a>';
 				break;
+
 
 				case "password":
 				$output .= $data;
 				break;
 
+
 				case "date_picker":
 				$format = $field['display_format'];
 				$output .= date($format,strtotime($data));
 				break;
+
 
 				case "date_time_picker":
 				$display_format = $field['display_format'];
@@ -3490,7 +3493,9 @@ class Aione_App_Builder_Public {
 				
 				case "color_picker":
 				$output .= $data;
-				break;			 
+				break;	
+
+
 				case "image":
 				// echo " CASE IMAGE";
 				if($field['return_format'] == "array"){
@@ -3505,7 +3510,6 @@ class Aione_App_Builder_Public {
 				break; 
 
 				case "file":
-
 				if( $field['return_format'] == "array" ){
 					if( $data['type'] == 'audio' ){
 						$file_type = $data['subtype'];
@@ -3527,12 +3531,18 @@ class Aione_App_Builder_Public {
 					$output .= '<div><a href="'.$file_url.'"><button class="aione-button">'.$field['label'].'</button></a>';
 				}
 				break;
+
+
 				case "wysiwyg":
 				$output .= $data;
 				break; 
+
+
 				case "oembed":
 				$output .= $data;
-				break;         
+				break;    
+
+
 				case "gallery":
 				$field_classes = explode(' ', trim( $field['wrapper']['class'] ) );
 
@@ -3551,6 +3561,8 @@ class Aione_App_Builder_Public {
 					}
 				}
 				break; 
+
+
 				case "select":
 				if($field['multiple'] == '1'){ 
 					if($field['return_format'] == "value" || $field['return_format'] == "label"){
@@ -3568,6 +3580,8 @@ class Aione_App_Builder_Public {
 					}
 				}
 				break; 
+
+
 				case "checkbox":
 				if($field['return_format'] == "value" || $field['return_format'] == "label"){
 					$output .= implode(",", $data);
@@ -3577,6 +3591,8 @@ class Aione_App_Builder_Public {
 					}
 				}
 				break;
+
+
 				case "radio":
 				if($field['return_format'] == "array"){
 					$output .= $data['label'];
@@ -3584,6 +3600,8 @@ class Aione_App_Builder_Public {
 					$output .= $data;
 				}
 				break;
+
+
 				case "button_group":
 				if($field['return_format'] == "array"){
 					$output .= $data['label'];
@@ -3591,11 +3609,15 @@ class Aione_App_Builder_Public {
 					$output .= $data;
 				}
 				break;
+
+
 				case "true_false":
 				if($data == "1"){			    		
 					$output .= "True";
 				}
 				break;
+
+
 				case "link":
 				if($field['return_format'] == "array"){			    		
 					$output .= '<a href="'.$data['url'].'" target="'.$data['target'].'">'.$data['title'].'</a>';
@@ -3603,6 +3625,8 @@ class Aione_App_Builder_Public {
 					$output .= '<a href="'.$data.'" target="">'.$data.'</a>';
 				}
 				break; 
+
+
 				case "post_object":
 				$post_template = $atts['template'];
 
@@ -3686,6 +3710,8 @@ class Aione_App_Builder_Public {
 					}	
 				}
 				break;
+
+
 				case "page_link":
 				if($field['multiple'] == '1'){
 					foreach ($data as $key => $value) {
@@ -3695,6 +3721,8 @@ class Aione_App_Builder_Public {
 					$output .= '<a href="'.$data.'" target="">'.$data.'</a>';
 				}			    	
 				break;
+
+
 				case "relationship":			    
 				if($field['return_format'] == "object"){
 					$output .= '<div class="">Title : '.$data[0]->post_title.'</div>';
@@ -3705,6 +3733,8 @@ class Aione_App_Builder_Public {
 					$output .= '<div class="">Content : '.$data->post_content.'</div>';
 				}		    	
 				break; 
+
+
 				case "taxonomy":   
 				if($field['return_format'] == "object"){			    		
 					if($field['field_type']=="radio" || $field['field_type']=="select"){
@@ -3726,38 +3756,18 @@ class Aione_App_Builder_Public {
 					}
 				}	    	
 				break; 
+
+
 				case "user":   
-			   	// echo "<pre>";print_r($data);echo "</pre>";
 				if( $field['multiple'] == '1' ){
 					$users = array();
 					foreach ($data as $key => $value) {
 						if($field['return_format'] == "object"){
-							// $output .= "<br>Object:";
-							// $output .= $value->ID;
 							$users[] = $value->ID;
-							/*
-							$output .= '<div class="">First Name:'.$value->user_firstname.'</div>';
-							$output .= '<div class="">Last Name:'.$value->user_lastname.'</div>';
-							$output .= '<div class="">Email:'.$value->user_email.'</div>';
-							*/
 						} else if ($field['return_format'] == "array"){
-							// $output .= "<br>Array:";
 							$users[] = $value['ID'];
-							/*
-							$output .= '<div class="">First Name:'.$value['user_firstname'].'</div>';
-							$output .= '<div class="">Last Name:'.$value['user_lastname'].'</div>';
-							$output .= '<div class="">Email:'.$value['user_email'].'</div>';
-							*/
 						} else {
-							// $output .= "<br>ID:";
-							// $user_info = get_userdata($value);
-							// $output .= $value;
 							$users[] =  $value;
-							/*
-							$output .= '<div class="">First Name:'.$user_info->user_firstname.'</div>';
-							$output .= '<div class="">Last Name:'.$user_info->user_lastname.'</div>';
-							$output .= '<div class="">Email:'.$user_info->user_email.'</div>';
-							*/
 						}
 					}
 
@@ -3771,20 +3781,15 @@ class Aione_App_Builder_Public {
 						$output .= $data;
 					}
 				}
-				
 				break;
+
+
 				case "repeater":   
-			    /*
-			    	$output .=  "<pre>";
-			    	$output .= print_r( $field, true );
-			    	$output .=  "</pre>";
-			    	*/
+			    	$repeater_field_key 	= $field['key'];
+			    	$repeater_field_label 	= $atts['show_label'];
+			    	$repeater_field_style 	= $atts['style'];
 
-			    	$repeater_field_key = $field['key'];
-			    	$repeater_field_label = $atts['label'];
-			    	$repeater_field_style = $atts['style'];
-
-			    	$output .= do_shortcode( '[custom-field field="'.$repeater_field_key.'" label="'.$repeater_field_label.'" style="'.$repeater_field_style.'"]' );
+			    	$output .= do_shortcode( '[post_meta field="'.$repeater_field_key.'" show_label="'.$repeater_field_label.'" style="'.$repeater_field_style.'"]' );
 			    	break;             
 			    	default:
 			    	$output .= "Unknown field Type";   
@@ -3802,6 +3807,39 @@ class Aione_App_Builder_Public {
 			return  get_field( $key, $post_id );
 		}
 
+	}
+
+
+	function clean_shortcode_parameters( $atts ){
+
+		foreach ($atts as $parameter_key => $parameter_value) {
+
+			$parameter =  $parameter_value;
+			$parameter = str_replace("{{","[", $parameter );
+			$parameter = str_replace("}}","]", $parameter );
+
+			$parameter = do_shortcode( $parameter );
+
+			$atts[$parameter_key] = $parameter;
+		}
+
+		return $atts;
+	}
+
+
+	function human_readable_date( $date, $format='' ){
+
+		$output = "";
+		$date = strtotime( $date );
+		$now = current_time( 'timestamp', 1 );
+		
+		if( $date < $now){
+			$output .= human_time_diff( $date,  $now) . ' ago';
+		} else{
+			$output .= 'after ' . human_time_diff( $date,  $now);
+		}
+
+		return $output;
 	}
 
 	function aione_app_builder_upcoming_tag_shortcode( $atts ){
