@@ -1998,9 +1998,8 @@ class Aione_App_Builder_Public {
 			'author_id'			=> '',
 			'meta_key'			=> '',
 			'meta_value'		=> '',
-			'meta_query'		=> '',
-			'count'				=> '',
-			'offset'				=> '',
+			//'count'				=> '',
+			'offset'			=> '',
 			'posts_per_page'	=> '',
 			'order'				=> 'DESC',
 			'orderby'			=> 'date',
@@ -2137,7 +2136,7 @@ class Aione_App_Builder_Public {
 			'template'	=> '',
 			'id'		=> '',
 			'class'		=> ''	
-		), $atts, 'post_meta' );
+		), $atts, 'post' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 
@@ -2346,9 +2345,8 @@ class Aione_App_Builder_Public {
 		extract( shortcode_atts(
 			array(
 				'site' 		=>  $GLOBALS['blog_id'],
-				'style' 	=> 'table',
-				'columns' 	=> 'Username',
-				'fields' 	=> 'user_login',
+				'include'      => array(),
+				'exclude'      => array(),
 				'role' 		=> '',
 				'roles' 	=> '',
 			), $atts )
@@ -2364,15 +2362,15 @@ class Aione_App_Builder_Public {
 		$args = array(
 			'blog_id'      => $site,
 			'role'         => $role,
-			'role__in'     => $roles,
+			'role__in'     => explode( ",", $atts['roles'] ),
 			'role__not_in' => array(),
 			'meta_key'     => '',
 			'meta_value'   => '',
 			'meta_compare' => '',
 			'meta_query'   => array(),
 			'date_query'   => array(),        
-			'include'      => array(),
-			'exclude'      => array(),
+			'include'      => explode( ",", $atts['include'] ),
+			'exclude'      => explode( ",", $atts['exclude'] ),
 			'orderby'      => 'login',
 			'order'        => 'ASC',
 			'offset'       => '',
@@ -3005,7 +3003,7 @@ class Aione_App_Builder_Public {
 
 		$atts = shortcode_atts( array(
 			'post_id'	=>	$post->ID,
-		), $atts, 'post-id' );
+		), $atts, 'link' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 
@@ -3024,10 +3022,11 @@ class Aione_App_Builder_Public {
 			'post_id'	=>	$post->ID,
 			'class'		=>	'',
 			'id'		=>	'',
+			'style'		=>	'div', //h1,h2,h3,h4,h5,h6,span
 		), $atts, 'title' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
-
+		$title = "";
 		$id_attribute ='';
 		if( !empty($atts['id']) ){
 			$id_attribute = 'id="'.$atts['id'].'"';
@@ -3038,10 +3037,22 @@ class Aione_App_Builder_Public {
 		$post_object = get_post( $post_id ); 
 		$post_title = $post_object->post_title; 
 
+		if($atts['style'] != ""){
+			$title .= '<'.$atts['style'].' '.$id_attribute.' class="'.$atts['class'].'">';
+		}
 		if($atts['link'] == "true"){
-			$title = '<a '.$id_attribute.' class="'.$atts['class'].'" href="'.get_permalink( $post_id ).'">'.$post_title.'</a>';
+			if($atts['style'] != ""){
+				$title .= '<a  href="'.get_permalink( $post_id ).'">'.$post_title.'</a>';
+			} else {
+				$title .= '<a '.$id_attribute.' class="'.$atts['class'].'" href="'.get_permalink( $post_id ).'">'.$post_title.'</a>';
+			}
+			
 		} else {
-			$title = '<div '.$id_attribute.' class="'.$atts['class'].'">'.$post_title.'</div>';
+			$title .= $post_title;
+		}
+
+		if($atts['style'] != ""){
+			$title .= '</'.$atts['style'].'>';
 		}
 		
 		return $title;
@@ -3102,7 +3113,7 @@ class Aione_App_Builder_Public {
 			'placeholder' => 'true',
 			'placeholder_image' => plugin_dir_url( __FILE__ ) . 'images/user.svg',
 			'return' => 'image',// image/url/width/height/alt
-		), $atts, 'featured-image' );
+		), $atts, 'featured_image' );
 		$output = "";
 		$id_attribute ='';
 		if( !empty($id) ){
@@ -3168,7 +3179,7 @@ class Aione_App_Builder_Public {
 				'width' => '',
 				'height' => '',
 				'caption' => 'true',
-			), $atts, 'attached-media' )
+			), $atts, 'attached_media' )
 		);
 		$output = "";
 		$type = get_post_mime_type( $post->ID );
@@ -3214,7 +3225,7 @@ class Aione_App_Builder_Public {
 			'style' => 'list',
 			'class' => 'aione-tags',
 			'id' => 'aione_tags_'.$post->ID,
-		), $atts, 'aione-post-tags' );
+		), $atts, 'tags' );
 
 		$output = "";
 		$output .= $this->aione_app_builder_get_post_terms( $post->ID, $atts['texonomy'], $atts['style'], $atts['class'], $atts['id']);
@@ -3228,7 +3239,7 @@ class Aione_App_Builder_Public {
 			'style' => 'list',
 			'class' => 'aione-categories',
 			'id' => 'aione_categories_'.$post->ID,
-		), $atts, 'aione-post-categories' );
+		), $atts, 'categories' );
 
 		$output = "";
 		$output .= $this->aione_app_builder_get_post_terms( $post->ID, $atts['texonomy'], $atts['style'], $atts['class'], $atts['id']);
@@ -4122,7 +4133,8 @@ class Aione_App_Builder_Public {
 			'label_placement' 		=> 'top', // top/left
 			'instruction_placement' => 'label', // label/field
 			'field_el' 				=> 'div',
-			'uploader' 				=> 'wp',
+			//'uploader' 				=> 'wp',
+			'uploader' 				=> 'basic',
 			'html_updated_message'	=> '<div id="message" class="updated"><p>%s</p></div>',
 			'html_submit_button'	=> '<input type="submit" class="acf-button button button-primary button-large" value="%s" />',
 			'html_submit_spinner'	=> '<span class="acf-spinner"></span>',
@@ -4198,7 +4210,7 @@ class Aione_App_Builder_Public {
 			'label_placement' 		=> 'top', // top/left
 			'instruction_placement' => 'label', // label/field
 			'field_el' 				=> 'div',
-			'uploader' 				=> 'wp',
+			'uploader' 				=> 'basic',
 			'html_updated_message'	=> '<div id="message" class="updated"><p>%s</p></div>',
 			'html_submit_button'	=> '<input type="submit" class="acf-button button button-primary button-large" value="%s" />',
 			'html_submit_spinner'	=> '<span class="acf-spinner"></span>',
@@ -4216,6 +4228,52 @@ class Aione_App_Builder_Public {
 		return $output;
 	}
 
+	function pyre_per_page_settings_shortcode(){
+		$blog_list = get_blog_list( 0, 'all' );
+		foreach ($blog_list AS $blog) {
+		    echo 'Blog '.$blog['blog_id'].': '.$blog['domain'].$blog['path'].'<br />';
+		    switch_to_blog( $blog['blog_id'] );
+		    global $wpdb;
+		    $querystr = "SELECT DISTINCT `post_type` FROM `aione_".$blog['blog_id']."_posts`";
+		    $query_result = $wpdb->get_results($querystr, ARRAY_N);
+		    //$post_types = get_post_types();
+		    $post_types = [];
+		    foreach ($query_result as $key => $value) {
+		    	$post_types[] = $value[0];
+		    }
+		    if(($key = array_search('acf-field',$post_types)) !== false) {
+		       unset($post_types[$key]);
+		    }
+		    if(($key = array_search('acf-field-group',$post_types)) !== false) {
+		       unset($post_types[$key]);
+		    }
+		    if(($key = array_search('nav_menu_item',$post_types)) !== false) {
+		       unset($post_types[$key]);
+		    } 
+		    if(($key = array_search('revision',$post_types)) !== false) {
+		       unset($post_types[$key]);
+		    }
+		    if(($key = array_search('wp_block',$post_types)) !== false) {
+		       unset($post_types[$key]);
+		    }
+		    if(($key = array_search('attachment',$post_types)) !== false) {
+		       unset($post_types[$key]);
+		    }
+		    
+		    //echo "<pre>";print_r($post_types);echo "</pre>";
+		    foreach ($post_types as $post_slug) {
+		    	$args = array(
+				  'numberposts' => -1,
+				  'post_type'   => $post_slug
+				);
+				 
+				//$posts = get_posts( $args );
+				$posts = wp_count_posts( $post_type = $post_slug );
+				echo "<pre>";print_r($posts);echo "</pre>";
+		    }
+		    restore_current_blog();      
+		}
+	}
 	
 
 }

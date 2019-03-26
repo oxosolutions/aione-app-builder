@@ -189,7 +189,10 @@
 'cat_id'         => '',
 'author'         => '',
 'author_id'      => '',
-'count'          => '',
+'meta_key'      => '',
+'meta_value'      => '',
+'posts_per_page'          => '',
+'offset'          => '',
 'order'			=> 'DESC',
 'orderby'		=> 'date',
 'template'       => '', // slug of aione template
@@ -215,10 +218,13 @@
 					<td>[post_meta]</td>
 					<td>
 <pre>
+'post_id' => '', //Post ID
 'field' => 'field_5bc5a7afa60b0', //acf field_key
-'label' => 'true', //false
+'show_label' => 'no', //yes
 'template' => '', //slug of aione template (work only if field type is Post Object)
-'seperator' => ' : ',
+'style' => 'div', //table/div/list/ Leave empty for no html
+'id'             => '', //CSS ID
+'class'          => '' //CSS class
 </pre>
 					</td>
 				</tr>
@@ -264,11 +270,11 @@
 					<td>
 <pre>
 'site'           =>  1, // ID of site in case of multisite
-'style'          => 'table',
-'columns'        => 'Username', //Headers for the columns
-'fields'         => 'user_login', //keys of fields and custom fields to be dispayed
 'role'           => '', //Get users of a perticular role
-'roles'          => '', //Get users of a roles saperated by comma</pre>
+'roles'          => '', //Get users of a roles saperated by comma
+'include'        => '', 
+'exclude'        => '', 
+</pre>
 </td>
 					</tr>
 					<tr>
@@ -276,9 +282,23 @@
 						<td>[user]</td>
 						<td>
 <pre>
-'user_id'        => CURRENT_LOGGED_IN_USER, // ID of user
+'user_id'        => '', // ID of user
 'field'          => 'user_login', //key of field and custom field to be dispayed
-'field_type'     => 'field', //field/meta
+'template'     => '', 
+</pre>
+						</td>
+					</tr>
+					<tr>
+						<td>User Meta</td>
+						<td>[user_meta]</td>
+						<td>
+<pre>
+'user_id'        => '', // ID of user
+'field'          => 'first_name', //key of field and custom field to be dispayed
+'show_label'     => 'no', //yes
+'class'			=> '', //css class
+'id'			=> '', //css id
+'style'			=> 'div',
 </pre>
 						</td>
 					</tr>
@@ -360,6 +380,9 @@
 'fields'         => 'user_login', //keys of fields and custom fields to be dispayed
 'role'           => '', //Get users of a perticular role
 'roles'          => '', //Get users of a roles saperated by comma
+'template'       => '', 
+'include'       => '', 
+'exclude'       => '', 
 </pre>
 				</td>
 				</tr>
@@ -375,6 +398,9 @@
 				<td>Post Link</td>
 				<td>[link]</td>
 				<td>
+<pre>
+'post_id' => '', //Post ID
+</pre>					
 				</td>
 			</td>
 		</tr>
@@ -383,6 +409,7 @@
 			<td>[title]</td>
 			<td>
 <pre>
+'post_id' => '', //Post ID
 'link' => 'true', //false
 'class' => ' ',
 'id' => ' '
@@ -396,6 +423,7 @@
 	<td>[content]</td>
 	<td>
 <pre>
+'post_id' => '', //Post ID
 'expert' => 'false', //true
 'expert-length' => '20',
 'more-text' => 'Read More...'
@@ -451,7 +479,7 @@
 	<td>[categories]</td>
 	<td>
 <pre>
-'texonomy' => 'post_tags', //custom texonomy
+'texonomy' => 'category', //custom texonomy
 'style' => 'list', //list,div
 'class' => ' ',
 'id' => ' '
@@ -546,8 +574,10 @@
 'title' => 'true', // false
 'content' => 'true', // false
 'status' => 'publish', // draft,pending, all wordpres post status
+'field_groups' => '123', // ID of acf field group
+'fields' => '', // ID of acf field
 'id' => 'add_new_form', // css id name
-'class' => 'add_new_form', // css class name
+'class' => 'add-new-form', // css class name
 </pre>
 </td>
 </tr>
@@ -556,11 +586,14 @@
 	<td>[edit]</td>
 	<td>
 <pre>
+'post_id' => '', // Post ID
 'title' => 'true', // false
 'content' => 'true', // false
 'status' => 'publish', // draft,pending, all wordpres post status
-'id' => 'add_new_form', // css id name
-'class' => 'add_new_form', // css class name
+'field_groups' => '123', // ID of acf field group
+'fields' => '', // ID of acf field
+'id' => 'edit_post_form', // css id name
+'class' => 'edit-post-form', // css class name
 
 </pre>
 	</td>

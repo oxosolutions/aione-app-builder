@@ -277,6 +277,7 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'post_count', $plugin_public, 'aione_app_builder_post_count_shortcode' );
 		$this->loader->add_shortcode( 'posts', $plugin_public, 'aione_app_builder_posts_shortcode' );
 		$this->loader->add_shortcode( 'post', $plugin_public, 'aione_app_builder_post_shortcode' );
+		// to be deleted
 		$this->loader->add_shortcode( 'list-posts', $plugin_public, 'aione_app_builder_posts_shortcode' );
 		$this->loader->add_shortcode( 'list_comments', $plugin_public, 'aione_app_builder_list_comments_shortcode' );
 		// $this->loader->add_shortcode( 'faq', $plugin_public, 'aione_app_builder_faq_shortcode' );
@@ -334,7 +335,8 @@ class Aione_App_Builder {
 		//to_be_deleted
 		$this->loader->add_shortcode( 'add-new', $plugin_public, 'aione_app_builder_add_new_shortcode' );
 
-		
+		//pyre_per_page_settings in single array
+		$this->loader->add_shortcode( 'pyre_per_page_settings', $plugin_public, 'pyre_per_page_settings_shortcode' );
 		
 		
 	}

@@ -409,7 +409,8 @@ class Aione_App_Builder_Admin {
 				add_submenu_page( 'aione-dashboard', __( 'Field Groups', 'aione-app-builder' ), __( 'Custom Fields', 'aione-app-builder' ), 'manage_options', 'edit.php?post_type=acf' );
 			} else {
 				remove_menu_page( 'edit.php?post_type=acf-field-group' );
-				add_submenu_page( 'aione-dashboard', __( 'Field Groups', 'aione-app-builder' ), __( 'Custom Fields', 'aione-app-builder' ), 'manage_options', 'edit.php?post_type=acf-field-group' );
+				add_submenu_page( 'aione-dashboard', __( 'Field Groups', 'aione-app-builder' ), __( 'Fields', 'aione-app-builder' ), 'manage_options', 'edit.php?post_type=acf-field-group' );
+				add_submenu_page( 'aione-dashboard', __( 'Import/Export Field Groups', 'aione-app-builder' ), __( 'Import/Export Fields', 'aione-app-builder' ), 'manage_options', 'edit.php?post_type=acf-field-group&page=acf-tools' );
 			}
 			
 			add_action('admin_head', array($this,'acf_page_style'));
