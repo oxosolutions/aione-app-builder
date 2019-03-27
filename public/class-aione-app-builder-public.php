@@ -4230,7 +4230,7 @@ class Aione_App_Builder_Public {
 
 	function pyre_per_page_settings_shortcode(){
 		$blog_list = get_blog_list( 0, 'all' );
-		foreach ($blog_list AS $blog) {
+		/*foreach ($blog_list AS $blog) {
 		    echo 'Blog '.$blog['blog_id'].': '.$blog['domain'].$blog['path'].'<br />';
 		    switch_to_blog( $blog['blog_id'] );
 		    global $wpdb;
@@ -4259,20 +4259,182 @@ class Aione_App_Builder_Public {
 		    if(($key = array_search('attachment',$post_types)) !== false) {
 		       unset($post_types[$key]);
 		    }
+
+		    $default_settings = array(
+			    'pyre_show_top_bar' => 'default',
+			    'pyre_top_bar_100_width' => 'default',
+			    'pyre_header_enable' => 'default',
+			    'pyre_header_100_width' => 'default',
+			    'pyre_header_show_logo' => 'default',
+			    'pyre_header_show_site_title' => 'default',
+			    'pyre_header_show_tagline' => 'default',
+			    'pyre_header_show_navigation' => 'default',
+			    'pyre_displayed_menu' => 'default',
+			    'pyre_main_nav_show_home_icon' => 'default',
+			    'pyre_main_nav_show_home_link' => 'default',
+			    'pyre_main_nav_show_description' => 'default',
+			    'pyre_main_nav_search_icon' => 'default',
+			    'pyre_menu_display_dropdown_indicator' => 'default',
+			    'pyre_header_show_banner' => 'default',
+			    'pyre_slidingbar_widgets' => 'default',
+			    'pyre_slider_enable' => 'default',
+			    'pyre_slider_100_width' => 'default',
+			    'pyre_select_slider' => 'default',
+			    'pyre_page_title_bar' => 'default',
+			    'pyre_page_title_100_width' => 'default',
+			    'pyre_page_title_bar_enable_title' => 'default',
+			    'pyre_page_title_bar_enable_description' => 'default',
+			    'pyre_page_title_bar_description_text' => '',
+			    'pyre_page_100_width' => 'default',
+			    'pyre_page_top_area_enable' => 'default',
+			    'pyre_page_top_area_100_width' => 'default',
+			    'pyre_page_bottom_area_enable' => 'default',
+			    'pyre_page_bottom_area_100_width' => 'default',
+			    'pyre_page_padding_enable' => 'default',
+			    'pyre_sidebar_left_enable' => 'default',
+			    'pyre_sidebar_left' => 'default',
+			    'pyre_sidebar_right_enable' => 'default',
+			    'pyre_sidebar_right' => 'default',
+			    'pyre_content_top_area_enable' => 'default',
+			    'pyre_content_bottom_area_enable' => 'default',
+			    'pyre_page_content_padding_enable' => 'default',
+			    'pyre_footer_widgets' => 'default',
+			    'pyre_footer_100_width' => 'default',
+			    'pyre_footer_copyright' => 'default',
+			    'pyre_footer_copyright_100_width' => 'default',
+			    'pyre_custom_css' => '',
+			    'pyre_custom_js' => '',
+			    'pyre_title_tag' => '',
+			    'pyre_meta_description' => '',
+			    'pyre_meta_keywords' => '',
+			    'pyre_og_title' => '',
+			    'pyre_og_description' => '',
+			    'pyre_og_image' => '',
+			    'pyre_og_url' => '',
+			);
 		    
-		    //echo "<pre>";print_r($post_types);echo "</pre>";
+		    
 		    foreach ($post_types as $post_slug) {
 		    	$args = array(
 				  'numberposts' => -1,
 				  'post_type'   => $post_slug
 				);
 				 
-				//$posts = get_posts( $args );
-				$posts = wp_count_posts( $post_type = $post_slug );
-				echo "<pre>";print_r($posts);echo "</pre>";
+				$posts = get_posts( $args );
+				if(!empty($posts)){	
+					foreach ($posts as  $post) {
+						$meta_key = metadata_exists('post', $post->ID, 'aione_per_page_setting');
+						if(empty($meta_key)){
+							$setting_array = array();
+							$keys= array_keys($default_settings);
+							foreach ($keys as $value) {
+								$old_meta = get_post_meta($post->ID,$value,true);
+								$setting_array[$value] = $old_meta;
+								update_post_meta( $post->ID, 'aione_per_page_setting', $setting_array );
+							}
+						} 
+					}
+				}
 		    }
 		    restore_current_blog();      
-		}
+		}*/
+
+		/****************/
+		$post_types = get_post_types();
+		if(($key = array_search('acf-field',$post_types)) !== false) {
+	       unset($post_types[$key]);
+	    }
+	    if(($key = array_search('acf-field-group',$post_types)) !== false) {
+	       unset($post_types[$key]);
+	    }
+	    if(($key = array_search('nav_menu_item',$post_types)) !== false) {
+	       unset($post_types[$key]);
+	    } 
+	    if(($key = array_search('revision',$post_types)) !== false) {
+	       unset($post_types[$key]);
+	    }
+	    if(($key = array_search('wp_block',$post_types)) !== false) {
+	       unset($post_types[$key]);
+	    }
+	    if(($key = array_search('attachment',$post_types)) !== false) {
+	       unset($post_types[$key]);
+	    }
+
+	    $default_settings = array(
+		    'pyre_show_top_bar' => 'default',
+		    'pyre_top_bar_100_width' => 'default',
+		    'pyre_header_enable' => 'default',
+		    'pyre_header_100_width' => 'default',
+		    'pyre_header_show_logo' => 'default',
+		    'pyre_header_show_site_title' => 'default',
+		    'pyre_header_show_tagline' => 'default',
+		    'pyre_header_show_navigation' => 'default',
+		    'pyre_displayed_menu' => 'default',
+		    'pyre_main_nav_show_home_icon' => 'default',
+		    'pyre_main_nav_show_home_link' => 'default',
+		    'pyre_main_nav_show_description' => 'default',
+		    'pyre_main_nav_search_icon' => 'default',
+		    'pyre_menu_display_dropdown_indicator' => 'default',
+		    'pyre_header_show_banner' => 'default',
+		    'pyre_slidingbar_widgets' => 'default',
+		    'pyre_slider_enable' => 'default',
+		    'pyre_slider_100_width' => 'default',
+		    'pyre_select_slider' => 'default',
+		    'pyre_page_title_bar' => 'default',
+		    'pyre_page_title_100_width' => 'default',
+		    'pyre_page_title_bar_enable_title' => 'default',
+		    'pyre_page_title_bar_enable_description' => 'default',
+		    'pyre_page_title_bar_description_text' => '',
+		    'pyre_page_100_width' => 'default',
+		    'pyre_page_top_area_enable' => 'default',
+		    'pyre_page_top_area_100_width' => 'default',
+		    'pyre_page_bottom_area_enable' => 'default',
+		    'pyre_page_bottom_area_100_width' => 'default',
+		    'pyre_page_padding_enable' => 'default',
+		    'pyre_sidebar_left_enable' => 'default',
+		    'pyre_sidebar_left' => 'default',
+		    'pyre_sidebar_right_enable' => 'default',
+		    'pyre_sidebar_right' => 'default',
+		    'pyre_content_top_area_enable' => 'default',
+		    'pyre_content_bottom_area_enable' => 'default',
+		    'pyre_page_content_padding_enable' => 'default',
+		    'pyre_footer_widgets' => 'default',
+		    'pyre_footer_100_width' => 'default',
+		    'pyre_footer_copyright' => 'default',
+		    'pyre_footer_copyright_100_width' => 'default',
+		    'pyre_custom_css' => '',
+		    'pyre_custom_js' => '',
+		    'pyre_title_tag' => '',
+		    'pyre_meta_description' => '',
+		    'pyre_meta_keywords' => '',
+		    'pyre_og_title' => '',
+		    'pyre_og_description' => '',
+		    'pyre_og_image' => '',
+		    'pyre_og_url' => '',
+		);
+
+	    foreach ($post_types as $post_slug) {
+	    	$args = array(
+			  'numberposts' => -1,
+			  'post_type'   => $post_slug
+			);
+			 
+			$posts = get_posts( $args );
+			if(!empty($posts)){	
+				foreach ($posts as  $post) {
+					$meta_key = metadata_exists('post', $post->ID, 'aione_per_page_setting');
+					if(empty($meta_key)){
+						$setting_array = array();
+						$keys= array_keys($default_settings);
+						foreach ($keys as $value) {
+							$old_meta = get_post_meta($post->ID,$value,true);
+							$setting_array[$value] = $old_meta;
+							update_post_meta( $post->ID, 'aione_per_page_setting', $setting_array );
+						}
+					} 
+				}
+			}
+	    }
 	}
 	
 

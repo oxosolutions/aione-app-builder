@@ -336,7 +336,7 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'add-new', $plugin_public, 'aione_app_builder_add_new_shortcode' );
 
 		//pyre_per_page_settings in single array
-		$this->loader->add_shortcode( 'pyre_per_page_settings', $plugin_public, 'pyre_per_page_settings_shortcode' );
+		//$this->loader->add_shortcode( 'pyre_per_page_settings', $plugin_public, 'pyre_per_page_settings_shortcode' );
 		
 		
 	}
