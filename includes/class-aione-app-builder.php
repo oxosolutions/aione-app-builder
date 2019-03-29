@@ -234,61 +234,64 @@ class Aione_App_Builder {
 
         //Add Shortcode
 		$this->loader->add_shortcode( 'login_link', $plugin_public, 'aione_app_builder_login_link_shortcode' );
-        //to_be_deleted
-		$this->loader->add_shortcode( 'login-link', $plugin_public, 'aione_app_builder_login_link_shortcode' );
+        
 		$this->loader->add_shortcode( 'register_link', $plugin_public, 'aione_app_builder_register_link_shortcode' );
-        //to_be_deleted
-		$this->loader->add_shortcode( 'register-link', $plugin_public, 'aione_app_builder_register_link_shortcode' );
+       
 		$this->loader->add_shortcode( 'reset_password_link', $plugin_public, 'aione_app_builder_reset_password_link_shortcode' );
-        //to_be_deleted
-		$this->loader->add_shortcode( 'reset-password-link', $plugin_public, 'aione_app_builder_reset_password_link_shortcode' );
+        
 		$this->loader->add_shortcode( 'logout_link', $plugin_public, 'aione_app_builder_logout_link_shortcode' );
-        //to_be_deleted
-		$this->loader->add_shortcode( 'logout-link', $plugin_public, 'aione_app_builder_logout_link_shortcode' );
+        
 		$this->loader->add_shortcode( 'account_link', $plugin_public, 'aione_app_builder_account_link_shortcode' );
-        //to_be_deleted
-		$this->loader->add_shortcode( 'account-link', $plugin_public, 'aione_app_builder_account_link_shortcode' );
+        
 		$this->loader->add_shortcode( 'dashboard_link', $plugin_public, 'aione_app_builder_dashboard_link_shortcode' );
-        //to_be_deleted
-		$this->loader->add_shortcode( 'dashboard-link', $plugin_public, 'aione_app_builder_dashboard_link_shortcode' );
+        
 		$this->loader->add_shortcode( 'is_user_logged_in', $plugin_public, 'aione_app_builder_is_user_logged_in_shortcode' );
+
 		$this->loader->add_shortcode( 'user_not_logged_in', $plugin_public, 'aione_app_builder_user_not_logged_in_shortcode' );
+
 		$this->loader->add_shortcode( 'user_not_logged_in_error', $plugin_public, 'aione_app_builder_user_not_logged_in_error_shortcode' );
+
 		$this->loader->add_shortcode( 'access', $plugin_public, 'aione_app_builder_access_check_shortcode' );
+
 		$this->loader->add_shortcode( 'login', $plugin_public, 'aione_app_builder_login_shortcode' );
 		$this->loader->add_shortcode( 'register', $plugin_public, 'aione_app_builder_register_shortcode' );
+
 		$this->loader->add_shortcode( 'reset_password', $plugin_public, 'aione_app_builder_reset_password_shortcode' );
-		//to_be_deleted
-		$this->loader->add_shortcode( 'reset-password', $plugin_public, 'aione_app_builder_reset_password_shortcode' );
+		
 		// $this->loader->add_shortcode( 'account', $plugin_public, 'aione_app_builder_account_shortcode' );
 		// $this->loader->add_shortcode( 'account-menu', $plugin_public, 'aione_app_builder_account_menu_shortcode' );
 		// $this->loader->add_shortcode( 'account-content', $plugin_public, 'aione_app_builder_account_content_shortcode' );
+
 		$this->loader->add_shortcode( 'view_profile', $plugin_public, 'aione_app_builder_profile_shortcode' );
-		//to_be_deleted
-		$this->loader->add_shortcode( 'profile', $plugin_public, 'aione_app_builder_profile_shortcode' );
+		
 		$this->loader->add_shortcode( 'edit_profile', $plugin_public, 'aione_app_builder_edit_profile_shortcode' );
-		//to_be_deleted
-		$this->loader->add_shortcode( 'edit-profile', $plugin_public, 'aione_app_builder_edit_profile_shortcode' );
+		
 		$this->loader->add_shortcode( 'change_password', $plugin_public, 'aione_app_builder_change_password_shortcode' );
-		//to_be_deleted
-		$this->loader->add_shortcode( 'change-password', $plugin_public, 'aione_app_builder_change_password_shortcode' );
+		
 		$this->loader->add_shortcode( 'home_url', $plugin_public, 'aione_app_builder_home_url_shortcode' );
+
 		$this->loader->add_shortcode( 'url', $plugin_public, 'aione_app_builder_url_shortcode' );
+
 		$this->loader->add_shortcode( 'post_count', $plugin_public, 'aione_app_builder_post_count_shortcode' );
+
 		$this->loader->add_shortcode( 'posts', $plugin_public, 'aione_app_builder_posts_shortcode' );
 		$this->loader->add_shortcode( 'post', $plugin_public, 'aione_app_builder_post_shortcode' );
-		// to be deleted
-		$this->loader->add_shortcode( 'list-posts', $plugin_public, 'aione_app_builder_posts_shortcode' );
+		$this->loader->add_shortcode( 'post_meta', $plugin_public, 'aione_app_builder_post_meta_shortcode' );
+		
 		$this->loader->add_shortcode( 'list_comments', $plugin_public, 'aione_app_builder_list_comments_shortcode' );
-		// $this->loader->add_shortcode( 'faq', $plugin_public, 'aione_app_builder_faq_shortcode' );
+		
 		$this->loader->add_shortcode( 'user_count', $plugin_public, 'aione_app_builder_count_users_shortcode' );
+		
 		$this->loader->add_shortcode( 'users', $plugin_public, 'aione_app_builder_users_shortcode' );
 		$this->loader->add_shortcode( 'user', $plugin_public, 'aione_app_builder_user_shortcode' );
 		$this->loader->add_shortcode( 'user_meta', $plugin_public, 'aione_app_builder_user_meta_shortcode' );
+
 		$this->loader->add_shortcode( 'welcome', $plugin_public, 'aione_app_builder_welcome_shortcode' );
+
 		$this->loader->add_shortcode( 'blog', $plugin_public, 'aione_app_builder_blog_shortcode' );
 
 		$this->loader->add_shortcode( 'icon', $plugin_public, 'aione_app_builder_aione_icon_shortcode' );
+
 		$this->loader->add_shortcode( 'date', $plugin_public, 'aione_app_builder_date_shortcode' );
 		$this->loader->add_shortcode( 'info', $plugin_public, 'aione_app_builder_info_shortcode' );
 
@@ -298,13 +301,17 @@ class Aione_App_Builder {
 		// POST SHORTCODES
 
 		// Post ID $post->ID
-		$this->loader->add_shortcode( 'post', $plugin_public, 'aione_app_builder_post_shortcode' );
+		
 		$this->loader->add_shortcode( 'id', $plugin_public, 'aione_app_builder_post_id_shortcode' );
 		$this->loader->add_shortcode( 'link', $plugin_public, 'aione_app_builder_post_link_shortcode' );
+
 		$this->loader->add_shortcode( 'title', $plugin_public, 'aione_app_builder_post_title_shortcode' );
+
 		$this->loader->add_shortcode( 'content', $plugin_public, 'aione_app_builder_post_content_shortcode' );
-		$this->loader->add_shortcode( 'author', $plugin_public, 'aione_app_builder_author_shortcode' );
+
 		$this->loader->add_shortcode( 'featured_image', $plugin_public, 'aione_app_builder_post_featured_image_shortcode' );
+		
+		$this->loader->add_shortcode( 'author', $plugin_public, 'aione_app_builder_author_shortcode' );
 		//to_be_deleted
 		$this->loader->add_shortcode( 'featured-image', $plugin_public, 'aione_app_builder_post_featured_image_shortcode' );
 		$this->loader->add_shortcode( 'attached_media', $plugin_public, 'aione_app_builder_post_attached_media_shortcode' );
@@ -312,7 +319,7 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'attached-media', $plugin_public, 'aione_app_builder_post_attached_media_shortcode' );
 		$this->loader->add_shortcode( 'tags', $plugin_public, 'aione_app_builder_post_tags_shortcode' );
 		$this->loader->add_shortcode( 'categories', $plugin_public, 'aione_app_builder_post_categories_shortcode' );
-		$this->loader->add_shortcode( 'post_meta', $plugin_public, 'aione_app_builder_post_meta_shortcode' );
+		
 		$this->loader->add_shortcode( 'custom-field', $plugin_public, 'aione_app_builder_post_meta_shortcode' );
 		$this->loader->add_shortcode( 'custom-fields', $plugin_public, 'aione_app_builder_post_custom_fields_shortcode' );
 
@@ -335,8 +342,7 @@ class Aione_App_Builder {
 		//to_be_deleted
 		$this->loader->add_shortcode( 'add-new', $plugin_public, 'aione_app_builder_add_new_shortcode' );
 
-		//pyre_per_page_settings in single array
-		//$this->loader->add_shortcode( 'pyre_per_page_settings', $plugin_public, 'pyre_per_page_settings_shortcode' );
+		
 		
 		
 	}

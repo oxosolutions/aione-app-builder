@@ -44,6 +44,16 @@
 				</td>
 				</tr>
 				<tr>
+					<td>Reset Password Link</td>
+					<td>[reset_password_link]</td>
+					<td>
+<pre>
+'class' => '', //CSS class for Register link
+'text'  => 'Reset Password' //Default Text to be shown 
+</pre>
+				</td>
+				</tr>
+				<tr>
 					<td>logout Link</td>
 					<td>[logout_link]</td>
 					<td>
@@ -103,7 +113,7 @@
 					<td>[login]</td>
 					<td>
 <pre>
-'echo'           => false, // true/false
+'echo'           => 'false', // true/false
 'redirect'       => Page set in set pages,  //Link to redirect after login
 'form_id'        => 'loginform', //CSS Id for login form
 'label_username' => __( 'Username' ),//Label for username input
@@ -114,138 +124,17 @@
 'id_password'    => 'user_pass',  //CSS Id for password input
 'id_remember'    => 'rememberme',  //CSS Id for Remember me input
 'id_submit'      => 'wp-submit',  //CSS Id for login Button
-'social_login'   => 'no', //Whether social login or not
 </pre>
 				</td>
 				</tr>
 				
-				
-				<tr>
-					<td>View Profile</td>
-					<td>[view_profile]</td>
-					<td></td>
-				</tr>
-				<tr>
-					<td>Edit Profile</td>
-					<td>[edit_profile]</td>
-					<td></td>
-				</tr>
-				<tr>
-					<td>Change Password</td>
-					<td>[change_password]</td>
-					<td></td>
-				</tr>
-				<tr>
-					<td>Reset Password</td>
-					<td>[reset_password]</td>
-					<td></td>
-				</tr>
-				<tr>
-					<td>Home URL</td>
-					<td>[home_url]</td>
-					<td></td>
-				</tr>
-				<tr>
-					<td>URL</td>
-					<td>[url]</td>
-					<td>
-<pre>
-'type'           => '',
-'id'             => '0',
-'path'           => '',
-'title'          => '',
-'action'         => 'logout',
-</pre>
-				</td>
-				</tr>
-				<tr>
-					<td>Post Count</td>
-					<td>[post_count]</td>
-					<td>
-<pre>
-'post_type'      => 'post',
-'status'		=> 'publish',
-'cat'            => '',
-'cat_id'         => '',
-'author'         => '',
-'author_id'      => '',
-'count'          => '',
-'order'			=> 'DESC',
-'orderby'		=> 'date',
-'template'       => '', // slug of aione template
-'pagination'     => 'yes', // no
-'id'             => '',
-'class'          => ''	
-</pre></td>
-				</tr>
-				<tr>
-					<td>List Posts</td>
-					<td>[posts]</td>
-					<td>
-<pre>
-'post_type'      => 'post',
-'status'		=> 'publish',
-'cat'            => '',
-'cat_id'         => '',
-'author'         => '',
-'author_id'      => '',
-'meta_key'      => '',
-'meta_value'      => '',
-'posts_per_page'          => '',
-'offset'          => '',
-'order'			=> 'DESC',
-'orderby'		=> 'date',
-'template'       => '', // slug of aione template
-'pagination'     => 'yes', // no
-'id'             => '',
-'class'          => ''	
-</pre></td>
-				</tr>
-				<tr>
-					<td>Post</td>
-					<td>[post]</td>
-					<td>
-<pre>
-'post_id'      => 'null',
-'template'       => '', // slug of aione template
-'id'             => '',
-'class'          => ''	
-</pre>
-					</td>
-				</tr>
-				<tr>
-					<td>Post Meta</td>
-					<td>[post_meta]</td>
-					<td>
-<pre>
-'post_id' => '', //Post ID
-'field' => 'field_5bc5a7afa60b0', //acf field_key
-'show_label' => 'no', //yes
-'template' => '', //slug of aione template (work only if field type is Post Object)
-'style' => 'div', //table/div/list/ Leave empty for no html
-'id'             => '', //CSS ID
-'class'          => '' //CSS class
-</pre>
-					</td>
-				</tr>
-				<tr>
-					<td>List Comments</td>
-					<td>[list_comments]</td>
-					<td>
-<pre>
-'count'          => '',
-'id'             => '',
-'class'          => ''						
-</pre></td>
-				</tr>
-
 				<tr>
 					<td>Register Form</td>
 					<td>[register]</td>
 					<td>
 <pre>
-'echo'           => false, // true/false
-'captcha'           => true, // true/false
+'echo'           => 'false', // true/false
+'captcha'           => 'true', // true/false
 'form_id'        => 'aione_registration_form',  //CSS Id for Registeration form
 'show_firstname' => 'yes', //Label for Username Input
 'show_lastname'  => 'yes',
@@ -264,6 +153,119 @@
 </pre>
 					</td>
 				</tr>
+
+				<tr>
+					<td>Reset Password</td>
+					<td>[reset_password]</td>
+					<td></td>
+				</tr>
+				
+				<tr>
+					<td>View Profile</td>
+					<td>[view_profile]</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Edit Profile</td>
+					<td>[edit_profile]</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Change Password</td>
+					<td>[change_password]</td>
+					<td></td>
+				</tr>
+				
+				<tr>
+					<td>Home URL</td>
+					<td>[home_url]</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>URL</td>
+					<td>[url]</td>
+					<td>
+<pre>
+'id'             => '123', id of page/post
+'path'           => 'home', //Page/Post path (Not for custom post type)
+'title'          => '', //Page/Post title (Not for custom post type)
+</pre>
+				</td>
+				</tr>
+				<tr>
+					<td>Post Count</td>
+					<td>[post_count]</td>
+					<td>
+<pre>
+'post_type'      => 'post',
+'status'		=> 'publish',
+'cat'            => '', // category slug
+'cat_id'         => '', // category ID 
+'author'         => '', // user nice_name
+'author_id'      => '', // user ID
+'order'			=> 'DESC',
+'orderby'		=> 'date'
+</pre></td>
+				</tr>
+				<tr>
+					<td>List Posts</td>
+					<td>[posts]</td>
+					<td>
+<pre>
+'post_type'      => 'post',
+'status'		=> 'publish',
+'cat'            => '',
+'cat_id'         => '',
+'author'         => '',
+'author_id'      => '',
+'meta_key'      => '',
+'meta_value'      => '',
+'posts_per_page'  => '-1',
+'offset'          => '',
+'order'			=> 'DESC',
+'orderby'		=> 'date',
+'template'       => '', // slug of aione template
+'pagination'     => 'yes', // no
+'id'             => '',
+'class'          => ''	
+</pre></td>
+				</tr>
+				<tr>
+					<td>Post</td>
+					<td>[post]</td>
+					<td>
+<pre>
+'post_id'      => '', Post ID
+'template'       => '', // slug of aione template
+'id'             => '',
+'class'          => ''	
+</pre>
+					</td>
+				</tr>
+				<tr>
+					<td>Post Meta</td>
+					<td>[post_meta]</td>
+					<td>
+<pre>
+'post_id' => '', //Post ID
+'field' => 'field_5bc5a7afa60b0', //acf field_key
+'show_label' => 'no', //yes
+'class'          => '' //CSS class
+</pre>
+					</td>
+				</tr>
+				<tr>
+					<td>List Comments</td>
+					<td>[list_comments]</td>
+					<td>
+<pre>
+'count'          => '',
+'id'             => '',
+'class'          => ''						
+</pre></td>
+				</tr>
+
+				
 				<tr>
 					<td>User Count</td>
 					<td>[user_count]</td>
@@ -278,12 +280,33 @@
 </td>
 					</tr>
 					<tr>
+					<td>List or Users</td>
+					<td>[users]</td>
+					<td>
+<pre>
+'site'           =>  1, // ID of site in case of multisite
+'style'          => 'table', only table or keep it blank
+'columns'        => 'Username', //Headers for the columns. Seperated with | 
+'fields'         => 'user_login', //keys of fields and custom fields to be dispayed.
+					Seperated with | 
+					user_pass is not allowed 
+					For custom fields : {{slug}}
+'role'           => '', //Get users of a perticular role
+'roles'          => '', //Get users of a roles saperated by comma
+'template'       => '', 
+'include'       => '', 
+'exclude'       => '', 
+</pre>
+				</td>
+				</tr>
+					<tr>
 						<td>Details about Single User</td>
 						<td>[user]</td>
 						<td>
 <pre>
 'user_id'        => '', // ID of user
 'field'          => 'user_login', //key of field and custom field to be dispayed
+				For custom fields : {{slug}}
 'template'     => '', 
 </pre>
 						</td>
@@ -297,8 +320,7 @@
 'field'          => 'first_name', //key of field and custom field to be dispayed
 'show_label'     => 'no', //yes
 'class'			=> '', //css class
-'id'			=> '', //css id
-'style'			=> 'div',
+'style'			=> 'div', //Leave empty for no html
 </pre>
 						</td>
 					</tr>
@@ -369,23 +391,7 @@
 						<a href="https://developer.wordpress.org/reference/functions/get_bloginfo/" target="_blank">Supported Parameters</a></td>
 					</td>
 				</tr>
-				<tr>
-					<td>List or Users</td>
-					<td>[users]</td>
-					<td>
-<pre>
-'site'           =>  1, // ID of site in case of multisite
-'style'          => 'table',
-'columns'        => 'Username', //Headers for the columns
-'fields'         => 'user_login', //keys of fields and custom fields to be dispayed
-'role'           => '', //Get users of a perticular role
-'roles'          => '', //Get users of a roles saperated by comma
-'template'       => '', 
-'include'       => '', 
-'exclude'       => '', 
-</pre>
-				</td>
-				</tr>
+				
 
 				<tr>
 					<td>Post ID</td>
@@ -424,9 +430,9 @@
 	<td>
 <pre>
 'post_id' => '', //Post ID
-'expert' => 'false', //true
-'expert-length' => '20',
-'more-text' => 'Read More...'
+'excerpt' => 'false', //true/false
+'excerpt_length' => '30',
+'more_text' => '...'
 'class' => ' ',
 'id' => ' '
 </pre>

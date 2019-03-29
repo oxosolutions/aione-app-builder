@@ -828,7 +828,6 @@ class Aione_App_Builder_Public {
 				'id_password'    => 'user_pass',
 				'id_remember'    => 'rememberme',
 				'id_submit'      => 'wp-submit',
-				'social_login'      => 'no',
 			), $atts )
 		);
 		
@@ -1106,7 +1105,7 @@ class Aione_App_Builder_Public {
 		extract( shortcode_atts(
 			array(
 				'echo'           => false,
-				'captcha'        => true,
+				'captcha'        => "true",
 				'form_id'        => 'aione_registration_form',
 				'show_firstname' => 'yes',
 				'show_lastname' 	=> 'yes',
@@ -1171,7 +1170,7 @@ class Aione_App_Builder_Public {
 					$user_last		= $_POST["aione_user_lname"];
 
 					
-					if($captcha == true){
+					if($captcha == "true"){
 						if (class_exists('ReallySimpleCaptcha'))  {
 							$captcha_value= $_POST['captcha_value'];
 							$prefix = $_POST['captcha_prefix'];
@@ -1300,7 +1299,7 @@ class Aione_App_Builder_Public {
 		} //END aione_app_builder_register_shortcode()
 
 		public function aione_app_builder_user_registration_form($args) {
-			if($args['captcha'] == true){
+			if($args['captcha'] == "true"){
 				if (class_exists('ReallySimpleCaptcha'))  {
 					
 					$captcha_instance = new ReallySimpleCaptcha();
@@ -1363,7 +1362,7 @@ class Aione_App_Builder_Public {
 			</div>
 
 			';
-			if($args['captcha'] == true){
+			if($args['captcha'] == "true"){
 				if (class_exists('ReallySimpleCaptcha'))  {	
 					$word = $captcha_instance->generate_random_word();
 					$prefix = mt_rand();
@@ -1711,14 +1710,12 @@ class Aione_App_Builder_Public {
 			$username = $user->user_login;
 			$value = get_user_meta($user_id);
 			
-			$action = $_GET['action'];
-			
-			//if($action == "edit-profile") {
+			//echo "<pre>";print_r($_POST);echo "</pre>";
 			
 			if(isset($_POST['update_profile'])  && $_POST['update_profile'] == 'update_profile'){
 				$first_name = $_POST['aione_user_fname'];
 				$last_name = $_POST['aione_user_lname'];
-				$custom_fields = $_POST['fields'];
+				$custom_fields = $_POST['acf'];
 				wp_update_user( array( 'ID' => $user_id, 'first_name' => $first_name, 'last_name' => $last_name  ) );
 				foreach($custom_fields as $custom_field_key => $custom_field){
 					update_field($custom_field_key , $custom_field, "user_".$user_id);
@@ -1746,9 +1743,15 @@ class Aione_App_Builder_Public {
 			';
 			
 			$field_groups = get_option('aione_app_builder_registration_custom_field_groups');
-			if(!is_array($field_groups)){
-				$field_groups = array($field_groups);
+			
+			if(!empty($field_groups)){
+				if(!is_array($field_groups)){
+					$field_groups = array($field_groups);
+				}
+			} else {
+				$field_groups = array();
 			}
+			
 			$options = array(
 				'post_id'	            => 'user_'.$user_id,
 				'form'                  => false,
@@ -1761,12 +1764,12 @@ class Aione_App_Builder_Public {
 				'submit_value'	        => 'Submit',
 				'updated_message'	    => 'Updated Successfully',
 			);
-
+			
 			ob_start();
 			acf_form($options);
 			$output .= ob_get_contents();
 			ob_end_clean();
-			//}
+			
 		} else {
 			$output .= "";
 		}	
@@ -1864,7 +1867,7 @@ class Aione_App_Builder_Public {
 	public function aione_app_builder_url_shortcode( $atts ) {
 		extract( shortcode_atts(
 			array(
-				'type' 		=> '',
+				
 				'id' 		=> '0',
 				'path' 		=> '',
 				'title' 	=> '',
@@ -1889,12 +1892,6 @@ class Aione_App_Builder_Public {
 				$page_id = get_page_by_title($title);
 			}
 			
-			if($action != ''){
-				if($action == 'logout'){
-					return wp_logout_url();
-				}	
-			}
-			
 			if ($page_id) {
 				return get_page_link($page_id);
 			} else {
@@ -1906,7 +1903,7 @@ class Aione_App_Builder_Public {
 	public function aione_app_builder_post_count_shortcode( $atts ) {
 
 		// Attributes
-		shortcode_atts(
+		extract(shortcode_atts(
 			array(
 				'post_type'			=> 'post',
 				'status'			=> array('publish'),
@@ -1918,11 +1915,7 @@ class Aione_App_Builder_Public {
 				'post_count'		=> '999999999',
 				'order'				=> 'DESC',
 				'orderby'			=> 'date',
-				'template'			=> '',
-				'pagination'		=> 'yes',
-				'id'				=> '',
-				'class'				=> ''	
-			), $atts, 'posts'
+			), $atts, 'post_count')
 		);
 
 		$atts = $this->clean_shortcode_parameters( $atts );
@@ -1931,54 +1924,31 @@ class Aione_App_Builder_Public {
 
 		$output = "";
 
-		if( !empty( $atts['status'] ) ){
-			$status = explode( ',', $atts['status'] );
+		if( !empty( $status ) ){
+			$status = explode( ',', $status );
 		}
-		/*
-		echo "<pre>";
-		print_r( $atts );
-		echo "</pre>";
-		*/
-
+		
 
 		// WP_Query arguments
 		$args = array (
-			'post_type'				=> $atts['post_type'],
+			'post_type'				=> $post_type,
 			'post_status'			=> $status,
-			'cat'					=> $atts['cat_id'],
-			'category_name'			=> $atts['cat'],
-			'author'				=> $atts['author_id'],
-			'author_name'			=> $atts['author'],
-			'pagination'			=> false,
-			'posts_per_page'		=> $atts['posts_per_page'],
-			'post_count'			=> $atts['post_count'],
+			'cat'					=> $cat_id,
+			'category_name'			=> $cat,
+			'author'				=> $author_id,
+			'author_name'			=> $author,
+			'posts_per_page'		=> $posts_per_page,
+			'post_count'			=> $post_count,
 			'ignore_sticky_posts'	=> false,
-			'order'					=> $atts['order'],
-			'orderby'				=> $atts['orderby'],
+			'order'					=> $order,
+			'orderby'				=> $orderby,
 			'cache_results'			=> true,
 			'update_post_meta_cache'=> true,
 			'update_post_term_cache'=> true,
 		);
-
-		/*
-
-
-		echo "<pre>";
-		print_r( $args );
-		echo "</pre>";
-		*/
-
-
-
+		
 		$posts = new WP_Query( $args );
-		/*
-
-		echo "<pre>";
-		print_r( $posts );
-		echo "</pre>";
-		*/
-
-
+		
 		$output = $posts->found_posts;
 			
 		return $output;
@@ -1989,7 +1959,7 @@ class Aione_App_Builder_Public {
 	public function aione_app_builder_posts_shortcode( $atts ) {
 
 		// Attributes
-		shortcode_atts( array(
+		extract(shortcode_atts( array(
 			'post_type'			=> 'post',
 			'status'			=> 'publish',
 			'cat'				=> '',
@@ -1998,16 +1968,15 @@ class Aione_App_Builder_Public {
 			'author_id'			=> '',
 			'meta_key'			=> '',
 			'meta_value'		=> '',
-			//'count'				=> '',
 			'offset'			=> '',
-			'posts_per_page'	=> '',
+			'posts_per_page'	=> -1,
 			'order'				=> 'DESC',
 			'orderby'			=> 'date',
 			'template'			=> '',
 			'pagination'		=> 'yes',
 			'id'				=> '',
 			'class'				=> ''	
-		), $atts, 'posts');
+		), $atts, 'posts'));
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 		
@@ -2015,7 +1984,7 @@ class Aione_App_Builder_Public {
 
 		$output = "";
 
-		$status = explode(',',$atts['status']);
+		$status = explode(',',$status);
 
 
 
@@ -2024,39 +1993,34 @@ class Aione_App_Builder_Public {
 	    // $total_pages = $wp_query->max_num_pages;
 
 	    if( $current_page > 0 ){
-	    	$atts['offset'] = $atts['posts_per_page'] * ( $current_page - 1);
+	    	$offset = $posts_per_page * ( $current_page - 1);
 
 	    }
 
 
-	    // $output .= '<br>PAGE = '.$current_page;
-
-
 		// WP_Query arguments
 		$args = array (
-			'post_type'				=> $atts['post_type'],
-			'post_status'			=> $atts['status'],
-			'cat'					=> $atts['cat_id'],
-			'category_name'			=> $atts['cat'],
-			'author'				=> $atts['author_id'],
-			'author_name'			=> $atts['author'],
-			'meta_key'				=> $atts['meta_key'],
-			'meta_value'			=> $atts['meta_value'],
-			'posts_per_page'		=> $atts['posts_per_page'],
-			'offset'				=> $atts['offset'],
+			'post_type'				=> $post_type,
+			'post_status'			=> $status,
+			'cat'					=> $cat_id,
+			'category_name'			=> $cat,
+			'author'				=> $author_id,
+			'author_name'			=> $author,
+			'meta_key'				=> $meta_key,
+			'meta_value'			=> $meta_value,
+			'posts_per_page'		=> $posts_per_page,
+			'offset'				=> $offset,
 			'ignore_sticky_posts'	=> false,
-			'order'					=> $atts['order'],
-			'orderby'				=> $atts['orderby'],
+			'order'					=> $order,
+			'orderby'				=> $orderby,
 			'cache_results'			=> true,
 			'update_post_meta_cache'=> true,
 			'update_post_term_cache'=> true,
 		);
-
+		
 		$posts = new WP_Query($args);
 
 		$is_template = false;
-
-		$template = $atts['template'];
 
 		if( !empty( $template ) ) {
 			$aione_templates = @get_option( 'aione-templates' );
@@ -2071,7 +2035,7 @@ class Aione_App_Builder_Public {
 			$id_attribute = 'id="'.$id.'"';
 		}
 
-		//echo "<pre>";print_r($is_template);echo "</pre>";
+		
 		if( $posts->have_posts() ){
 			if( $is_template ){
 				$output .= '<div class="aione-template type-archive '.$template.'">';
@@ -2083,20 +2047,13 @@ class Aione_App_Builder_Public {
 				if( $is_template ){
 					$output .= do_shortcode( $aione_template );
 				} else { 
-
-					if(has_post_thumbnail()){
+					if(has_post_thumbnail($post->ID)){
 						$output .= '<div class="post-image">';
 						$output .= '<a href="'.get_permalink().'">';
 						$output .= 	get_the_post_thumbnail($post->ID,'tabs-img');
 						$output .= '</a>';
 						$output .= '</div>';
-					} else {
-						$output .= '<div class="post-image">';
-						$output .= '<a href="'.get_permalink().'">';
-						$output .= 	'<img width="52" height="50" src="'.plugin_dir_url( __FILE__ ).'/assets/images/placeholder_grey_52x50.png" class="attachment-tabs-img wp-post-image" alt="'.get_the_title().'" >';
-						$output .= '</a>';
-						$output .= '</div>';						
-					}
+					} 
 					$output .= '<div class="post-holder">';
 					$output .= '<a href="'.get_permalink().'" class="post-title">'.get_the_title().'</a>';
 					$output .= '<div class="post-meta">';
@@ -2116,7 +2073,7 @@ class Aione_App_Builder_Public {
 
 			wp_reset_postdata();
 
-			if( $atts['pagination'] == 'yes' ) {				
+			if( $pagination == 'yes' ) {				
 				$output .= aione_pagination( $posts );
 			}
 
@@ -2131,22 +2088,20 @@ class Aione_App_Builder_Public {
 		global $post, $theme_options;
 
 		// Attributes
-		$atts = shortcode_atts( array(
+		extract(shortcode_atts( array(
 			'post_id'	=> $post->ID,
 			'template'	=> '',
 			'id'		=> '',
 			'class'		=> ''	
-		), $atts, 'post' );
+		), $atts, 'post' ));
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 
 		$output = "";
 
-		$post =  get_post( $atts['post_id'] );
+		$post =  get_post( $post_id );
 
 		$is_template = false;
-
-		$template = $atts['template'];
 
 		if( !empty( $template ) ) {
 			$aione_templates = @get_option( 'aione-templates' );
@@ -2169,7 +2124,7 @@ class Aione_App_Builder_Public {
 				$output .= do_shortcode( $aione_template );
 				$output .= '</div>';
 			} else{
-				$output .= '<h5 class="font-size-16 align-center">template does not exist</h5>';
+				$output .= '<h5 class="font-size-16 align-center">Template does not exist</h5>';
 			}
 		} else{
 			$output .= '<h5 class="font-size-16 align-center">Post does not exist</h5>';
@@ -2345,12 +2300,12 @@ class Aione_App_Builder_Public {
 		extract( shortcode_atts(
 			array(
 				'site' 		=>  $GLOBALS['blog_id'],
-				'include'      => array(),
-				'exclude'      => array(),
+				'include'   => '',
+				'exclude'   => '',
 				'role' 		=> '',
 				'roles' 	=> '',
 			), $atts )
-	);
+		);
 		
 		$output = "";
 		
@@ -2359,18 +2314,28 @@ class Aione_App_Builder_Public {
 		} else {
 			$roles = array();
 		}
+		if(!empty($include)){
+			$include = explode(",", $include);
+		} else {
+			$include = array();
+		}
+		if(!empty($exclude)){
+			$exclude = explode(",", $exclude);
+		} else {
+			$exclude = array();
+		}
 		$args = array(
 			'blog_id'      => $site,
 			'role'         => $role,
-			'role__in'     => explode( ",", $atts['roles'] ),
+			'role__in'     => $roles,
 			'role__not_in' => array(),
 			'meta_key'     => '',
 			'meta_value'   => '',
 			'meta_compare' => '',
 			'meta_query'   => array(),
 			'date_query'   => array(),        
-			'include'      => explode( ",", $atts['include'] ),
-			'exclude'      => explode( ",", $atts['exclude'] ),
+			'include'      => $include,
+			'exclude'      => $exclude,
 			'orderby'      => 'login',
 			'order'        => 'ASC',
 			'offset'       => '',
@@ -2380,71 +2345,16 @@ class Aione_App_Builder_Public {
 			'fields'       => 'all',
 			'who'          => ''
 		);
+		//echo "<pre>";print_r($args);echo "</pre>";
 		$users = get_users( $args );
-		
-		//echo count($users);
 		return count($users);
-		// if($style == 'table'){
 		
-		// 	$columns = explode("|", $columns); 
-		// 	$fields = explode("|", $fields); 
-		
-		// 	$output .= '<div class="aione-table">';
-		// 	$output .= '<table class="compact">';
-		// 	$output .= '<thead>';
-		// 	$output .= '<tr>';
-		
-		// 	foreach ( $columns as $column ) {
-		// 		$output .= '<th>'.$column.'</th>';
-		// 	}
-		
-		// 	$output .= '</tr>';
-		// 	$output .= '</thead>';
-		// 	$output .= '<tbody>';
-		
-		// 	// Array of WP_User objects.
-		// 	foreach ( $users as $user ) {
-		
-		// 		$user_id = $user->ID;
-		
-		// 		$output .= '<tr>';
-		// 		foreach ( $fields as $field ) {
-		// 			if( $field == 'status'){
-		// 				$output .= '<td>' . esc_html( $user->$field ) . '</td>';
-		// 			} elseif(empty($field)){
-		// 				$output .= '<td></td>';
-		// 			}elseif (preg_match("~\{\{\s*(.*?)\s*\}\}~", $field)) {
-		// 				$field = str_replace("{","",$field);
-		// 				$field = str_replace("}","",$field);
-		// 				$custom_field = get_user_meta( $user_id, $field, true ); 
-		// 				$output .= '<td>' . $custom_field . '</td>';
-		// 			}else {
-		// 				$output .= '<td>' . esc_html( $user->$field ) . '</td>';
-		// 			}
-		
-		// 		}
-		// 		$output .= '</tr>';
-		// 	}
-		
-		// 	$output .= '</tbody>';
-		// 	$output .= '</table>';
-		// 	$output .= '</div>';
-		
-		// } else{ 
-		// 	$count = 1;
-		// 	// Array of WP_User objects.
-		// 	foreach ( $users as $user ) {
-		// 		$output .= '<br><span>'.$count.'. ' . esc_html( $user->user_login ) . '</span>';
-		// 		$count++;
-		// 	}
-		// }
-		// return $output;
 	}
 
 	public function aione_app_builder_users_shortcode( $atts ) {
 
 		// Attributes
-		$atts = shortcode_atts( array(
+		extract( shortcode_atts( array(
 			'site'		=>  $GLOBALS['blog_id'],
 			'style'		=> 'table',
 			'columns'	=> 'Username',
@@ -2454,24 +2364,24 @@ class Aione_App_Builder_Public {
 			'template'	=> '',
 			'role'		=> '',
 			'roles'		=> array(),
-		), $atts, 'users' );
+		), $atts, 'users' ));
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 
 		$output = "";
 		
 		$args = array(
-			'blog_id'      => $atts['site'],
-			'role'         => $atts['role'],
-			'role__in'     => explode( ",", $atts['roles'] ),
+			'blog_id'      => $site,
+			'role'         => $role,
+			'role__in'     => explode( ",", $roles ),
 			'role__not_in' => array(),
 			'meta_key'     => '',
 			'meta_value'   => '',
 			'meta_compare' => '',
 			'meta_query'   => array(),
 			'date_query'   => array(),        
-			'include'      => explode( ",", $atts['include'] ),
-			'exclude'      => explode( ",", $atts['exclude'] ),
+			'include'      => explode( ",", $include ),
+			'exclude'      => explode( ",", $exclude ),
 			'orderby'      => 'login',
 			'order'        => 'ASC',
 			'offset'       => '',
@@ -2484,10 +2394,6 @@ class Aione_App_Builder_Public {
 
 		$users = get_users( $args );
 		//echo "<pre>";print_r($users);echo "</pre>";
-
-
-		$template = $atts['template'];
-
 
 		if( !empty( $template ) ){
 			$aione_templates		= get_option( 'aione-templates' );
@@ -2506,10 +2412,10 @@ class Aione_App_Builder_Public {
 
 			$output .= '</div>';
 		} else {
-			if($atts['style'] == 'table') {
+			if($style == 'table') {
 			
-				$columns = explode("|", $atts['columns']); 
-				$fields = explode("|", $atts['fields']); 
+				$columns = explode("|", $columns); 
+				$fields = explode("|", $fields); 
 				
 				$output .= '<div class="users aione-table">';
 				$output .= '<table class="compact">';
@@ -2531,16 +2437,15 @@ class Aione_App_Builder_Public {
 					
 					$output .= '<tr>';
 					foreach ( $fields as $field ) {
-						if( $field == 'status'){
-							$output .= '<td>' . esc_html( $user->$field ) . '</td>';
-						} elseif(empty($field)){
+						
+						if(empty($field) || $field == 'user_pass'){ 
 							$output .= '<td></td>';
-						}elseif (preg_match("~\{\{\s*(.*?)\s*\}\}~", $field)) {
+						}elseif (preg_match("~\{\{\s*(.*?)\s*\}\}~", $field)) { 
 							$field = str_replace("{","",$field);
 							$field = str_replace("}","",$field);
 							$custom_field = get_user_meta( $user_id, $field, true ); 
 							$output .= '<td>' . $custom_field . '</td>';
-						}else {
+						}else { 
 							$output .= '<td>' . esc_html( $user->$field ) . '</td>';
 						}
 						
@@ -2573,22 +2478,18 @@ class Aione_App_Builder_Public {
 		$user = wp_get_current_user();
 		$userid = $user->ID;
 
-		$atts = shortcode_atts( array(
+		extract(shortcode_atts( array(
 			'user_id'		=> $userid, // ID of user
 			'field'			=> 'user_login', //key of field and custom field to be dispayed
 			'template'		=> '', //field/meta
-		), $atts, 'user' );
+		), $atts, 'user' ));
 
 		$output = "";
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 		
-		$user = get_user_by( 'id', $atts['user_id'] );
+		$user = get_user_by( 'id', $user_id );
 		$user = $user->data;
-
-		$field = $atts['field'];
-
-		$template = $atts['template'];
 
 		if( !empty( $template ) ){
 			$aione_templates		= get_option( 'aione-templates' );
@@ -2601,7 +2502,12 @@ class Aione_App_Builder_Public {
 		} else{
 			if( $field == 'user_pass' ){
 				$output .= '';
-			} else {
+			} elseif (preg_match("~\{\{\s*(.*?)\s*\}\}~", $field)) { 
+				$field = str_replace("{","",$field);
+				$field = str_replace("}","",$field);
+				$custom_field = get_user_meta( $user_id, $field, true ); 
+				$output .= $custom_field;
+			}else {
 				$output .= $user->$field;
 			}
 		}
@@ -2615,26 +2521,25 @@ class Aione_App_Builder_Public {
 		$user = wp_get_current_user();
 		$current_user_id = $user->ID;
 
-		$atts = shortcode_atts( array(
+		extract( shortcode_atts( array(
 			'user_id'		=> $current_user_id, // ID of user
 			'field'			=> 'first_name', //key of field and custom field to be dispayed
 			'show_label'	=> 'no', //show field label
 			'class'			=> '',
-			'id'			=> '',
-			'style'			=> '',
-		), $atts, 'user_meta' );
+			'style'			=> 'div',
+		), $atts, 'user_meta' ));
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 
 		$output = "";
 
-		$field = get_field_object( $atts['field'], 'user_'.$atts['user_id'] );
+		$field = get_field_object( $field, 'user_'.$user_id);
 
 		if( $field ){
-			$shortcode = '[post_meta post_id="user_'.$atts['user_id'].'" field="'.$field['key'].'" show_label="'.$atts['show_label'].'" class="'.$atts['class'].'" id="'.$atts['id'].'" style="'.$atts['style'].'"]';
+			$shortcode = '[post_meta post_id="user_'.$user_id.'" field="'.$field['key'].'" show_label="'.$show_label.'" class="'.$class.'" style="'.$style.'"]';
 			$output .=  do_shortcode( $shortcode );
 		} else {
-			$output .= get_user_meta( $atts['user_id'], $atts['field'], true ); 
+			$output .= get_user_meta( $user_id, $field, true ); 
 		}
  
 		return $output;	
@@ -2927,12 +2832,12 @@ class Aione_App_Builder_Public {
 	* 
 	*/
 	function aione_app_builder_aione_icon_shortcode( $atts ) {
-		$atts = shortcode_atts( array(
-			'class' => '',
-		), $atts, 'aione-icon' );
+		extract( shortcode_atts( array(
+			'class' => 'fa fa-facebook',
+		), $atts, 'icon' ));
 
 		$output = '';
-		$aione_icon = $atts['class'];
+		$aione_icon = $class;
 
 		if($aione_icon){
 			$output = '<i class="'.$aione_icon.'"></i>';
@@ -2997,17 +2902,17 @@ class Aione_App_Builder_Public {
 		return $output;
 	}
 
-	public function aione_app_builder_post_link_shortcode( $attr, $content = null ) {
+	public function aione_app_builder_post_link_shortcode( $atts, $content = null ) {
 
 		global $post;
 
-		$atts = shortcode_atts( array(
+		extract( shortcode_atts( array(
 			'post_id'	=>	$post->ID,
-		), $atts, 'link' );
+		), $atts, 'link' ));
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 
-		$output = get_permalink( $atts['post_id'] );
+		$output = get_permalink( $post_id );
 
 		return $output; 
 	}
@@ -3061,13 +2966,14 @@ class Aione_App_Builder_Public {
 	function aione_app_builder_post_content_shortcode( $atts ) {
 
 		global $post;
+
 		$atts = shortcode_atts( array(
-			'expert'		=> "false",
-			'expert-length'	=> "20",
-			'more-text'		=> "...",
-			'post_id'		=> $post->ID,
-			'class'			=> '',
-			'id'			=> '',
+			'excerpt'			=> 'false',
+			'excerpt_length'	=> '30',
+			'more_text'			=> '...',
+			'post_id'			=> $post->ID,
+			'class'				=> '',
+			'id'				=> '',
 		), $atts, 'content' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
@@ -3082,8 +2988,8 @@ class Aione_App_Builder_Public {
 		$post_object = get_post( $post_id ); 
 		$post_content = $post_object->post_content; 
 
-		if($atts['expert'] == "true"){
-			$content = wp_trim_words( $post_content, $atts['expert-length'], $atts['more-text'] );
+		if($atts['excerpt'] == "true"){
+			$content = wp_trim_words( $post_content, $atts['excerpt_length'], $atts['more_text'] );
 		} else {
 			$content = $post_content;
 		}
@@ -3323,36 +3229,22 @@ class Aione_App_Builder_Public {
 		
 		global $post;
 
-		$atts = shortcode_atts( array(
+		extract(shortcode_atts( array(
 			'post_id'		=> $post->ID,
 			'field'			=> '',
 			'show_label'	=> 'no',
-			'template'		=> '',
 			'class'			=> '',
-			'id'			=> '',
 			'style'			=> 'div', // table/div/list/ Leave empty for no html
-		), $atts, 'post_meta' );
+		), $atts, 'post_meta' ));
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 
 		$output = '';
-		
 
-		/*
-		if( get_post_status( $atts['post_id'] ) ){
-			$post_id = $atts['post_id'];
-		} else {
-			$post_id = $post->ID;
-		}
-		*/
-
-		$post_id = $atts['post_id'];
-
-		$field = get_field_object( $atts['field'], $post_id );
-
+		$field = get_field_object( $field, $post_id );
+		//echo "<pre>";print_r($field['sub_fields']);echo "</pre>";
 		if( empty( $field)  ){
-			// return get_user_meta( $atts['user_id'], $atts['field'], true ); 
-			return get_post_meta( $post_id, $atts['field'], true );
+			return get_post_meta( $post_id, $field, true );
 		} 
 
 		
@@ -3370,7 +3262,7 @@ class Aione_App_Builder_Public {
 
 		$field_classes = array(
 			'field',
-			$atts['class'],
+			$class,
 			$field_class,
 			$field['wrapper']['class'],
 			'field_type_'.$field['type'],
@@ -3378,21 +3270,22 @@ class Aione_App_Builder_Public {
 
 		$field_classes = implode(' ', $field_classes);
 
-		if($atts['style'] == "div"){
+		if($style == "div"){
 			$output .= '<div id="'.$field_id.'" class="'.$field_classes.'">';
 		}
 
-		if($atts['show_label'] == "yes"){
+		if($show_label == "yes"){
 			$output .= '<label class="field-label"><h3>'.$field['label'].'</h3></label>';
 		}
-		if($field['type'] == 'repeater'){
+		if($field['type'] == 'repeater'){ 			
 			$repeater = true;
-			if( have_rows($field['key']) ){
+			if( have_rows($field['key']) ){ 
 				$output .= '<ul class="field-rows">';
 				while( have_rows($field['key']) ){
 					the_row();
 					$output .= '<li class="field-row">';
 					$output .= '<ul class="subfields">';
+
 					foreach ($field['sub_fields'] as $sub_fields_key => $sub_field_array) {
 
 						$field_class = 'subfield_'.$sub_field_array['name'];
@@ -3430,7 +3323,7 @@ class Aione_App_Builder_Public {
 			$output .= $this->get_data_callback( $field, $post_id, $repeater, $atts );
 		}
 		
-		if($atts['style'] == "div"){
+		if($style == "div"){
 			$output .= '</div>';
 		}
 		return $output;	
@@ -4228,214 +4121,5 @@ class Aione_App_Builder_Public {
 		return $output;
 	}
 
-	function pyre_per_page_settings_shortcode(){
-		$blog_list = get_blog_list( 0, 'all' );
-		/*foreach ($blog_list AS $blog) {
-		    echo 'Blog '.$blog['blog_id'].': '.$blog['domain'].$blog['path'].'<br />';
-		    switch_to_blog( $blog['blog_id'] );
-		    global $wpdb;
-		    $querystr = "SELECT DISTINCT `post_type` FROM `aione_".$blog['blog_id']."_posts`";
-		    $query_result = $wpdb->get_results($querystr, ARRAY_N);
-		    //$post_types = get_post_types();
-		    $post_types = [];
-		    foreach ($query_result as $key => $value) {
-		    	$post_types[] = $value[0];
-		    }
-		    if(($key = array_search('acf-field',$post_types)) !== false) {
-		       unset($post_types[$key]);
-		    }
-		    if(($key = array_search('acf-field-group',$post_types)) !== false) {
-		       unset($post_types[$key]);
-		    }
-		    if(($key = array_search('nav_menu_item',$post_types)) !== false) {
-		       unset($post_types[$key]);
-		    } 
-		    if(($key = array_search('revision',$post_types)) !== false) {
-		       unset($post_types[$key]);
-		    }
-		    if(($key = array_search('wp_block',$post_types)) !== false) {
-		       unset($post_types[$key]);
-		    }
-		    if(($key = array_search('attachment',$post_types)) !== false) {
-		       unset($post_types[$key]);
-		    }
-
-		    $default_settings = array(
-			    'pyre_show_top_bar' => 'default',
-			    'pyre_top_bar_100_width' => 'default',
-			    'pyre_header_enable' => 'default',
-			    'pyre_header_100_width' => 'default',
-			    'pyre_header_show_logo' => 'default',
-			    'pyre_header_show_site_title' => 'default',
-			    'pyre_header_show_tagline' => 'default',
-			    'pyre_header_show_navigation' => 'default',
-			    'pyre_displayed_menu' => 'default',
-			    'pyre_main_nav_show_home_icon' => 'default',
-			    'pyre_main_nav_show_home_link' => 'default',
-			    'pyre_main_nav_show_description' => 'default',
-			    'pyre_main_nav_search_icon' => 'default',
-			    'pyre_menu_display_dropdown_indicator' => 'default',
-			    'pyre_header_show_banner' => 'default',
-			    'pyre_slidingbar_widgets' => 'default',
-			    'pyre_slider_enable' => 'default',
-			    'pyre_slider_100_width' => 'default',
-			    'pyre_select_slider' => 'default',
-			    'pyre_page_title_bar' => 'default',
-			    'pyre_page_title_100_width' => 'default',
-			    'pyre_page_title_bar_enable_title' => 'default',
-			    'pyre_page_title_bar_enable_description' => 'default',
-			    'pyre_page_title_bar_description_text' => '',
-			    'pyre_page_100_width' => 'default',
-			    'pyre_page_top_area_enable' => 'default',
-			    'pyre_page_top_area_100_width' => 'default',
-			    'pyre_page_bottom_area_enable' => 'default',
-			    'pyre_page_bottom_area_100_width' => 'default',
-			    'pyre_page_padding_enable' => 'default',
-			    'pyre_sidebar_left_enable' => 'default',
-			    'pyre_sidebar_left' => 'default',
-			    'pyre_sidebar_right_enable' => 'default',
-			    'pyre_sidebar_right' => 'default',
-			    'pyre_content_top_area_enable' => 'default',
-			    'pyre_content_bottom_area_enable' => 'default',
-			    'pyre_page_content_padding_enable' => 'default',
-			    'pyre_footer_widgets' => 'default',
-			    'pyre_footer_100_width' => 'default',
-			    'pyre_footer_copyright' => 'default',
-			    'pyre_footer_copyright_100_width' => 'default',
-			    'pyre_custom_css' => '',
-			    'pyre_custom_js' => '',
-			    'pyre_title_tag' => '',
-			    'pyre_meta_description' => '',
-			    'pyre_meta_keywords' => '',
-			    'pyre_og_title' => '',
-			    'pyre_og_description' => '',
-			    'pyre_og_image' => '',
-			    'pyre_og_url' => '',
-			);
-		    
-		    
-		    foreach ($post_types as $post_slug) {
-		    	$args = array(
-				  'numberposts' => -1,
-				  'post_type'   => $post_slug
-				);
-				 
-				$posts = get_posts( $args );
-				if(!empty($posts)){	
-					foreach ($posts as  $post) {
-						$meta_key = metadata_exists('post', $post->ID, 'aione_per_page_setting');
-						if(empty($meta_key)){
-							$setting_array = array();
-							$keys= array_keys($default_settings);
-							foreach ($keys as $value) {
-								$old_meta = get_post_meta($post->ID,$value,true);
-								$setting_array[$value] = $old_meta;
-								update_post_meta( $post->ID, 'aione_per_page_setting', $setting_array );
-							}
-						} 
-					}
-				}
-		    }
-		    restore_current_blog();      
-		}*/
-
-		/****************/
-		$post_types = get_post_types();
-		if(($key = array_search('acf-field',$post_types)) !== false) {
-	       unset($post_types[$key]);
-	    }
-	    if(($key = array_search('acf-field-group',$post_types)) !== false) {
-	       unset($post_types[$key]);
-	    }
-	    if(($key = array_search('nav_menu_item',$post_types)) !== false) {
-	       unset($post_types[$key]);
-	    } 
-	    if(($key = array_search('revision',$post_types)) !== false) {
-	       unset($post_types[$key]);
-	    }
-	    if(($key = array_search('wp_block',$post_types)) !== false) {
-	       unset($post_types[$key]);
-	    }
-	    if(($key = array_search('attachment',$post_types)) !== false) {
-	       unset($post_types[$key]);
-	    }
-
-	    $default_settings = array(
-		    'pyre_show_top_bar' => 'default',
-		    'pyre_top_bar_100_width' => 'default',
-		    'pyre_header_enable' => 'default',
-		    'pyre_header_100_width' => 'default',
-		    'pyre_header_show_logo' => 'default',
-		    'pyre_header_show_site_title' => 'default',
-		    'pyre_header_show_tagline' => 'default',
-		    'pyre_header_show_navigation' => 'default',
-		    'pyre_displayed_menu' => 'default',
-		    'pyre_main_nav_show_home_icon' => 'default',
-		    'pyre_main_nav_show_home_link' => 'default',
-		    'pyre_main_nav_show_description' => 'default',
-		    'pyre_main_nav_search_icon' => 'default',
-		    'pyre_menu_display_dropdown_indicator' => 'default',
-		    'pyre_header_show_banner' => 'default',
-		    'pyre_slidingbar_widgets' => 'default',
-		    'pyre_slider_enable' => 'default',
-		    'pyre_slider_100_width' => 'default',
-		    'pyre_select_slider' => 'default',
-		    'pyre_page_title_bar' => 'default',
-		    'pyre_page_title_100_width' => 'default',
-		    'pyre_page_title_bar_enable_title' => 'default',
-		    'pyre_page_title_bar_enable_description' => 'default',
-		    'pyre_page_title_bar_description_text' => '',
-		    'pyre_page_100_width' => 'default',
-		    'pyre_page_top_area_enable' => 'default',
-		    'pyre_page_top_area_100_width' => 'default',
-		    'pyre_page_bottom_area_enable' => 'default',
-		    'pyre_page_bottom_area_100_width' => 'default',
-		    'pyre_page_padding_enable' => 'default',
-		    'pyre_sidebar_left_enable' => 'default',
-		    'pyre_sidebar_left' => 'default',
-		    'pyre_sidebar_right_enable' => 'default',
-		    'pyre_sidebar_right' => 'default',
-		    'pyre_content_top_area_enable' => 'default',
-		    'pyre_content_bottom_area_enable' => 'default',
-		    'pyre_page_content_padding_enable' => 'default',
-		    'pyre_footer_widgets' => 'default',
-		    'pyre_footer_100_width' => 'default',
-		    'pyre_footer_copyright' => 'default',
-		    'pyre_footer_copyright_100_width' => 'default',
-		    'pyre_custom_css' => '',
-		    'pyre_custom_js' => '',
-		    'pyre_title_tag' => '',
-		    'pyre_meta_description' => '',
-		    'pyre_meta_keywords' => '',
-		    'pyre_og_title' => '',
-		    'pyre_og_description' => '',
-		    'pyre_og_image' => '',
-		    'pyre_og_url' => '',
-		);
-
-	    foreach ($post_types as $post_slug) {
-	    	$args = array(
-			  'numberposts' => -1,
-			  'post_type'   => $post_slug
-			);
-			 
-			$posts = get_posts( $args );
-			if(!empty($posts)){	
-				foreach ($posts as  $post) {
-					$meta_key = metadata_exists('post', $post->ID, 'aione_per_page_setting');
-					if(empty($meta_key)){
-						$setting_array = array();
-						$keys= array_keys($default_settings);
-						foreach ($keys as $value) {
-							$old_meta = get_post_meta($post->ID,$value,true);
-							$setting_array[$value] = $old_meta;
-							update_post_meta( $post->ID, 'aione_per_page_setting', $setting_array );
-						}
-					} 
-				}
-			}
-	    }
-	}
 	
-
 }
