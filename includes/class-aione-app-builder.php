@@ -312,8 +312,7 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'featured_image', $plugin_public, 'aione_app_builder_post_featured_image_shortcode' );
 		
 		$this->loader->add_shortcode( 'author', $plugin_public, 'aione_app_builder_author_shortcode' );
-		//to_be_deleted
-		$this->loader->add_shortcode( 'featured-image', $plugin_public, 'aione_app_builder_post_featured_image_shortcode' );
+		
 		$this->loader->add_shortcode( 'attached_media', $plugin_public, 'aione_app_builder_post_attached_media_shortcode' );
 		//to_be_deleted
 		$this->loader->add_shortcode( 'attached-media', $plugin_public, 'aione_app_builder_post_attached_media_shortcode' );
