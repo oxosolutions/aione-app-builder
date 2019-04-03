@@ -2475,19 +2475,28 @@ class Aione_App_Builder_Public {
 
 	public function aione_app_builder_user_shortcode( $atts ) {
 		
-		$user = wp_get_current_user();
-		$userid = $user->ID;
-
-		extract(shortcode_atts( array(
-			'user_id'		=> $userid, // ID of user
+		shortcode_atts( array(
+			'user_id'		=> '', // ID of user
 			'field'			=> 'user_login', //key of field and custom field to be dispayed
-			'template'		=> '', //field/meta
-		), $atts, 'user' ));
+			'template'		=> '',
+		), $atts, 'user' );
+
+		if( empty( $atts['user_id'] ) ) {
+
+			$current_user = wp_get_current_user();
+			$current_user_id = $current_user->ID;
+			$atts['user_id'] = $current_user_id;
+
+		}
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+		$template 	= $atts['template'];
+		$field 		= $atts['field'];
+		$user_id 	= $atts['user_id'];
 
 		$output = "";
 
-		$atts = $this->clean_shortcode_parameters( $atts );
-		
 		$user = get_user_by( 'id', $user_id );
 		$user = $user->data;
 
@@ -2502,12 +2511,7 @@ class Aione_App_Builder_Public {
 		} else{
 			if( $field == 'user_pass' ){
 				$output .= '';
-			} elseif (preg_match("~\{\{\s*(.*?)\s*\}\}~", $field)) { 
-				$field = str_replace("{","",$field);
-				$field = str_replace("}","",$field);
-				$custom_field = get_user_meta( $user_id, $field, true ); 
-				$output .= $custom_field;
-			}else {
+			} else {
 				$output .= $user->$field;
 			}
 		}
@@ -3231,30 +3235,34 @@ class Aione_App_Builder_Public {
 
 	function aione_app_builder_post_meta_shortcode( $atts ) {
 		
-		global $post;
-
-		extract(shortcode_atts( array(
-			'post_id'		=> $post->ID,
+		$atts = shortcode_atts( array(
+			'post_id'		=> '',
 			'field'			=> '',
 			'show_label'	=> 'no',
-			'class'			=> '',
 			'style'			=> 'div', // table/div/list/ Leave empty for no html
-		), $atts, 'post_meta' ));
+			'class'			=> ''
+		), $atts, 'post_meta' );
+
+		global $post;
+
+		if( empty( $atts['post_id'] ) ) {
+			$atts['post_id'] = $post->ID;
+		}
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 
 		$output = '';
 
-		$field = get_field_object( $field, $post_id );
-		//echo "<pre>";print_r($field['sub_fields']);echo "</pre>";
-		if( empty( $field)  ){
-			return get_post_meta( $post_id, $field, true );
+		$field = get_field_object( $atts['field'], $atts['post_id'] );
+
+		if( empty( $field)  ) {
+			$output .= get_post_meta( $atts['post_id'], $atts['field'], true );
+			return $output;	
 		} 
 
-		
 		$field_class = 'field_'.$field['name'];
 
-		if( empty( $field_class ) ){
+		if( empty( $field_class ) ) {
 			$field_class = $field['key'];
 		}
 
@@ -3266,33 +3274,40 @@ class Aione_App_Builder_Public {
 
 		$field_classes = array(
 			'field',
-			$class,
+			$atts['class'],
 			$field_class,
 			$field['wrapper']['class'],
-			'field_type_'.$field['type'],
+			'field_type_' . $field['type'],
 		);
 
-		$field_classes = implode(' ', $field_classes);
+		$field_classes = implode( ' ', $field_classes );
 
-		if($style == "div"){
-			$output .= '<div id="'.$field_id.'" class="'.$field_classes.'">';
+		if( $atts['style'] == "div" ) {
+			$output .= '<div id="' . $field_id . '" class="' . $field_classes . '">';
 		}
 
-		if($show_label == "yes"){
-			$output .= '<label class="field-label"><h3>'.$field['label'].'</h3></label>';
+		if( $atts['show_label'] == "yes" ) {
+			$output .= '<label class="field-label"><h4>' . $field['label'] . '</h4></label>';
 		}
-		if($field['type'] == 'repeater'){ 			
+
+		if( $field['type'] == 'repeater' ) {
+
 			$repeater = true;
-			if( have_rows($field['key']) ){ 
+
+			if( have_rows( $field['key'] ) ) {
+
 				$output .= '<ul class="field-rows">';
+
 				while( have_rows($field['key']) ){
+
 					the_row();
+
 					$output .= '<li class="field-row">';
 					$output .= '<ul class="subfields">';
 
-					foreach ($field['sub_fields'] as $sub_fields_key => $sub_field_array) {
+					foreach ( $field['sub_fields'] as $sub_fields_key => $sub_field_array ) {
 
-						$field_class = 'subfield_'.$sub_field_array['name'];
+						$field_class = 'subfield_' . $sub_field_array['name'];
 
 						if( empty( $field_class ) ){
 							$field_class = $sub_field_array['key'];
@@ -3308,26 +3323,33 @@ class Aione_App_Builder_Public {
 							'subfield',
 							$field_class,
 							$sub_field_array['wrapper']['class'],
-							'field_type_'.$sub_field_array['type'],
+							'field_type_' . $sub_field_array['type'],
 						);
 
 						$sub_field_classes = implode(' ', $sub_field_classes);
+						
 						$output .= '<li class="'.$sub_field_classes.'">';
-						$output .= $this->get_data_callback($sub_field_array,$post_id,$repeater,$atts);
+
+						$output .= $this->get_data_callback( $sub_field_array, $atts['post_id'], $repeater, $atts );
 						$output .= '</li>';
+
 					}
+
 					$output .= '</ul>';
 					$output .= '</li>';
 
 				}
+
 				$output .= '</ul>';
+
 			}
+
 		} else {
 			$repeater = false;
-			$output .= $this->get_data_callback( $field, $post_id, $repeater, $atts );
+			$output .= $this->get_data_callback( $field, $atts['post_id'], $repeater, $atts );
 		}
 		
-		if($style == "div"){
+		if( $atts['style'] == "div" ){
 			$output .= '</div>';
 		}
 		return $output;	
