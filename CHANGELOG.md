@@ -58,3 +58,6 @@ FIXED: Bug Removed in Add Template
 
 ## 1.4.0.10 21-02-2019
 UPDATED: updated list-posts shortcode
+
+## 1.4.0.11 03-04-2019
+FIXED: user_meta shortcode

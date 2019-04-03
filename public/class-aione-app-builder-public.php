@@ -2518,16 +2518,20 @@ class Aione_App_Builder_Public {
 
 	public function aione_app_builder_user_meta_shortcode( $atts ) {
 		
-		$user = wp_get_current_user();
-		$current_user_id = $user->ID;
-
 		extract( shortcode_atts( array(
-			'user_id'		=> $current_user_id, // ID of user
+			'user_id'		=> '', // ID of user
 			'field'			=> 'first_name', //key of field and custom field to be dispayed
 			'show_label'	=> 'no', //show field label
 			'class'			=> '',
 			'style'			=> 'div',
 		), $atts, 'user_meta' ));
+
+		$user = wp_get_current_user();
+		$current_user_id = $user->ID;
+
+		if( empty( $atts['user_id'] ) ){
+			$atts['user_id'] = $current_user_id;
+		}
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 
@@ -2536,10 +2540,10 @@ class Aione_App_Builder_Public {
 		$field = get_field_object( $field, 'user_'.$user_id);
 
 		if( $field ){
-			$shortcode = '[post_meta post_id="user_'.$user_id.'" field="'.$field['key'].'" show_label="'.$show_label.'" class="'.$class.'" style="'.$style.'"]';
+			$shortcode = '[post_meta post_id="user_' . $atts['user_id'] . '" field="' . $field['key'] . '" show_label="' . $atts['show_label'] . '" class="' . $atts['class'] . '" style="' . $atts['style'] . '"]';
 			$output .=  do_shortcode( $shortcode );
 		} else {
-			$output .= get_user_meta( $user_id, $field, true ); 
+			$output .= get_user_meta( $atts['user_id'], $atts['field'], true ); 
 		}
  
 		return $output;	
@@ -3732,6 +3736,8 @@ class Aione_App_Builder_Public {
 
 
 	function human_readable_date( $date, $format='' ){
+
+		//New Function on WP human_readable_duration()
 
 		$output = "";
 		$date = strtotime( $date );
