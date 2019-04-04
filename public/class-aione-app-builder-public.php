@@ -639,62 +639,59 @@ class Aione_App_Builder_Public {
 	*/
 
 	public function aione_app_builder_login_link_shortcode( $atts ) {
-		extract( shortcode_atts(
+		$atts = shortcode_atts(
 			array(
 				'class'           => '',
 				'text'           => 'Login'
-			), $atts )
-	);
+			), $atts, 'login_link' );
 		$output = "";
 		if ( !is_user_logged_in() ) {
-			$output .= '<div id="login_link" class="user-links login-link '.$class.'">';
-			$output .= '<a href="'.wp_login_url().'" title="' . $text . '">' . $text . '</a>';
+			$output .= '<div id="login_link" class="user-links login-link '.$atts['class'].'">';
+			$output .= '<a href="'.wp_login_url().'" title="' . $atts['text'] . '">' . $atts['text'] . '</a>';
 			$output .= '</div>';
 		} 
 		return $output;
 	} // End aione_app_builder_login_link_shortcode()
 
 	public function aione_app_builder_register_link_shortcode( $atts ) {
-		extract( shortcode_atts(
+		$atts = shortcode_atts(
 			array(
 				'class'           => '',
 				'text'           => 'Sign up'
-			), $atts )
-	);
+			), $atts , 'register_link' );
+
 		$output = "";
 		
 		if ( !is_user_logged_in() ) {
-			$output .= '<div id="register_link" class="user-links register-link '.$class.'">';
-			$output .= '<a href="'.wp_registration_url().'" title="' . $text . '">' . $text . '</a>';
+			$output .= '<div id="register_link" class="user-links register-link '.$atts['class'].'">';
+			$output .= '<a href="'.wp_registration_url().'" title="' . $atts['text'] . '">' . $atts['text'] . '</a>';
 			$output .= '</div>';
 		} 
 		return $output;
 	} // End aione_app_builder_register_link_shortcode()
 
 	public function aione_app_builder_reset_password_link_shortcode( $atts ) {
-		extract( shortcode_atts(
+		$atts = shortcode_atts(
 			array(
 				'class'           => '',
 				'text'           => 'Reset Password'
-			), $atts )
-	);
+			), $atts , 'reset_password_link' );
 		$output = "";
 		
 		if ( !is_user_logged_in() ) {
-			$output .= '<div id="reset_password_link" class="user-links reset-password-link '.$class.'">';
-			$output .= '<a href="'.wp_lostpassword_url().'" title="' . $text . '">' . $text . '</a>';
+			$output .= '<div id="reset_password_link" class="user-links reset-password-link '.$atts['class'].'">';
+			$output .= '<a href="'.wp_lostpassword_url().'" title="' . $atts['text'] . '">' . $atts['text'] . '</a>';
 			$output .= '</div>';
 		} 
 		return $output;
 	} // End aione_app_builder_reset_password_link_shortcode()
 
 	public function aione_app_builder_account_link_shortcode( $atts ) {
-		extract( shortcode_atts(
+		$atts = shortcode_atts(
 			array(
 				'class'           => '',
 				'text'           => 'Account'
-			), $atts )
-	);
+			), $atts , 'account_link' );
 
 		$admin_login_redirect_page_link = "#";
 
@@ -707,8 +704,8 @@ class Aione_App_Builder_Public {
 
 		$output = "";
 
-		$output .= '<div id="account_link" class="user-links account-link '.$class.'">';
-		$output .= '<a href="'.$admin_login_redirect_page_link.'" title="' . $text . '">' . $text . '</a>';
+		$output .= '<div id="account_link" class="user-links account-link '.$atts['class'].'">';
+		$output .= '<a href="'.$admin_login_redirect_page_link.'" title="' . $atts['text'] . '">' . $atts['text'] . '</a>';
 		$output .= '</div>';
 
 
@@ -716,16 +713,15 @@ class Aione_App_Builder_Public {
 	} // End aione_app_builder_account_link_shortcode()
 
 	public function aione_app_builder_dashboard_link_shortcode( $atts ) {
-		extract( shortcode_atts(
+		$atts = shortcode_atts(
 			array(
 				'class'           => '',
 				'text'           => 'Dashboard'
-			), $atts )
-	);
+			), $atts , 'dashboard_link' );
 		$output = "";
 
-		$output .= '<div id="dashboard_link" class="user-links dashboard-link '.$class.'">';
-		$output .= '<a href="'.get_bloginfo( 'url' ).'/wp-admin/" title="' . $text . '">' . $text . '</a>';
+		$output .= '<div id="dashboard_link" class="user-links dashboard-link '.$atts['class'].'">';
+		$output .= '<a href="'.get_bloginfo( 'url' ).'/wp-admin/" title="' . $atts['text'] . '">' . $atts['text'] . '</a>';
 		$output .= '</div>';
 
 		return $output;
@@ -733,17 +729,16 @@ class Aione_App_Builder_Public {
 
 
 	public function aione_app_builder_logout_link_shortcode( $atts ) {
-		extract( shortcode_atts(
+		$atts = shortcode_atts(
 			array(
 				'class'           => '',
 				'text'           => 'Logout'
-			), $atts )
-	);
+			), $atts , 'logout_link' );
 		$output = "";
 		
 		if ( is_user_logged_in() ) {
-			$output .= '<div id="logout_link" class="user-links logout-link '.$class.'">';
-			$output .= '<a href="'.wp_logout_url().'" title="' . $text . '">' . $text . '</a>';
+			$output .= '<div id="logout_link" class="user-links logout-link '.$atts['class'].'">';
+			$output .= '<a href="'.wp_logout_url().'" title="' . $atts['text'] . '">' . $atts['text'] . '</a>';
 			$output .= '</div>';
 		} 
 		return $output;
@@ -815,7 +810,7 @@ class Aione_App_Builder_Public {
 		}else {
 			$custom_redirect =  admin_url();
 		}
-		extract( shortcode_atts(
+		$atts = shortcode_atts(
 			array(
 				'echo'           => false,
 				'redirect'       => $custom_redirect, 
@@ -828,8 +823,7 @@ class Aione_App_Builder_Public {
 				'id_password'    => 'user_pass',
 				'id_remember'    => 'rememberme',
 				'id_submit'      => 'wp-submit',
-			), $atts )
-		);
+			), $atts , 'login');
 		
 		$output = "";
 
@@ -841,17 +835,17 @@ class Aione_App_Builder_Public {
 		}
 
 		$args = array(
-			'echo'           => $echo,
-			'redirect'       => $redirect, 
-			'form_id'        => $form_id,
-			'label_username' => $label_username,
-			'label_password' => $label_password,
-			'label_remember' => $label_remember,
-			'label_log_in'   => $label_log_in,
-			'id_username'    => $id_username,
-			'id_password'    => $id_password,
-			'id_remember'    => $id_remember,
-			'id_submit'      => $id_submit,
+			'echo'           => $atts['echo'],
+			'redirect'       => $atts['redirect'], 
+			'form_id'        => $atts['form_id'],
+			'label_username' => $atts['label_username'],
+			'label_password' => $atts['label_password'],
+			'label_remember' => $atts['label_remember'],
+			'label_log_in'   => $atts['label_log_in'],
+			'id_username'    => $atts['id_username'],
+			'id_password'    => $atts['id_password'],
+			'id_remember'    => $atts['id_remember'],
+			'id_submit'      => $atts['id_submit'],
 			'remember'	     => empty( $instance['remember'] ) ? true : false,
 			'value_username' => esc_attr( $instance['value_username'] ),
 			'value_remember' => !empty( $instance['value_remember'] ) ? true : false
@@ -1102,7 +1096,7 @@ class Aione_App_Builder_Public {
 
 	public function aione_app_builder_register_shortcode( $atts, $content = null ) {
 		// Attributes
-		extract( shortcode_atts(
+		$atts =  shortcode_atts(
 			array(
 				'echo'           => false,
 				'captcha'        => "true",
@@ -1121,27 +1115,26 @@ class Aione_App_Builder_Public {
 				'placeholder_username' => __( 'Enter Your Username' ),
 				'placeholder_email' => __( 'Enter Your Email Address' ),
 				'role' => get_option('default_role'),
-			), $atts )
-	);
+			), $atts , 'register');
 
 		$args = array(
-			'echo'						=> $echo,
-			'captcha'                   => $captcha,
-			'form_id'					=> $form_id,
-			'show_firstname'			=> $show_firstname,
-			'show_lastname'				=> $show_lastname,
-			'label_firstname'			=> $label_firstname,
-			'label_lastname'			=> $label_lastname,
-			'label_username'			=> $label_username,
-			'label_email'				=> $label_email,
-			'label_password'			=> $label_password,
-			'label_password_again'		=> $label_password_again,
-			'label_submit'				=> $label_submit,
-			'placeholder_firstname'		=> $placeholder_firstname,
-			'placeholder_laststname'	=> $placeholder_laststname,
-			'placeholder_username'		=> $placeholder_username,
-			'placeholder_email'			=> $placeholder_email,
-			'role' 						=> $role,
+			'echo'						=> $atts['echo'],
+			'captcha'                   => $atts['captcha'],
+			'form_id'					=> $atts['form_id'],
+			'show_firstname'			=> $atts['show_firstname'],
+			'show_lastname'				=> $atts['show_lastname'],
+			'label_firstname'			=> $atts['label_firstname'],
+			'label_lastname'			=> $atts['label_lastname'],
+			'label_username'			=> $atts['label_username'],
+			'label_email'				=> $atts['label_email'],
+			'label_password'			=> $atts['label_password'],
+			'label_password_again'		=> $atts['label_password_again'],
+			'label_submit'				=> $atts['label_submit'],
+			'placeholder_firstname'		=> $atts['placeholder_firstname'],
+			'placeholder_laststname'	=> $atts['placeholder_laststname'],
+			'placeholder_username'		=> $atts['placeholder_username'],
+			'placeholder_email'			=> $atts['placeholder_email'],
+			'role' 						=> $atts['role'],
 		);
 		
 		
@@ -1170,7 +1163,7 @@ class Aione_App_Builder_Public {
 					$user_last		= $_POST["aione_user_lname"];
 
 					
-					if($captcha == "true"){
+					if($atts['captcha'] == "true"){
 						if (class_exists('ReallySimpleCaptcha'))  {
 							$captcha_value= $_POST['captcha_value'];
 							$prefix = $_POST['captcha_prefix'];
@@ -1248,8 +1241,8 @@ class Aione_App_Builder_Public {
 					if(empty($errors)) {
 						global $wp_roles;
 						$roles = wp_roles()->get_names();
-						if(array_key_exists($role,$roles)){
-							$user_role = $role;
+						if(array_key_exists($atts['role'],$roles)){
+							$user_role = $atts['role'];
 						} else {
 							$user_role = get_option('default_role');
 						}
@@ -1495,28 +1488,28 @@ class Aione_App_Builder_Public {
 			return $output;
 		}
 
-		public function aione_app_builder_account_shortcode ($attr, $content = null){
+/*		public function aione_app_builder_account_shortcode ($attr, $content = null){
 			extract( shortcode_atts(
 				array(
-			'pages'    => 'yes', // yes/no
-			'sub_pages'    => 'no', // yes/no
-			'layout_menu'    => 'vertical',// horizontal/vertical
-			'layout_content'    => 'box',// box/table/list
-		), $attr )
-		);
+				'pages'    => 'yes', // yes/no
+				'sub_pages'    => 'no', // yes/no
+				'layout_menu'    => 'vertical',// horizontal/vertical
+				'layout_content'    => 'box',// box/table/list
+				), $attr )
+			);
 
 			
 			$attr_menu = array(
-			'pages'    => $pages, // yes/no
-			'sub_pages'    => $sub_pages, // yes/no
-			'layout'    => $layout_menu,// horizontal/vertical
-		);
+				'pages'    => $pages, // yes/no
+				'sub_pages'    => $sub_pages, // yes/no
+				'layout'    => $layout_menu,// horizontal/vertical
+			);
 
 			$attr_content = array(
-			'pages'    => $pages, // yes/no
-			'sub_pages'    => $sub_pages, // yes/no
-			'layout'    => $layout_content,// horizontal/vertical
-		);
+				'pages'    => $pages, // yes/no
+				'sub_pages'    => $sub_pages, // yes/no
+				'layout'    => $layout_content,// horizontal/vertical
+			);
 			$output = "";
 			if(is_user_logged_in() ){
 				$output .= $this->aione_app_builder_account_menu_shortcode($attr_menu);	
@@ -1532,11 +1525,11 @@ class Aione_App_Builder_Public {
 		// Attributes
 			extract( shortcode_atts(
 				array(
-			'pages'    => 'yes', // yes/no
-			'sub_pages'    => 'no', // yes/no
-			'layout'    => 'vertical',// horizontal/vertical
-		), $attr )
-		);
+				'pages'    => 'yes', // yes/no
+				'sub_pages'    => 'no', // yes/no
+				'layout'    => 'vertical',// horizontal/vertical
+			), $attr )
+			);
 
 			$output = "";
 			if(is_user_logged_in() ) {
@@ -1575,11 +1568,11 @@ class Aione_App_Builder_Public {
 		public function aione_app_builder_account_content_shortcode ($attr, $content = null){
 			extract( shortcode_atts(
 				array(
-			'pages'    => 'yes', // yes/no
-			'sub_pages'    => 'no', // yes/no
-			'layout'    => 'box',// box/table/list
-		), $attr )
-		);
+				'pages'    => 'yes', // yes/no
+				'sub_pages'    => 'no', // yes/no
+				'layout'    => 'box',// box/table/list
+			), $attr )
+			);
 
 			$output = "";
 			if(is_user_logged_in()) {
@@ -1632,7 +1625,7 @@ class Aione_App_Builder_Public {
 			$output .= "";
 		}
 		return $output;
-	}
+		}*/
 
 	public function aione_app_builder_profile_shortcode ($attr=null, $content = null){
 		$defaults = array(
@@ -1781,7 +1774,7 @@ class Aione_App_Builder_Public {
 		extract( shortcode_atts(
 			array(
 			), $atts )
-	);
+		);
 		$output = "";
 		$errors = array();
 
@@ -1865,7 +1858,7 @@ class Aione_App_Builder_Public {
 	} // End aione_app_builder_home_url_shortcode()
 
 	public function aione_app_builder_url_shortcode( $atts ) {
-		extract( shortcode_atts(
+		$atts = shortcode_atts(
 			array(
 				
 				'id' 		=> '0',
@@ -1873,23 +1866,22 @@ class Aione_App_Builder_Public {
 				'title' 	=> '',
 				'action' 	=> '',
 				'class' 	=> '',
-			), $atts )
-	);
+			), $atts,'url');
 		
-		if(!$id && !$path && !$title && !$action){
+		if(!$atts['id'] && !atts['$path'] && !$atts['title'] && !$atts['action']){
 			return home_url();
 		} else {
 			$page_id = 0;
-			if( $id && is_numeric ($id) ){
-				$page_id = $id;
+			if( $atts['id'] && is_numeric ($atts['id']) ){
+				$page_id = $atts['id'];
 			}
 			
-			if($path != ''){
-				$page_id = get_page_by_path($path);
+			if($atts['path'] != ''){
+				$page_id = get_page_by_path($atts['path']);
 			}
 			
-			if($title != ''){
-				$page_id = get_page_by_title($title);
+			if($atts['title'] != ''){
+				$page_id = get_page_by_title($atts['title']);
 			}
 			
 			if ($page_id) {
@@ -1903,7 +1895,7 @@ class Aione_App_Builder_Public {
 	public function aione_app_builder_post_count_shortcode( $atts ) {
 
 		// Attributes
-		extract(shortcode_atts(
+		$atts = shortcode_atts(
 			array(
 				'post_type'			=> 'post',
 				'status'			=> array('publish'),
@@ -1915,8 +1907,7 @@ class Aione_App_Builder_Public {
 				'post_count'		=> '999999999',
 				'order'				=> 'DESC',
 				'orderby'			=> 'date',
-			), $atts, 'post_count')
-		);
+			), $atts, 'post_count');
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 		
@@ -1924,24 +1915,24 @@ class Aione_App_Builder_Public {
 
 		$output = "";
 
-		if( !empty( $status ) ){
-			$status = explode( ',', $status );
+		if( !empty( $atts['status'] ) ){
+			$status = explode( ',', $atts['status'] );
 		}
 		
 
 		// WP_Query arguments
 		$args = array (
-			'post_type'				=> $post_type,
+			'post_type'				=> $atts['post_type'],
 			'post_status'			=> $status,
-			'cat'					=> $cat_id,
-			'category_name'			=> $cat,
-			'author'				=> $author_id,
-			'author_name'			=> $author,
-			'posts_per_page'		=> $posts_per_page,
-			'post_count'			=> $post_count,
+			'cat'					=> $atts['cat_id'],
+			'category_name'			=> $atts['cat'],
+			'author'				=> $atts['author_id'],
+			'author_name'			=> $atts['author'],
+			'posts_per_page'		=> $atts['posts_per_page'],
+			'post_count'			=> $atts['post_count'],
 			'ignore_sticky_posts'	=> false,
-			'order'					=> $order,
-			'orderby'				=> $orderby,
+			'order'					=> $atts['order'],
+			'orderby'				=> $atts['orderby'],
 			'cache_results'			=> true,
 			'update_post_meta_cache'=> true,
 			'update_post_term_cache'=> true,
@@ -1959,7 +1950,7 @@ class Aione_App_Builder_Public {
 	public function aione_app_builder_posts_shortcode( $atts ) {
 
 		// Attributes
-		extract(shortcode_atts( array(
+		$atts = shortcode_atts( array(
 			'post_type'			=> 'post',
 			'status'			=> 'publish',
 			'cat'				=> '',
@@ -1976,7 +1967,7 @@ class Aione_App_Builder_Public {
 			'pagination'		=> 'yes',
 			'id'				=> '',
 			'class'				=> ''	
-		), $atts, 'posts'));
+		), $atts, 'posts');
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 		
@@ -1984,7 +1975,7 @@ class Aione_App_Builder_Public {
 
 		$output = "";
 
-		$status = explode(',',$status);
+		$status = explode(',',$atts['status']);
 
 
 
@@ -1993,34 +1984,44 @@ class Aione_App_Builder_Public {
 	    // $total_pages = $wp_query->max_num_pages;
 
 	    if( $current_page > 0 ){
-	    	$offset = $posts_per_page * ( $current_page - 1);
-
+	    	$offset = $atts['posts_per_page'] * ( $current_page - 1);
+	    } else{
+	    	$offset = 0;
 	    }
 
 
 		// WP_Query arguments
 		$args = array (
-			'post_type'				=> $post_type,
+			'post_type'				=> $atts['post_type'],
 			'post_status'			=> $status,
-			'cat'					=> $cat_id,
-			'category_name'			=> $cat,
-			'author'				=> $author_id,
-			'author_name'			=> $author,
-			'meta_key'				=> $meta_key,
-			'meta_value'			=> $meta_value,
-			'posts_per_page'		=> $posts_per_page,
+			'cat'					=> $atts['cat_id'],
+			'category_name'			=> $atts['cat'],
+			'author'				=> $atts['author_id'],
+			'author_name'			=> $atts['author'],
+			'meta_key'				=> $atts['meta_key'],
+			'meta_value'			=> $atts['meta_value'],
+			'posts_per_page'		=> $atts['posts_per_page'],
 			'offset'				=> $offset,
 			'ignore_sticky_posts'	=> false,
-			'order'					=> $order,
-			'orderby'				=> $orderby,
+			'order'					=> $atts['order'],
+			'orderby'				=> $atts['orderby'],
 			'cache_results'			=> true,
 			'update_post_meta_cache'=> true,
 			'update_post_term_cache'=> true,
 		);
 		
-		$posts = new WP_Query($args);
+		$posts = new WP_Query( $args );
+
+		$total_posts = $posts->found_posts;
+		$total_pages = $posts->max_num_pages;
+
+		if( $total_pages < 2 ){
+			$atts['pagination'] = 'no';
+		}
 
 		$is_template = false;
+
+		$template = $atts['template'];
 
 		if( !empty( $template ) ) {
 			$aione_templates = @get_option( 'aione-templates' );
@@ -2031,16 +2032,16 @@ class Aione_App_Builder_Public {
 		}
 
 		$id_attribute ='';
-		if( !empty($id) ){
-			$id_attribute = 'id="'.$id.'"';
+		if( !empty($atts['id']) ){
+			$id_attribute = 'id="'.$atts['id'].'"';
 		}
 
 		
 		if( $posts->have_posts() ){
 			if( $is_template ){
-				$output .= '<div class="aione-template type-archive '.$template.'">';
+				$output .= '<div class="aione-template type-archive '.$atts['template'].'">';
 			}
-			$output .= '<ul '.$id_attribute.' class="list-posts '.$class.'">';
+			$output .= '<ul '.$id_attribute.' class="list-posts '.$atts['class'].'">';
 			while( $posts->have_posts() ){
 				$posts->the_post(); 
 				$output .= '<li>';
@@ -2073,7 +2074,7 @@ class Aione_App_Builder_Public {
 
 			wp_reset_postdata();
 
-			if( $pagination == 'yes' ) {				
+			if( $atts['pagination'] == 'yes' ) {				
 				$output .= aione_pagination( $posts );
 			}
 
@@ -2088,22 +2089,22 @@ class Aione_App_Builder_Public {
 		global $post, $theme_options;
 
 		// Attributes
-		extract(shortcode_atts( array(
+		$atts = shortcode_atts( array(
 			'post_id'	=> $post->ID,
 			'template'	=> '',
 			'id'		=> '',
 			'class'		=> ''	
-		), $atts, 'post' ));
+		), $atts, 'post');
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 
 		$output = "";
 
-		$post =  get_post( $post_id );
+		$post =  get_post( $atts['post_id'] );
 
 		$is_template = false;
 
-		if( !empty( $template ) ) {
+		if( !empty( $atts['template'] ) ) {
 			$aione_templates = @get_option( 'aione-templates' );
 			$aione_template = @$aione_templates[$template]['content'];
 			if( !empty( $aione_template ) ){
@@ -2112,15 +2113,15 @@ class Aione_App_Builder_Public {
 		}
 
 		$id_attribute ='';
-		if( !empty($id) ){
-			$id_attribute = 'id="'.$id.'"';
+		if( !empty($atts['id']) ){
+			$id_attribute = 'id="'.$atts['id'].'"';
 		}
 
 
-		if( get_post_status ( $post_id ) ){
+		if( get_post_status ( $atts['post_id'] ) ){
 
 			if( $is_template ){
-				$output .= '<div '.$id_attribute.' class="aione-post '.$template.' '.$class.'">';
+				$output .= '<div '.$id_attribute.' class="aione-post '.$atts['template'].' '.$atts['class'].'">';
 				$output .= do_shortcode( $aione_template );
 				$output .= '</div>';
 			} else{
@@ -2136,24 +2137,22 @@ class Aione_App_Builder_Public {
 
 
 	public function aione_app_builder_list_comments_shortcode( $atts ) {
+		global $theme_options, $post;
 		// Attributes
-		extract( shortcode_atts(
+		$atts = shortcode_atts(
 			array(
+				'post_id'	=> $post->ID,
 				'count'           => '',
 				'id'           => '',
 				'class'           => ''
-				
-			), $atts )
-	);
-		
-		global $theme_options, $post;
+			), $atts,'list_comments' );
 		
 		$output = "";
-		$number = $count;
+		$number = $atts['count'];
 		
 		$id_attribute ='';
-		if( !empty($id) ){
-			$id_attribute = 'id="'.$id.'"';
+		if( !empty($atts['id']) ){
+			$id_attribute = 'id="'.$atts['id'].'"';
 		}
 
 		
@@ -2170,7 +2169,7 @@ class Aione_App_Builder_Public {
 			'order'				=> 'DESC',
 			'parent'			=> '',
 			'post_ID'			=> '', // ignored (use post_id instead)
-			'post_id'			=> $post->ID,
+			'post_id'			=> $atts['post'],
 			'post__in'			=> '',
 			'post__not_in'		=> '',
 			'post_author'		=> '',
@@ -2193,7 +2192,7 @@ class Aione_App_Builder_Public {
 		$the_comments = get_comments( $args );
 
 		if($the_comments){
-			$output .= '<ul '.$id_attribute.' class="list-posts resent-comments '.$class.'">';
+			$output .= '<ul '.$id_attribute.' class="list-posts resent-comments '.$atts['class'].'">';
 			foreach($the_comments as $comment) { //echo "<pre>";print_r($comment);echo "</pre>";
 				$output .= '<li>';
 				$output .= '<div class="post-image">';
@@ -2222,16 +2221,15 @@ class Aione_App_Builder_Public {
 
 	public function aione_app_builder_faq_shortcode($atts) {
 
-		extract(shortcode_atts(
+		$atts = shortcode_atts(
 			array(
 				'category' => '',
 				'id' => '',
 				'class' => '',
-			), $atts)
-	);
+			), $atts,'faq');
 		
 		$output = '';
-		if (!$category){
+		if (!$atts['category']){
 			return '';
 			$portfolio_category = get_terms('faq_category');
 			if ($portfolio_category){
@@ -2254,7 +2252,7 @@ class Aione_App_Builder_Public {
 				array(
 					'taxonomy' => 'faq_category',
 					'field'    => 'slug',
-					'terms'    => $category,
+					'terms'    => $atts['category'],
 				),
 			),
 			'nopaging' => true
@@ -2297,36 +2295,35 @@ class Aione_App_Builder_Public {
 	//Function To counts the users 
 	public function aione_app_builder_count_users_shortcode($atts){
 		// Attributes
-		extract( shortcode_atts(
+		$atts =  shortcode_atts(
 			array(
 				'site' 		=>  $GLOBALS['blog_id'],
 				'include'   => '',
 				'exclude'   => '',
 				'role' 		=> '',
 				'roles' 	=> '',
-			), $atts )
-		);
+			), $atts,'count_users' );
 		
 		$output = "";
 		
-		if(!empty($roles)){
-			$roles = explode(",", $roles);
+		if(!empty($atts['roles'])){
+			$roles = explode(",", $atts['roles']);
 		} else {
 			$roles = array();
 		}
-		if(!empty($include)){
-			$include = explode(",", $include);
+		if(!empty($atts['include'])){
+			$include = explode(",", $atts['include']);
 		} else {
 			$include = array();
 		}
-		if(!empty($exclude)){
-			$exclude = explode(",", $exclude);
+		if(!empty($atts['exclude'])){
+			$exclude = explode(",", $atts['exclude']);
 		} else {
 			$exclude = array();
 		}
 		$args = array(
-			'blog_id'      => $site,
-			'role'         => $role,
+			'blog_id'      => $atts['site'],
+			'role'         => $atts['role'],
 			'role__in'     => $roles,
 			'role__not_in' => array(),
 			'meta_key'     => '',
@@ -2354,7 +2351,7 @@ class Aione_App_Builder_Public {
 	public function aione_app_builder_users_shortcode( $atts ) {
 
 		// Attributes
-		extract( shortcode_atts( array(
+		$atts = shortcode_atts( array(
 			'site'		=>  $GLOBALS['blog_id'],
 			'style'		=> 'table',
 			'columns'	=> 'Username',
@@ -2364,24 +2361,24 @@ class Aione_App_Builder_Public {
 			'template'	=> '',
 			'role'		=> '',
 			'roles'		=> array(),
-		), $atts, 'users' ));
+		), $atts, 'users' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 
 		$output = "";
 		
 		$args = array(
-			'blog_id'      => $site,
-			'role'         => $role,
-			'role__in'     => explode( ",", $roles ),
+			'blog_id'      => $atts['site'],
+			'role'         => $atts['role'],
+			'role__in'     => explode( ",", $atts['roles'] ),
 			'role__not_in' => array(),
 			'meta_key'     => '',
 			'meta_value'   => '',
 			'meta_compare' => '',
 			'meta_query'   => array(),
 			'date_query'   => array(),        
-			'include'      => explode( ",", $include ),
-			'exclude'      => explode( ",", $exclude ),
+			'include'      => explode( ",", $atts['include'] ),
+			'exclude'      => explode( ",", $atts['exclude'] ),
 			'orderby'      => 'login',
 			'order'        => 'ASC',
 			'offset'       => '',
@@ -2395,7 +2392,7 @@ class Aione_App_Builder_Public {
 		$users = get_users( $args );
 		//echo "<pre>";print_r($users);echo "</pre>";
 
-		if( !empty( $template ) ){
+		if( !empty( $atts['template'] ) ){
 			$aione_templates		= get_option( 'aione-templates' );
 			$aione_template_array 	= $aione_templates[$template];
 			$aione_template_content = $aione_template_array['content'];
@@ -2414,8 +2411,8 @@ class Aione_App_Builder_Public {
 		} else {
 			if($style == 'table') {
 			
-				$columns = explode("|", $columns); 
-				$fields = explode("|", $fields); 
+				$columns = explode("|", $atts['columns']); 
+				$fields = explode("|", $atts['fields']); 
 				
 				$output .= '<div class="users aione-table">';
 				$output .= '<table class="compact">';
@@ -2475,7 +2472,7 @@ class Aione_App_Builder_Public {
 
 	public function aione_app_builder_user_shortcode( $atts ) {
 		
-		shortcode_atts( array(
+		$atts = shortcode_atts( array(
 			'user_id'		=> '', // ID of user
 			'field'			=> 'user_login', //key of field and custom field to be dispayed
 			'template'		=> '',
@@ -2522,13 +2519,13 @@ class Aione_App_Builder_Public {
 
 	public function aione_app_builder_user_meta_shortcode( $atts ) {
 		
-		extract( shortcode_atts( array(
+		$atts =  shortcode_atts( array(
 			'user_id'		=> '', // ID of user
 			'field'			=> 'first_name', //key of field and custom field to be dispayed
 			'show_label'	=> 'no', //show field label
 			'class'			=> '',
 			'style'			=> 'div',
-		), $atts, 'user_meta' ));
+		), $atts, 'user_meta' );
 
 		$user = wp_get_current_user();
 		$current_user_id = $user->ID;
@@ -2541,7 +2538,7 @@ class Aione_App_Builder_Public {
 
 		$output = "";
 
-		$field = get_field_object( $field, 'user_'.$user_id);
+		$field = get_field_object( $atts['field'], 'user_'.$atts['user_id']);
 
 		if( $field ){
 			$shortcode = '[post_meta post_id="user_' . $atts['user_id'] . '" field="' . $field['key'] . '" show_label="' . $atts['show_label'] . '" class="' . $atts['class'] . '" style="' . $atts['style'] . '"]';
@@ -2560,15 +2557,14 @@ class Aione_App_Builder_Public {
 		$userid = $user->ID;
 
 		// Attributes
-		extract( shortcode_atts(
+		$atts = shortcode_atts(
 			array(
 				'class' => '', 
 				'id' => '', 
 				'user_id' => $userid, // ID of user
-			), $atts )
-	);
+			), $atts,'welcome' );
 		
-		$user = get_user_by('id', $user_id);
+		$user = get_user_by('id', $atts['user_id']);
 
 
 
@@ -2576,7 +2572,7 @@ class Aione_App_Builder_Public {
 
 		$displayname = $user->user_displayname;
 		if(empty($displayname) || $displayname == ""){
-			$first_name = get_user_meta( $user_id, "first_name", true );
+			$first_name = get_user_meta( $atts['user_id'], "first_name", true );
 			if(empty($first_name) || $first_name == ""){
 				$nicename = $user->user_nicename;
 				if(empty($nicename) || $nicename == ""){
@@ -2600,7 +2596,7 @@ class Aione_App_Builder_Public {
 	function aione_app_builder_blog_shortcode( $atts, $content = null ){
 		global $theme_options;
 		// Attributes
-		extract( shortcode_atts(
+		$atts = shortcode_atts(
 			array(
 				'post_type'              => array( 'post' ), // Post Types
 				'post_status'            => array( 'publish' ), // Post status
@@ -2628,8 +2624,34 @@ class Aione_App_Builder_Public {
 				'read_more'   	        => $theme_options['blog_archive_read_more_enable'], //yes/no. Default=yes
 				'read_more_text'   		=> $theme_options['blog_archive_read_more_text'], //Text. Default is Read More
 				'layout' 			  	=> $theme_options['blog_archive_layout'], // list,grid,timeline. Default =list
-			), $atts )
-	);
+			), $atts,'blog' );
+
+		$post_type = $atts['post_type'];
+		$post_status = $atts['post_status'];
+		$order = $atts['order'];
+		$orderby = $atts['orderby'];
+		$class = $atts['class'];
+		$id = $atts['id'];
+		$number_posts = $atts['number_posts'];
+		$offset = $atts['offset'];
+		$cat_slug = $atts['cat_slug'];
+		$exclude_cats = $atts['exclude_cats'];
+		$show_title = $atts['show_title'];
+		$title_link = $atts['title_link'];
+		$thumbnail = $atts['thumbnail'];
+		$excerpt = $atts['excerpt'];
+		$excerpt_length = $atts['excerpt_length'];
+		$meta_author = $atts['meta_author'];
+		$meta_categories = $atts['meta_categories'];
+		$meta_date = $atts['meta_date'];
+		$meta_date_format = $atts['meta_date_format'];
+		$meta_tags = $atts['meta_tags'];
+		$pagination = $atts['pagination'];
+		$blog_grid_column_spacing = $atts['blog_grid_column_spacing'];
+		$blog_grid_columns = $atts['blog_grid_columns'];
+		$read_more = $atts['read_more'];
+		$read_more_text = $atts['read_more_text'];
+		$layout = $atts['layout'];
 
 		//setting up categories to be used .Transform slugs to ids
 		$cat_ids ='';
@@ -2840,12 +2862,12 @@ class Aione_App_Builder_Public {
 	* 
 	*/
 	function aione_app_builder_aione_icon_shortcode( $atts ) {
-		extract( shortcode_atts( array(
+		$atts =  shortcode_atts( array(
 			'class' => 'fa fa-facebook',
-		), $atts, 'icon' ));
+		), $atts, 'icon' );
 
 		$output = '';
-		$aione_icon = $class;
+		$aione_icon = $atts['class'];
 
 		if($aione_icon){
 			$output = '<i class="'.$aione_icon.'"></i>';
@@ -2882,9 +2904,6 @@ class Aione_App_Builder_Public {
 
 		}
 
-		
-
-
 		return $output;
 	}
 	/**
@@ -2914,13 +2933,13 @@ class Aione_App_Builder_Public {
 
 		global $post;
 
-		extract( shortcode_atts( array(
+		$atts = shortcode_atts( array(
 			'post_id'	=>	$post->ID,
-		), $atts, 'link' ));
+		), $atts, 'link' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 
-		$output = get_permalink( $post_id );
+		$output = get_permalink( $atts['post_id'] );
 
 		return $output; 
 	}
@@ -3030,8 +3049,9 @@ class Aione_App_Builder_Public {
 		), $atts, 'featured_image' );
 		$output = "";
 		$id_attribute ='';
-		if( !empty($id) ){
-			$id_attribute = 'id="'.$id.'"';
+
+		if( !empty($atts['id']) ){
+			$id_attribute = 'id="'.$atts['id'].'"';
 		}
 		if ( has_post_thumbnail($post->ID) ) {
 			$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ),  $atts['size']);
@@ -3087,15 +3107,20 @@ class Aione_App_Builder_Public {
 
 	function aione_app_builder_post_attached_media_shortcode($atts){
 		global $post;
-		extract( shortcode_atts( array(
+		$atts = shortcode_atts( array(
 				'class' => '',
 				'id' => '',
 				'width' => '',
 				'height' => '',
 				'caption' => 'true',
-			), $atts, 'attached_media' )
+			), $atts, 'attached_media' 
 		);
 		$output = "";
+		$class = $atts['class'];
+		$id = $atts['id'];
+		$width = $atts['width'];
+		$height = $atts['height'];
+		$caption = $atts['caption'];
 		$type = get_post_mime_type( $post->ID );
 		$media = wp_get_attachment_url( $post->ID );
 		$caption_text = wp_get_attachment_caption( $post->ID );
@@ -3220,7 +3245,7 @@ class Aione_App_Builder_Public {
 			'class' => '',
 			'id' => '',
 			'style' => 'div', // table/div/list
-		), $atts, 'custom-fields' );
+		), $atts, 'custom_fields' );
 
 		if(function_exists('acf_get_field_groups')) {
 			$fieldGroup = acf_get_field_group($atts['field_group']);
@@ -3404,6 +3429,12 @@ class Aione_App_Builder_Public {
 
 
 				case "date_picker":
+				$format = $field['display_format'];
+				$output .= date($format,strtotime($data));
+				break;
+
+
+				case "time_picker":
 				$format = $field['display_format'];
 				$output .= date($format,strtotime($data));
 				break;
@@ -3776,18 +3807,17 @@ class Aione_App_Builder_Public {
 
 	function aione_app_builder_upcoming_tag_shortcode( $atts ){
 		
-		extract( shortcode_atts(
+		$atts = shortcode_atts(
 			array(
 				'text'           => "Upcoming",
-			), $atts )
-		);
+			), $atts,'upcoming_tag' );
 
 		global $post;
 		$html = '';
 		$status = get_post_status( $post->ID );
 
 		if($status == 'future'){
-			$html .= '<div class="upcoming-tag">'.$text.'</div>';
+			$html .= '<div class="upcoming-tag">'.$atts['text'].'</div>';
 			return $html;
 		} else {
 			return false;
@@ -3796,7 +3826,7 @@ class Aione_App_Builder_Public {
 	}
 
 	function aione_app_builder_social_icon_shortcode($atts){
-		extract( shortcode_atts(
+		$atts = shortcode_atts(
 			array(
 				'size'       => "small",
 				'theme'           => "dark",
@@ -3816,10 +3846,27 @@ class Aione_App_Builder_Public {
 				'tumblr'          => "",
 				'vimeo'           => "",
 				'wordpress'       => "",
-			), $atts )
-		);
+			), $atts,'social_icon' );
 
 		$html = '';
+		$size = $atts['size'];
+		$theme = $atts['theme'];
+		$style = $atts['style'];
+		$direction = $atts['direction'];
+		$labels = $atts['labels'];
+		$facebook = $atts['facebook'];
+		$twitter = $atts['twitter'];
+		$youtube = $atts['youtube'];
+		$googleplus = $atts['googleplus'];
+		$linkedin = $atts['linkedin'];
+		$instagram = $atts['instagram'];
+		$flickr = $atts['flickr'];
+		$github = $atts['github'];
+		$pinterest = $atts['pinterest'];
+		$rss = $atts['rss'];
+		$tumblr = $atts['tumblr'];
+		$vimeo = $atts['vimeo'];
+		$wordpress = $atts['wordpress'];
 		$html .= '<ul class="aione-social-icons '.$size.' '.$theme.' '.$style.' '.$direction.' '.$labels.'">';
 		if($facebook != ""){
 			$html .= '<li class="facebook"><a href='.$facebook.' target="_blank"><span class="icon"></span><span class="label">Facebook</span></a></li>';
@@ -3866,7 +3913,7 @@ class Aione_App_Builder_Public {
 	}
 
 	function aione_app_builder_social_share_shortcode($atts){
-		extract( shortcode_atts(
+		$atts = shortcode_atts(
 			array(
 				'size'       => "small",
 				'theme'           => "dark",
@@ -3880,10 +3927,21 @@ class Aione_App_Builder_Public {
 				'pinterest'       => "",
 				'reddit'             => "",
 				'tumblr'          => "",
-			), $atts )
-	);
+			), $atts,'social_share' );
 
 		$html = '';
+		$size = $atts['size'];
+		$theme = $atts['theme'];
+		$style = $atts['style'];
+		$direction = $atts['direction'];
+		$labels = $atts['labels'];
+		$facebook = $atts['facebook'];
+		$twitter = $atts['twitter'];
+		$googleplus = $atts['googleplus'];
+		$linkedin = $atts['linkedin'];
+		$pinterest = $atts['pinterest'];
+		$reddit = $atts['reddit'];
+		$tumblr = $atts['tumblr'];
 		$html .= '<ul class="aione-social-icons '.$size.' '.$theme.' '.$style.' '.$direction.' '.$labels.'">';
 		if($facebook == "true"){
 			$facebook_url = '
@@ -4005,7 +4063,7 @@ class Aione_App_Builder_Public {
 	*/
 	function aione_app_builder_add_new_shortcode(  $atts, $content = null ) {
 		// Attributes
-		shortcode_atts(
+		$atts = shortcode_atts(
 			array(
 				'type'				=> 'post',
 				'title'				=> true,
@@ -4081,7 +4139,7 @@ class Aione_App_Builder_Public {
 	*/
 	function aione_app_builder_edit_shortcode(  $atts, $content = null ) {
 		// Attributes
-		shortcode_atts(
+		$atts = shortcode_atts(
 			array(
 				'post_id'			=> null,
 				'title'				=> true,
