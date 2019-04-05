@@ -455,6 +455,16 @@
 </td>
 </tr>
 <tr>
+	<td>Post Author</td>
+	<td>[author]</td>
+	<td>
+<pre>
+Return post author ID
+</pre>
+</td>
+</td>
+</tr>
+<tr>
 	<td>Attached Media</td>
 	<td>[attached_media]</td>
 	<td>
@@ -473,6 +483,7 @@
 	<td>[tags]</td>
 	<td>
 <pre>
+'post_id' => '', 
 'texonomy' => 'post_tags', //custom texonomy
 'style' => 'list', //list,div
 'class' => ' ',
@@ -493,17 +504,21 @@
 </td>
 </tr>
 
-<!-- <tr>
+<tr>
 	<td>Custom Field</td>
 	<td>[custom-fields]</td>
 	<td>
 <pre>
+'post_id' => '', 
 'field_group' => '82', 
-'label' => 'true', //false
+'show_label' => 'no', //yes
 'seperator' => ' : ',
+'class' => '',
+'id' => '',
+'style' => '', //// table/div/list
 </pre>
 </td>
-</tr> -->
+</tr>
 <tr>
 	<td>Upcoming Tag</td>
 	<td>[upcoming_tag]</td>

@@ -314,12 +314,13 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'author', $plugin_public, 'aione_app_builder_author_shortcode' );
 		
 		$this->loader->add_shortcode( 'attached_media', $plugin_public, 'aione_app_builder_post_attached_media_shortcode' );
-		//to_be_deleted
-		$this->loader->add_shortcode( 'attached-media', $plugin_public, 'aione_app_builder_post_attached_media_shortcode' );
+		
 		$this->loader->add_shortcode( 'tags', $plugin_public, 'aione_app_builder_post_tags_shortcode' );
+
 		$this->loader->add_shortcode( 'categories', $plugin_public, 'aione_app_builder_post_categories_shortcode' );
 		
 		$this->loader->add_shortcode( 'custom-field', $plugin_public, 'aione_app_builder_post_meta_shortcode' );
+		
 		$this->loader->add_shortcode( 'custom-fields', $plugin_public, 'aione_app_builder_post_custom_fields_shortcode' );
 
 		$this->loader->add_shortcode( 'profile_picture', $plugin_public, 'aione_app_builder_profile_picture_shortcode' );

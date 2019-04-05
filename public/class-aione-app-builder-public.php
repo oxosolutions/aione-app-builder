@@ -2058,7 +2058,7 @@ class Aione_App_Builder_Public {
 					$output .= '<div class="post-holder">';
 					$output .= '<a href="'.get_permalink().'" class="post-title">'.get_the_title().'</a>';
 					$output .= '<div class="post-meta">';
-					$output .= 	get_the_time($theme_options['date_format']);
+					$output .= 	get_the_date($theme_options['date_format']);
 					$output .= '</div>';
 					$output .= '</div>';
 					$output .= '<div class="clear"></div>';
@@ -2105,6 +2105,7 @@ class Aione_App_Builder_Public {
 		$is_template = false;
 
 		if( !empty( $atts['template'] ) ) {
+			$template = $atts['template'];
 			$aione_templates = @get_option( 'aione-templates' );
 			$aione_template = @$aione_templates[$template]['content'];
 			if( !empty( $aione_template ) ){
@@ -2392,7 +2393,9 @@ class Aione_App_Builder_Public {
 		$users = get_users( $args );
 		//echo "<pre>";print_r($users);echo "</pre>";
 
-		if( !empty( $atts['template'] ) ){
+		$template = $atts['template'];
+
+		if( !empty( $template ) ){
 			$aione_templates		= get_option( 'aione-templates' );
 			$aione_template_array 	= $aione_templates[$template];
 			$aione_template_content = $aione_template_array['content'];
@@ -2409,7 +2412,7 @@ class Aione_App_Builder_Public {
 
 			$output .= '</div>';
 		} else {
-			if($style == 'table') {
+			if($atts['style'] == 'table') {
 			
 				$columns = explode("|", $atts['columns']); 
 				$fields = explode("|", $atts['fields']); 
@@ -3026,7 +3029,6 @@ class Aione_App_Builder_Public {
 
 	function aione_app_builder_author_shortcode( $atts ) {
 		
-		global $post;
 		$atts = shortcode_atts( array(
 			'class' => '',
 			'id' => '',
@@ -3040,6 +3042,7 @@ class Aione_App_Builder_Public {
 	function aione_app_builder_post_featured_image_shortcode($atts){
 		global $post;
 		$atts = shortcode_atts( array(
+			'post_id' => $post->ID,
 			'size' => 'full',
 			'class' => '',
 			'id' => '',
@@ -3049,17 +3052,18 @@ class Aione_App_Builder_Public {
 		), $atts, 'featured_image' );
 		$output = "";
 		$id_attribute ='';
+		$post_id = $atts['post_id'];
 
 		if( !empty($atts['id']) ){
 			$id_attribute = 'id="'.$atts['id'].'"';
 		}
-		if ( has_post_thumbnail($post->ID) ) {
-			$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ),  $atts['size']);
+		if ( has_post_thumbnail($post_id) ) {
+			$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ),  $atts['size']);
 			$featured_image_url = $featured_image[0];
 			$featured_image_width = $featured_image[1];
 			$featured_image_height = $featured_image[2];
-			$featured_image_meta = wp_get_attachment_metadata( get_post_thumbnail_id( $post->ID ),  true);
-			$featured_image_meta_alt = get_post_meta( get_post_thumbnail_id( $post->ID ), '_wp_attachment_image_alt');
+			$featured_image_meta = wp_get_attachment_metadata( get_post_thumbnail_id( $post_id ),  true);
+			$featured_image_meta_alt = get_post_meta( get_post_thumbnail_id( $post_id ), '_wp_attachment_image_alt');
 
 			
 			/*
@@ -3128,6 +3132,7 @@ class Aione_App_Builder_Public {
 		if( !empty($id) ){
 			$id_attribute = 'id="'.$id.'"';
 		}
+		
 		switch ($type) {
 			case 'image/jpeg':
 			case 'image/png':
@@ -3160,6 +3165,7 @@ class Aione_App_Builder_Public {
 	function aione_app_builder_post_tags_shortcode($atts){
 		global $post;
 		$atts = shortcode_atts( array(
+			'post_id' => $post->ID,
 			'texonomy' => 'post_tag',
 			'style' => 'list',
 			'class' => 'aione-tags',
@@ -3167,13 +3173,14 @@ class Aione_App_Builder_Public {
 		), $atts, 'tags' );
 
 		$output = "";
-		$output .= $this->aione_app_builder_get_post_terms( $post->ID, $atts['texonomy'], $atts['style'], $atts['class'], $atts['id']);
+		$output .= $this->aione_app_builder_get_post_terms( $atts['post_id'], $atts['texonomy'], $atts['style'], $atts['class'], $atts['id']);
 		return $output;
 	}
 
 	function aione_app_builder_post_categories_shortcode($atts){
 		global $post;
 		$atts = shortcode_atts( array(
+			'post_id' => $post->ID,
 			'texonomy' => 'category',
 			'style' => 'list',
 			'class' => 'aione-categories',
@@ -3181,7 +3188,7 @@ class Aione_App_Builder_Public {
 		), $atts, 'categories' );
 
 		$output = "";
-		$output .= $this->aione_app_builder_get_post_terms( $post->ID, $atts['texonomy'], $atts['style'], $atts['class'], $atts['id']);
+		$output .= $this->aione_app_builder_get_post_terms( $atts['post_id'], $atts['texonomy'], $atts['style'], $atts['class'], $atts['id']);
 		return $output;
 	}
 
@@ -3239,19 +3246,22 @@ class Aione_App_Builder_Public {
 		$output = "";
 		global $post;
 		$atts = shortcode_atts( array(
+			'post_id'		=> '',
 			'field_group' => '',
-			'label' => "true",
+			'show_label' => "no",
 			'seperator' => ' : ',
 			'class' => '',
 			'id' => '',
 			'style' => 'div', // table/div/list
 		), $atts, 'custom_fields' );
 
+
 		if(function_exists('acf_get_field_groups')) {
 			$fieldGroup = acf_get_field_group($atts['field_group']);
 			$fields = acf_get_fields_by_id($atts['field_group']);
 			foreach ($fields as $key => $field) {
-				$output .= do_shortcode('[custom-field field="'.$field['key'].'" label="'.$atts['label'].'" seperator="'.$atts['seperator'].'" class="'.$atts['class'].'" id="'.$atts['id'].'" style="'.$atts['style'].'"]');
+				//$output .= do_shortcode('[custom-field field="'.$field['key'].'" label="'.$atts['label'].'" seperator="'.$atts['seperator'].'" class="'.$atts['class'].'" id="'.$atts['id'].'" style="'.$atts['style'].'"]');
+				$output .= do_shortcode('[post_meta post_id="' . $atts['post_id'] . '" field="' . $field['key'] . '" show_label="' . $atts['show_label'] . '" class="' . $atts['class'] . '" style="' . $atts['style'] . '"]');
 			}
 		}
 
