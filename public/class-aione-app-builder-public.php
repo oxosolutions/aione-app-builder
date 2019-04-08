@@ -1627,23 +1627,31 @@ class Aione_App_Builder_Public {
 		return $output;
 		}*/
 
-	public function aione_app_builder_profile_shortcode ($attr=null, $content = null){
-		$defaults = array(
-			
-		);
-		extract( shortcode_atts( $defaults, $attr ) );
-		$output = "";
-		if(is_user_logged_in() ) {
+	public function aione_app_builder_view_profile_shortcode ( $atts, $content = null ) {
+
+		// Attributes
+		$atts = shortcode_atts( array(
+			'class'				=> 'view-profile',
+			'id'				=> 'view_profile'
+		), $atts, 'view_profile' );
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+		$output = '';
+
+		if( is_user_logged_in() ) {
+
 			$user = wp_get_current_user();
 			$user_id = $user->ID;
 			$username = $user->user_login;
 			$user_roles = $user->roles;
-			$value = get_user_meta($user_id);
+			$value = get_user_meta( $user_id );
 			$action = $_GET['action'];
 			
 
-			$output .='<div class="account-content-outer" id="account_content_outer">
-			<div class="account-content-title-heading-center"><h4>'.$username.' Profile</h4></div>';
+			$output .='<div id="' . $atts['id'] . '" class="' . $atts['class'] . '">';
+
+			$output .='<div class="account-content-title-heading-center"><h4>'.$username.' Profile</h4></div>';
 			$output .= '<ul class="aione-list theme-solid small" id="account_content_profile">
 			<li><div class="user-detail-label">ID</div>
 			<div class="user-detail-value">'.$user_id.'</div>
@@ -1683,11 +1691,8 @@ class Aione_App_Builder_Public {
 			
 			$output .= '</ul>
 			</div>';
-			
-		} else {
-			$output .= "";
 		}
-		
+
 		return $output;
 	}
 
@@ -4148,18 +4153,18 @@ class Aione_App_Builder_Public {
 	* Add New Post Shortcode
 	*/
 	function aione_app_builder_edit_shortcode(  $atts, $content = null ) {
+
 		// Attributes
-		$atts = shortcode_atts(
-			array(
-				'post_id'			=> null,
-				'title'				=> true,
-				'content'			=> true,
-				'status'			=> 'publish',
-				'field_groups'		=> false,
-				'fields'			=> false,
-				'class'				=> 'edit-post-form',
-				'id'				=> 'edit_post_form',
-			), $atts, 'edit' );
+		$atts = shortcode_atts( array(
+			'post_id'			=> null,
+			'title'				=> true,
+			'content'			=> true,
+			'status'			=> 'publish',
+			'field_groups'		=> false,
+			'fields'			=> false,
+			'class'				=> 'edit-post-form',
+			'id'				=> 'edit_post_form'
+		), $atts, 'edit' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 

@@ -262,7 +262,7 @@ class Aione_App_Builder {
 		// $this->loader->add_shortcode( 'account-menu', $plugin_public, 'aione_app_builder_account_menu_shortcode' );
 		// $this->loader->add_shortcode( 'account-content', $plugin_public, 'aione_app_builder_account_content_shortcode' );
 
-		$this->loader->add_shortcode( 'view_profile', $plugin_public, 'aione_app_builder_profile_shortcode' );
+		$this->loader->add_shortcode( 'view_profile', $plugin_public, 'aione_app_builder_view_profile_shortcode' );
 		
 		$this->loader->add_shortcode( 'edit_profile', $plugin_public, 'aione_app_builder_edit_profile_shortcode' );
 		
