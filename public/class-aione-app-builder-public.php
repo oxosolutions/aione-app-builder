@@ -3409,138 +3409,187 @@ class Aione_App_Builder_Public {
 			switch ( $field['type'] ) { 
 
 				case "text":
-				$output .= $data;
-				break;
+
+					$output .= $data;
+					break;
 
 
 				case "textarea":
-				$output .= $data;
-				break;
+
+					$output .= $data;
+					break;
 
 
 				case "number":
-				$output .= $data;
-				break;
+
+					$output .= $data;
+					break;
 
 
 				case "range":
-				$output .= $data;
-				break;
+
+					$output .= $data;
+					break;
 
 
 				case "email":
-				$output .= $data;
-				break;
+
+					$output .= $data;
+					break;
 
 
 				case "url":
-				$output .= '<a href="'.$data.'">'.$data.'</a>';
-				break;
+
+					$output .= '<a href="'.$data.'">'.$data.'</a>';
+					break;
 
 
 				case "password":
-				$output .= $data;
-				break;
+
+					$output .= $data;
+					break;
 
 
 				case "date_picker":
-				$format = $field['display_format'];
-				$output .= date($format,strtotime($data));
-				break;
+				
+					$return_format = $field['return_format'];
+
+					if( $return_format == 'd/m/Y' ){
+						$output .= 'Return format i.e. "d/m/Y" is not supported';
+					} else{
+						if( strpos( $field['wrapper']['class'], 'human') !== false ){
+							$output .= $this->human_readable_date( $data, $return_format );
+						} else{
+							$output .= date( $return_format, strtotime( $data ) );
+						}
+					}
+
+					break;
 
 
 				case "time_picker":
-				$format = $field['display_format'];
-				$output .= date($format,strtotime($data));
-				break;
+
+					$format = $field['display_format'];
+					$output .= date($format,strtotime($data));
+					break;
 
 
 				case "date_time_picker":
-				$display_format = $field['display_format'];
-				$return_format = $field['return_format'];
 
-				if( strpos( $field['wrapper']['class'], 'human') !== false){
-					$output .= $this->human_readable_date($data, $return_format);
-				} else{
-					$output .= date( $return_format, strtotime( $data ) );
-				}
-				break;	
+					$return_format = $field['return_format'];
 
-				
+					if( $return_format == 'd/m/Y' ){
+						$output .= 'Return format i.e. "d/m/Y" is not supported';
+					} else{
+						if( strpos( $field['wrapper']['class'], 'human') !== false ){
+							$output .= $this->human_readable_date( $data, $return_format );
+						} else{
+							$output .= date( $return_format, strtotime( $data ) );
+						}
+					}
+					break;
+
+
 				case "color_picker":
-				$output .= $data;
-				break;	
+
+					$output .= $data;
+					break;	
 
 
 				case "image":
-				// echo " CASE IMAGE";
-				if($field['return_format'] == "array"){
-					$src =  $data['url'];
-				} elseif($field['return_format'] == "url"){
-					$src =  $data;
-				} else {
-					$image_url = wp_get_attachment_url( $data );
-					$src =  $image_url;
-				}
-				$output .= '<img src="'.$src.'"/>';
-				break; 
+
+					if($field['return_format'] == "array"){
+						$src =  $data['url'];
+					} elseif($field['return_format'] == "url"){
+						$src =  $data;
+					} else {
+						$image_url = wp_get_attachment_url( $data );
+						$src =  $image_url;
+					}
+					$output .= '<img src="'.$src.'"/>';
+					break; 
+
 
 				case "file":
-				if( $field['return_format'] == "array" ){
-					if( $data['type'] == 'audio' ){
-						$file_type = $data['subtype'];
-						if( $file_type == 'mpeg' ){
-							$file_type = 'mp3';
+
+					if( $field['return_format'] == "array" ){
+						if( $data['type'] == 'audio' ){
+							$file_type = $data['subtype'];
+							if( $file_type == 'mpeg' ){
+								$file_type = 'mp3';
+							}
+							$output .= do_shortcode('[audio '.$file_type.'="'.$data['url'].'"][/audio]');
+						} elseif( $data['type'] == 'video' ){
+							$output .= do_shortcode('[video width="'.$data['width'].'" height="'.$data['height'].'" '.$data['subtype'].'="'.$data['url'].'"][/video]');
+						}else {
+							$output .= '<img src="'.$data['icon'].'"/><div><a href="'.$data['url'].'">'.$data['filename'].'</a></div>';
 						}
-						$output .= do_shortcode('[audio '.$file_type.'="'.$data['url'].'"][/audio]');
-					} elseif( $data['type'] == 'video' ){
-						$output .= do_shortcode('[video width="'.$data['width'].'" height="'.$data['height'].'" '.$data['subtype'].'="'.$data['url'].'"][/video]');
-					}else {
-						$output .= '<img src="'.$data['icon'].'"/><div><a href="'.$data['url'].'">'.$data['filename'].'</a></div>';
+					} elseif($field['return_format'] == "url"){
+						$field = get_field_object($key);
+						$output .= $data;
+					} else {
+						$file_url = wp_get_attachment_url( $data );
+						$field = get_field_object($key);
+						$output .= '<div><a href="'.$file_url.'"><button class="aione-button">'.$field['label'].'</button></a>';
 					}
-				} elseif($field['return_format'] == "url"){
-					$field = get_field_object($key);
-					$output .= $data;
-				} else {
-					$file_url = wp_get_attachment_url( $data );
-					$field = get_field_object($key);
-					$output .= '<div><a href="'.$file_url.'"><button class="aione-button">'.$field['label'].'</button></a>';
-				}
-				break;
+					break;
 
 
 				case "wysiwyg":
-				$output .= $data;
-				break; 
+
+					$output .= $data;
+					break; 
 
 
 				case "oembed":
-				$output .= $data;
-				break;    
+
+					$output .= $data;
+					break;
 
 
 				case "gallery":
-				$field_classes = explode(' ', trim( $field['wrapper']['class'] ) );
 
-				if( is_array(  $field_classes ) && in_array( 'aione-images' , $field_classes ) ){
-					foreach ($data as  $gallery) {
-						$output .= '<a href="'.$gallery['link'].'">';
-						$output .= '<img src="'.$gallery['url'].'"/>';
-						$output .= '</a>';
-							// $output .= $gallery['caption'];
-							// $output .= $gallery['description'];
-					}
-				} else {
+					$field_classes = explode(' ', trim( $field['wrapper']['class'] ) );
 
-					foreach ($data as  $gallery) {
-						$output .= '<img src="'.$gallery['url'].'"/>';
+					if( is_array(  $field_classes ) && in_array( 'aione-images' , $field_classes ) ){
+						foreach ($data as  $gallery) {
+							$output .= '<a href="'.$gallery['link'].'">';
+							$output .= '<img src="'.$gallery['url'].'"/>';
+							$output .= '</a>';
+								// $output .= $gallery['caption'];
+								// $output .= $gallery['description'];
+						}
+					} else {
+
+						foreach ($data as  $gallery) {
+							$output .= '<img src="'.$gallery['url'].'"/>';
+						}
 					}
-				}
-				break; 
+					break;
 
 
 				case "select":
-				if($field['multiple'] == '1'){ 
+
+					if($field['multiple'] == '1'){ 
+						if($field['return_format'] == "value" || $field['return_format'] == "label"){
+							$output .= implode(",", $data);
+						} else {
+							foreach ($data as $value) {	
+								$output .= $value['label']." ";
+							}
+						}
+					} else {
+						if($field['return_format'] == "array" ){ 
+							$output .= $data['label'];
+						} else {						
+							$output .= $data;
+						}
+					}
+					break; 
+
+
+				case "checkbox":
+
 					if($field['return_format'] == "value" || $field['return_format'] == "label"){
 						$output .= implode(",", $data);
 					} else {
@@ -3548,232 +3597,228 @@ class Aione_App_Builder_Public {
 							$output .= $value['label']." ";
 						}
 					}
-				} else {
-					if($field['return_format'] == "array" ){ 
-						$output .= $data['label'];
-					} else {						
-						$output .= $data;
-					}
-				}
-				break; 
-
-
-				case "checkbox":
-				if($field['return_format'] == "value" || $field['return_format'] == "label"){
-					$output .= implode(",", $data);
-				} else {
-					foreach ($data as $value) {	
-						$output .= $value['label']." ";
-					}
-				}
-				break;
+					break;
 
 
 				case "radio":
-				if($field['return_format'] == "array"){
-					$output .= $data['label'];
-				} else {
-					$output .= $data;
-				}
-				break;
 
-
-				case "button_group":
-				if($field['return_format'] == "array"){
-					$output .= $data['label'];
-				} else {
-					$output .= $data;
-				}
-				break;
-
-
-				case "true_false":
-				if($data == "1"){			    		
-					$output .= "True";
-				}
-				break;
-
-
-				case "link":
-				if($field['return_format'] == "array"){			    		
-					$output .= '<a href="'.$data['url'].'" target="'.$data['target'].'">'.$data['title'].'</a>';
-				} else {
-					$output .= '<a href="'.$data.'" target="">'.$data.'</a>';
-				}
-				break; 
-
-
-				case "post_object":
-				$post_template = $atts['template'];
-
-				$aione_templates 		= get_option( 'aione-templates' );
-				$post_template_array 		= $aione_templates[$post_template];
-
-				if($field['multiple'] == '1'){				
-					
-					if($field['return_format'] == "object"){
-						foreach ($data as $key => $value) {
-
-							if( !empty( $post_template ) && $post_template_array ){
-								global $post;
-								/*$post_type = get_post_type( $value->ID );
-
-								$posts = get_posts( 
-									array( 
-										'include' => array( $value->ID ), 
-										'post_type' => $post_type
-									) 
-								);
-
-								if ( $posts ) {
-									foreach ( $posts as $post ) : 
-										setup_postdata( $post ); 
-										$output .= do_shortcode( $post_template_array['content'] );
-									endforeach;
-									wp_reset_postdata();
-								}*/
-
-								$post = get_post($value->ID);
-								setup_postdata( $post ); 
-								$output .= do_shortcode( $post_template_array['content'] );
-								wp_reset_postdata();
-
-							} else {
-								$output .= '<div class="post-title">'.$value->post_title.'</div>';
-								$output .= '<div class="post-content">'.do_shortcode( $value->post_content ).'</div>';
-							}							
-						}				    		
-					} else {
-						foreach ($data as $key => $value) {
-							if( !empty( $post_template ) && $post_template_array ){
-								global $post;
-								$post = get_post($value);
-								setup_postdata( $post ); 
-								$output .= do_shortcode( $post_template_array['content'] );
-								wp_reset_postdata();
-							} else {
-								$value = get_post($value);
-								$output .= '<div class="post-title">'.$value->post_title.'</div>';
-								$output .= '<div class="post-content">'.do_shortcode( $value->post_content ).'</div>';
-							}
-							
-						}
-					}
-				} else {			    	
-					if($field['return_format'] == "object"){
-						if( !empty( $post_template ) && $post_template_array ){
-							global $post;
-							$post = get_post($data);
-							setup_postdata( $post ); 
-							$output .= do_shortcode( $post_template_array['content'] );
-							wp_reset_postdata();
-						} else {
-							$output .= '<div class="post-title">'.$data->post_title.'</div>';
-							$output .= '<div class="post-content">'.do_shortcode( $data->post_content ).'</div>';
-						}						
-					} else {
-						if( !empty( $post_template ) && $post_template_array ){
-							global $post;
-							$post = get_post($data);
-							setup_postdata( $post ); 
-							$output .= do_shortcode( $post_template_array['content'] );
-							wp_reset_postdata();
-						} else {
-							$data = get_post($data);
-							$output .= '<div class="post-title">'.$data->post_title.'</div>';
-							$output .= '<div class="post-content">'.do_shortcode( $data->post_content ).'</div>';
-						}
-					}	
-				}
-				break;
-
-
-				case "page_link":
-				if($field['multiple'] == '1'){
-					foreach ($data as $key => $value) {
-						$output .= '<a href="'.$value.'" target="">'.$value.'</a>';
-					}			    		
-				} else {
-					$output .= '<a href="'.$data.'" target="">'.$data.'</a>';
-				}			    	
-				break;
-
-
-				case "relationship":			    
-				if($field['return_format'] == "object"){
-					$output .= '<div class="">Title : '.$data[0]->post_title.'</div>';
-					$output .= '<div class="">Content : '.$data[0]->post_content.'</div>';
-				} else { 
-					$data = get_post($data[0]);
-					$output .= '<div class="">Title : '.$data->post_title.'</div>';
-					$output .= '<div class="">Content : '.$data->post_content.'</div>';
-				}		    	
-				break; 
-
-
-				case "taxonomy":   
-				if($field['return_format'] == "object"){			    		
-					if($field['field_type']=="radio" || $field['field_type']=="select"){
-						$output .= $data->name;
-					} else {
-						foreach ($data as $value) {
-							$output .= $value->name." ";
-						}
-					}
-				} else {
-					if($field['field_type']=="radio" || $field['field_type']=="select"){
-						$term = get_term( $data );
-						$output .= $term->name;
-					} else {
-						foreach ($data as $value) {
-							$term = get_term( $value );
-							$output .= $term->name." ";
-						}
-					}
-				}	    	
-				break; 
-
-
-				case "user":   
-				if( $field['multiple'] == '1' ){
-					$users = array();
-					foreach ($data as $key => $value) {
-						if($field['return_format'] == "object"){
-							$users[] = $value->ID;
-						} else if ($field['return_format'] == "array"){
-							$users[] = $value['ID'];
-						} else {
-							$users[] =  $value;
-						}
-					}
-
-					$output .= implode( $users, ',');
-				} else {
-					if( $field['return_format'] == "object" ){
-						$output .= $data->ID;
-					} else if ( $field['return_format'] == "array" ){
-						$output .= $data['ID'];
+					if($field['return_format'] == "array"){
+						$output .= $data['label'];
 					} else {
 						$output .= $data;
 					}
-				}
-				break;
+					break;
 
 
-				case "repeater":   
+				case "button_group":
+
+					if($field['return_format'] == "array"){
+						$output .= $data['label'];
+					} else {
+						$output .= $data;
+					}
+					break;
+
+
+				case "true_false":
+
+					if($data == "1"){			    		
+						$output .= "True";
+					}
+					break;
+
+
+				case "link":
+
+					if($field['return_format'] == "array"){			    		
+						$output .= '<a href="'.$data['url'].'" target="'.$data['target'].'">'.$data['title'].'</a>';
+					} else {
+						$output .= '<a href="'.$data.'" target="">'.$data.'</a>';
+					}
+					break; 
+
+
+				case "post_object":
+
+					$post_template = $atts['template'];
+
+					$aione_templates 		= get_option( 'aione-templates' );
+					$post_template_array 		= $aione_templates[$post_template];
+
+					if($field['multiple'] == '1'){				
+						
+						if($field['return_format'] == "object"){
+							foreach ($data as $key => $value) {
+
+								if( !empty( $post_template ) && $post_template_array ){
+									global $post;
+									/*$post_type = get_post_type( $value->ID );
+
+									$posts = get_posts( 
+										array( 
+											'include' => array( $value->ID ), 
+											'post_type' => $post_type
+										) 
+									);
+
+									if ( $posts ) {
+										foreach ( $posts as $post ) : 
+											setup_postdata( $post ); 
+											$output .= do_shortcode( $post_template_array['content'] );
+										endforeach;
+										wp_reset_postdata();
+									}*/
+
+									$post = get_post($value->ID);
+									setup_postdata( $post ); 
+									$output .= do_shortcode( $post_template_array['content'] );
+									wp_reset_postdata();
+
+								} else {
+									$output .= '<div class="post-title">'.$value->post_title.'</div>';
+									$output .= '<div class="post-content">'.do_shortcode( $value->post_content ).'</div>';
+								}							
+							}				    		
+						} else {
+							foreach ($data as $key => $value) {
+								if( !empty( $post_template ) && $post_template_array ){
+									global $post;
+									$post = get_post($value);
+									setup_postdata( $post ); 
+									$output .= do_shortcode( $post_template_array['content'] );
+									wp_reset_postdata();
+								} else {
+									$value = get_post($value);
+									$output .= '<div class="post-title">'.$value->post_title.'</div>';
+									$output .= '<div class="post-content">'.do_shortcode( $value->post_content ).'</div>';
+								}
+								
+							}
+						}
+					} else {			    	
+						if($field['return_format'] == "object"){
+							if( !empty( $post_template ) && $post_template_array ){
+								global $post;
+								$post = get_post($data);
+								setup_postdata( $post ); 
+								$output .= do_shortcode( $post_template_array['content'] );
+								wp_reset_postdata();
+							} else {
+								$output .= '<div class="post-title">'.$data->post_title.'</div>';
+								$output .= '<div class="post-content">'.do_shortcode( $data->post_content ).'</div>';
+							}						
+						} else {
+							if( !empty( $post_template ) && $post_template_array ){
+								global $post;
+								$post = get_post($data);
+								setup_postdata( $post ); 
+								$output .= do_shortcode( $post_template_array['content'] );
+								wp_reset_postdata();
+							} else {
+								$data = get_post($data);
+								$output .= '<div class="post-title">'.$data->post_title.'</div>';
+								$output .= '<div class="post-content">'.do_shortcode( $data->post_content ).'</div>';
+							}
+						}	
+					}
+					break;
+
+
+				case "page_link":
+
+					if($field['multiple'] == '1'){
+						foreach ($data as $key => $value) {
+							$output .= '<a href="'.$value.'" target="">'.$value.'</a>';
+						}			    		
+					} else {
+						$output .= '<a href="'.$data.'" target="">'.$data.'</a>';
+					}			    	
+					break;
+
+
+				case "relationship":
+
+					if($field['return_format'] == "object"){
+						$output .= '<div class="">Title : '.$data[0]->post_title.'</div>';
+						$output .= '<div class="">Content : '.$data[0]->post_content.'</div>';
+					} else { 
+						$data = get_post($data[0]);
+						$output .= '<div class="">Title : '.$data->post_title.'</div>';
+						$output .= '<div class="">Content : '.$data->post_content.'</div>';
+					}		    	
+					break; 
+
+
+				case "taxonomy":
+
+					if($field['return_format'] == "object"){			    		
+						if($field['field_type']=="radio" || $field['field_type']=="select"){
+							$output .= $data->name;
+						} else {
+							foreach ($data as $value) {
+								$output .= $value->name." ";
+							}
+						}
+					} else {
+						if($field['field_type']=="radio" || $field['field_type']=="select"){
+							$term = get_term( $data );
+							$output .= $term->name;
+						} else {
+							foreach ($data as $value) {
+								$term = get_term( $value );
+								$output .= $term->name." ";
+							}
+						}
+					}	    	
+					break; 
+
+
+				case "user": 
+
+					if( $field['multiple'] == '1' ){
+						$users = array();
+						foreach ($data as $key => $value) {
+							if($field['return_format'] == "object"){
+								$users[] = $value->ID;
+							} else if ($field['return_format'] == "array"){
+								$users[] = $value['ID'];
+							} else {
+								$users[] =  $value;
+							}
+						}
+
+						$output .= implode( $users, ',');
+					} else {
+						if( $field['return_format'] == "object" ){
+							$output .= $data->ID;
+						} else if ( $field['return_format'] == "array" ){
+							$output .= $data['ID'];
+						} else {
+							$output .= $data;
+						}
+					}
+					break;
+
+
+				case "repeater":  
+
 			    	$repeater_field_key 	= $field['key'];
 			    	$repeater_field_label 	= $atts['show_label'];
 			    	$repeater_field_style 	= $atts['style'];
 
 			    	$output .= do_shortcode( '[post_meta field="'.$repeater_field_key.'" show_label="'.$repeater_field_label.'" style="'.$repeater_field_style.'"]' );
-			    	break;             
-			    	default:
-			    	$output .= "Unknown field Type";   
-			} //switch
-		} // if $data
+			    	break;  
+
+
+			    default:
+			    	$output .= "Unknown field Type"; 
+
+			} // switch( $data )
+		} // if( $data )
 
 		return $output;
 	}
+	
 
 	function get_field_data( $key , $post_id, $repeater = false ){
 

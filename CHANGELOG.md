@@ -61,3 +61,6 @@ UPDATED: updated list-posts shortcode
 
 ## 1.4.0.11 03-04-2019
 FIXED: user_meta shortcode
+
+## 1.4.0.12 10-04-2019
+UPDATED: post_meta shortcode
