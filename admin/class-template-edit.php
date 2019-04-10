@@ -441,7 +441,7 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
         );
 
         $sidebars = array();
-        $sidebars['default'] = __( 'Default', 'gutenbergtheme' );
+        $sidebars['Default'] = __( 'default', 'gutenbergtheme' );
         foreach ( $GLOBALS['wp_registered_sidebars'] as $sidebar ) {
             $sidebar_id = $sidebar['id'];
             $sidebar_name = ucwords( $sidebar['name']);

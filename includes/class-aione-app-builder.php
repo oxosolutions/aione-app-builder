@@ -323,9 +323,9 @@ class Aione_App_Builder {
 		
 		$this->loader->add_shortcode( 'custom-fields', $plugin_public, 'aione_app_builder_post_custom_fields_shortcode' );
 
-		$this->loader->add_shortcode( 'profile_picture', $plugin_public, 'aione_app_builder_profile_picture_shortcode' );
+		/*$this->loader->add_shortcode( 'profile_picture', $plugin_public, 'aione_app_builder_profile_picture_shortcode' );
 		//to_be_deleted
-		$this->loader->add_shortcode( 'profile-image', $plugin_public, 'aione_app_builder_profile_picture_shortcode' );
+		$this->loader->add_shortcode( 'profile-image', $plugin_public, 'aione_app_builder_profile_picture_shortcode' );*/
 
 		$this->loader->add_shortcode( 'upcoming_tag', $plugin_public, 'aione_app_builder_upcoming_tag_shortcode' );
 		//to_be_deleted
