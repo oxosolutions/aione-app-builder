@@ -3359,18 +3359,33 @@ class Aione_App_Builder_Public {
 							$field_id = $sub_field_array['key'];
 						}
 
+						
+
+						$sub_field_value = $this->get_data_callback( $sub_field_array, $atts['post_id'], $repeater, $atts );
+
+
+						$sub_field_value_calss = str_replace( ' ', '-', $sub_field_value ); // Replaces all spaces with hyphens.
+						$sub_field_value_calss = preg_replace( '/[^A-Za-z0-9\-]/', '', $sub_field_value_calss ); // Removes special chars.
+						$sub_field_value_calss = preg_replace( '/-+/', '-', $sub_field_value_calss ); // Replaces multiple hyphens with single one.
+						$sub_field_value_calss = trim( $sub_field_value_calss, '-' ); // Remove first or last -
+						$sub_field_value_calss = strtolower( $sub_field_value_calss ); // lowercase
+
+
+
 						$sub_field_classes = array(
 							'subfield',
 							$field_class,
 							$sub_field_array['wrapper']['class'],
-							'field_type_' . $sub_field_array['type'],
+							'subfield-type-' . $sub_field_array['type'],
+							'subfield-value-' . $sub_field_value_calss,
 						);
 
 						$sub_field_classes = implode(' ', $sub_field_classes);
 						
 						$output .= '<li class="'.$sub_field_classes.'">';
 
-						$output .= $this->get_data_callback( $sub_field_array, $atts['post_id'], $repeater, $atts );
+						$output .= $sub_field_value;
+
 						$output .= '</li>';
 
 					}
