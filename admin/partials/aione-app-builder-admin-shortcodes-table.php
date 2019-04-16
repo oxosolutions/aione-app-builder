@@ -218,6 +218,7 @@
 'cat_id'         => '',
 'author'         => '',
 'author_id'      => '',
+'post__in'      => '',// comma saperated ids of post ids to be included
 'meta_key'      => '',
 'meta_value'      => '',
 'posts_per_page'  => '-1',

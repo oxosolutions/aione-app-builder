@@ -1960,6 +1960,7 @@ class Aione_App_Builder_Public {
 			'status'			=> 'publish',
 			'cat'				=> '',
 			'cat_id'			=> '',
+			'post__in'			=> '',
 			'author'			=> '',
 			'author_id'			=> '',
 			'meta_key'			=> '',
@@ -1981,6 +1982,12 @@ class Aione_App_Builder_Public {
 		$output = "";
 
 		$status = explode(',',$atts['status']);
+
+		
+
+		if( !empty( $atts['post__in'] ) ){
+			$post__in = explode( ',', $atts['post__in'] );
+		}
 
 
 
@@ -2006,6 +2013,7 @@ class Aione_App_Builder_Public {
 			'meta_key'				=> $atts['meta_key'],
 			'meta_value'			=> $atts['meta_value'],
 			'posts_per_page'		=> $atts['posts_per_page'],
+			'post__in'				=> $post__in,
 			'offset'				=> $offset,
 			'ignore_sticky_posts'	=> false,
 			'order'					=> $atts['order'],
@@ -3655,6 +3663,8 @@ class Aione_App_Builder_Public {
 
 				case "post_object":
 
+					
+
 					$post_template = $atts['template'];
 
 					$aione_templates 		= get_option( 'aione-templates' );
@@ -3689,7 +3699,10 @@ class Aione_App_Builder_Public {
 									$output .= do_shortcode( $post_template_array['content'] );
 									wp_reset_postdata();
 
+								} elseif( $field['return_format'] == "object" ){
+
 								} else {
+									
 									$output .= '<div class="post-title">'.$value->post_title.'</div>';
 									$output .= '<div class="post-content">'.do_shortcode( $value->post_content ).'</div>';
 								}							
