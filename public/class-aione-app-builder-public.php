@@ -1965,6 +1965,8 @@ class Aione_App_Builder_Public {
 			'author_id'			=> '',
 			'meta_key'			=> '',
 			'meta_value'		=> '',
+			'meta_compare'		=> 'LIKE',
+			'meta_query'		=> '',
 			'offset'			=> '',
 			'posts_per_page'	=> -1,
 			'order'				=> 'DESC',
@@ -1989,7 +1991,10 @@ class Aione_App_Builder_Public {
 			$post__in = explode( ',', $atts['post__in'] );
 		}
 
-
+		if( !empty( $atts['meta_query'] ) ){
+			$atts['meta_query'] = json_decode( $atts['meta_query'] , TRUE);
+		}
+		
 
 		// $big = 999999999; // need an unlikely integer
 	    $current_page = get_query_var('paged');
@@ -2012,6 +2017,8 @@ class Aione_App_Builder_Public {
 			'author_name'			=> $atts['author'],
 			'meta_key'				=> $atts['meta_key'],
 			'meta_value'			=> $atts['meta_value'],
+			'meta_compare'			=> $atts['meta_compare'],
+			'meta_query'			=> $atts['meta_query'],
 			'posts_per_page'		=> $atts['posts_per_page'],
 			'post__in'				=> $post__in,
 			'offset'				=> $offset,
