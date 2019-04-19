@@ -769,34 +769,83 @@ class Aione_App_Builder_Public {
 		return do_shortcode($content);
 	} // aione_app_builder_user_not_logged_in_error_shortcode ()
 
-	public function aione_app_builder_access_check_shortcode( $attr, $content = null ) {
-		$defaults = array(
-			'capability' => '',
-			'role' => '',
-		);
-		extract( shortcode_atts( $defaults, $attr ) );
+	public function aione_app_builder_is_user_shortcode( $atts, $content = null ) {
+
+		// Attributes
+		$atts = shortcode_atts( array(
+			'capabilities' 	=> '',
+			'roles' 		=> '',
+			'users' 		=> '',
+		), $atts, 'is_user');
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+		$capabilities 	= trim( $atts['capabilities'] );
+		$roles 			= trim( $atts['roles'] );
+		$users 			= trim( $atts['users'] );
 
 		if ( is_null( $content ) || is_feed() ){
 			return '';
 		}
+
+	
+		/*
+		echo "<br>capability =  ".$capability ;
+		echo "<br>role =  ".$role ;
+		echo "<br>users =  ".$users ;
+		*/
 		
-		if ( !empty( $capability ) ) {
-			$caps = explode( ',', $capability );
-			foreach ( $caps as $cap ) {
-				if ( current_user_can( trim( $cap ) ) )
+
+		
+		if ( !empty( $user ) && !empty( $role ) ) {
+
+			$users = explode( ',', $users );
+			$current_user_id = get_current_user_id();
+			$roles = explode( ',', $role );
+
+			foreach ( $roles as $role ) {
+				if ( current_user_can( trim( $role ) ) && in_array( $current_user_id, $users ) ) {
 					return do_shortcode( $content );
+				}
 			}
 		}
 
-		if ( !empty( $role ) ) {
-			$roles = explode( ',', $role );
-			foreach ( $roles as $role ) {
-				if ( current_user_can( trim( $role ) ) )
-					return do_shortcode( $content );
+		if ( !empty( $users ) ) {
+
+			$users = explode( ',', $users );
+			$current_user_id = get_current_user_id();
+
+			if( in_array( $current_user_id, $users ) ) {
+				return do_shortcode( $content );
 			}
 		}
+
+		if ( !empty( $roles ) ) {
+
+			$roles = explode( ',', $roles );
+
+			$user = wp_get_current_user();
+			$user_roles = (array) $user->roles;
+
+			foreach ( $user_roles as $user_role ) {
+				if ( in_array( $user_role, $roles ) ) {
+					return do_shortcode( $content );
+				}
+			}
+		}
+
+		
+		if ( !empty( $capabilities ) ) {
+			$capabilities = explode( ',', $capabilities );
+			foreach ( $capabilities as $capability ) {
+				if ( current_user_can( trim( $capability ) ) ){
+					return do_shortcode( $content );
+				}
+			}
+		}
+		
 		return '';
-	} // aione_app_builder_access_check_shortcode ()
+	} // aione_app_builder_is_user_shortcode ()
 
 	public function aione_app_builder_login_shortcode( $atts, $content = null ) {		
 		$admin_login_redirect_page = get_option('admin_login_redirect_page');
@@ -1961,12 +2010,12 @@ class Aione_App_Builder_Public {
 			'cat'				=> '',
 			'cat_id'			=> '',
 			'post__in'			=> '',
-			'author'			=> '',
-			'author_id'			=> '',
 			'meta_key'			=> '',
 			'meta_value'		=> '',
 			'meta_compare'		=> 'LIKE',
 			'meta_query'		=> '',
+			'author'			=> '',
+			'author_id'			=> '',
 			'offset'			=> '',
 			'posts_per_page'	=> -1,
 			'order'				=> 'DESC',
@@ -3244,7 +3293,7 @@ class Aione_App_Builder_Public {
 	}
 
 
-	function aione_app_builder_variable_shortcode($atts){
+	function aione_app_builder_variable_shortcode( $atts ){
 
 		$atts = shortcode_atts( array(
 			'parameter' => '',
@@ -3259,6 +3308,25 @@ class Aione_App_Builder_Public {
 		return $variable;
 
 	}
+
+	function aione_app_builder_if_shortcode( $atts, $content ){
+
+		$atts = shortcode_atts( array(
+			'condition' => ''
+		), $atts, 'if' );
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+		$condition = $atts['condition'];
+		$condition = trim( $condition );
+
+		if( $condition ){
+			return $content;
+		}
+
+	}
+
+
 
 
 	function aione_app_builder_post_custom_fields_shortcode($atts){
@@ -3871,10 +3939,23 @@ class Aione_App_Builder_Public {
 		foreach ($atts as $parameter_key => $parameter_value) {
 
 			$parameter =  $parameter_value;
-			$parameter = str_replace("{{","[", $parameter );
-			$parameter = str_replace("}}","]", $parameter );
 
-			$parameter = do_shortcode( $parameter );
+			if( $parameter_key == 'meta_query'){
+				$parameter = str_replace("<%","[", $parameter );
+				$parameter = str_replace("%>","]", $parameter );
+
+				$parameter = do_shortcode( $parameter );
+			} else{
+				$parameter = str_replace("<%","[", $parameter );
+				$parameter = str_replace("%>","]", $parameter );
+
+				$parameter = do_shortcode( $parameter );
+
+				$parameter = str_replace("{{","[", $parameter );
+				$parameter = str_replace("}}","]", $parameter );
+
+				$parameter = do_shortcode( $parameter );
+			}
 
 			$atts[$parameter_key] = $parameter;
 		}

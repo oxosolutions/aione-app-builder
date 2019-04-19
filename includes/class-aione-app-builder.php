@@ -251,7 +251,7 @@ class Aione_App_Builder {
 
 		$this->loader->add_shortcode( 'user_not_logged_in_error', $plugin_public, 'aione_app_builder_user_not_logged_in_error_shortcode' );
 
-		$this->loader->add_shortcode( 'access', $plugin_public, 'aione_app_builder_access_check_shortcode' );
+		$this->loader->add_shortcode( 'is_user', $plugin_public, 'aione_app_builder_is_user_shortcode');
 
 		$this->loader->add_shortcode( 'login', $plugin_public, 'aione_app_builder_login_shortcode' );
 		$this->loader->add_shortcode( 'register', $plugin_public, 'aione_app_builder_register_shortcode' );
@@ -297,6 +297,7 @@ class Aione_App_Builder {
 
 
 		$this->loader->add_shortcode( 'variable', $plugin_public, 'aione_app_builder_variable_shortcode' );
+		$this->loader->add_shortcode( 'if', $plugin_public, 'aione_app_builder_if_shortcode' );
 
 		// POST SHORTCODES
 

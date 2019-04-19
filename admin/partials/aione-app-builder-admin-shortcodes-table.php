@@ -109,6 +109,17 @@
 				</td>
 				</tr>
 				<tr>
+					<td>Is User</td>
+					<td>[is_user][/is_user]</td>
+					<td>
+<pre>
+'users'           => '', //ID of User or comma saperated list of User ID
+'roles'           => '', //Role of User or comma saperated list of User Roles
+'capabilities'     => '', //Capabilities of user
+</pre>
+				</td>
+				</tr>
+				<tr>
 					<td>Login Form</td>
 					<td>[login]</td>
 					<td>
