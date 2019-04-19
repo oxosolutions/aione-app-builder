@@ -3430,7 +3430,7 @@ class Aione_App_Builder_Public {
 
 					foreach ( $field['sub_fields'] as $sub_fields_key => $sub_field_array ) {
 
-						$field_class = 'subfield_' . $sub_field_array['name'];
+						$field_class = 'subfield-' . $sub_field_array['name'];
 
 						if( empty( $field_class ) ){
 							$field_class = $sub_field_array['key'];
