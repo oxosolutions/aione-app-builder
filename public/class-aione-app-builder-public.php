@@ -2157,21 +2157,21 @@ class Aione_App_Builder_Public {
 		
 		// Attributes
 		$atts = shortcode_atts( array(
-			'post_id'	=> $post->ID,
+			'post_id'	=> '',
 			'template'	=> '',
 			'id'		=> '',
 			'class'		=> ''	
 		), $atts, 'post');
 
 		global $post, $theme_options;
-
+		
 		$atts = $this->clean_shortcode_parameters( $atts );
-
+		
 		$output = "";
 
 		$post =  get_post( $atts['post_id'] );
 		setup_postdata( $post ); 
-
+		
 		$is_template = false;
 
 		if( !empty( $atts['template'] ) ) {
@@ -2187,7 +2187,6 @@ class Aione_App_Builder_Public {
 		if( !empty($atts['id']) ){
 			$id_attribute = 'id="'.$atts['id'].'"';
 		}
-
 
 		if( get_post_status ( $atts['post_id'] ) ){
 
@@ -3422,14 +3421,19 @@ class Aione_App_Builder_Public {
 
 			if( have_rows( $field['key'] ) ) {
 
-				$output .= '<ul class="field-rows">';
+				if( $atts['style'] == "div" ) {
+
+					$output .= '<ul class="field-rows">';
+				}
 
 				while( have_rows($field['key']) ){
 
 					the_row();
 
+					if( $atts['style'] == "div" ) {
 					$output .= '<li class="field-row">';
 					$output .= '<ul class="subfields">';
+					}
 
 					foreach ( $field['sub_fields'] as $sub_fields_key => $sub_field_array ) {
 
@@ -3467,21 +3471,32 @@ class Aione_App_Builder_Public {
 						);
 
 						$sub_field_classes = implode(' ', $sub_field_classes);
+
+						if( $atts['style'] == "div" ) {
 						
 						$output .= '<li class="'.$sub_field_classes.'">';
+						}
 
 						$output .= $sub_field_value;
+						if( $atts['style'] == "div" ) {
 
 						$output .= '</li>';
+						}
 
 					}
 
+					if( $atts['style'] == "div" ) {
+
 					$output .= '</ul>';
 					$output .= '</li>';
+					}
 
 				}
 
+				if( $atts['style'] == "div" ) {
+
 				$output .= '</ul>';
+				}
 
 			}
 
@@ -3947,7 +3962,7 @@ class Aione_App_Builder_Public {
 
 
 	function clean_shortcode_parameters( $atts ){
-
+		
 		foreach ($atts as $parameter_key => $parameter_value) {
 
 			$parameter =  $parameter_value;
