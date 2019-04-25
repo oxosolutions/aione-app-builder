@@ -3363,6 +3363,8 @@ class Aione_App_Builder_Public {
 		$atts = shortcode_atts( array(
 			'post_id'		=> '',
 			'field'			=> '',
+			'subfields'		=> '',
+			'subfield_operator'		=> '',
 			'show_label'	=> 'no',
 			'style'			=> 'div', // table/div/list/ Leave empty for no html
 			'class'			=> ''
@@ -3419,11 +3421,13 @@ class Aione_App_Builder_Public {
 
 			$repeater = true;
 
+			$repeater_output = '';
+
 			if( have_rows( $field['key'] ) ) {
 
 				if( $atts['style'] == "div" ) {
 
-					$output .= '<ul class="field-rows">';
+					$repeater_output .='<ul class="field-rows">';
 				}
 
 				while( have_rows($field['key']) ){
@@ -3431,11 +3435,21 @@ class Aione_App_Builder_Public {
 					the_row();
 
 					if( $atts['style'] == "div" ) {
-					$output .= '<li class="field-row">';
-					$output .= '<ul class="subfields">';
+					$repeater_output .='<li class="field-row">';
+					$repeater_output .='<ul class="subfields">';
 					}
 
 					foreach ( $field['sub_fields'] as $sub_fields_key => $sub_field_array ) {
+
+						$subfields = $atts['subfields'];
+						$subfield_operator = $atts['subfield_operator'];
+
+						if( !empty( $subfields ) ) {
+							$subfields = explode( ',', $subfields );
+							if ( !in_array( $sub_field_array['name'], $subfields ) ) {
+								continue;
+							}
+						}
 
 						$field_class = 'subfield-' . $sub_field_array['name'];
 
@@ -3474,31 +3488,40 @@ class Aione_App_Builder_Public {
 
 						if( $atts['style'] == "div" ) {
 						
-						$output .= '<li class="'.$sub_field_classes.'">';
+						$repeater_output .='<li class="'.$sub_field_classes.'">';
 						}
 
-						$output .= $sub_field_value;
+						$repeater_output .=$sub_field_value;
 						if( $atts['style'] == "div" ) {
 
-						$output .= '</li>';
+						$repeater_output .='</li>';
 						}
+						$repeater_output .=$subfield_operator;
 
 					}
 
 					if( $atts['style'] == "div" ) {
 
-					$output .= '</ul>';
-					$output .= '</li>';
+					$repeater_output .='</ul>';
+					$repeater_output .='</li>';
 					}
 
 				}
 
 				if( $atts['style'] == "div" ) {
 
-				$output .= '</ul>';
+				$repeater_output .='</ul>';
 				}
 
 			}
+
+			$repeater_output = trim( $repeater_output, '+');
+			$repeater_output = trim( $repeater_output, '-');
+			$repeater_output = trim( $repeater_output, '*');
+			$repeater_output = trim( $repeater_output, '/');
+			$repeater_output = trim( $repeater_output);
+
+			$output .= $repeater_output;
 
 		} else {
 			$repeater = false;
