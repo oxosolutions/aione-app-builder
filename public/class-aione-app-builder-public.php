@@ -3423,14 +3423,14 @@ class Aione_App_Builder_Public {
 
 			$repeater_output = '';
 
-			if( have_rows( $field['key'] ) ) {
+			if( have_rows( $field['key'], $atts['post_id'] ) ) {
 
 				if( $atts['style'] == "div" ) {
 
 					$repeater_output .='<ul class="field-rows">';
 				}
 
-				while( have_rows($field['key']) ){
+				while( have_rows($field['key'], $atts['post_id'] ) ){
 
 					the_row();
 
