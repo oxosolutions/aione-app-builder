@@ -1912,38 +1912,58 @@ class Aione_App_Builder_Public {
 	} // End aione_app_builder_home_url_shortcode()
 
 	public function aione_app_builder_url_shortcode( $atts ) {
+
+
 		$atts = shortcode_atts(
 			array(
-				
 				'id' 		=> '0',
 				'path' 		=> '',
 				'title' 	=> '',
 				'action' 	=> '',
 				'class' 	=> '',
 			), $atts,'url');
+
+		$atts = $this->clean_shortcode_parameters( $atts );
 		
-		if(!$atts['id'] && !atts['$path'] && !$atts['title'] && !$atts['action']){
+		
+		if(!$atts['id'] && !$atts['$path'] && !$atts['title'] && !$atts['action']){
+
 			return home_url();
+
 		} else {
+
 			$page_id = 0;
-			if( $atts['id'] && is_numeric ($atts['id']) ){
+
+			if( $atts['id'] && is_numeric( $atts['id'] ) ){
+
 				$page_id = $atts['id'];
+
 			}
 			
-			if($atts['path'] != ''){
+			if( $atts['path'] != '' ){
+
 				$page_id = get_page_by_path($atts['path']);
+
 			}
 			
-			if($atts['title'] != ''){
+			if( $atts['title'] != '' ){
+
 				$page_id = get_page_by_title($atts['title']);
+
 			}
 			
-			if ($page_id) {
+			if ( $page_id ) {
+
 				return get_page_link($page_id);
+
 			} else {
+
 				return null;
+
 			}	
+
 		}
+
 	} // End aione_app_builder_url_shortcode()
 
 	public function aione_app_builder_post_count_shortcode( $atts ) {
