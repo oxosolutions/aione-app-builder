@@ -2103,7 +2103,7 @@ class Aione_App_Builder_Public {
 		
 		$posts = new WP_Query( $args );
 
-		if( $atts['api'] == 'yes' ){
+		if( $atts['api'] == 'yes' ) {
 
 			$api_array = array();
 			
@@ -2500,6 +2500,7 @@ class Aione_App_Builder_Public {
 			'include'	=> array(),
 			'exclude'	=> array(),
 			'template'	=> '',
+			'api'		=> 'no',
 			'role'		=> '',
 			'roles'		=> array(),
 		), $atts, 'users' );
@@ -2531,6 +2532,41 @@ class Aione_App_Builder_Public {
 		);
 
 		$users = get_users( $args );
+
+
+
+		if( $atts['api'] == 'yes' ){
+
+			$api_array = array();
+			
+			foreach ( $users as $api_key => $user ) {
+
+				$fields = array();
+				$fields['data'] 	= $user->data;
+				$fields['roles'] 	= $user->roles;
+
+				$post_meta = array();
+
+				$user_meta = get_user_meta( $user->ID );
+
+				foreach ( $user_meta as $key => $field ) {
+					$post_meta[$key] = $field;
+				}
+
+				$fields['meta'] = $post_meta;
+				$api_array[$api_key] = $fields;
+				// $api_array[$api_key]['meta'] = "META";
+				
+			}
+			
+
+
+			$output .= json_encode( $api_array, JSON_PRETTY_PRINT );
+
+			return $output;
+
+
+		}
 		//echo "<pre>";print_r($users);echo "</pre>";
 
 		$template = $atts['template'];
@@ -2542,7 +2578,9 @@ class Aione_App_Builder_Public {
 		}
 		
 		if( !empty( $aione_template_content ) ) {
-			$output .= '<div class="users aione-table">';
+			if( !empty( $atts['style'] ) ){
+				$output .= '<div class="users aione-table">';
+			}
 
 			foreach ( $users as $user ) {
 				$template_content = $aione_template_content;
@@ -2550,7 +2588,9 @@ class Aione_App_Builder_Public {
 				$output .= do_shortcode( $template_content );
 			}
 
-			$output .= '</div>';
+			if( !empty( $atts['style'] ) ){
+				$output .= '</div>';
+			}
 		} else {
 			if($atts['style'] == 'table') {
 			
