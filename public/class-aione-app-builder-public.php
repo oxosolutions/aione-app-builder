@@ -2022,6 +2022,8 @@ class Aione_App_Builder_Public {
 			'orderby'			=> 'date',
 			'template'			=> '',
 			'pagination'		=> 'yes',
+			'api'				=> 'no', // yes/no
+			'style'				=> 'list', // div/list/''
 			'id'				=> '',
 			'class'				=> ''	
 		), $atts, 'posts');
@@ -2081,6 +2083,41 @@ class Aione_App_Builder_Public {
 		
 		$posts = new WP_Query( $args );
 
+		if( $atts['api'] == 'yes' ){
+
+			$api_array = array();
+			
+			foreach ( $posts->posts as $api_key => $api_post ) {
+				$fields = array();
+				$post_meta = array();
+				foreach ( $api_post as $key => $field ) {
+					$fields[$key] = $field;
+				}
+
+				$api_post_meta = get_post_meta( $api_post->ID );
+
+
+				foreach ( $api_post_meta as $key => $field ) {
+					$post_meta[$key] = $field;
+				}
+
+				$fields['post_meta'] = $post_meta;
+				$api_array[$api_key] = $fields;
+				// $api_array[$api_key]['meta'] = "META";
+				
+			}
+			
+
+
+			$output .= json_encode( $api_array, JSON_PRETTY_PRINT );
+
+			return $output;
+
+
+		}
+
+
+
 		$total_posts = $posts->found_posts;
 		$total_pages = $posts->max_num_pages;
 
@@ -2108,12 +2145,18 @@ class Aione_App_Builder_Public {
 		
 		if( $posts->have_posts() ){
 			if( $is_template ){
+				if( !empty( $atts['style'] ) ){
 				$output .= '<div class="aione-template type-archive '.$atts['template'].'">';
+				}
 			}
-			$output .= '<ul '.$id_attribute.' class="list-posts '.$atts['class'].'">';
-			while( $posts->have_posts() ){
+			if( !empty( $atts['style'] ) ){
+				$output .= '<ul '.$id_attribute.' class="list-posts '.$atts['class'].'">';
+			}
+			while( $posts->have_posts() ) {
 				$posts->the_post(); 
+				if( !empty( $atts['style'] ) ){
 				$output .= '<li>';
+				}
 				if( $is_template ){
 					$output .= do_shortcode( $aione_template );
 				} else { 
@@ -2131,14 +2174,20 @@ class Aione_App_Builder_Public {
 					$output .= '</div>';
 					$output .= '</div>';
 					$output .= '<div class="clear"></div>';
-					$output .= '</li>';
 				
 				}
+				if( !empty( $atts['style'] ) ){
+				$output .= '</li>';
+				}
 			}
+			if( !empty( $atts['style'] ) ){
 			$output .= '</ul>';
+			}
 
 			if( $is_template ){
+				if( !empty( $atts['style'] ) ){
 				$output .= '</div>';
+				}
 			}
 
 			wp_reset_postdata();
@@ -3361,13 +3410,13 @@ class Aione_App_Builder_Public {
 	function aione_app_builder_post_meta_shortcode( $atts ) {
 		
 		$atts = shortcode_atts( array(
-			'post_id'		=> '',
-			'field'			=> '',
-			'subfields'		=> '',
-			'subfield_operator'		=> '',
-			'show_label'	=> 'no',
-			'style'			=> 'div', // table/div/list/ Leave empty for no html
-			'class'			=> ''
+			'post_id'			=> '',
+			'field'				=> '',
+			'subfields'			=> '',
+			'subfield_operator'	=> '',
+			'show_label'		=> 'no',
+			'style'				=> 'div', // table/div/list/ Leave empty for no html
+			'class'				=> ''
 		), $atts, 'post_meta' );
 
 		global $post;
@@ -3463,8 +3512,6 @@ class Aione_App_Builder_Public {
 							$field_id = $sub_field_array['key'];
 						}
 
-						
-
 						$sub_field_value = $this->get_data_callback( $sub_field_array, $atts['post_id'], $repeater, $atts );
 
 
@@ -3473,8 +3520,6 @@ class Aione_App_Builder_Public {
 						$sub_field_value_calss = preg_replace( '/-+/', '-', $sub_field_value_calss ); // Replaces multiple hyphens with single one.
 						$sub_field_value_calss = trim( $sub_field_value_calss, '-' ); // Remove first or last -
 						$sub_field_value_calss = strtolower( $sub_field_value_calss ); // lowercase
-
-
 
 						$sub_field_classes = array(
 							'subfield',
