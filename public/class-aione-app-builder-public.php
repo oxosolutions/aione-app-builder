@@ -964,21 +964,21 @@ class Aione_App_Builder_Public {
 		$form = '
 			<form name="' . $args['form_id'] . '" id="' . $args['form_id'] . '" action=""  method="post">
 				' . $login_form_top . '
-				<p class="login-username">
+				<div class="login-username">
 					<label for="' . esc_attr( $args['id_username'] ) . '">' . esc_html( $args['label_username'] ) . '</label>
 					<input type="text" name="username" id="' . esc_attr( $args['id_username'] ) . '" class="input" value="' . esc_attr( $args['value_username'] ) . '" size="20" />
-				</p>
-				<p class="login-password">
+				</div>
+				<div class="login-password">
 					<label for="' . esc_attr( $args['id_password'] ) . '">' . esc_html( $args['label_password'] ) . '</label>
 					<input type="password" name="password" id="' . esc_attr( $args['id_password'] ) . '" class="input" value="" size="20" />
-				</p>
+				</div>
 				' . $login_form_middle . '
 				' . $tfa_selection . '
 				' . ( $args['remember'] ? '<p class="login-remember"><label><input name="rememberme" type="checkbox" id="' . esc_attr( $args['id_remember'] ) . '" value="forever"' . ( $args['value_remember'] ? ' checked="checked"' : '' ) . ' /> ' . esc_html( $args['label_remember'] ) . '</label></p>' : '' ) . '
-				<p class="login-submit">
+				<div class="login-submit">
 					<input type="submit" name="wp-submit" id="' . esc_attr( $args['id_submit'] ) . '" class="button button-primary" value="' . esc_attr( $args['label_log_in'] ) . '" />
 					<input type="hidden" name="redirect_to" value="' . esc_url( $args['redirect'] ) . '" />
-				</p>
+				</div>
 				'. wp_nonce_field( 'aione_login_nonce', 'CSRFToken-aione', true, false ) .'
 				' . $login_form_bottom . '
 			</form>';
@@ -1916,7 +1916,7 @@ class Aione_App_Builder_Public {
 
 		$atts = shortcode_atts(
 			array(
-				'id' 		=> '0',
+				'id' 		=> '',
 				'path' 		=> '',
 				'title' 	=> '',
 				'action' 	=> '',
@@ -1925,8 +1925,7 @@ class Aione_App_Builder_Public {
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 		
-		
-		if(!$atts['id'] && !$atts['$path'] && !$atts['title'] && !$atts['action']){
+		if( empty( $atts['id'] ) && empty( $atts['path'] ) && empty( $atts['title'] ) ) {
 
 			return home_url();
 

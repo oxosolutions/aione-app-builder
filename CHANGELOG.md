@@ -64,3 +64,6 @@ FIXED: user_meta shortcode
 
 ## 1.4.0.12 10-04-2019
 UPDATED: post_meta shortcode
+
+## 1.4.0.13 01-05-2019
+FIXED: few UI Fixes
