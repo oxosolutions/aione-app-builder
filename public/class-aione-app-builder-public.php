@@ -2702,11 +2702,13 @@ class Aione_App_Builder_Public {
 	public function aione_app_builder_user_meta_shortcode( $atts ) {
 		
 		$atts =  shortcode_atts( array(
-			'user_id'		=> '', // ID of user
-			'field'			=> 'first_name', //key of field and custom field to be dispayed
-			'show_label'	=> 'no', //show field label
-			'class'			=> '',
-			'style'			=> 'div',
+			'user_id'			=> '', // ID of user
+			'field'				=> 'first_name', //key of field and custom field to be dispayed
+			'subfields'			=> '', // field names(slugs) to be displayed
+			'subfield_operator'	=> '', // + or - etc
+			'show_label'		=> 'no', //show field label
+			'class'				=> '',
+			'style'				=> 'div',
 		), $atts, 'user_meta' );
 
 		$user = wp_get_current_user();
@@ -2723,7 +2725,7 @@ class Aione_App_Builder_Public {
 		$field = get_field_object( $atts['field'], 'user_'.$atts['user_id']);
 
 		if( $field ){
-			$shortcode = '[post_meta post_id="user_' . $atts['user_id'] . '" field="' . $field['key'] . '" show_label="' . $atts['show_label'] . '" class="' . $atts['class'] . '" style="' . $atts['style'] . '"]';
+			$shortcode = '[post_meta post_id="user_' . $atts['user_id'] . '" field="' . $field['key'] . '" subfields="'.$atts['subfields'].'" subfield_operator="'.$atts['subfield_operator'].'" show_label="' . $atts['show_label'] . '" class="' . $atts['class'] . '" style="' . $atts['style'] . '"]';
 			$output .=  do_shortcode( $shortcode );
 		} else {
 			$output .= get_user_meta( $atts['user_id'], $atts['field'], true ); 
@@ -3470,9 +3472,9 @@ class Aione_App_Builder_Public {
 		
 		$atts = shortcode_atts( array(
 			'post_id'			=> '',
-			'field'				=> '',
-			'subfields'			=> '',
-			'subfield_operator'	=> '',
+			'field'				=> '', //field name(slug) or field_key
+			'subfields'			=> '',// field names(slugs) to be displayed
+			'subfield_operator'	=> '', // + or - etc
 			'show_label'		=> 'no',
 			'style'				=> 'div', // table/div/list/ Leave empty for no html
 			'class'				=> ''
@@ -3803,71 +3805,78 @@ class Aione_App_Builder_Public {
 								// $output .= $gallery['description'];
 						}
 					} else {
-
 						foreach ($data as  $gallery) {
 							$output .= '<img src="'.$gallery['url'].'"/>';
 						}
 					}
+					
 					break;
 
 
 				case "select":
 
-					if($field['multiple'] == '1'){ 
-						if($field['return_format'] == "value" || $field['return_format'] == "label"){
+					if( $field['multiple'] == '1' ) { 
+						if( $field['return_format'] == "value" || $field['return_format'] == "label" ) {
 							$output .= implode(",", $data);
 						} else {
-							foreach ($data as $value) {	
-								$output .= $value['label']." ";
+							foreach( $data as $value ) {	
+								$output .= $value['label']."(".$value['value'].") ";
 							}
 						}
 					} else {
-						if($field['return_format'] == "array" ){ 
-							$output .= $data['label'];
+						if( $field['return_format'] == "array" ){ 
+							$output .= $data['label']."(".$data['value'].") ";
 						} else {						
 							$output .= $data;
 						}
 					}
+
 					break; 
 
 
 				case "checkbox":
 
-					if($field['return_format'] == "value" || $field['return_format'] == "label"){
+					if( $field['return_format'] == "value" || $field['return_format'] == "label" ) {
 						$output .= implode(",", $data);
 					} else {
-						foreach ($data as $value) {	
-							$output .= $value['label']." ";
+						foreach ( $data as $value ) {	
+							$output .= $value['label']."(".$value['value'].") ";
 						}
 					}
+
 					break;
 
 
 				case "radio":
 
-					if($field['return_format'] == "array"){
-						$output .= $data['label'];
+					if( $field['return_format'] == "array" ) {
+						$output .= $data['label']."(".$data['value'].")";
 					} else {
 						$output .= $data;
 					}
+
 					break;
 
 
 				case "button_group":
 
-					if($field['return_format'] == "array"){
+					if( $field['return_format'] == "array" ) {
 						$output .= $data['label'];
 					} else {
 						$output .= $data;
 					}
+
 					break;
 
 
 				case "true_false":
 
-					if($data == "1"){			    		
-						$output .= "True";
+					if( $data == "1" ) {			    		
+						$output .= "true";
+					} else{
+						$output .= "false";
 					}
+
 					break;
 
 
@@ -4395,7 +4404,7 @@ class Aione_App_Builder_Public {
 		// Attributes
 		$atts = shortcode_atts(
 			array(
-				'type'				=> 'post',
+				'post_type'				=> 'post',
 				'title'				=> true,
 				'content'			=> true,
 				'status'			=> 'publish',

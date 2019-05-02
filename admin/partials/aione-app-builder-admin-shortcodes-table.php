@@ -260,7 +260,9 @@
 					<td>
 <pre>
 'post_id' => '', //Post ID
-'field' => 'field_5bc5a7afa60b0', //acf field_key
+'field' => 'field_5bc5a7afa60b0', //acf field name(slug) or field_key
+'subfields'			=> '', // field names(slugs) to be displayed
+'subfield_operator'	=> '', // + or - etc
 'show_label' => 'no', //yes
 'class'          => '' //CSS class
 </pre>
@@ -328,11 +330,13 @@
 						<td>[user_meta]</td>
 						<td>
 <pre>
-'user_id'        => '', // ID of user
-'field'          => 'first_name', //key of field and custom field to be dispayed
-'show_label'     => 'no', //yes
-'class'			=> '', //css class
-'style'			=> 'div', //Leave empty for no html
+'user_id'        	=> '', // ID of user
+'field'          	=> 'first_name', //key of field and custom field to be dispayed
+'subfields'			=> '',// field names(slugs) to be displayed
+'subfield_operator'	=> '', // + or - etc
+'show_label'     	=> 'no', //yes
+'class'				=> '', //css class
+'style'				=> 'div', //Leave empty for no html
 </pre>
 						</td>
 					</tr>
@@ -603,7 +607,7 @@ Return post author ID
 	<td>[add_new]</td>
 	<td>
 <pre>
-'type' => 'post', // page, any custom pot type
+'post_type' => 'post', // page, any custom pot type
 'title' => 'true', // false
 'content' => 'true', // false
 'status' => 'publish', // draft,pending, all wordpres post status
