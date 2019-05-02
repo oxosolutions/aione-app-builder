@@ -4404,7 +4404,7 @@ class Aione_App_Builder_Public {
 		// Attributes
 		$atts = shortcode_atts(
 			array(
-				'post_type'				=> 'post',
+				'post_type'			=> 'post',
 				'title'				=> true,
 				'content'			=> true,
 				'status'			=> 'publish',
@@ -4415,6 +4415,12 @@ class Aione_App_Builder_Public {
 			), $atts, 'add_new' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
+
+/*
+		echo "<pre>";
+		print_r( $atts);
+		echo "</pre>";
+		*/
 
 		if( !empty( $atts['field_groups'] ) ){	
 			$field_groups = explode( ',', $atts['field_groups'] );
@@ -4434,7 +4440,7 @@ class Aione_App_Builder_Public {
 			'id'					=> $atts['id'],
 			'post_id'				=> 'new_post',
 			'new_post' 				=> array(
-				'post_type'			=> $atts['type'],
+				'post_type'			=> $atts['post_type'],
 				'post_status'		=> $atts['status']
 			),
 			'post_title'			=> $atts['title'],
