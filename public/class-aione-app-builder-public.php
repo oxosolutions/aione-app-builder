@@ -1499,7 +1499,7 @@ class Aione_App_Builder_Public {
 						$user_id = $user->ID;
 						$activation_key = wp_generate_password( 8, false );
 						$update_error = wp_update_user( array( 'ID' => $user_id, 'user_pass' => esc_attr( $activation_key ) ) );
-						$user_notification = aione_app_builder_forget_password_notification($user_id, $activation_key);
+						$user_notification = $this->aione_app_builder_forget_password_notification($user_id, $activation_key);
 						if(is_int($update_error) && $user_notification){
 							$success_messages[] = "Password reset email sent.";
 							$success_messages[] = "Please also check spam folder.";
@@ -1536,6 +1536,31 @@ class Aione_App_Builder_Public {
 			
 			return $output;
 		}
+
+		public function aione_app_builder_forget_password_notification( $user_id, $user_key ) {
+        $user = new WP_User( $user_id );
+        $user_login = stripslashes( $user->user_login );
+        $user_email = stripslashes( $user->user_email );
+        // $headers = array('Content-Type: text/html; charset=UTF-8');
+        $headers = 'From: Darlic <no-reply@darlic.com>;';
+        $message  = "Hi " . $user->first_name . " " . $user->last_name . ", <br><br>";
+        $message .= "Someone has requested to reset password for this account" . "<br><br>";
+        $message .= "<strong>Account Details</strong>" . "<br><br><br><br>";
+        $message .= "Login URL: " . wp_login_url() . "<br><br>";
+        $message .= "Username: " . $user_login . "<br>";
+        $message .= "E-mail: " . $user_email . "<br>";
+        $message .= "Password : " . $user_key . "<br><br>";
+        $message .= "If you have any problems, please contact administrator<br><br>";
+        $message .= "Thanks!";
+		$subject = sprintf( __('Reset Password for %s account'), get_option('blogname') );;
+        $notification_sent = wp_mail( $user_email, $subject, $message, $headers );
+        if($notification_sent){
+            return true;
+        } else {
+            return false;
+        }
+    }
+	// END aione_app_builder_forget_password_notification()
 
 /*		public function aione_app_builder_account_shortcode ($attr, $content = null){
 			extract( shortcode_atts(
@@ -4410,13 +4435,14 @@ class Aione_App_Builder_Public {
 				'status'			=> 'publish',
 				'field_groups'		=> false,
 				'fields'			=> false,
+				//'return'			=> '',
 				'class'				=> 'add-new-form',
 				'id'				=> 'add_new_form',
 			), $atts, 'add_new' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 
-/*
+		/*
 		echo "<pre>";
 		print_r( $atts);
 		echo "</pre>";
@@ -4435,6 +4461,20 @@ class Aione_App_Builder_Public {
 		}
 
 		$output = '';
+		if($atts['title'] == "false"){
+			$atts['title'] = false;
+		}
+		if($atts['title'] == "true"){
+			$atts['title'] = true;
+		}
+		if($atts['content'] == "false"){
+			$atts['content'] = false;
+		}
+		if($atts['content'] == "true"){
+			$atts['content'] = true;
+		}
+		
+
 
 		$options = array(
 			'id'					=> $atts['id'],
@@ -4516,6 +4556,19 @@ class Aione_App_Builder_Public {
 		print_r( );
 		echo "</pre>";
 		*/
+
+		if($atts['title'] == "false"){
+			$atts['title'] = false;
+		}
+		if($atts['title'] == "true"){
+			$atts['title'] = true;
+		}
+		if($atts['content'] == "false"){
+			$atts['content'] = false;
+		}
+		if($atts['content'] == "true"){
+			$atts['content'] = true;
+		}
 
 		$options = array(
 			'id'					=> $atts['id'],
