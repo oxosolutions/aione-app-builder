@@ -1999,6 +1999,10 @@ class Aione_App_Builder_Public {
 				'status'			=> array('publish'),
 				'cat'				=> '',
 				'cat_id'			=> '',
+				'meta_key'			=> '',
+				'meta_value'		=> '',
+				'meta_compare'		=> 'LIKE',
+				'meta_query'		=> '',
 				'author'			=> '',
 				'author_id'			=> '',
 				'posts_per_page'	=> '99999999999',
@@ -2024,6 +2028,10 @@ class Aione_App_Builder_Public {
 			'post_status'			=> $status,
 			'cat'					=> $atts['cat_id'],
 			'category_name'			=> $atts['cat'],
+			'meta_key'				=> $atts['meta_key'],
+			'meta_value'			=> $atts['meta_value'],
+			'meta_compare'			=> $atts['meta_compare'],
+			'meta_query'			=> $atts['meta_query'],
 			'author'				=> $atts['author_id'],
 			'author_name'			=> $atts['author'],
 			'posts_per_page'		=> $atts['posts_per_page'],
@@ -2035,8 +2043,21 @@ class Aione_App_Builder_Public {
 			'update_post_meta_cache'=> true,
 			'update_post_term_cache'=> true,
 		);
+
+		
+
+		/*echo "<pre>";
+		print_r( $args );
+		echo "</pre>";
+*/
+		
 		
 		$posts = new WP_Query( $args );
+
+		/*echo "<pre>";
+		print_r( $posts );
+		echo "</pre>";*/
+
 		
 		$output = $posts->found_posts;
 			

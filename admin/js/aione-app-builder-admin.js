@@ -1332,6 +1332,26 @@
         return false;
     });
 
+
+    jQuery( document ).ready( function( $ ) {
+    	jQuery('#aione_reset_submit').click(function(){
+			if ( 'reset' === jQuery('#aione_reset_confirm').val() ) {
+				var message =  'This action is not reversable. Clicking OK will reset your database back to the defaults. Click Cancel to abort.',
+					reset   = confirm( message );
+				if ( reset ) {
+					jQuery('#aione_reset_form').submit();
+				} else {
+					jQuery('#aione_reset').val('false');
+					return false;
+				}
+			} else {
+				alert( 'Invalid confirmation word. Please type the word reset in the confirmation field.' );
+				return false;
+			}
+		} );
+    });
+
+
     
 
 })( jQuery );

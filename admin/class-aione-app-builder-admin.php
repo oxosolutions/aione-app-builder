@@ -76,6 +76,7 @@ class Aione_App_Builder_Admin {
 		add_action( 'admin_menu',array( &$this, 'admin_menu' ) );
 		add_action('admin_init', array( $this,'init_dialog_scripts'));		
 		add_action( 'admin_init',array( $this, 'aione_register_acf_menu' ), 10 );
+		add_action( 'admin_init',array( $this, 'aione_reset_all_submit' ), 10 );
 		// TO DO: To add Members Plugin Menu in Aione App Builder
 		//add_action( 'admin_init',array( $this, 'aione_register_members_menu' ), 1000 );
 		add_filter( 'aione_filter_register_menu_pages', array( $this, 'register_page_dashboard_in_menu' ), 1000 );
@@ -393,6 +394,14 @@ class Aione_App_Builder_Admin {
 	        'capability'		=> 'manage_options',
 	    );
 		$pages['aione-pwa']['load_hook'] = aione_admin_calculate_menu_page_load_hook( $pages['aione-pwa'] );
+
+		$pages['aione-reset-all'] = array(
+			'slug'				=> 'aione-reset-all',
+	        'menu_title'		=> __( 'Reset All', 'aione-app-builder' ),
+	        'page_title'		=> __( 'Reset All', 'aione-app-builder' ),
+	        'callback'  		=> 'aione_admin_reset_all',
+	        'capability'		=> 'manage_options',
+	    );
 		//echo "<pre>";print_r($pages);echo "</pre>";
 		return $pages;
 		
@@ -1000,6 +1009,115 @@ class Aione_App_Builder_Admin {
 				
 		</h2>
 		<?php
+	}
+
+	public function aione_admin_reset_all() {
+		global $current_user;
+		if ( isset( $_POST['aione_reset_confirm'] ) && 'reset' !== $_POST['aione_reset_confirm'] ) {
+			echo '<div class="error fade"><p><strong>' . esc_html__( 'Invalid confirmation word. Please type the word "reset" in the confirmation field.', 'aione-app-builder' ) . '</strong></p></div>';
+		} elseif ( isset( $_POST['_wpnonce'] ) ) {
+			echo '<div class="error fade"><p><strong>' . esc_html__( 'Invalid nonce. Please try again.', 'aione-app-builder' ) . '</strong></p></div>';
+		}
+		
+		?>
+		<div class="wrap">
+			<div id="icon-tools" class="icon32"><br /></div>
+			<h1><?php esc_html_e( 'Reset', 'aione-app-builder' ); ?></h1>
+			<h2><?php esc_html_e( 'Details about the reset', 'aione-app-builder' ); ?></h2>
+			<p><strong><?php esc_html_e( 'After completing this reset you will be taken to the dashboard.', 'aione-app-builder' ); ?></strong></p>
+			<?php $admin = get_user_by( 'login', 'admin' ); ?>
+			<?php if ( ! isset( $admin->user_login ) || $admin->user_level < 10 ) : ?>
+				<?php $user = $current_user; ?>
+				<?php /* translators: The username. */ ?>
+				<p><?php printf( esc_html__( 'The "admin" user does not exist. The user %s will be recreated using its current password with user level 10.', 'wp-reset' ), '<strong>' . esc_html( $user->user_login ) . '</strong>' ); ?></p>
+			<?php else : ?>
+				<p><?php esc_html_e( 'The "admin" user exists and will be recreated with its current password.', 'wp-reset' ); ?></p>
+			<?php endif; ?>
+			
+			
+			<h3><?php esc_html_e( 'Reset', 'aione-app-builder' ); ?></h3>
+			<?php /* translators: reset. */ ?>
+			<p><?php printf( esc_html__( 'Type %s in the confirmation field to confirm the reset and then click the reset button:', 'aione-app-builder' ), '<strong>reset</strong>' ); ?></p>
+			<form id="aione_reset_form" action="" method="post">
+				<?php wp_nonce_field( 'aione_reset' ); ?>
+				<input id="aione_reset" type="hidden" name="aione_reset" value="true" />
+				<input id="aione_reset_confirm" type="text" name="aione_reset_confirm" value="" />
+				<p class="submit">
+					<input id="aione_reset_submit" style="width: 80px;" type="submit" name="Submit" class="button-primary" value="<?php esc_html_e( 'Reset' ); ?>" />
+				</p>
+			</form>
+		</div>
+		<?php
+	}
+
+	public function aione_reset_all_submit() {
+		global $current_user;
+
+		$wordpress_reset         = ( isset( $_POST['aione_reset'] ) && 'true' == $_POST['aione_reset'] );
+		$wordpress_reset_confirm = ( isset( $_POST['aione_reset_confirm'] ) && 'reset' == $_POST['aione_reset_confirm'] );
+		$valid_nonce             = ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'aione_reset' ) );
+
+		if ( $wordpress_reset && $wordpress_reset_confirm && $valid_nonce ) {
+			require_once ABSPATH . '/wp-admin/includes/upgrade.php';
+
+			$blogname    = get_option( 'blogname' );
+			$admin_email = get_option( 'admin_email' );
+			$blog_public = get_option( 'blog_public' );
+
+			if ( 'admin' !== $current_user->user_login ) {
+				$user = get_user_by( 'login', 'admin' );
+			}
+
+			if ( empty( $user->user_level ) || $user->user_level < 10 ) {
+				$user = $current_user;
+			}
+
+			global $wpdb, $reactivate_wp_reset_additional;
+
+			$prefix = str_replace( '_', '\_', $wpdb->prefix );
+			$tables = $wpdb->get_col( "SHOW TABLES LIKE '{$prefix}%'" );
+			foreach ( $tables as $table ) {
+				$wpdb->query( "DROP TABLE $table" );
+			}
+
+			$result = wp_install( $blogname, $user->user_login, $user->user_email, $blog_public );
+			extract( $result, EXTR_SKIP );
+
+			$query = $wpdb->prepare( "UPDATE $wpdb->users SET user_pass = %s, user_activation_key = '' WHERE ID = %d", $user->user_pass, $user_id );
+			$wpdb->query( $query );
+
+			$get_user_meta    = function_exists( 'get_user_meta' ) ? 'get_user_meta' : 'get_usermeta';
+			$update_user_meta = function_exists( 'update_user_meta' ) ? 'update_user_meta' : 'update_usermeta';
+
+			if ( $get_user_meta( $user_id, 'default_password_nag' ) ) {
+				$update_user_meta( $user_id, 'default_password_nag', false );
+			}
+
+			if ( $get_user_meta( $user_id, $wpdb->prefix . 'default_password_nag' ) ) {
+				$update_user_meta( $user_id, $wpdb->prefix . 'default_password_nag', false );
+			}
+
+
+			wp_clear_auth_cookie();
+			wp_set_auth_cookie( $user_id );
+
+			wp_redirect( admin_url() . '?reset' );
+			exit();
+		}
+
+		if ( array_key_exists( 'reset', $_GET ) && stristr( $_SERVER['HTTP_REFERER'], 'wordpress-reset' ) ) {
+			add_action( 'admin_notices', array( &$this, 'reset_notice' ) );
+		}
+	}
+
+	public function reset_notice() {
+		$user = get_user_by( 'id', 1 );
+		printf(
+			/* translators: The username. */
+			'<div id="message" class="updated fade"><p><strong>' . esc_html__( 'WordPress has been reset back to defaults. The user "%s" was recreated with its previous password.', 'aione-app-builder' ) . '</strong></p></div>',
+			esc_html( $user->user_login )
+		);
+		do_action( 'wordpress_reset_post', $user );
 	}
 
 }
