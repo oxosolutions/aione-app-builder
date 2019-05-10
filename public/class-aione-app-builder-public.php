@@ -2624,7 +2624,7 @@ class Aione_App_Builder_Public {
 		
 		if( !empty( $aione_template_content ) ) {
 			if( !empty( $atts['style'] ) ){
-				$output .= '<div class="users aione-table">';
+				$output .= '<div class="aione-template type-users "'.$template.'">';
 			}
 
 			foreach ( $users as $user ) {
