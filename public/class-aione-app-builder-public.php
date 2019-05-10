@@ -1725,7 +1725,6 @@ class Aione_App_Builder_Public {
 
 			$output .='<div id="' . $atts['id'] . '" class="' . $atts['class'] . '">';
 
-			$output .='<div class="account-content-title-heading-center"><h4>'.$username.' Profile</h4></div>';
 			$output .= '<ul class="aione-list theme-solid small" id="account_content_profile">
 			<li><div class="user-detail-label">ID</div>
 			<div class="user-detail-value">'.$user_id.'</div>
@@ -1804,9 +1803,6 @@ class Aione_App_Builder_Public {
 					update_field( $custom_field_key , $custom_field, "user_".$user_id );
 				}
 			}
-
-
-			$output .= '<h3 class="account-content-title-heading-center">Edit Profile</h3>';
 
 			$html_before_fields = "";
 			$html_before_fields .= '
@@ -1927,7 +1923,6 @@ class Aione_App_Builder_Public {
 			$output .= '</ul></div>';
 		}
 		if(is_user_logged_in()) {
-			$output .= '<h3 class="account-content-title-heading-center">Change Password</h3>';
 			$output .= '<form method="post" class="aione-change-password-form aione-form form acf-form" id="aione-change-password-form" action="">';
 			$output .= '<div class="aione-form-field field field-type-text">
 			<div class="label"><label for="current_pass">Current Password<span class="required">*</span></label></div>
