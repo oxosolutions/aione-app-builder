@@ -671,10 +671,11 @@ class Aione_App_Builder_Public {
 	} // End aione_app_builder_register_link_shortcode()
 
 	public function aione_app_builder_reset_password_link_shortcode( $atts ) {
+		
 		$atts = shortcode_atts(
 			array(
-				'class'           => '',
-				'text'           => 'Reset Password'
+				'class'		=> '',
+				'text'		=> 'Reset Password'
 			), $atts , 'reset_password_link' );
 		$output = "";
 		
