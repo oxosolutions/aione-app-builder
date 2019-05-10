@@ -1701,12 +1701,12 @@ class Aione_App_Builder_Public {
 		return $output;
 		}*/
 
-	public function aione_app_builder_view_profile_shortcode ( $atts, $content = null ) {
+	public function aione_app_builder_view_profile_shortcode( $atts, $content = null ) {
 
 		// Attributes
 		$atts = shortcode_atts( array(
-			'class'				=> 'view-profile',
-			'id'				=> 'view_profile'
+			'class'	=> 'view-profile',
+			'id'	=> 'view_profile'
 		), $atts, 'view_profile' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
@@ -1770,31 +1770,44 @@ class Aione_App_Builder_Public {
 		return $output;
 	}
 
-	public function aione_app_builder_edit_profile_shortcode ($attr, $content = null){
-		$defaults = array(
-			
-		);
-		extract( shortcode_atts( $defaults, $attr ) );
+	public function aione_app_builder_edit_profile_shortcode( $atts, $content = null ){
+
+		// Attributes
+		$atts = shortcode_atts( array(
+			'class'	=> 'edit-profile',
+			'id'	=> 'edit_profile'
+		), $atts, 'edit_profile' );
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
 		$output = "";
-		if(is_user_logged_in() ){
-			$user = wp_get_current_user();
-			$user_id = $user->ID;
-			$username = $user->user_login;
-			$value = get_user_meta($user_id);
+
+		if( is_user_logged_in() ) {
+
+			$user 		= wp_get_current_user();
+			$user_id 	= $user->ID;
+			$username 	= $user->user_login;
+			$value 		= get_user_meta( $user_id );
 			
-			//echo "<pre>";print_r($_POST);echo "</pre>";
-			
-			if(isset($_POST['update_profile'])  && $_POST['update_profile'] == 'update_profile'){
-				$first_name = $_POST['aione_user_fname'];
-				$last_name = $_POST['aione_user_lname'];
-				$custom_fields = $_POST['acf'];
-				wp_update_user( array( 'ID' => $user_id, 'first_name' => $first_name, 'last_name' => $last_name  ) );
-				foreach($custom_fields as $custom_field_key => $custom_field){
-					update_field($custom_field_key , $custom_field, "user_".$user_id);
+			if( isset( $_POST['update_profile'] )  && $_POST['update_profile'] == 'update_profile' ){
+				$first_name 	= $_POST['aione_user_fname'];
+				$last_name 		= $_POST['aione_user_lname'];
+				$custom_fields 	= $_POST['acf'];
+
+				wp_update_user( array( 
+					'ID' 			=> $user_id, 
+					'first_name' 	=> $first_name, 
+					'last_name' 	=> $last_name 
+				));
+
+				foreach( $custom_fields as $custom_field_key => $custom_fields ) {
+					update_field( $custom_field_key , $custom_field, "user_".$user_id );
 				}
-				
 			}
+
+
 			$output .= '<h3 class="account-content-title-heading-center">Edit Profile</h3>';
+
 			$html_before_fields = "";
 			$html_before_fields .= '
 			<form id="aione_edit_profile_form" class="aione-edit-profile-form aione-form form acf-form" action="'.get_permalink().'?action=edit-profile" method="post">
@@ -1816,14 +1829,14 @@ class Aione_App_Builder_Public {
 			
 			$field_groups = get_option('aione_app_builder_registration_custom_field_groups');
 			
-			if(!empty($field_groups)){
-				if(!is_array($field_groups)){
+			if( !empty( $field_groups ) ) {
+				if( !is_array( $field_groups ) ) {
 					$field_groups = array($field_groups);
 				}
 			} else {
 				$field_groups = array();
 			}
-			
+
 			$options = array(
 				'post_id'	            => 'user_'.$user_id,
 				'form'                  => false,
@@ -1848,12 +1861,16 @@ class Aione_App_Builder_Public {
 		return $output;
 	}
 
-	public function aione_app_builder_change_password_shortcode( $atts ) {
+	public function aione_app_builder_change_password_shortcode( $atts, $content = null ){
+
 		// Attributes
-		extract( shortcode_atts(
-			array(
-			), $atts )
-		);
+		$atts = shortcode_atts( array(
+			'class'	=> 'change-password',
+			'id'	=> 'change_password'
+		), $atts, 'change_password' );
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
 		$output = "";
 		$errors = array();
 
@@ -1931,6 +1948,8 @@ class Aione_App_Builder_Public {
 		}
 		return $output;
 	} // END aione_app_builder_change_password_shortcode()
+
+
 
 	public function aione_app_builder_home_url_shortcode( $attr, $content = null ) {
 		return home_url();
