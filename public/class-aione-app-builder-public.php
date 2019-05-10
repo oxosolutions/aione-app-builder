@@ -311,7 +311,7 @@ class Aione_App_Builder_Public {
 		if ( get_option('enable_two_factor_auth') == 'yes' ) {
 			if(get_option('two_factor_auth')=='user_can_select'){
 				$output .='
-				<p>
+				<div>
 					<label for="my_extra_field">Select Authentication Method</label>
 					<div id="user_selection">
 						<select name="auth_method" id="auth_method">
@@ -320,7 +320,7 @@ class Aione_App_Builder_Public {
 							<option value="none">None</option>
 						</select> 
 					</div>
-				</p>
+				</div>
 				';
 			}
 		}
@@ -974,7 +974,7 @@ class Aione_App_Builder_Public {
 				</div>
 				' . $login_form_middle . '
 				' . $tfa_selection . '
-				' . ( $args['remember'] ? '<p class="login-remember"><label><input name="rememberme" type="checkbox" id="' . esc_attr( $args['id_remember'] ) . '" value="forever"' . ( $args['value_remember'] ? ' checked="checked"' : '' ) . ' /> ' . esc_html( $args['label_remember'] ) . '</label></p>' : '' ) . '
+				' . ( $args['remember'] ? '<div class="login-remember"><label><input name="rememberme" type="checkbox" id="' . esc_attr( $args['id_remember'] ) . '" value="forever"' . ( $args['value_remember'] ? ' checked="checked"' : '' ) . ' /> ' . esc_html( $args['label_remember'] ) . '</label></div>' : '' ) . '
 				<div class="login-submit">
 					<input type="submit" name="wp-submit" id="' . esc_attr( $args['id_submit'] ) . '" class="button button-primary" value="' . esc_attr( $args['label_log_in'] ) . '" />
 					<input type="hidden" name="redirect_to" value="' . esc_url( $args['redirect'] ) . '" />
@@ -1370,7 +1370,7 @@ class Aione_App_Builder_Public {
 			if($args['show_firstname'] == 'yes'){
 
 				$html_before_fields .= '<div class="aione-form-field field field-type-text">
-				<p class="label"><label for="aione_user_fname">'.$args['label_firstname'].'<span class="required">*</span></label></p>
+				<div class="label"><label for="aione_user_fname">'.$args['label_firstname'].'<span class="required">*</span></label></div>
 				<div class="acf-input-wrap"><input name="aione_user_fname" id="aione_user_fname" class="textbox large" type="text" placeholder="'.$args['placeholder_firstname'].'" value="" minlength="2" maxlength="200" required /></div>
 				</div>';
 			}
@@ -1378,28 +1378,28 @@ class Aione_App_Builder_Public {
 			if($args['show_lastname'] == 'yes'){
 
 				$html_before_fields .= '<div class="aione-form-field field field-type-text">
-				<p class="label"><label for="aione_user_lname">'.$args['label_lastname'].'</label></p>
+				<div class="label"><label for="aione_user_lname">'.$args['label_lastname'].'</label></div>
 				<div class="acf-input-wrap"><input name="aione_user_lname" id="aione_user_lname" class="textbox large" type="text" placeholder="'.$args['placeholder_laststname'].'" value=""/></div>
 				</div>';
 			}
 
 			
 			$html_before_fields .= '<div class="aione-form-field field field-type-text">
-			<p class="label"><label for="aione_user_login">'.$args['label_username'].'<span class="required">*</span></label></p>
+			<div class="label"><label for="aione_user_login">'.$args['label_username'].'<span class="required">*</span></label></div>
 			<div class="acf-input-wrap"><input name="aione_user_login" id="aione_user_login" class="textbox large required" type="text" placeholder="'.$args['placeholder_username'].'" value="" minlength="6" maxlength="50" required/></div>
 			</div>
 			<div class="aione-form-field field field-type-text">
-			<p class="label"><label for="aione_user_email">'.$args['label_email'].'<span class="required">*</span></label></p>
+			<div class="label"><label for="aione_user_email">'.$args['label_email'].'<span class="required">*</span></label></div>
 			<div class="acf-input-wrap"><input name="aione_user_email" id="aione_user_email" class="textbox large required" type="email" placeholder="'.$args['placeholder_email'].'" value="" required /></div>
 			</div>
 
 			<div class="aione-form-field field field-type-text">
-			<p class="label"><label for="password">'.$args['label_password'].'<span class="required">*</span></label></p>
+			<div class="label"><label for="password">'.$args['label_password'].'<span class="required">*</span></label></div>
 			<div class="acf-input-wrap"><input name="aione_user_pass" id="password" class="textbox large required" type="password" minlength="6" required /></div>
 			</div>
 
 			<div class="aione-form-field field field-type-text">
-			<p class="label"><label for="password_again">'.$args['label_password_again'].'<span class="required">*</span></label></p>
+			<div class="label"><label for="password_again">'.$args['label_password_again'].'<span class="required">*</span></label></div>
 			<div class="acf-input-wrap"><input name="aione_user_pass_confirm" id="password_again" class="textbox large required" type="password" minlength="6" required/></div>
 			</div>
 
@@ -1417,7 +1417,7 @@ class Aione_App_Builder_Public {
 					//$blog_template = intval($_GET['template']);
 					
 					$html_before_fields .= '<div class="aione-form-field field field-type-text">
-					<p class="label"><label for="register_form_captcha_value">Captcha<span class="required">*</span></label></p>
+					<div class="label"><label for="register_form_captcha_value">Captcha<span class="required">*</span></label></div>
 					<div class="register_form_captcha_image">
 					<img src="'.$captcha_image_url.'" />
 					</div> 
@@ -1524,14 +1524,14 @@ class Aione_App_Builder_Public {
 			}
 			
 			$output .= '<form method="post" class="login-signup" id="login-signup" action="'.get_permalink().'">';
-			$output .= '<p class="forgot-password-user">';
+			$output .= '<div class="forgot-password-user">';
 			$output .= '<label for="email">Your Email Address<span class="required">*</span></label>';
 			$output .= '<input class="text-input field-long" name="email" type="email" id="email">';
-			$output .= '</p>';
-			$output .= '<p class="reset-password">';
+			$output .= '</div>';
+			$output .= '<div class="reset-password">';
 			$output .= '<input name="reset-password" type="submit" class="field-long submit btn button-primary button application-button" value="Reset Password">';
 			$output .= '<input name="action" type="hidden" value="'.$action.'">';
-			$output .= '</p>';
+			$output .= '</div>';
 			$output .= '</form>';
 			
 			return $output;
@@ -1800,11 +1800,11 @@ class Aione_App_Builder_Public {
 			<form id="aione_edit_profile_form" class="aione-edit-profile-form aione-form form acf-form" action="'.get_permalink().'?action=edit-profile" method="post">
 			';
 			$html_before_fields .= '<div class="aione-form-field field field-type-text">
-			<p class="label"><label for="aione_user_fname">First Name</label></p>
+			<div class="label"><label for="aione_user_fname">First Name</label></div>
 			<div class="acf-input-wrap"><input name="aione_user_fname" id="aione_user_fname" class="textbox large" type="text" placeholder="" value="'.$value['first_name'][0].'"/></div>
 			</div>';
 			$html_before_fields .= '<div class="aione-form-field field field-type-text">
-			<p class="label"><label for="aione_user_lname">Last Name</label></p>
+			<div class="label"><label for="aione_user_lname">Last Name</label></div>
 			<div class="acf-input-wrap"><input name="aione_user_lname" id="aione_user_lname" class="textbox large" type="text" placeholder="" value="'.$value['last_name'][0].'"/></div>
 			</div>';		
 			
@@ -1913,15 +1913,15 @@ class Aione_App_Builder_Public {
 			$output .= '<h3 class="account-content-title-heading-center">Change Password</h3>';
 			$output .= '<form method="post" class="aione-change-password-form aione-form form acf-form" id="aione-change-password-form" action="">';
 			$output .= '<div class="aione-form-field field field-type-text">
-			<p class="label"><label for="current_pass">Current Password<span class="required">*</span></label></p>
+			<div class="label"><label for="current_pass">Current Password<span class="required">*</span></label></div>
 			<div class="acf-input-wrap"><input name="current_pass" id="current_pass" class="text-input field-long" type="password" /></div>
 			</div>';
 			$output .= '<div class="aione-form-field field field-type-text">
-			<p class="label"><label for="pass1">New Password<span class="required">*</span></label></p>
+			<div class="label"><label for="pass1">New Password<span class="required">*</span></label></div>
 			<div class="acf-input-wrap"><input name="pass1" id="pass1" class="text-input field-long" type="password" /></div>
 			</div>';
 			$output .= '<div class="aione-form-field field field-type-text">
-			<p class="label"><label for="pass2">New Password<span class="required">*</span></label></p>
+			<div class="label"><label for="pass2">New Password<span class="required">*</span></label></div>
 			<div class="acf-input-wrap"><input name="pass2" id="pass2" class="text-input field-long" type="password" /></div>
 			</div>';
 			

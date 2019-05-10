@@ -67,3 +67,6 @@ UPDATED: post_meta shortcode
 
 ## 1.4.0.13 01-05-2019
 FIXED: few UI Fixes
+
+## 1.4.0.14 10-05-2019
+FIXED: Valid form HTML
