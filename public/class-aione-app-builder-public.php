@@ -3495,7 +3495,7 @@ class Aione_App_Builder_Public {
 		$condition = trim( $condition );
 
 		if( $condition ){
-			return $content;
+			return do_shortcode( $content );
 		}
 
 	}
@@ -3554,7 +3554,7 @@ class Aione_App_Builder_Public {
 
 		$field = get_field_object( $atts['field'], $atts['post_id'] );
 
-		if( empty( $field)  ) {
+		if( empty( $field) ) { 
 			$output .= get_post_meta( $atts['post_id'], $atts['field'], true );
 			return $output;	
 		} 
@@ -3623,6 +3623,7 @@ class Aione_App_Builder_Public {
 							}
 						}
 
+						
 						$field_class = 'subfield-' . $sub_field_array['name'];
 
 						if( empty( $field_class ) ){
@@ -3656,10 +3657,10 @@ class Aione_App_Builder_Public {
 
 						if( $atts['style'] == "div" ) {
 						
-						$repeater_output .='<li class="'.$sub_field_classes.'">';
+							$repeater_output .='<li class="'.$sub_field_classes.'">';
 						}
 
-						$repeater_output .=$sub_field_value;
+						$repeater_output .= $sub_field_value;
 						if( $atts['style'] == "div" ) {
 
 						$repeater_output .='</li>';
@@ -4150,7 +4151,7 @@ class Aione_App_Builder_Public {
 
 	function get_field_data( $key , $post_id, $repeater = false ){
 
-		if( $repeater == true ){
+		if( $repeater == true ){ 
 			return get_sub_field( $key, $post_id );
 		} else {			
 			return  get_field( $key, $post_id );
