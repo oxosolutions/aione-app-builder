@@ -2025,9 +2025,13 @@ class Aione_App_Builder_Public {
 				'order'				=> 'DESC',
 				'orderby'			=> 'date',
 			), $atts, 'post_count');
-
+		/*echo "<pre>";
+		print_r( $atts );
+		echo "</pre>";*/
 		$atts = $this->clean_shortcode_parameters( $atts );
-		
+		/*echo "<pre>";
+		print_r( $atts );
+		echo "</pre>";*/
 		global $theme_options, $post;
 
 		$output = "";
@@ -2035,7 +2039,10 @@ class Aione_App_Builder_Public {
 		if( !empty( $atts['status'] ) ){
 			$status = explode( ',', $atts['status'] );
 		}
-		
+		if( !empty( $atts['meta_query'] ) ){
+			$atts['meta_query'] = json_decode( $atts['meta_query'] , TRUE);
+		}
+		//$atts = $this->clean_shortcode_parameters( $atts );
 
 		// WP_Query arguments
 		$args = array (
@@ -2060,11 +2067,10 @@ class Aione_App_Builder_Public {
 		);
 
 		
-
 		/*echo "<pre>";
 		print_r( $args );
-		echo "</pre>";
-*/
+		echo "</pre>";*/
+
 		
 		
 		$posts = new WP_Query( $args );
@@ -3838,7 +3844,7 @@ class Aione_App_Builder_Public {
 					} else {
 						$file_url = wp_get_attachment_url( $data );
 						$field = get_field_object($key);
-						$output .= '<div><a href="'.$file_url.'"><button class="aione-button">'.$field['label'].'</button></a>';
+						$output .= '<div><a href="'.$file_url.'"><button class="aione-button">Downlaod</button></a>';
 					}
 					break;
 
