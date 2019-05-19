@@ -3560,7 +3560,7 @@ class Aione_App_Builder_Public {
 
 		$field = get_field_object( $atts['field'], $atts['post_id'] );
 
-		if( empty( $field) ) { 
+		if( empty( $field)  ) {
 			$output .= get_post_meta( $atts['post_id'], $atts['field'], true );
 			return $output;	
 		} 
@@ -3592,32 +3592,79 @@ class Aione_App_Builder_Public {
 		}
 
 		if( $atts['show_label'] == "yes" ) {
-			$output .= '<label class="field-label"><h4>' . $field['label'] . '</h4></label>';
+			$output .= '<label class="field-label">' . $field['label'] . '</label>';
 		}
 
 		if( $field['type'] == 'repeater' ) {
 
-			$repeater = true;
+			$repeater 	= true;
+			$layout 	= $field['layout'];
+			$style 		= $atts['style'];
+			$sub_fields = $field['sub_fields'];
 
-			$repeater_output = '';
+			$repeater_output 	= '';
+			$start_html 		= '';
+			$end_html 			= '';
+			$row_start_html 	= '';
+			$row_end_html 		= '';
+			$column_html_tag 	= '';
 
 			if( have_rows( $field['key'], $atts['post_id'] ) ) {
 
-				if( $atts['style'] == "div" ) {
+				if( $layout == 'table' ) {
+					if( !empty( $style ) ) {
+						$start_html 		.= '<div class="repeater-layout-'.$layout.' aione-table">';
+						$start_html 		.= '<table>';
 
-					$repeater_output .='<ul class="field-rows">';
+						if( $atts['show_label'] == "yes" ) {
+							$start_html 		.= '<thead>';
+							$start_html 		.= '<tr>';
+							foreach ( $sub_fields as $sub_field_key => $sub_field_value ) {
+								$start_html 		.= '<th>';
+								$start_html 		.= $sub_field_value['label'];
+								$start_html 		.= '</th>';
+							}
+							$start_html 		.= '<tr>';
+							$start_html 		.= '</thead>';
+						}
+
+						$start_html 		.= '<tbody>';
+						$end_html 			.= '</tbody>';
+						$end_html 			.= '</table>';
+						$end_html 			.= '</div>';
+						$row_start_html 	.= '<tr>';
+						$row_end_html 		.= '</tr>';
+						$column_html_tag 	.= 'td';
+					}
+				} elseif( $layout == 'block' ) {
+					if( !empty( $style ) ) {
+						$start_html 		.= '<div class="repeater-layout-'.$layout.' field-rows">';
+						$end_html 			.= '</div>';
+						$row_start_html 	.= '<div class="field-row subfields">';
+						$row_end_html 		.= '</div>';
+						$column_html_tag 	.= 'div';
+					}
+				} elseif( $layout == 'row' ) {
+					if( !empty( $style ) ) {
+						$start_html 		.= '<ul class="repeater-layout-'.$layout.' field-rows">';
+						$end_html 			.= '</ul>';
+						$row_start_html 	.= '<li class="field-row">';
+						$row_start_html 	.= '<ul class="subfields">';
+						$row_end_html 		.= '</ul>';
+						$row_end_html 		.= '</li>';
+						$column_html_tag 	.= 'li';
+					}
 				}
 
-				while( have_rows($field['key'], $atts['post_id'] ) ){
+				$repeater_output .= $start_html;
+
+				while( have_rows($field['key'], $atts['post_id'] ) ) {
 
 					the_row();
-
-					if( $atts['style'] == "div" ) {
-					$repeater_output .='<li class="field-row">';
-					$repeater_output .='<ul class="subfields">';
-					}
+					$repeater_output .= $row_start_html;
 
 					foreach ( $field['sub_fields'] as $sub_fields_key => $sub_field_array ) {
+
 
 						$subfields = $atts['subfields'];
 						$subfield_operator = $atts['subfield_operator'];
@@ -3629,7 +3676,6 @@ class Aione_App_Builder_Public {
 							}
 						}
 
-						
 						$field_class = 'subfield-' . $sub_field_array['name'];
 
 						if( empty( $field_class ) ){
@@ -3661,51 +3707,33 @@ class Aione_App_Builder_Public {
 
 						$sub_field_classes = implode(' ', $sub_field_classes);
 
-						if( $atts['style'] == "div" ) {
-						
-							$repeater_output .='<li class="'.$sub_field_classes.'">';
+						$repeater_output .= '<'.$column_html_tag.' class="'.$sub_field_classes.'">';
+						if( $atts['show_label'] == "yes" ) {
+							$repeater_output .= '<label class="sub-field-label">';
+							$repeater_output .= $sub_field_array['label'];
+							$repeater_output .= '</label>';
 						}
-
+						$repeater_output .= '<div class="sub-field-value">';
 						$repeater_output .= $sub_field_value;
-						if( $atts['style'] == "div" ) {
-
-						$repeater_output .='</li>';
-						}
-						$repeater_output .=$subfield_operator;
+						$repeater_output .= '</div>';
+						$repeater_output .= '</'.$column_html_tag.'>';
+						// $repeater_output .=$subfield_operator;
 
 					}
 
-					if( $atts['style'] == "div" ) {
-
-					$repeater_output .='</ul>';
-					$repeater_output .='</li>';
-					}
-
+					$repeater_output .= $row_end_html;
 				}
-
-				if( $atts['style'] == "div" ) {
-
-				$repeater_output .='</ul>';
-				}
-
+				$repeater_output .= $end_html;
 			}
-
-			$repeater_output = trim( $repeater_output, '+');
-			$repeater_output = trim( $repeater_output, '-');
-			$repeater_output = trim( $repeater_output, '*');
-			$repeater_output = trim( $repeater_output, '/');
-			$repeater_output = trim( $repeater_output);
-
 			$output .= $repeater_output;
-
 		} else {
 			$repeater = false;
 			$output .= $this->get_data_callback( $field, $atts['post_id'], $repeater, $atts );
 		}
-		
 		if( $atts['style'] == "div" ){
 			$output .= '</div>';
 		}
+
 		return $output;	
 		
 	} // END aione_app_builder_post_meta_shortcode
