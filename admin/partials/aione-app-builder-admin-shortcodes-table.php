@@ -269,6 +269,26 @@
 					</td>
 				</tr>
 				<tr>
+					<td>Pagination</td>
+					<td>[pagination]</td>
+					<td>
+<pre>
+'id'             => '',
+'class'          => ''						
+</pre></td>
+				</tr>
+<tr>
+					<td>Form</td>
+					<td>[form]</td>
+					<td>
+<pre>
+'field_groups' => '123', // ID of acf field group
+'fields' => '', // ID of acf field
+'id'             => '',
+'class'          => ''						
+</pre></td>
+				</tr>
+				<tr>
 					<td>List Comments</td>
 					<td>[list_comments]</td>
 					<td>

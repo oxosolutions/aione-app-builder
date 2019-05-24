@@ -277,6 +277,8 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'posts', $plugin_public, 'aione_app_builder_posts_shortcode' );
 		$this->loader->add_shortcode( 'post', $plugin_public, 'aione_app_builder_post_shortcode' );
 		$this->loader->add_shortcode( 'post_meta', $plugin_public, 'aione_app_builder_post_meta_shortcode' );
+
+		$this->loader->add_shortcode( 'pagination', $plugin_public, 'aione_app_builder_pagination_shortcode' );
 		
 		$this->loader->add_shortcode( 'list_comments', $plugin_public, 'aione_app_builder_list_comments_shortcode' );
 		
@@ -337,6 +339,8 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'add_new', $plugin_public, 'aione_app_builder_add_new_shortcode' );
 
 		$this->loader->add_shortcode( 'edit', $plugin_public, 'aione_app_builder_edit_shortcode' );
+
+		$this->loader->add_shortcode( 'form', $plugin_public, 'aione_app_builder_form_shortcode' );
 		
 	}
 

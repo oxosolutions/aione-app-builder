@@ -2288,7 +2288,22 @@ class Aione_App_Builder_Public {
 		return $output;
 	} // END aione_app_builder_posts_shortcode()
 
-		public function aione_app_builder_post_shortcode( $atts, $content = null ) {
+	public function aione_app_builder_pagination_shortcode( $atts, $content = null ) {
+		// Attributes
+		$atts = shortcode_atts( array(
+			'id'		=> '',
+			'class'		=> ''	
+		), $atts, 'pagination');
+		
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+		$output .= aione_pagination( );
+
+		return $output;
+
+	} // END aione_app_builder_pagination_shortcode()
+
+	public function aione_app_builder_post_shortcode( $atts, $content = null ) {
 		
 		// Attributes
 		$atts = shortcode_atts( array(
@@ -4592,7 +4607,7 @@ class Aione_App_Builder_Public {
 
 
 	/**
-	* Add New Post Shortcode
+	* Edit Post Shortcode
 	*/
 	function aione_app_builder_edit_shortcode(  $atts, $content = null ) {
 
@@ -4650,6 +4665,71 @@ class Aione_App_Builder_Public {
 			'field_groups'			=> $field_groups,
 			'fields'				=> $fields,
 			'form'					=> true,
+			'form_attributes' 		=> array(),
+			'return' 				=> '',
+			'html_before_fields' 	=> '',
+			'html_after_fields' 	=> '',
+			'submit_value' 			=> __("Submit", 'aione-app-builder'),
+			'updated_message' 		=> __("Post updated", 'aione-app-builder'),
+			'label_placement' 		=> 'top', // top/left
+			'instruction_placement' => 'label', // label/field
+			'field_el' 				=> 'div',
+			'uploader' 				=> 'basic',
+			'html_updated_message'	=> '<div id="message" class="updated"><p>%s</p></div>',
+			'html_submit_button'	=> '<input type="submit" class="acf-button button button-primary button-large" value="%s" />',
+			'html_submit_spinner'	=> '<span class="acf-spinner"></span>',
+			'honeypot' 				=> true,
+			'kses'					=> true,
+		);
+
+		acf_form_head(); 
+
+		ob_start();
+		acf_form( $options );
+		$output .= ob_get_contents();
+		ob_end_clean();
+
+		return $output;
+	}
+
+
+	/**
+	* Form Shortcode
+	*/
+	function aione_app_builder_from_shortcode(  $atts, $content = null ) {
+
+		// Attributes
+		$atts = shortcode_atts( array(
+			'field_groups'		=> false,
+			'fields'			=> false,
+			'class'				=> 'aione-form',
+			'id'				=> 'aione_form'
+		), $atts, 'edit' );
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+		$output = '';
+
+		if( !empty( $atts['field_groups'] ) ){	
+			$field_groups = explode( ',', $atts['field_groups'] );
+		} else {
+			$field_groups = false;
+		}
+
+		if( !empty( $atts['fields'] ) ){	
+			$fields = explode( ',', $atts['fields'] );
+		} else {
+			$fields = false;
+		}
+
+		$options = array(
+			'id'					=> $atts['id'],
+			'post_id'				=> $atts['post_id'],
+			'post_title'			=> $atts['title'],
+			'post_content'			=> $atts['content'],
+			'field_groups'			=> $field_groups,
+			'fields'				=> $fields,
+			'form'					=> false,
 			'form_attributes' 		=> array(),
 			'return' 				=> '',
 			'html_before_fields' 	=> '',
