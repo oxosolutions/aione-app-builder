@@ -4696,15 +4696,18 @@ class Aione_App_Builder_Public {
 	/**
 	* Form Shortcode
 	*/
-	function aione_app_builder_from_shortcode(  $atts, $content = null ) {
+	function aione_app_builder_form_shortcode(  $atts, $content = null ) {
 
 		// Attributes
 		$atts = shortcode_atts( array(
 			'field_groups'		=> false,
 			'fields'			=> false,
+			'action'			=> '',
+			'method'			=> 'post',
+			'submit'			=> 'Submit',
 			'class'				=> 'aione-form',
 			'id'				=> 'aione_form'
-		), $atts, 'edit' );
+		), $atts, 'form' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 
@@ -4724,16 +4727,17 @@ class Aione_App_Builder_Public {
 
 		$options = array(
 			'id'					=> $atts['id'],
-			'post_id'				=> $atts['post_id'],
-			'post_title'			=> $atts['title'],
-			'post_content'			=> $atts['content'],
+			'post_id'				=> false,
+			'new_post'				=> false,
+			'post_title'			=> false,
+			'post_content'			=> false,
 			'field_groups'			=> $field_groups,
 			'fields'				=> $fields,
 			'form'					=> false,
 			'form_attributes' 		=> array(),
 			'return' 				=> '',
-			'html_before_fields' 	=> '',
-			'html_after_fields' 	=> '',
+			'html_before_fields' 	=> '<form id="'.$atts['id'].'" class="'.$atts['class'].'" action="'.$atts['action'].'" method="'.$atts['method'].'">',
+			'html_after_fields' 	=> '<div><input type="submit" class="acf-button button button-primary button-large" value="'.$atts['submit'].'" /></div></form>',
 			'submit_value' 			=> __("Submit", 'aione-app-builder'),
 			'updated_message' 		=> __("Post updated", 'aione-app-builder'),
 			'label_placement' 		=> 'top', // top/left
