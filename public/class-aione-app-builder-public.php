@@ -3314,14 +3314,18 @@ class Aione_App_Builder_Public {
 			'placeholder_image' => plugin_dir_url( __FILE__ ) . 'images/user.svg',
 			'return' => 'image',// image/url/width/height/alt
 		), $atts, 'featured_image' );
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
 		$output = "";
 		$id_attribute ='';
 		$post_id = $atts['post_id'];
 
-		if( !empty($atts['id']) ){
+		if( !empty(	$atts['id']	) ){
 			$id_attribute = 'id="'.$atts['id'].'"';
 		}
-		if ( has_post_thumbnail($post_id) ) {
+		
+		if ( has_post_thumbnail( $post_id ) ) {
 			$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ),  $atts['size']);
 			$featured_image_url = $featured_image[0];
 			$featured_image_width = $featured_image[1];
@@ -3556,8 +3560,7 @@ class Aione_App_Builder_Public {
 		$atts = shortcode_atts( array(
 			'post_id'			=> '',
 			'field'				=> '', //field name(slug) or field_key
-			'subfields'			=> '',// field names(slugs) to be displayed
-			'subfield_operator'	=> '', // + or - etc
+			'sub_fields'		=> '',// field names(slugs) to be displayed
 			'show_label'		=> 'no',
 			'style'				=> 'div', // table/div/list/ Leave empty for no html
 			'class'				=> ''
@@ -3641,6 +3644,7 @@ class Aione_App_Builder_Public {
 							}
 							$start_html 		.= '<tr>';
 							$start_html 		.= '</thead>';
+							$atts['show_label'] = "no";
 						}
 
 						$start_html 		.= '<tbody>';
@@ -3878,7 +3882,7 @@ class Aione_App_Builder_Public {
 							$output .= do_shortcode('[audio '.$file_type.'="'.$data['url'].'"][/audio]');
 						} elseif( $data['type'] == 'video' ){
 							$output .= do_shortcode('[video width="'.$data['width'].'" height="'.$data['height'].'" '.$data['subtype'].'="'.$data['url'].'"][/video]');
-						}else {
+						} else {
 							$output .= '<img src="'.$data['icon'].'"/><div><a href="'.$data['url'].'">'.$data['filename'].'</a></div>';
 						}
 					} elseif($field['return_format'] == "url"){
@@ -3887,7 +3891,7 @@ class Aione_App_Builder_Public {
 					} else {
 						$file_url = wp_get_attachment_url( $data );
 						$field = get_field_object($key);
-						$output .= '<div><a href="'.$file_url.'"><button class="aione-button">Downlaod</button></a>';
+						$output .= '<a href="'.$file_url.'"><button class="aione-button">View</button></a>';
 					}
 					break;
 
