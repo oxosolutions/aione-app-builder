@@ -3560,7 +3560,7 @@ class Aione_App_Builder_Public {
 		$atts = shortcode_atts( array(
 			'post_id'			=> '',
 			'field'				=> '', //field name(slug) or field_key
-			'sub_fields'		=> '',// field names(slugs) to be displayed
+			'subfields'			=> '',// field names(slugs) to be displayed
 			'show_label'		=> 'no',
 			'style'				=> 'div', // table/div/list/ Leave empty for no html
 			'class'				=> ''
@@ -3619,6 +3619,8 @@ class Aione_App_Builder_Public {
 			$layout 	= $field['layout'];
 			$style 		= $atts['style'];
 			$sub_fields = $field['sub_fields'];
+			$subfields 	= $atts['subfields'];
+			$subfields 	= explode( ',', $subfields );
 
 			$repeater_output 	= '';
 			$start_html 		= '';
@@ -3627,9 +3629,25 @@ class Aione_App_Builder_Public {
 			$row_end_html 		= '';
 			$column_html_tag 	= '';
 
+			$aione_data_table_headers 	= array();
+			$aione_data_table_data 		= array();
+
 			if( have_rows( $field['key'], $atts['post_id'] ) ) {
 
-				if( $layout == 'table' ) {
+				
+
+				if( $style == 'aione_data_table' ) {
+					foreach ( $sub_fields as $sub_field_key => $sub_field_value ) {
+						/*
+						if( !empty( $subfields ) ) {
+							if ( !in_array( $sub_field_value['name'], $subfields ) ) {
+								continue;
+							}
+						}
+						*/
+						$aione_data_table_headers[] = $sub_field_value['label'];
+					}
+				} elseif( $layout == 'table' ) {
 					if( !empty( $style ) ) {
 						$start_html 		.= '<div class="repeater-layout-'.$layout.' aione-table">';
 						$start_html 		.= '<table>';
@@ -3638,6 +3656,11 @@ class Aione_App_Builder_Public {
 							$start_html 		.= '<thead>';
 							$start_html 		.= '<tr>';
 							foreach ( $sub_fields as $sub_field_key => $sub_field_value ) {
+								if( !empty( $subfields ) ) {
+									if ( !in_array( $sub_field_value['name'], $subfields ) ) {
+										continue;
+									}
+								}
 								$start_html 		.= '<th>';
 								$start_html 		.= $sub_field_value['label'];
 								$start_html 		.= '</th>';
@@ -3688,12 +3711,14 @@ class Aione_App_Builder_Public {
 						$subfields = $atts['subfields'];
 						$subfield_operator = $atts['subfield_operator'];
 
+						/*
+
 						if( !empty( $subfields ) ) {
-							$subfields = explode( ',', $subfields );
 							if ( !in_array( $sub_field_array['name'], $subfields ) ) {
 								continue;
 							}
 						}
+						*/
 
 						$field_class = 'subfield-' . $sub_field_array['name'];
 
@@ -3738,13 +3763,23 @@ class Aione_App_Builder_Public {
 						$repeater_output .= '</'.$column_html_tag.'>';
 						// $repeater_output .=$subfield_operator;
 
+
+						if( $style == 'aione_data_table' ) {
+							$aione_data_table_data[$sub_fields_key][] = $sub_field_value;
+						} 
+
+
 					}
 
 					$repeater_output .= $row_end_html;
 				}
 				$repeater_output .= $end_html;
 			}
-			$output .= $repeater_output;
+			if( $style == 'aione_data_table' ) {
+				$output .= aione_data_table( $aione_data_table_headers, $aione_data_table_data );
+			} else{
+				$output .= $repeater_output;
+			}
 		} else {
 			$repeater = false;
 			$output .= $this->get_data_callback( $field, $atts['post_id'], $repeater, $atts );
