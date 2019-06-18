@@ -2166,6 +2166,8 @@ class Aione_App_Builder_Public {
 			'update_post_meta_cache'=> true,
 			'update_post_term_cache'=> true,
 		);
+
+		
 		
 		$posts = new WP_Query( $args );
 
@@ -4741,6 +4743,7 @@ class Aione_App_Builder_Public {
 		$atts = shortcode_atts( array(
 			'field_groups'		=> false,
 			'fields'			=> false,
+			'form'				=> true,
 			'action'			=> '',
 			'method'			=> 'post',
 			'submit'			=> 'Submit',
@@ -4764,6 +4767,14 @@ class Aione_App_Builder_Public {
 			$fields = false;
 		}
 
+		$html_before_fields = '';
+		$html_after_fields 	= '';
+
+		if( $atts['form'] ) {
+			$html_before_fields = '<form id="'.$atts['id'].'" class="'.$atts['class'].'" action="'.$atts['action'].'" method="'.$atts['method'].'">';
+			$html_after_fields = '<div><input type="submit" class="acf-button button button-primary button-large" value="'.$atts['submit'].'" /></div></form>';
+		}
+
 		$options = array(
 			'id'					=> $atts['id'],
 			'post_id'				=> false,
@@ -4775,8 +4786,8 @@ class Aione_App_Builder_Public {
 			'form'					=> false,
 			'form_attributes' 		=> array(),
 			'return' 				=> '',
-			'html_before_fields' 	=> '<form id="'.$atts['id'].'" class="'.$atts['class'].'" action="'.$atts['action'].'" method="'.$atts['method'].'">',
-			'html_after_fields' 	=> '<div><input type="submit" class="acf-button button button-primary button-large" value="'.$atts['submit'].'" /></div></form>',
+			'html_before_fields' 	=> $html_before_fields,
+			'html_after_fields' 	=> $html_after_fields,
 			'submit_value' 			=> __("Submit", 'aione-app-builder'),
 			'updated_message' 		=> __("Post updated", 'aione-app-builder'),
 			'label_placement' 		=> 'top', // top/left
@@ -4790,7 +4801,7 @@ class Aione_App_Builder_Public {
 			'kses'					=> true,
 		);
 
-		acf_form_head(); 
+		acf_form_head();  
 
 		ob_start();
 		acf_form( $options );
