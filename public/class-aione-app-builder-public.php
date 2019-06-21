@@ -20,6 +20,8 @@
  * @subpackage Aione_App_Builder/public
  * @author     OXO Solutions <contact@oxosolutions.com>
  */
+
+
 // Use the REST API Client to make requests to the Twilio REST API
 use Twilio\Rest\Client;
 class Aione_App_Builder_Public {
@@ -595,8 +597,10 @@ class Aione_App_Builder_Public {
 	}
 
 
-		//change default Register url
+	
+	//change default Register url
 	function aione_app_builder_register_url( $register_url ) {
+
 		$aione_app_builder_register_page = get_option('aione_app_builder_register_page');
 		if(isset($aione_app_builder_register_page)){
 			if(!empty($aione_app_builder_register_page)){
@@ -607,9 +611,12 @@ class Aione_App_Builder_Public {
 		} else {
 			return $register_url;
 		}
+
 	}
-		//change default lost password url
-	function aione_app_builder_lostpassword_url($lostpassword_url, $redirect) {
+
+
+	//change default lost password url
+	function aione_app_builder_lostpassword_url( $lostpassword_url, $redirect ) {
 		$aione_app_builder_forgot_password_page = get_option('aione_app_builder_forgot_password_page');
 		if(isset($aione_app_builder_forgot_password_page)){
 			if(!empty($aione_app_builder_forgot_password_page)){
@@ -621,7 +628,9 @@ class Aione_App_Builder_Public {
 			return $lostpassword_url;
 		}
 	}
-		// After logout redirect
+
+
+	// After logout redirect
 	function logout_redirect(){
 		$logout_redirect_page = get_option('logout_redirect_page');
 		if(isset($logout_redirect_page)){
@@ -632,43 +641,152 @@ class Aione_App_Builder_Public {
 		}
 	}
 
+
 	/**
 	*
 	*Shortcodes Functionality
 	*
 	*/
 
+
+
+
+	/**
+	 * Display link to login page
+	 *
+	 * Function for shortcode [login_link]. Returns html/link/url to display button/link to login page 
+	 *
+	 * @type 	shortcode
+	 * @since 	1.0.0.0
+	 * @access 	public
+	 * 
+	 * @example [login_link id="custom_login_link" class="custom-login-link" text="Login" return="link"]
+	 * 
+	 * @param 	id 		login_link 	text 	
+	 * @param 	class 	null 		text 	
+	 * @param 	text 	Login 		text 	
+	 * @param 	return 	html 		text 	html/link/url
+	 * 
+	 * @return 	html
+	 */
+
 	public function aione_app_builder_login_link_shortcode( $atts ) {
+
+		// Attributes
 		$atts = shortcode_atts(
 			array(
-				'class'           => '',
-				'text'           => 'Login'
+				'id'		=> 'login_link',
+				'class'		=> '',
+				'text'		=> 'Login',
+				'return'	=> 'html', //html/link/url
 			), $atts, 'login_link' );
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+
 		$output = "";
+
 		if ( !is_user_logged_in() ) {
-			$output .= '<div id="login_link" class="user-links login-link '.$atts['class'].'">';
-			$output .= '<a href="'.wp_login_url().'" title="' . $atts['text'] . '">' . $atts['text'] . '</a>';
-			$output .= '</div>';
+
+			if( $atts['return'] == 'html' ) {
+				$output .= '<div id="'.$atts['id'].'" class="user-links login-link '.$atts['class'].'">';
+			}
+
+			if( $atts['return'] == 'url' ) {
+				$output .= wp_login_url();
+			} else {
+				$output .= '<a href="'.wp_login_url().'" title="' . $atts['text'] . '">' . $atts['text'] . '</a>';
+			}
+
+			if( $atts['return'] == 'html' ) {
+				$output .= '</div>';
+			}
+
 		} 
+
 		return $output;
+
 	} // End aione_app_builder_login_link_shortcode()
 
+
+
+	/**
+	 * Display link to Sign up page
+	 *
+	 * Function for shortcode [register_link]. Returns html/link/url to display button/link to Sign up page 
+	 *
+	 * @type 	shortcode
+	 * @since 	1.0.0.0
+	 * @access 	public
+	 * 
+	 * @example [register_link id="register_link" class="register-link" text="Register" return="link"]
+	 * 
+	 * @param 	id 		register_link 	text 	
+	 * @param 	class 	null 			text 	
+	 * @param 	text 	Sign up 		text 	
+	 * @param 	return 	html 			text 	html/link/url
+	 * 
+	 * @return 	html
+	 */
+
 	public function aione_app_builder_register_link_shortcode( $atts ) {
+
+		// Attributes
 		$atts = shortcode_atts(
 			array(
-				'class'           => '',
-				'text'           => 'Sign up'
-			), $atts , 'register_link' );
+				'id'		=> 'register_link',
+				'class'		=> '',
+				'text'		=> 'Sign up',
+				'return'	=> 'html', //html/link/url
+			), $atts, 'register_link' );
+
+		$atts = $this->clean_shortcode_parameters( $atts );
 
 		$output = "";
-		
+
+
 		if ( !is_user_logged_in() ) {
-			$output .= '<div id="register_link" class="user-links register-link '.$atts['class'].'">';
-			$output .= '<a href="'.wp_registration_url().'" title="' . $atts['text'] . '">' . $atts['text'] . '</a>';
-			$output .= '</div>';
+
+			if( $atts['return'] == 'html' ) {
+				$output .= '<div id="'.$atts['id'].'" class="user-links register-link '.$atts['class'].'">';
+			}
+
+			if( $atts['return'] == 'url' ) {
+				$output .= wp_registration_url();
+			} else {
+				$output .= '<a href="'.wp_registration_url().'" title="' . $atts['text'] . '">' . $atts['text'] . '</a>';
+			}
+
+			if( $atts['return'] == 'html' ) {
+				$output .= '</div>';
+			}
+
 		} 
+
 		return $output;
+
+
 	} // End aione_app_builder_register_link_shortcode()
+
+
+	/**
+	 * Display link to Reset Password page
+	 *
+	 * Function for shortcode [reset_password_link]. Returns html/link/url to display button/link to Reset Password page
+	 *
+	 * @type 	shortcode
+	 * @since 	1.0.0.0
+	 * @access 	public
+	 * 
+	 * @example [reset_password_link id="forgot_password_link" class="forgot-password-link" text="Forgot Password" return="link"]
+	 * 
+	 * @param 	id 		reset_password_link 	text 	
+	 * @param 	class 	null 				text 	
+	 * @param 	text 	Sign up 			text 	
+	 * @param 	return 	html 				text 	html/link/url
+	 * 
+	 * @return 	html
+	 */
 
 	public function aione_app_builder_reset_password_link_shortcode( $atts ) {
 
@@ -677,23 +795,38 @@ class Aione_App_Builder_Public {
 			array(
 				'id'		=> 'reset_password_link',
 				'class'		=> '',
-				'text'		=> 'Reset Password'
+				'text'		=> 'Reset Password',
+				'return'	=> 'html', //html/link/url
 			), $atts, 'reset_password_link' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 
 		$output = "";
+
 		
 		if ( !is_user_logged_in() ) {
-			$output .= '<div id="'.$atts['id'].'" class="user-links reset-password-link '.$atts['class'].'">';
-			$output .= '<a href="'.wp_lostpassword_url().'" title="' . $atts['text'] . '">' . $atts['text'] . '</a>';
-			$output .= '</div>';
-		} 
 
+			if( $atts['return'] == 'html' ) {
+				$output .= '<div id="'.$atts['id'].'" class="user-links reset-password-link '.$atts['class'].'">';
+			}
+
+			if( $atts['return'] == 'url' ) {
+				$output .= wp_lostpassword_url();
+			} else {
+				$output .= '<a href="'.wp_lostpassword_url().'" title="' . $atts['text'] . '">' . $atts['text'] . '</a>';
+			}
+
+			if( $atts['return'] == 'html' ) {
+				$output .= '</div>';
+			}
+
+		}
 
 		return $output;
 
 	} // End aione_app_builder_reset_password_link_shortcode()
+
+
 
 	public function aione_app_builder_account_link_shortcode( $atts ) {
 		$atts = shortcode_atts(
@@ -1349,143 +1482,143 @@ class Aione_App_Builder_Public {
 		return $output;
 		} //END aione_app_builder_register_shortcode()
 
-		public function aione_app_builder_user_registration_form($args) {
-			if($args['captcha'] == "true"){
-				if (class_exists('ReallySimpleCaptcha'))  {
-					
-					$captcha_instance = new ReallySimpleCaptcha();
-					$captcha_instance->cleanup($minutes = 30);
-					
-					$captcha_instance->chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';	
-					$captcha_instance->bg = array( 255, 255, 255 );
-					$captcha_instance->fg = array( 21, 141, 197 );
-					$captcha_instance->img_size = array( 205, 40 );
-					$captcha_instance->base = array( 20, 30 );
-					$captcha_instance->font_size = 22;
-					$captcha_instance->char_length = 6;
-					$captcha_instance->font_char_width = 28;
-				//$upload_dir = wp_upload_dir();
-				//$captcha_instance->tmp_dir = $upload_dir['basedir'].'/captcha/';
-					
-				}	
-			}
-			
-			$html_before_fields = '';
-			$html_before_fields .= '
-			
-			<form id="'.$args['form_id'].'" class="aione-registration-form aione-form form acf-form" action="'.get_permalink().'" method="post">
-			<div class="postbox acf_postbox no_box">';
+	public function aione_app_builder_user_registration_form($args) {
+		if($args['captcha'] == "true"){
+			if (class_exists('ReallySimpleCaptcha'))  {
+				
+				$captcha_instance = new ReallySimpleCaptcha();
+				$captcha_instance->cleanup($minutes = 30);
+				
+				$captcha_instance->chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';	
+				$captcha_instance->bg = array( 255, 255, 255 );
+				$captcha_instance->fg = array( 21, 141, 197 );
+				$captcha_instance->img_size = array( 205, 40 );
+				$captcha_instance->base = array( 20, 30 );
+				$captcha_instance->font_size = 22;
+				$captcha_instance->char_length = 6;
+				$captcha_instance->font_char_width = 28;
+			//$upload_dir = wp_upload_dir();
+			//$captcha_instance->tmp_dir = $upload_dir['basedir'].'/captcha/';
+				
+			}	
+		}
+		
+		$html_before_fields = '';
+		$html_before_fields .= '
+		
+		<form id="'.$args['form_id'].'" class="aione-registration-form aione-form form acf-form" action="'.get_permalink().'" method="post">
+		<div class="postbox acf_postbox no_box">';
 
-			if($args['show_firstname'] == 'yes'){
+		if($args['show_firstname'] == 'yes'){
 
-				$html_before_fields .= '<div class="aione-form-field field field-type-text">
-				<div class="label"><label for="aione_user_fname">'.$args['label_firstname'].'<span class="required">*</span></label></div>
-				<div class="acf-input-wrap"><input name="aione_user_fname" id="aione_user_fname" class="textbox large" type="text" placeholder="'.$args['placeholder_firstname'].'" value="" minlength="2" maxlength="200" required /></div>
-				</div>';
-			}
-
-			if($args['show_lastname'] == 'yes'){
-
-				$html_before_fields .= '<div class="aione-form-field field field-type-text">
-				<div class="label"><label for="aione_user_lname">'.$args['label_lastname'].'</label></div>
-				<div class="acf-input-wrap"><input name="aione_user_lname" id="aione_user_lname" class="textbox large" type="text" placeholder="'.$args['placeholder_laststname'].'" value=""/></div>
-				</div>';
-			}
-
-			
 			$html_before_fields .= '<div class="aione-form-field field field-type-text">
-			<div class="label"><label for="aione_user_login">'.$args['label_username'].'<span class="required">*</span></label></div>
-			<div class="acf-input-wrap"><input name="aione_user_login" id="aione_user_login" class="textbox large required" type="text" placeholder="'.$args['placeholder_username'].'" value="" minlength="6" maxlength="50" required/></div>
-			</div>
-			<div class="aione-form-field field field-type-text">
-			<div class="label"><label for="aione_user_email">'.$args['label_email'].'<span class="required">*</span></label></div>
-			<div class="acf-input-wrap"><input name="aione_user_email" id="aione_user_email" class="textbox large required" type="email" placeholder="'.$args['placeholder_email'].'" value="" required /></div>
-			</div>
+			<div class="label"><label for="aione_user_fname">'.$args['label_firstname'].'<span class="required">*</span></label></div>
+			<div class="acf-input-wrap"><input name="aione_user_fname" id="aione_user_fname" class="textbox large" type="text" placeholder="'.$args['placeholder_firstname'].'" value="" minlength="2" maxlength="200" required /></div>
+			</div>';
+		}
 
-			<div class="aione-form-field field field-type-text">
-			<div class="label"><label for="password">'.$args['label_password'].'<span class="required">*</span></label></div>
-			<div class="acf-input-wrap"><input name="aione_user_pass" id="password" class="textbox large required" type="password" minlength="6" required /></div>
-			</div>
+		if($args['show_lastname'] == 'yes'){
 
-			<div class="aione-form-field field field-type-text">
-			<div class="label"><label for="password_again">'.$args['label_password_again'].'<span class="required">*</span></label></div>
-			<div class="acf-input-wrap"><input name="aione_user_pass_confirm" id="password_again" class="textbox large required" type="password" minlength="6" required/></div>
-			</div>
+			$html_before_fields .= '<div class="aione-form-field field field-type-text">
+			<div class="label"><label for="aione_user_lname">'.$args['label_lastname'].'</label></div>
+			<div class="acf-input-wrap"><input name="aione_user_lname" id="aione_user_lname" class="textbox large" type="text" placeholder="'.$args['placeholder_laststname'].'" value=""/></div>
+			</div>';
+		}
 
-			';
-			if($args['captcha'] == "true"){
-				if (class_exists('ReallySimpleCaptcha'))  {	
-					$word = $captcha_instance->generate_random_word();
-					$prefix = mt_rand();
-					$image_name = $captcha_instance->generate_image( $prefix, $word );
-					//$captcha_image_url =  $upload_dir['baseurl'].'/captcha/'.$image_name;
-					//$captcha_image_url = plugins_url();
-					//$captcha_image_url =  plugin_dir_url(dirname(__FILE__))."library/really-simple-captcha/tmp/".$image_name;
-					$captcha_image_url =  plugin_dir_url(dirname(__FILE__))."tmp/".$image_name;
+		
+		$html_before_fields .= '<div class="aione-form-field field field-type-text">
+		<div class="label"><label for="aione_user_login">'.$args['label_username'].'<span class="required">*</span></label></div>
+		<div class="acf-input-wrap"><input name="aione_user_login" id="aione_user_login" class="textbox large required" type="text" placeholder="'.$args['placeholder_username'].'" value="" minlength="6" maxlength="50" required/></div>
+		</div>
+		<div class="aione-form-field field field-type-text">
+		<div class="label"><label for="aione_user_email">'.$args['label_email'].'<span class="required">*</span></label></div>
+		<div class="acf-input-wrap"><input name="aione_user_email" id="aione_user_email" class="textbox large required" type="email" placeholder="'.$args['placeholder_email'].'" value="" required /></div>
+		</div>
 
-					//$blog_template = intval($_GET['template']);
-					
-					$html_before_fields .= '<div class="aione-form-field field field-type-text">
-					<div class="label"><label for="register_form_captcha_value">Captcha<span class="required">*</span></label></div>
-					<div class="register_form_captcha_image">
-					<img src="'.$captcha_image_url.'" />
-					</div> 
-					<div class="acf-input-wrap"><input name="captcha_value" id="register_form_captcha_value" type="text" placeholder="Enter Captcha Here" value="" class="textbox large required" >
-					<input name="captcha_prefix" type="hidden" value="'.$prefix.'" >
-					</div>
-					
-					</div>
-					';
-				}
-			}
-			$html_after_fields = '<div class="aione-form-field field">
-			<input type="hidden" name="action" value="add_new">
-			<input type="submit" value="'.$args['label_submit'].'">
-			</div>
-			<script>
-			jQuery("#'.$args['form_id'].'").validate();
-			</script>
+		<div class="aione-form-field field field-type-text">
+		<div class="label"><label for="password">'.$args['label_password'].'<span class="required">*</span></label></div>
+		<div class="acf-input-wrap"><input name="aione_user_pass" id="password" class="textbox large required" type="password" minlength="6" required /></div>
+		</div>
 
-			<style>
-			.error{
-				color:#cc0000;
+		<div class="aione-form-field field field-type-text">
+		<div class="label"><label for="password_again">'.$args['label_password_again'].'<span class="required">*</span></label></div>
+		<div class="acf-input-wrap"><input name="aione_user_pass_confirm" id="password_again" class="textbox large required" type="password" minlength="6" required/></div>
+		</div>
+
+		';
+		if($args['captcha'] == "true"){
+			if (class_exists('ReallySimpleCaptcha'))  {	
+				$word = $captcha_instance->generate_random_word();
+				$prefix = mt_rand();
+				$image_name = $captcha_instance->generate_image( $prefix, $word );
+				//$captcha_image_url =  $upload_dir['baseurl'].'/captcha/'.$image_name;
+				//$captcha_image_url = plugins_url();
+				//$captcha_image_url =  plugin_dir_url(dirname(__FILE__))."library/really-simple-captcha/tmp/".$image_name;
+				$captcha_image_url =  plugin_dir_url(dirname(__FILE__))."tmp/".$image_name;
+
+				//$blog_template = intval($_GET['template']);
+				
+				$html_before_fields .= '<div class="aione-form-field field field-type-text">
+				<div class="label"><label for="register_form_captcha_value">Captcha<span class="required">*</span></label></div>
+				<div class="register_form_captcha_image">
+				<img src="'.$captcha_image_url.'" />
+				</div> 
+				<div class="acf-input-wrap"><input name="captcha_value" id="register_form_captcha_value" type="text" placeholder="Enter Captcha Here" value="" class="textbox large required" >
+				<input name="captcha_prefix" type="hidden" value="'.$prefix.'" >
+				</div>
+				
+				</div>
+				';
 			}
-			.aione-registration-form p.label{
-				margin-bottom:0;
-			}
-			.aione-registration-form .aione-form-field{
-				margin-bottom:20px;
-			}
-			</style>
-			';
-			
-			$field_groups = get_option('aione_app_builder_registration_custom_field_groups');
-			if($field_groups == ""){
-				$field_groups = 0;
-			}
-			if(!is_array($field_groups)){
-				$field_groups = array($field_groups);
-			}
-			
-			$options = array(
-				'post_id'	            => 'new_post',
-				'form'                  => false,
-				'field_groups'          => $field_groups,
-				'post_title'            => false,
-				'post_content'          => false,
-				'html_before_fields'    => $html_before_fields,
-				'html_after_fields'     => $html_after_fields,
-				'instruction_placement' => 'field',
-				'submit_value'	        => 'Submit',
-				'updated_message'	    => 'Registered Successfully',
-			);
-			
-			ob_start();
-			acf_form($options);
-			$output .= ob_get_contents();
-			ob_end_clean();
-			return $output;
-		} // END aione_app_builder_user_registration_form()
+		}
+		$html_after_fields = '<div class="aione-form-field field">
+		<input type="hidden" name="action" value="add_new">
+		<input type="submit" value="'.$args['label_submit'].'">
+		</div>
+		<script>
+		jQuery("#'.$args['form_id'].'").validate();
+		</script>
+
+		<style>
+		.error{
+			color:#cc0000;
+		}
+		.aione-registration-form p.label{
+			margin-bottom:0;
+		}
+		.aione-registration-form .aione-form-field{
+			margin-bottom:20px;
+		}
+		</style>
+		';
+		
+		$field_groups = get_option('aione_app_builder_registration_custom_field_groups');
+		if($field_groups == ""){
+			$field_groups = 0;
+		}
+		if(!is_array($field_groups)){
+			$field_groups = array($field_groups);
+		}
+		
+		$options = array(
+			'post_id'	            => 'new_post',
+			'form'                  => false,
+			'field_groups'          => $field_groups,
+			'post_title'            => false,
+			'post_content'          => false,
+			'html_before_fields'    => $html_before_fields,
+			'html_after_fields'     => $html_after_fields,
+			'instruction_placement' => 'field',
+			'submit_value'	        => 'Submit',
+			'updated_message'	    => 'Registered Successfully',
+		);
+		
+		ob_start();
+		acf_form($options);
+		$output .= ob_get_contents();
+		ob_end_clean();
+		return $output;
+	} // END aione_app_builder_user_registration_form()
 
 	public function aione_app_builder_reset_password_shortcode( $atts ) {
 
@@ -1499,115 +1632,174 @@ class Aione_App_Builder_Public {
 
 		$atts = $this->clean_shortcode_parameters( $atts );
 
-
 		$output = "";
 
-		$errors 			= array();
-		$success_messages 	= array();
+		if ( !is_user_logged_in() ) {
 
-		$email 		= $_POST['email'];
-		$action 	= $_POST['action'];
-		
-		if( !empty( $action ) && $action == 'reset_password_submit' ) {
+			$errors 			= array();
+			$success_messages 	= array();
 
-			if( !empty( $email ) ) {
-
-				if( !is_email( $email ) ) {
-					$errors[] = 'Invalid email address';
-				}
-
-				if( !email_exists( $email ) ) {
-					$errors[] = 'Email address does not exist';
-				}
-
-				if ( empty($errors) ) {
-
-					$user = get_user_by( 'email', $email );
-					$user_id = $user->ID;
-
-					$new_password = wp_generate_password( 20, false );
-
-					$update_error = wp_update_user( array( 'ID' => $user_id, 'user_pass' => esc_attr( $new_password ) ) );
-
-					$is_password_updated = wp_set_password( $new_password, $user_id );
-
-					$user_notification = $this->aione_app_builder_forget_password_notification( $user_id, $new_password );
-
-					if(	is_int(	$is_password_updated ) )	{
-						$success_messages[] = "Password reset successfully";
-					} else{
-						$errors[] = "Unable to reset password";
-					}
-
-					if( $user_notification ) { 
-						$success_messages[] = "Password reset email sent. Please also check spam folder.";
-					} else {
-						$errors[] = "Unable to send password reset email.";
-					}
-				}
-			} else{
-				$errors[] = 'Please enter email address';
-			}
-
+			$email 		= trim( wp_unslash( $_POST['user_login'] ) );
+			$action 	= trim( $_POST['action'] );
 			
-			if ( !empty( $errors ) ) {
-				$output .= '<div class="aione-message error">';
-				$output .= '<ul class="aione-messages">';
-				foreach($errors as $error){
-					$output .= '<li class="error"><strong>' . __('Error') . '</strong>: ' . $error . '</li>';
+			
+			if( !empty( $action ) && $action == 'reset_password_submit' ) {
+
+				if( !empty( $email ) ) {
+
+					if( !is_email( $email ) ) {
+						$errors[] = __( "The email address you have entered is invalid. Please enter a valid email address" );
+					}
+
+					if( !email_exists( $email ) ) {
+						$errors[] = __( "The email address you have entered does not exist in our user database. Please make sure that the email address you have entered is . " );
+					}
+
+					if ( empty($errors) ) {
+						
+						$user = get_user_by( 'email', $email );
+						$user_id = $user->ID;
+
+						do_action( 'retrieve_password', $email );
+
+						$reset_key = get_password_reset_key( $user );
+
+						if ( is_wp_error( $reset_key ) ) {
+							$errors[] = __( "Unable to reset password" );
+						} else{
+							
+							// $success_messages[] = __( "Reset password process is initiated." );
+
+							$user_notification = $this->aione_app_builder_reset_password_notification( $user_id, $reset_key );
+
+							if( $user_notification ) { 
+								$success_messages[] = __( "Password reset email sent. Please also check spam folder." );
+							} else {
+								$errors[] = __( "Unable to send reset password email." );
+							}
+						}
+						
+					}
+				} else{
+					$errors[] = __( "The email address field is required and can not be empty." );
 				}
-				$output .= '</ul>';
-				$output .= '</div>';
+
+				
+				if ( !empty( $errors ) ) {
+					$output .= '<div class="aione-message error">';
+					$output .= '<ul class="aione-messages">';
+					foreach($errors as $error){
+						$output .= '<li class="error"><strong>' . __('Error') . '</strong>: ' . $error . '</li>';
+					}
+					$output .= '</ul>';
+					$output .= '</div>';
+				}
+
+				if ( !empty( $success_messages ) ) {
+					$output .= '<div class="aione-message success">';
+					$output .= '<ul class="aione-messages">';
+					foreach($success_messages as $success_message){
+						$output .= '<li class="success">' . $success_message . '</li>';
+					}
+					$output .= '</ul>';
+					$output .= '</div>';
+				}
 			}
 
-			if ( !empty( $success_messages ) ) {
-				$output .= '<div class="aione-message success">';
-				$output .= '<ul class="aione-messages">';
-				foreach($success_messages as $success_message){
-					$output .= '<li class="success">' . $success_message . '</li>';
-				}
-				$output .= '</ul>';
-				$output .= '</div>';
-			}
+	
+			$output .= '<div id="'.$atts['id'].'" class="reset-password-form-wrapper '.$atts['class'].'">';
+			$output .= '<p>To recover your account password, enter your email address to the form below and click on <strong>Reset Password</strong> button. You will receive an email containing the link and instructions to reset your account password.</p>';
+			$output .= '<form id="reset_password_form" class="reset-password-form"  action="'.get_permalink().'" method="post">';
+
+
+			$output .= '<div class="field-wrapper">';
+			$output .= '<div class="field-label">';
+			$output .= '<label for="user_login">Email Address<span class="required">*</span></label>';
+			$output .= '</div>';
+			$output .= '<div class="field field-type-email">';
+			$output .= '<input class="text-input field-long" name="user_login" type="email" id="user_login" required="required">';
+			$output .= '</div>';
+			$output .= '</div>';
+
+			$output .= '<div class="field-wrapper">';
+			$output .= '<div class="field field-type-submit">';
+			$output .= '<input name="action" type="hidden" value="reset_password_submit">';
+			$output .= '<input name="reset-password" type="submit" class="field-long submit btn button-primary button application-button" value="Reset Password">';
+			$output .= '</div>';
+			$output .= '</div>';
+
+
+			$output .= '</form>';
+			$output .= '</div>';
+
+		} else {
+
+			$output .= '<div id="'.$atts['id'].'" class="reset-password-form-wrapper '.$atts['class'].'">';
+			$output .= '<p>';
+			$output .= __( "You are already logged in to you account. Please logout first to reset password." );
+			$output .= '</p>';
+			$output .= '</div>';
+
+
 		}
-		
-		$output .= '<div id="'.$atts['id'].'" class="reset-password-form-wrapper '.$atts['class'].'">';
-		$output .= '<form id="reset_password_form" class="reset-password-form"  action="'.get_permalink().'" method="post">';
-		$output .= '<div class="forgot-password-user">';
-		$output .= '<label for="email">Your Email Address<span class="required">*</span></label>';
-		$output .= '<input class="text-input field-long" name="email" type="email" id="email">';
-		$output .= '</div>';
-		$output .= '<div class="reset-password">';
-		$output .= '<input name="reset-password" type="submit" class="field-long submit btn button-primary button application-button" value="Reset Password">';
-		$output .= '<input name="action" type="hidden" value="reset_password_submit">';
-		$output .= '</div>';
-		$output .= '</form>';
-		$output .= '</div>';
 	
 		return $output;
 
-
 	}
 
-	public function aione_app_builder_forget_password_notification( $user_id, $user_key ) {
+	public function aione_app_builder_reset_password_notification( $user_id, $reset_key ) {
 
-        $user = new WP_User( $user_id );
+        // Get user by user_id 
+        $user 			= get_userdata( $user_id );
+        $user_meta 		= get_user_meta( $user_id );
 
-        $user_login = stripslashes( $user->user_login );
-        $user_email = stripslashes( $user->user_email );
+        $user_login 	= $user->user_login;
+        $user_email 	= $user->user_email;
+
+        $first_name 	= $user_meta['first_name'][0];
+        $last_name 		= $user_meta['last_name'][0];
+
+        $name 			= $first_name . ' ' . $last_name;
+
+        if( empty( $first_name ) ) {
+        	if( empty( $last_name ) ) {
+	        	$name = $user_login;
+	        }
+        }
         
-        $headers = array('Content-Type: text/html; charset=UTF-8');
-        $headers = 'From: Darlic <no-reply@darlic.com>;';
-        $message  = "Hi " . $user->first_name . " " . $user->last_name . ", <br><br>";
-        $message .= "Someone has requested to reset password for this account" . "<br><br>";
-        $message .= "<strong>Account Details</strong>" . "<br><br><br><br>";
-        $message .= "Login URL: " . wp_login_url() . "<br><br>";
-        $message .= "Username: " . $user_login . "<br>";
-        $message .= "E-mail: " . $user_email . "<br>";
-        $message .= "Password : " . $user_key . "<br><br>";
-        $message .= "If you have any problems, please contact administrator<br><br>";
-        $message .= "Thanks!";
-		$subject = sprintf( __('Reset Password for %s account'), get_option('blogname') );
+
+        $site_title 	= get_option('blogname');
+        $site_link 		= home_url();
+
+
+        $headers = array();
+        $headers[] = "Content-Type: text/html";
+        $headers[] = "charset=UTF-8";
+        
+		$subject = sprintf( __('🔐 Reset Password for %s account'), $site_title );
+
+        $message = '';
+        $message .= '<p>Hi ' . $name . ', </p>';
+        $message .= '<p>This email is in response to your request to reset your account password.</p>';
+        $message .= '<p>Please click the below link to reset your password.</p>';
+		$message .= '<a href="' . network_site_url( "wp-login.php?action=rp&key=$reset_key&login=" . rawurlencode( $user_login ), 'login' ) . ' target="_blank" >Click Here to Reset Password</a>';
+        $message .= '<br>';
+        $message .= '<p>Or copy and paste following url into browser\'s address bar</p>';
+		$message .= network_site_url( "wp-login.php?action=rp&key=$reset_key&login=" . rawurlencode( $user_login ), 'login' );
+
+        $message .= '<br>';
+        $message .= '<br>';
+        $message .= '<p><strong>Your Account Details</strong><p>';
+        // $message .= '<p>Login URL: ' . wp_login_url() . '</p>';
+        $message .= '<p>Username: ' . $user_login . '</p>';
+        $message .= '<p>E-mail: ' . $user_email . '</p>';
+        $message .= '<br>';
+
+        $message .= '<p>Website Link: ' . $site_link . '</p>';
+        $message .= '<p>If this was a mistake, just ignore this email and nothing will happen and your password will not change.</p>';
+        $message .= '<p>If you have any problems, please contact administrator on contact page.</p>';
+        $message .= '<p>Thanks & Regards</p>';
+        $message .= '<p>' . $site_title . '</p>';
 
         $notification_sent = wp_mail( $user_email, $subject, $message, $headers );
 
@@ -4830,7 +5022,7 @@ class Aione_App_Builder_Public {
 
 		if( $atts['form'] ) {
 			$html_before_fields = '<form id="'.$atts['id'].'" class="'.$atts['class'].'" action="'.$atts['action'].'" method="'.$atts['method'].'">';
-			$html_after_fields = '<div><input type="submit" class="acf-button button button-primary button-large" value="'.$atts['submit'].'" /></div></form>';
+			$html_after_fields = '<div><input name="submit" type="submit" class="acf-button button button-primary button-large" value="'.$atts['submit'].'" /></div></form>';
 		}
 
 		$options = array(

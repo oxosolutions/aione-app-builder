@@ -70,3 +70,6 @@ FIXED: few UI Fixes
 
 ## 1.4.0.14 10-05-2019
 FIXED: Valid form HTML
+
+## 1.5.0.0 21-06-2019
+UPDATED: Reset password flow and email notification
