@@ -1966,53 +1966,55 @@ class Aione_App_Builder_Public {
 
 		if( is_user_logged_in() ) {
 
-			$user = wp_get_current_user();
-			$user_id = $user->ID;
-			$username = $user->user_login;
+			$user 		= wp_get_current_user();
+			$user_id 	= $user->ID;
+			$username 	= $user->user_login;
 			$user_roles = $user->roles;
-			$value = get_user_meta( $user_id );
-			$action = $_GET['action'];
+			$user_meta 	= get_user_meta( $user_id );
+			$action 	= $_GET['action'];
 			
 
 			$output .='<div id="' . $atts['id'] . '" class="' . $atts['class'] . '">';
 
 			$output .= '<ul class="aione-list theme-solid small" id="account_content_profile">
 			<li><div class="user-detail-label">ID</div>
-			<div class="user-detail-value">'.$user_id.'</div>
+			<div class="user-detail-value">' . $user_id . '</div>
 			<div class="clear"></div></li>
 			<li><div class="user-detail-label">First Name</div>
-			<div class="user-detail-value">'.$value['first_name'][0].'</div>
+			<div class="user-detail-value">' . $user_meta['first_name'][0] . '</div>
 			<div class="clear"></div></li>
 			<li><div class="user-detail-label">Last name</div>
-			<div class="user-detail-value">'.$value['last_name'][0].'</div>
+			<div class="user-detail-value">' . $user_meta['last_name'][0] . '</div>
 			<div class="clear"></div></li>
 			<li><div class="user-detail-label">Email</div>
-			<div class="user-detail-value">'.$user->user_email.'</div>
+			<div class="user-detail-value">' . $user->user_email . '</div>
 			<div class="clear"></div></li>
 			';
 			
-			$field_groups = get_option('aione_app_builder_registration_custom_field_groups');
-			if(!is_array($field_groups)){
-				$field_groups = array($field_groups);
+			$field_groups = get_option( 'aione_app_builder_registration_custom_field_groups' );
+
+			if( !empty( $field_groups ) ) {
+				if( !is_array( $field_groups ) ) {
+					$field_groups = array($field_groups);
+				}
+			} else {
+				$field_groups = array();
 			}
-			
-			foreach($field_groups as $field_group_key => $field_group){
-				$fields = apply_filters('acf/field_group/get_fields',array(), $field_group);
+
+			foreach( $field_groups as $field_group_key => $field_group ) {
+				//$fields = apply_filters('acf/field_group/get_fields',array(), $field_group);
+				$fields = acf_get_fields( $field_group );
 				
-				foreach($fields as $fields_key => $field){
+				foreach( $fields as $fields_key => $field ) {
 					$field_key = $field['key'];
-					$field_data = get_field($field_key , "user_".$user_id);
-					if(is_array($field_data)){
-						$field_data = implode(",",$field_data);
-					}
-					$output .= '<li><div class="user-detail-label">'.$field['label'].'</div>';
-					$output .= '<div class="user-detail-value">'.$field_data.'</div>
+					$field_data_shortcode = '[user_meta field="' . $field_key . '" user_id="' . $user_id . '" style="" show_label="no"]';;
+					$field_data = do_shortcode( $field_data_shortcode );
+
+					$output .= '<li><div class="user-detail-label">' . $field['label'] . '</div>';
+					$output .= '<div class="user-detail-value">' . $field_data . '</div>
 					<div class="clear"></div></li>';
 				}
-				
-				
 			} 
-			
 			$output .= '</ul>
 			</div>';
 		}
@@ -2037,9 +2039,10 @@ class Aione_App_Builder_Public {
 			$user 		= wp_get_current_user();
 			$user_id 	= $user->ID;
 			$username 	= $user->user_login;
-			$value 		= get_user_meta( $user_id );
+			$user_meta 	= get_user_meta( $user_id );
+			$action 	= $_POST['action'];
 			
-			if( isset( $_POST['update_profile'] )  && $_POST['update_profile'] == 'update_profile' ){
+			if( !empty( $action )  && $action == 'update_profile' ){
 				$first_name 	= $_POST['aione_user_fname'];
 				$last_name 		= $_POST['aione_user_lname'];
 				$custom_fields 	= $_POST['acf'];
@@ -2049,27 +2052,27 @@ class Aione_App_Builder_Public {
 					'first_name' 	=> $first_name, 
 					'last_name' 	=> $last_name 
 				));
-
-				foreach( $custom_fields as $custom_field_key => $custom_fields ) {
+				
+				foreach( $custom_fields as $custom_field_key => $custom_field ) {
 					update_field( $custom_field_key , $custom_field, "user_".$user_id );
 				}
 			}
 
 			$html_before_fields = "";
 			$html_before_fields .= '
-			<form id="aione_edit_profile_form" class="aione-edit-profile-form aione-form form acf-form" action="'.get_permalink().'?action=edit-profile" method="post">
+			<form id="aione_edit_profile_form" class="aione-edit-profile-form aione-form form acf-form" action="'.get_permalink().'" method="post">
 			';
 			$html_before_fields .= '<div class="aione-form-field field field-type-text">
 			<div class="label"><label for="aione_user_fname">First Name</label></div>
-			<div class="acf-input-wrap"><input name="aione_user_fname" id="aione_user_fname" class="textbox large" type="text" placeholder="" value="'.$value['first_name'][0].'"/></div>
+			<div class="acf-input-wrap"><input name="aione_user_fname" id="aione_user_fname" class="textbox large" type="text" placeholder="" value="'.$user_meta['first_name'][0].'"/></div>
 			</div>';
 			$html_before_fields .= '<div class="aione-form-field field field-type-text">
 			<div class="label"><label for="aione_user_lname">Last Name</label></div>
-			<div class="acf-input-wrap"><input name="aione_user_lname" id="aione_user_lname" class="textbox large" type="text" placeholder="" value="'.$value['last_name'][0].'"/></div>
+			<div class="acf-input-wrap"><input name="aione_user_lname" id="aione_user_lname" class="textbox large" type="text" placeholder="" value="'.$user_meta['last_name'][0].'"/></div>
 			</div>';		
 			
 			$html_after_fields = '<div class="aione-form-field field">
-			<input type="hidden" name="update_profile" value="update_profile">
+			<input type="hidden" name="action" value="update_profile">
 			<input type="submit" value="Update">
 			</div>
 			';
@@ -2096,9 +2099,11 @@ class Aione_App_Builder_Public {
 				'submit_value'	        => 'Submit',
 				'updated_message'	    => 'Updated Successfully',
 			);
+
+			acf_form_head();
 			
 			ob_start();
-			acf_form($options);
+			acf_form( $options );
 			$output .= ob_get_contents();
 			ob_end_clean();
 			
@@ -2176,15 +2181,15 @@ class Aione_App_Builder_Public {
 		if(is_user_logged_in()) {
 			$output .= '<form method="post" class="aione-change-password-form aione-form form acf-form" id="aione-change-password-form" action="">';
 			$output .= '<div class="aione-form-field field field-type-text">
-			<div class="label"><label for="current_pass">Current Password<span class="required">*</span></label></div>
+			<div class="label"><label for="current_pass">Current Password <span class="required red">*</span></label></div>
 			<div class="acf-input-wrap"><input name="current_pass" id="current_pass" class="text-input field-long" type="password" /></div>
 			</div>';
 			$output .= '<div class="aione-form-field field field-type-text">
-			<div class="label"><label for="pass1">New Password<span class="required">*</span></label></div>
+			<div class="label"><label for="pass1">New Password <span class="required red">*</span></label></div>
 			<div class="acf-input-wrap"><input name="pass1" id="pass1" class="text-input field-long" type="password" /></div>
 			</div>';
 			$output .= '<div class="aione-form-field field field-type-text">
-			<div class="label"><label for="pass2">New Password<span class="required">*</span></label></div>
+			<div class="label"><label for="pass2">Re-enter New Password <span class="required red">*</span></label></div>
 			<div class="acf-input-wrap"><input name="pass2" id="pass2" class="text-input field-long" type="password" /></div>
 			</div>';
 			
