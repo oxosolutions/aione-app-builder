@@ -299,7 +299,7 @@ class Aione_App_Builder {
 
 
 		$this->loader->add_shortcode( 'variable', $plugin_public, 'aione_app_builder_variable_shortcode' );
-		$this->loader->add_shortcode( 'if', $plugin_public, 'aione_app_builder_if_shortcode' );
+		// $this->loader->add_shortcode( 'if', $plugin_public, 'aione_app_builder_if_shortcode' );
 
 		// POST SHORTCODES
 
@@ -322,10 +322,8 @@ class Aione_App_Builder {
 
 		$this->loader->add_shortcode( 'categories', $plugin_public, 'aione_app_builder_post_categories_shortcode' );
 		
-		$this->loader->add_shortcode( 'custom-field', $plugin_public, 'aione_app_builder_post_meta_shortcode' );
+		// $this->loader->add_shortcode( 'custom-field', $plugin_public, 'aione_app_builder_post_meta_shortcode' );
 		
-		$this->loader->add_shortcode( 'custom-fields', $plugin_public, 'aione_app_builder_post_custom_fields_shortcode' );
-
 		/*$this->loader->add_shortcode( 'profile_picture', $plugin_public, 'aione_app_builder_profile_picture_shortcode' );
 		//to_be_deleted
 		$this->loader->add_shortcode( 'profile-image', $plugin_public, 'aione_app_builder_profile_picture_shortcode' );*/
@@ -341,6 +339,8 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'edit', $plugin_public, 'aione_app_builder_edit_shortcode' );
 
 		$this->loader->add_shortcode( 'form', $plugin_public, 'aione_app_builder_form_shortcode' );
+
+		$this->loader->add_shortcode( 'fields', $plugin_public, 'aione_app_builder_fields_shortcode' );
 		
 	}
 

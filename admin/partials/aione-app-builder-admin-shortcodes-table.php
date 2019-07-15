@@ -282,10 +282,16 @@
 					<td>[form]</td>
 					<td>
 <pre>
-'field_groups' => '123', // ID of acf field group
-'fields' => '', // ID of acf field
-'id'             => '',
-'class'          => ''						
+'field_groups'			=> false,
+'fields'				=> false,
+'form'					=> true,
+'action'				=> '',
+'method'				=> 'post',
+'submit'				=> 'Submit',
+'label_placement' 		=> 'top', // top/left
+'instruction_placement' => 'label', // label/field
+'class'					=> 'aione-form',
+'id'					=> 'aione_form'					
 </pre></td>
 				</tr>
 				<tr>
@@ -633,6 +639,8 @@ Return post author ID
 'status' => 'publish', // draft,pending, all wordpres post status
 'field_groups' => '123', // ID of acf field group
 'fields' => '', // ID of acf field
+'label_placement' 		=> 'top', // top/left
+'instruction_placement' => 'label', // label/field
 'id' => 'add_new_form', // css id name
 'class' => 'add-new-form', // css class name
 </pre>
@@ -649,6 +657,8 @@ Return post author ID
 'status' => 'publish', // draft,pending, all wordpres post status
 'field_groups' => '123', // ID of acf field group
 'fields' => '', // ID of acf field
+'label_placement' 		=> 'top', // top/left
+'instruction_placement' => 'label', // label/field
 'id' => 'edit_post_form', // css id name
 'class' => 'edit-post-form', // css class name
 

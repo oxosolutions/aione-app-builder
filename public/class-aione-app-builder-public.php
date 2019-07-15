@@ -3785,28 +3785,48 @@ class Aione_App_Builder_Public {
 
 
 
-	function aione_app_builder_post_custom_fields_shortcode($atts){
+	function aione_app_builder_fields_shortcode($atts){
+
+		$atts = shortcode_atts( array(
+			'post_id' 			=> '',
+			'field_groups' 		=> '',
+			'include_fields' 	=> '',
+			'exclude_fields' 	=> '',
+			'check_conditions' 	=> 'yes',
+			'show_label' 		=> "no",
+			'class' 			=> '',
+			'id' 				=> '',
+			'style' 			=> 'div', // table/div/list
+		), $atts, 'fields' );
+
 
 		$output = "";
+
 		global $post;
-		$atts = shortcode_atts( array(
-			'post_id'		=> '',
-			'field_group' => '',
-			'show_label' => "no",
-			'seperator' => ' : ',
-			'class' => '',
-			'id' => '',
-			'style' => 'div', // table/div/list
-		), $atts, 'custom_fields' );
 
+		if( empty( $atts['post_id'] ) ) {
+			$atts['post_id'] = $post->ID;
+		}
 
-		if(function_exists('acf_get_field_groups')) {
-			$fieldGroup = acf_get_field_group($atts['field_group']);
-			$fields = acf_get_fields_by_id($atts['field_group']);
-			foreach ($fields as $key => $field) {
-				//$output .= do_shortcode('[custom-field field="'.$field['key'].'" label="'.$atts['label'].'" seperator="'.$atts['seperator'].'" class="'.$atts['class'].'" id="'.$atts['id'].'" style="'.$atts['style'].'"]');
-				$output .= do_shortcode('[post_meta post_id="' . $atts['post_id'] . '" field="' . $field['key'] . '" show_label="' . $atts['show_label'] . '" class="' . $atts['class'] . '" style="' . $atts['style'] . '"]');
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+		if( function_exists( 'acf_get_field_groups' ) ) {
+
+			$fieldGroup 	= acf_get_field_group( $atts['field_groups'] );
+			$fields 		= acf_get_fields_by_id( $atts['field_groups'] );
+
+			foreach ( $fields as $key => $field ) {
+
+				if( $atts['check_conditions'] == 'yes' ) {
+					$skip_field = $this->check_field_conditions( $field, $atts['post_id'] );
+				}
+
+				if( !$skip_field ){
+					$output .= do_shortcode('[post_meta post_id="' . $atts['post_id'] . '" field="' . $field['key'] . '" show_label="' . $atts['show_label'] . '" class="' . $atts['class'] . '" style="' . $atts['style'] . '"]');
+				}
 			}
+			
+
 		}
 
 		return $output;
@@ -3818,6 +3838,7 @@ class Aione_App_Builder_Public {
 			'post_id'			=> '',
 			'field'				=> '', //field name(slug) or field_key
 			'subfields'			=> '',// field names(slugs) to be displayed
+			'check_conditions' 	=> 'no',
 			'show_label'		=> 'no',
 			'style'				=> 'div', // table/div/list/ Leave empty for no html
 			'class'				=> ''
@@ -3839,6 +3860,13 @@ class Aione_App_Builder_Public {
 			$output .= get_post_meta( $atts['post_id'], $atts['field'], true );
 			return $output;	
 		} 
+
+		if( $atts['check_conditions'] == 'yes' ) {
+			$skip_field = $this->check_field_conditions( $field, $atts['post_id'] );
+			if( $skip_field ) {
+				return $output;
+			}
+		}
 
 		$field_class = 'field_'.$field['name'];
 
@@ -3992,18 +4020,18 @@ class Aione_App_Builder_Public {
 						$sub_field_value = $this->get_data_callback( $sub_field_array, $atts['post_id'], $repeater, $atts );
 
 
-						$sub_field_value_calss = str_replace( ' ', '-', $sub_field_value ); // Replaces all spaces with hyphens.
-						$sub_field_value_calss = preg_replace( '/[^A-Za-z0-9\-]/', '', $sub_field_value_calss ); // Removes special chars.
-						$sub_field_value_calss = preg_replace( '/-+/', '-', $sub_field_value_calss ); // Replaces multiple hyphens with single one.
-						$sub_field_value_calss = trim( $sub_field_value_calss, '-' ); // Remove first or last -
-						$sub_field_value_calss = strtolower( $sub_field_value_calss ); // lowercase
+						$sub_field_value_class = str_replace( ' ', '-', $sub_field_value ); // Replaces all spaces with hyphens.
+						$sub_field_value_class = preg_replace( '/[^A-Za-z0-9\-]/', '', $sub_field_value_class ); // Removes special chars.
+						$sub_field_value_class = preg_replace( '/-+/', '-', $sub_field_value_class ); // Replaces multiple hyphens with single one.
+						$sub_field_value_class = trim( $sub_field_value_class, '-' ); // Remove first or last -
+						$sub_field_value_class = strtolower( $sub_field_value_class ); // lowercase
 
 						$sub_field_classes = array(
 							'subfield',
 							$field_class,
 							$sub_field_array['wrapper']['class'],
 							'subfield-type-' . $sub_field_array['type'],
-							'subfield-value-' . $sub_field_value_calss,
+							'subfield-value-' . $sub_field_value_class,
 						);
 
 						$sub_field_classes = implode(' ', $sub_field_classes);
@@ -4048,6 +4076,74 @@ class Aione_App_Builder_Public {
 		return $output;	
 		
 	} // END aione_app_builder_post_meta_shortcode
+
+	//Check Field Conditions
+	function check_field_conditions( $field , $post_id ) {
+
+		$field_conditions = $field['conditional_logic'];
+
+		$skip_field = 0;
+
+		if( !empty( $field_conditions ) ) {
+			$skip_field++;
+
+			$is_or_true = 0;
+			foreach ( $field_conditions as $field_condition_key => $field_condition ) { 
+
+				$is_and_true = 0;
+				foreach ( $field_condition as $field_sub_condition_key => $field_sub_condition ) {
+
+					$field_value = get_field( $field_sub_condition['field'], $post_id );
+
+					if( $field_sub_condition['operator'] == '!=empty' ) {
+						if( !empty( $field_value ) ) {
+							$is_and_true++;
+						}
+					} elseif( $field_sub_condition['operator'] == '==empty' ) {
+						if( !empty( $field_value ) ) {
+							$is_and_true++;
+						}
+					} elseif( $field_sub_condition['operator'] == '==' ) {
+						if( $field_value == $field_sub_condition['value'] ) {
+							$is_and_true++;
+						}
+					} elseif( $field_sub_condition['operator'] == '!=' ) {
+						if( $field_value != $field_sub_condition['value'] ) {
+							$is_and_true++;
+						}
+					} elseif( $field_sub_condition['operator'] == '==contains' ) {
+						if( strpos( $field_value, $field_sub_condition['value'] ) !== false ) {
+							$is_and_true++;
+						}
+					} elseif( $field_sub_condition['operator'] == '==pattern ') {
+						if( preg_match( $field_sub_condition['value'], $field_value ) ) {
+							$is_and_true++;
+						}
+					} elseif( $field_sub_condition['operator'] == '>' ) {
+						if( $field_value > $field_sub_condition['value'] ) {
+							$is_and_true++;
+						}
+					} elseif( $field_sub_condition['operator'] == '<' ) {
+						if( $field_value < $field_sub_condition['value'] ) {
+							$is_and_true++;
+						}
+					}
+				}
+
+				if( $is_and_true == count( $field_condition )){
+					$is_or_true++;
+				}
+				
+			}
+
+			if( $is_or_true > 0 ){
+				$skip_field = 0;
+			}
+		}
+
+		return $skip_field;
+
+	}
 
 
 
@@ -4812,15 +4908,17 @@ class Aione_App_Builder_Public {
 		// Attributes
 		$atts = shortcode_atts(
 			array(
-				'post_type'			=> 'post',
-				'title'				=> true,
-				'content'			=> true,
-				'status'			=> 'publish',
-				'field_groups'		=> false,
-				'fields'			=> false,
-				//'return'			=> '',
-				'class'				=> 'add-new-form',
-				'id'				=> 'add_new_form',
+				'post_type'				=> 'post',
+				'title'					=> true,
+				'content'				=> true,
+				'status'				=> 'publish',
+				'field_groups'			=> false,
+				'fields'				=> false,
+				//'return'				=> '',
+				'label_placement' 		=> 'top', // top/left
+				'instruction_placement' => 'label', // label/field
+				'class'					=> 'add-new-form',
+				'id'					=> 'add_new_form',
 			), $atts, 'add_new' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
@@ -4877,8 +4975,8 @@ class Aione_App_Builder_Public {
 			'html_after_fields' 	=> '',
 			'submit_value' 			=> __("Submit", 'aione-app-builder'),
 			'updated_message' 		=> __("Post updated", 'aione-app-builder'),
-			'label_placement' 		=> 'top', // top/left
-			'instruction_placement' => 'label', // label/field
+			'label_placement' 		=> $atts['label_placement'], // top/left
+			'instruction_placement' => $atts['instruction_placement'], // label/field
 			'field_el' 				=> 'div',
 			//'uploader' 				=> 'wp',
 			'uploader' 				=> 'basic',
@@ -4915,6 +5013,8 @@ class Aione_App_Builder_Public {
 			'status'			=> 'publish',
 			'field_groups'		=> false,
 			'fields'			=> false,
+			'label_placement' 		=> 'top', // top/left
+			'instruction_placement' => 'label', // label/field
 			'class'				=> 'edit-post-form',
 			'id'				=> 'edit_post_form'
 		), $atts, 'edit' );
@@ -4967,8 +5067,8 @@ class Aione_App_Builder_Public {
 			'html_after_fields' 	=> '',
 			'submit_value' 			=> __("Submit", 'aione-app-builder'),
 			'updated_message' 		=> __("Post updated", 'aione-app-builder'),
-			'label_placement' 		=> 'top', // top/left
-			'instruction_placement' => 'label', // label/field
+			'label_placement' 		=> $atts['label_placement'], // top/left
+			'instruction_placement' => $atts['instruction_placement'], // label/field
 			'field_el' 				=> 'div',
 			'uploader' 				=> 'basic',
 			'html_updated_message'	=> '<div id="message" class="updated"><p>%s</p></div>',
@@ -5002,6 +5102,8 @@ class Aione_App_Builder_Public {
 			'action'			=> '',
 			'method'			=> 'post',
 			'submit'			=> 'Submit',
+			'label_placement' 		=> 'top', // top/left
+			'instruction_placement' => 'label', // label/field
 			'class'				=> 'aione-form',
 			'id'				=> 'aione_form'
 		), $atts, 'form' );
@@ -5045,8 +5147,8 @@ class Aione_App_Builder_Public {
 			'html_after_fields' 	=> $html_after_fields,
 			'submit_value' 			=> __("Submit", 'aione-app-builder'),
 			'updated_message' 		=> __("Post updated", 'aione-app-builder'),
-			'label_placement' 		=> 'top', // top/left
-			'instruction_placement' => 'label', // label/field
+			'label_placement' 		=> $atts['label_placement'], // top/left
+			'instruction_placement' => $atts['instruction_placement'], // label/field
 			'field_el' 				=> 'div',
 			'uploader' 				=> 'basic',
 			'html_updated_message'	=> '<div id="message" class="updated"><p>%s</p></div>',
