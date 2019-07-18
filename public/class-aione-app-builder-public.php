@@ -4211,25 +4211,17 @@ class Aione_App_Builder_Public {
 			case "date_picker":
 			
 				$return_format = $field['return_format'];
-				/*
 
 				if( $return_format == 'd/m/Y' ){
-					$output .= 'Return format i.e. "d/m/Y" is not supported';
+					// $output .= 'Return format i.e. "d/m/Y" is not supported';
+					$output .= $data;
 				} else{
-
-					*/
 					if( strpos( $field['wrapper']['class'], 'human') !== false ){
 						$output .= $this->human_readable_date( $data, $return_format );
 					} else{
-						if( !empty( $data ) ) {
-							$output .= date( $return_format, strtotime( $data ) );
-						} else {
-							$output .= "";
-						}
+						$output .= date( $return_format, strtotime( $data ) );
 					}
-				/*
 				}
-				*/
 
 				break;
 
