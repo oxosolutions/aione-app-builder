@@ -4221,7 +4221,11 @@ class Aione_App_Builder_Public {
 					if( strpos( $field['wrapper']['class'], 'human') !== false ){
 						$output .= $this->human_readable_date( $data, $return_format );
 					} else{
-						$output .= date( $return_format, strtotime( $data ) );
+						if( !empty( $data ) ) {
+							$output .= date( $return_format, strtotime( $data ) );
+						} else {
+							$output .= "";
+						}
 					}
 				/*
 				}
