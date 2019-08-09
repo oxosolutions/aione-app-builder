@@ -5122,6 +5122,7 @@ class Aione_App_Builder_Public {
 
 		$output = '';
 
+		
 		if( !empty( $atts['field_groups'] ) ){	
 			$field_groups = explode( ',', $atts['field_groups'] );
 		} else {
@@ -5178,5 +5179,84 @@ class Aione_App_Builder_Public {
 		return $output;
 	}
 
-	
+	/**
+	* Delete Post Shortcode
+	*/
+	/*
+	function aione_app_builder_delete_post_shortcode(  $atts, $content = null ) {
+
+
+		// Attributes
+		$atts = shortcode_atts( array(
+			'post_id'			=> null,
+			'status'			=> 'trash',
+			'class'				=> 'delete-post-form',
+			'id'				=> 'delete_post_form'
+		), $atts, 'delete_post' );
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+		$output 	= '';
+
+		if ( defined('DOING_AJAX') && DOING_AJAX ) { 
+			return;
+		}
+		if ( is_admin() ) { 
+			return;
+		}
+
+		$post_id 	= $atts['post_id'];
+		$status 	= $atts['status'];
+
+		if( !empty( $post_id ) ) { 
+
+			$delete_post_allowed 		= current_user_can( 'delete_post', $post_id );
+			$post_type 					= get_post_type( $post_id );
+			$post_type_object 			= get_post_type_object( $post_type );
+			$post_type_singular_name	= $post_type_object->labels->singular_name;
+
+			if( $delete_post_allowed ) {
+
+				$output .= '<p>You are going to delete '.$post_type_singular_name . '</p>';
+				$output .= '<p>Are you sure?</p>';
+				$output .= '';
+
+
+				if( $status == 'trash' ) {
+
+					$trashed = wp_trash_post( $post_id );
+
+					if( $trashed ) {
+						$output .= 'The '.$post_type_singular_name.' has been trashed successfully';
+					}
+
+				} elseif( $status == 'delete' ) {
+
+					$deleted = wp_delete_post( $post_id );
+
+					if( $deleted ) {
+						$output .= 'The '.$post_type_singular_name.' has been deleted successfully';
+					}
+
+				} else{
+
+					$args = array(
+						'ID' 			=> $post_id ,
+						'post_status' 	=> $status,
+					);
+
+					$updated = wp_update_post( $args );
+
+					if( $updated ) {
+						$output .= 'The '.$post_type_singular_name.' updated to '.$status.' successfully';
+					}
+
+				} // if( $status == 'trash' ) 
+			} // if( $delete_post_allowed ) 
+		} // if( !empty( $post_id ) ) 
+
+		return $output;
+	}
+	*/
+
 }

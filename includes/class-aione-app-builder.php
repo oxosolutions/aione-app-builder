@@ -227,11 +227,6 @@ class Aione_App_Builder {
         $this->loader->add_filter( 'lostpassword_url',$plugin_public, 'aione_app_builder_lostpassword_url', 10, 2 );
         $this->loader->add_action( 'wp_logout',$plugin_public, 'logout_redirect' );
 
-
-
-
-
-
         //Add Shortcode
 		$this->loader->add_shortcode( 'login_link', $plugin_public, 'aione_app_builder_login_link_shortcode' );
         
@@ -277,6 +272,7 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'posts', $plugin_public, 'aione_app_builder_posts_shortcode' );
 		$this->loader->add_shortcode( 'post', $plugin_public, 'aione_app_builder_post_shortcode' );
 		$this->loader->add_shortcode( 'post_meta', $plugin_public, 'aione_app_builder_post_meta_shortcode' );
+		// $this->loader->add_shortcode( 'delete_post', $plugin_public, 'aione_app_builder_delete_post_shortcode' );
 
 		$this->loader->add_shortcode( 'pagination', $plugin_public, 'aione_app_builder_pagination_shortcode' );
 		
