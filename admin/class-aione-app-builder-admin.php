@@ -77,6 +77,9 @@ class Aione_App_Builder_Admin {
 		add_action('admin_init', array( $this,'init_dialog_scripts'));		
 		add_action( 'admin_init',array( $this, 'aione_register_acf_menu' ), 10 );
 		add_action( 'admin_init',array( $this, 'aione_reset_all_submit' ), 10 );
+
+		// Add custom columns to listing page of custom post type created with Aione App Builder 
+		add_action( 'admin_init',array( $this, 'aione_add_admin_custom_column' ), 10 );
 		// TO DO: To add Members Plugin Menu in Aione App Builder
 		//add_action( 'admin_init',array( $this, 'aione_register_members_menu' ), 1000 );
 		add_filter( 'aione_filter_register_menu_pages', array( $this, 'register_page_dashboard_in_menu' ), 1000 );
@@ -1119,5 +1122,29 @@ class Aione_App_Builder_Admin {
 		);
 		do_action( 'wordpress_reset_post', $user );
 	}
+
+	public function aione_add_admin_custom_column(){
+		$post_type_option = new Aione_App_Builder_Admin_Components_Utils();
+        $custom_types = $post_type_option->get_components();
+        //echo "<pre>";print_r($custom_types);echo "</pre>";
+		if ( !empty( $custom_types ) ){
+			foreach( $custom_types as $post_type => $data ){
+				if(isset( $data['_builtin'] ) && $data['_builtin']){
+					unset($custom_types[$post_type]);
+				}
+				if(!empty($data['admin_custom_columns'])){
+					add_filter( 'manage_'.$post_type.'_posts_custom_column', array( $this, 'add_acf_columns' ) );
+				}
+			}
+		}
+		//echo "<pre>";print_r($custom_types);echo "</pre>";
+	}
+
+	/*function add_acf_columns($columns){
+		return array_merge ( $columns, array ( 
+	     'start_date' => __ ( 'Starts' ),
+	     'end_date'   => __ ( 'Ends' ) 
+	   ) );
+	}*/
 
 }

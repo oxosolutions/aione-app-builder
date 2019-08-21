@@ -3417,7 +3417,7 @@ class Aione_App_Builder_Public {
 			if( $atts['format'] == 'human'){
 				$output .=  $this->human_readable_date( get_the_date() );
 			} else{
-				$output .= get_the_date();
+				$output .= get_the_date( $atts['format'] );
 			}
 		} else{
 			//$output = date($atts['format']);
@@ -3425,7 +3425,7 @@ class Aione_App_Builder_Public {
 			$timestamp = time();
 			$dt = new DateTime("now", new DateTimeZone($tz)); //first argument "must" be a string
 			$dt->setTimestamp($timestamp); //adjust the object to correct timestamp
-			$output .=  $dt->format($atts['format']);
+			$output .=  $dt->format( $atts['format'] );
 
 		}
 

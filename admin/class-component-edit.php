@@ -89,7 +89,17 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
                 //'post_types' => 'custom',
                 'priority' => 'high',
             ),
+            
         );
+
+        if(sanitize_text_field( $_GET['aione-component-slug'] )){
+            $this->boxes['types_admin_custom_columns'] = array(
+                    'callback' => array($this, 'box_admin_custom_columns'),
+                    'title' => __('Admin Columns', 'aione-app-builder'),
+                    'default' => 'side',
+                    'post_types' => 'custom',
+                );
+        }
 
         $this->boxes = apply_filters('aione_meta_box_order_defaults', $this->boxes, $this->post_type);
 
@@ -835,6 +845,52 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
         $form = aione_form(__FUNCTION__, $form);
         echo $form->renderForm();
 
+    }
+
+    public function box_admin_custom_columns(){ 
+        global $aione; 
+        $form = array();
+        
+        $component_slug = sanitize_text_field( $_GET['aione-component-slug'] );       
+        $groups = acf_get_field_groups(array('post_type' => $component_slug));
+        
+        if(!empty($groups)){
+            foreach ($groups as $key => $group) {
+                $options = array();                
+                $fields = acf_get_fields($group['key']);
+                
+                if(!empty($fields)){
+                    foreach ( $fields as $field_key => $field ) {
+                        $options[$field['key']] = array(
+                            '#name' => 'ct[admin_custom_columns][' . $field['key'] . ']',
+                            '#title' => $field['label'],
+                            '#default_value' => ( ! empty( $this->ct['admin_custom_columns'][ $field['key'] ] ) ),
+                            '#inline' => true,
+                            '#before' => '<li>',
+                            '#after' => '</li>',
+                            '#attributes' => array(                
+                                //'disabled' => 'disabled',
+                            ),
+                        );
+                    }
+                    $form['admin_custom_columns_'.$group['ID']] = array(
+                        '#type' => 'checkboxes',
+                        '#options' => $options,
+                        '#name' => 'ct[admin_custom_columns]',
+                        '#inline' => true,
+                        '#before' => '<h4>'.$group['title'].'</h4> <ul class="aione-list">',
+                        '#after' => '</ul>',
+                        
+                    );                    
+                } // if fields
+            }
+           
+            //echo "<pre>";print_r($form);echo "</pre>";
+            $form = aione_form(__FUNCTION__, $form);
+            echo $form->renderForm();
+        } else {
+            echo "No ACF group is applied to this component";
+        }
     }
 
     /**
