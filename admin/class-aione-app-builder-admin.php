@@ -80,6 +80,7 @@ class Aione_App_Builder_Admin {
 
 		// Add custom columns to listing page of custom post type created with Aione App Builder 
 		add_action( 'admin_init',array( $this, 'aione_add_admin_custom_column' ), 10 );
+		add_filter( 'add_acf_columns', array( $this, 'add_acf_columns_callback' ), 10);
 		// TO DO: To add Members Plugin Menu in Aione App Builder
 		//add_action( 'admin_init',array( $this, 'aione_register_members_menu' ), 1000 );
 		add_filter( 'aione_filter_register_menu_pages', array( $this, 'register_page_dashboard_in_menu' ), 1000 );
@@ -1132,19 +1133,17 @@ class Aione_App_Builder_Admin {
 				if(isset( $data['_builtin'] ) && $data['_builtin']){
 					unset($custom_types[$post_type]);
 				}
-				if(!empty($data['admin_custom_columns'])){
-					add_filter( 'manage_'.$post_type.'_posts_custom_column', array( $this, 'add_acf_columns' ) );
+				if(!empty($data['admin_custom_columns'])){					
+					$post_type = apply_filters( 'add_acf_columns', $post_type );
 				}
 			}
 		}
 		//echo "<pre>";print_r($custom_types);echo "</pre>";
 	}
 
-	/*function add_acf_columns($columns){
-		return array_merge ( $columns, array ( 
-	     'start_date' => __ ( 'Starts' ),
-	     'end_date'   => __ ( 'Ends' ) 
-	   ) );
-	}*/
+	public function add_acf_columns_callback($post_type){
+		$aione_components = get_option(AIONE_OPTION_NAME_COMPONENTS);
+		//echo "<pre>";print_r($aione_components);echo "</pre>";
+	}
 
 }
