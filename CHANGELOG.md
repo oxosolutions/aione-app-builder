@@ -73,3 +73,6 @@ FIXED: Valid form HTML
 
 ## 1.5.0.0 21-06-2019
 UPDATED: Reset password flow and email notification
+
+## 1.5.0.1 10-09-2019
+UPDATED: Code Optimization
