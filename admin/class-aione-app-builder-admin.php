@@ -80,7 +80,7 @@ class Aione_App_Builder_Admin {
 
 		// Add custom columns to listing page of custom post type created with Aione App Builder 
 		add_action( 'admin_init',array( $this, 'aione_add_admin_custom_column' ), 10 );
-		add_filter( 'add_acf_columns', array( $this, 'add_acf_columns_callback' ), 10);
+
 		// TO DO: To add Members Plugin Menu in Aione App Builder
 		//add_action( 'admin_init',array( $this, 'aione_register_members_menu' ), 1000 );
 		add_filter( 'aione_filter_register_menu_pages', array( $this, 'register_page_dashboard_in_menu' ), 1000 );
@@ -1133,17 +1133,49 @@ class Aione_App_Builder_Admin {
 				if(isset( $data['_builtin'] ) && $data['_builtin']){
 					unset($custom_types[$post_type]);
 				}
-				if(!empty($data['admin_custom_columns'])){					
-					$post_type = apply_filters( 'add_acf_columns', $post_type );
+				if(!empty($data['admin_custom_columns'])){	
+					add_filter ( 'manage_posts_columns', array( $this, 'add_acf_columns' ),10,2 );
+					add_action('manage_posts_custom_column', array( $this, 'add_acf_columns_content' ), 10, 2);
+					add_filter('manage_edit-'.$post_type.'_sortable_columns', array( $this, 'acf_custom_column_sortable' ), 10);   
+
 				}
 			}
 		}
-		//echo "<pre>";print_r($custom_types);echo "</pre>";
+		
 	}
-
-	public function add_acf_columns_callback($post_type){
+	public function add_acf_columns($column,$post_type){
 		$aione_components = get_option(AIONE_OPTION_NAME_COMPONENTS);
-		//echo "<pre>";print_r($aione_components);echo "</pre>";
+		if ( !empty( $aione_components ) ){
+			$custom_columns = $aione_components[$post_type]['admin_custom_columns'];
+			$extra_columns = array();
+			if(!empty($custom_columns)){
+				foreach ($custom_columns as $key => $custom_column) {
+					$field = get_field_object($key);
+					$extra_columns[$field['name']]=$field['label'];
+				}
+			}			
+		}
+		return array_merge($column,$extra_columns);    	
+	}
+	public function add_acf_columns_content($column,$post_id){
+		echo get_post_meta ( $post_id, $column, true );		  	
+	}
+	public function acf_custom_column_sortable($columns){
+		$aione_components = get_option(AIONE_OPTION_NAME_COMPONENTS);
+		$extra_columns = array();
+		if ( !empty( $aione_components ) ){
+			foreach ($aione_components as $post_type => $aione_component) {
+				$custom_columns = $aione_component['admin_custom_columns'];	
+				if(!empty($custom_columns)){
+					foreach ($custom_columns as $key => $custom_column) {
+						$field = get_field_object($key);
+						$extra_columns[$field['name']]=$field['label'];
+					}
+				}
+			}			
+		}
+		
+		return array_merge($columns,$extra_columns);  
 	}
 
 }
