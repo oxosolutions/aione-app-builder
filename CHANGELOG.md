@@ -76,3 +76,6 @@ UPDATED: Reset password flow and email notification
 
 ## 1.5.0.1 10-09-2019
 UPDATED: Code Optimization
+
+## 1.6.0.0 26-09-2019
+ADDED: Admin Columns to componants
