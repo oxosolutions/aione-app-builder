@@ -4925,6 +4925,7 @@ class Aione_App_Builder_Public {
 				'field_groups'			=> false,
 				'fields'				=> false,
 				//'return'				=> '',
+				'uploader'			=> 'basic',
 				'label_placement' 		=> 'top', // top/left
 				'instruction_placement' => 'label', // label/field
 				'class'					=> 'add-new-form',
@@ -4988,8 +4989,7 @@ class Aione_App_Builder_Public {
 			'label_placement' 		=> $atts['label_placement'], // top/left
 			'instruction_placement' => $atts['instruction_placement'], // label/field
 			'field_el' 				=> 'div',
-			//'uploader' 				=> 'wp',
-			'uploader' 				=> 'basic',
+			'uploader' 				=> $atts['uploader'],
 			'html_updated_message'	=> '<div id="message" class="updated"><p>%s</p></div>',
 			'html_submit_button'	=> '<input type="submit" class="acf-button button button-primary button-large" value="%s" />',
 			'html_submit_spinner'	=> '<span class="acf-spinner"></span>',
@@ -5023,6 +5023,7 @@ class Aione_App_Builder_Public {
 			'status'			=> 'publish',
 			'field_groups'		=> false,
 			'fields'			=> false,
+			'uploader'			=> 'basic',
 			'label_placement' 		=> 'top', // top/left
 			'instruction_placement' => 'label', // label/field
 			'class'				=> 'edit-post-form',
@@ -5080,7 +5081,7 @@ class Aione_App_Builder_Public {
 			'label_placement' 		=> $atts['label_placement'], // top/left
 			'instruction_placement' => $atts['instruction_placement'], // label/field
 			'field_el' 				=> 'div',
-			'uploader' 				=> 'basic',
+			'uploader' 				=> $atts['uploader'],
 			'html_updated_message'	=> '<div id="message" class="updated"><p>%s</p></div>',
 			'html_submit_button'	=> '<input type="submit" class="acf-button button button-primary button-large" value="%s" />',
 			'html_submit_spinner'	=> '<span class="acf-spinner"></span>',
@@ -5112,6 +5113,7 @@ class Aione_App_Builder_Public {
 			'action'			=> '',
 			'method'			=> 'post',
 			'submit'			=> 'Submit',
+			'uploader'			=> 'basic',
 			'label_placement' 		=> 'top', // top/left
 			'instruction_placement' => 'label', // label/field
 			'class'				=> 'aione-form',
@@ -5161,7 +5163,7 @@ class Aione_App_Builder_Public {
 			'label_placement' 		=> $atts['label_placement'], // top/left
 			'instruction_placement' => $atts['instruction_placement'], // label/field
 			'field_el' 				=> 'div',
-			'uploader' 				=> 'basic',
+			'uploader' 				=> $atts['uploader'],
 			'html_updated_message'	=> '<div id="message" class="updated"><p>%s</p></div>',
 			'html_submit_button'	=> '<input type="submit" class="acf-button button button-primary button-large" value="%s" />',
 			'html_submit_spinner'	=> '<span class="acf-spinner"></span>',

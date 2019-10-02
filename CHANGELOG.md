@@ -79,3 +79,6 @@ UPDATED: Code Optimization
 
 ## 1.6.0.0 26-09-2019
 ADDED: Admin Columns to componants
+
+## 1.6.0.1 02-10-2019
+ADDED: uploaded argument Add, Edit, Form shortcodes 
