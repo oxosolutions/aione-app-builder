@@ -1154,11 +1154,17 @@ class Aione_App_Builder_Admin {
 					$extra_columns[$field['name']]=$field['label'];
 				}
 			}			
-		}
+		}		
 		return array_merge($column,$extra_columns);    	
 	}
 	public function add_acf_columns_content($column,$post_id){
-		echo get_post_meta ( $post_id, $column, true );		  	
+		$data = get_post_meta ( $post_id, $column, true );	
+		if(is_array($data)){
+			echo implode(',', $data);
+		} else{
+			echo $data;	  	
+		}
+			
 	}
 	public function acf_custom_column_sortable($columns){
 		$aione_components = get_option(AIONE_OPTION_NAME_COMPONENTS);

@@ -99,6 +99,12 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
                     'default' => 'side',
                     'post_types' => 'custom',
                 );
+            $this->boxes['types_admin_columns_order'] = array(
+                    'callback' => array($this, 'box_admin_columns_order'),
+                    'title' => __('Admin Columns Order', 'aione-app-builder'),
+                    'default' => 'side',
+                    'post_types' => 'custom',
+                );
         }
 
         $this->boxes = apply_filters('aione_meta_box_order_defaults', $this->boxes, $this->post_type);
@@ -893,6 +899,18 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
         }
     }
 
+    public function box_admin_columns_order(){
+        $post_type_option = new Aione_App_Builder_Admin_Components_Utils();
+        $custom_types = $post_type_option->get_components();
+        //echo "<pre>";print_r($custom_types);echo "</pre>";
+        $component_slug = sanitize_text_field( $_GET['aione-component-slug'] );
+        $custom_type = $custom_types[$component_slug];
+        $screen = get_current_screen();
+        /*echo "<pre>";print_r($screen);echo "</pre>";
+        echo "<pre>";print_r($screen->id);echo "</pre>";*/
+        /*$column_headers = get_column_headers();
+        echo "<pre>";print_r($column_headers);echo "</pre>";*/
+    }
     /**
      * post type properites
      */
