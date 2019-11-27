@@ -233,6 +233,7 @@
 'meta_key'      => '',
 'meta_value'      => '',
 'posts_per_page'  => '-1',
+'tax_query'  	=> '', // tax_query="movie-year=2016" or tax_query="movie-genre=comedy,action"
 'offset'          => '',
 'order'			=> 'DESC',
 'orderby'		=> 'date',

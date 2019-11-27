@@ -2357,6 +2357,7 @@ class Aione_App_Builder_Public {
 			'meta_query'		=> '',
 			'author'			=> '',
 			'author_id'			=> '',
+			'tax_query'			=> '',
 			'offset'			=> '',
 			'posts_per_page'	=> -1,
 			'order'				=> 'DESC',
@@ -2398,6 +2399,20 @@ class Aione_App_Builder_Public {
 	    	$offset = 0;
 	    }
 
+	    $tax_query = $atts['tax_query'];
+        $tax_query = explode("=",$tax_query);
+
+		$tax_query_array = array(
+			'relation' => 'AND',
+			array(
+				'taxonomy'         => $tax_query[0],
+				'terms'            => $tax_query[1],
+				'field'            => 'slug',
+				'operator'         => 'IN',
+				'include_children' => false,
+			),
+		);
+
 
 		// WP_Query arguments
 		$args = array (
@@ -2413,6 +2428,7 @@ class Aione_App_Builder_Public {
 			'meta_query'			=> $atts['meta_query'],
 			'posts_per_page'		=> $atts['posts_per_page'],
 			'post__in'				=> $post__in,
+			'tax_query'				=> $tax_query_array,
 			'offset'				=> $offset,
 			'ignore_sticky_posts'	=> false,
 			'order'					=> $atts['order'],

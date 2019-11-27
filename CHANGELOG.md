@@ -82,3 +82,6 @@ ADDED: Admin Columns to componants
 
 ## 1.6.0.1 02-10-2019
 ADDED: uploaded argument Add, Edit, Form shortcodes 
+
+## 1.6.0.2 27-11-2019
+UPDATED: updated posts shortcodes, added tax_query argument 
