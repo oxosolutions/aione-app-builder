@@ -2400,19 +2400,21 @@ class Aione_App_Builder_Public {
 	    }
 
 	    $tax_query = $atts['tax_query'];
-        $tax_query = explode("=",$tax_query);
+	    if( !empty( $tax_query ) ) {
 
-		$tax_query_array = array(
-			'relation' => 'AND',
-			array(
-				'taxonomy'         => $tax_query[0],
-				'terms'            => $tax_query[1],
-				'field'            => 'slug',
-				'operator'         => 'IN',
-				'include_children' => false,
-			),
-		);
+	        $tax_query = explode("=",$tax_query);
 
+			$tax_query_array = array(
+				'relation' => 'AND',
+				array(
+					'taxonomy'         => $tax_query[0],
+					'terms'            => $tax_query[1],
+					'field'            => 'slug',
+					'operator'         => 'IN',
+					'include_children' => false,
+				),
+			);
+	    }
 
 		// WP_Query arguments
 		$args = array (
@@ -2428,7 +2430,6 @@ class Aione_App_Builder_Public {
 			'meta_query'			=> $atts['meta_query'],
 			'posts_per_page'		=> $atts['posts_per_page'],
 			'post__in'				=> $post__in,
-			'tax_query'				=> $tax_query_array,
 			'offset'				=> $offset,
 			'ignore_sticky_posts'	=> false,
 			'order'					=> $atts['order'],
@@ -2437,6 +2438,10 @@ class Aione_App_Builder_Public {
 			'update_post_meta_cache'=> true,
 			'update_post_term_cache'=> true,
 		);
+
+		if( !empty( $tax_query ) ) {
+			$args['tax_query'] = $tax_query_array;
+		}
 
 		
 		
@@ -5196,6 +5201,63 @@ class Aione_App_Builder_Public {
 
 		return $output;
 	}
+
+	/**
+	* Form Shortcode
+	*/
+	function aione_app_builder_visit_counter_shortcode(  $atts, $content = null ) {
+
+		// Attributes
+		$atts = shortcode_atts( array(
+			'class' => 'aione-visit-counter',
+			'id' => 'aione_visit_counter',
+			'key' => 'visit_counter',
+			'text' => '',
+			'start' => '1',
+			'style' => 'html',
+			'theme' => 'dark',
+		), $atts, 'visit_counter' );
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+		$output = '';
+
+		$option_name = $atts['key'];
+
+		if ( get_option( $option_name ) !== false ) {
+	 
+		    // The option already exists, so update it.
+
+		    $visits = get_option( $option_name );
+			$visits = $visits + 1;
+
+		    update_option( $option_name, $visits );
+		 
+		} else {
+		 
+		    update_option( $option_name, $atts['start'] );
+		}
+
+		if( $atts['style'] == 'html' ) {
+			$output .= '<div id="' . $atts['id'] . '" class="' . $atts['class'] . ' ' . $atts['theme'] . '">';
+		}
+
+		if( !empty( $atts['text'] ) ) {
+			$output .=  '<span class="message">' . $atts['text'] . '</span>';
+		}
+
+		$output .=  '<span class="counter">' .get_option( $option_name ) . '</span>';
+
+		if( $atts['style'] == 'html' ) {
+			$output .= '</div>';
+		}
+
+		return $output;
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+	}
+
 
 	/**
 	* Delete Post Shortcode

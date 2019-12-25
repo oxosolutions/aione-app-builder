@@ -338,6 +338,8 @@ class Aione_App_Builder {
 
 		$this->loader->add_shortcode( 'fields', $plugin_public, 'aione_app_builder_fields_shortcode' );
 		
+		$this->loader->add_shortcode( 'visit_counter', $plugin_public, 'aione_app_builder_visit_counter_shortcode' );
+		
 	}
 
 	/**

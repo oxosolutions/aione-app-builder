@@ -666,6 +666,22 @@ Return post author ID
 </pre>
 	</td>
 </tr>
+<tr>
+	<td>Visit Counter</td>
+	<td>[visit_counter]</td>
+	<td>
+<pre>
+	'class' => 'aione-visit-counter', //CSS Class name
+	'id' => 'aione_visit_counter', //CSS ID name
+	'key' => 'visit_counter', //key to save data | default -> visit_counter
+	'text' => '', //Text to be displayed
+	'start' => '1', // initialize the counter from a given number
+	'style' => 'html', // html/none | to show html or raw nummber
+	'theme' => 'dark',  // dark or light theme
+
+</pre>
+	</td>
+</tr>
 </tbody>
 </table>
 </div>

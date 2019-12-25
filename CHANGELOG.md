@@ -85,3 +85,6 @@ ADDED: uploaded argument Add, Edit, Form shortcodes
 
 ## 1.6.0.2 27-11-2019
 UPDATED: updated posts shortcodes, added tax_query argument 
+
+## 1.6.0.3 25-12-2019
+FIXED: Issue is posts shortcode
