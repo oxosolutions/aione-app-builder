@@ -5209,13 +5209,14 @@ class Aione_App_Builder_Public {
 
 		// Attributes
 		$atts = shortcode_atts( array(
-			'class' => 'aione-visit-counter',
-			'id' => 'aione_visit_counter',
-			'key' => 'visit_counter',
-			'text' => '',
-			'start' => '1',
-			'style' => 'html',
-			'theme' => 'dark',
+			'class' 	=> 'aione-visit-counter',
+			'id' 		=> 'aione_visit_counter',
+			'key' 		=> 'visit_counter',
+			'table' 	=> 'options',
+			'text' 		=> '',
+			'start' 	=> '1',
+			'style' 	=> 'html',
+			'theme' 	=> 'dark',
 		), $atts, 'visit_counter' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
@@ -5224,29 +5225,58 @@ class Aione_App_Builder_Public {
 
 		$option_name = $atts['key'];
 
-		if ( get_option( $option_name ) !== false ) {
+
+		if( $atts['table'] == 'options' ) {
+			if( get_option( $option_name ) !== false ) {
 	 
-		    // The option already exists, so update it.
+			    // The option already exists, so update it.
 
-		    $visits = get_option( $option_name );
-			$visits = $visits + 1;
+			    $visits = get_option( $option_name );
+				$visits = $visits + 1;
 
-		    update_option( $option_name, $visits );
-		 
-		} else {
-		 
-		    update_option( $option_name, $atts['start'] );
+			    update_option( $option_name, $visits );
+			 
+			} else {
+			 
+			    update_option( $option_name, $atts['start'] );
+			}
+		} elseif( $atts['table'] == 'post_meta' ) {
+
+			if( !empty( get_post_meta( get_the_ID(), $option_name, true ) ) ) {
+	 
+			    // The option already exists, so update it.
+
+			    $visits = get_post_meta( get_the_ID(), $option_name, true );
+				$visits = $visits + 1;
+
+			    update_post_meta( get_the_ID(), $option_name, $visits );
+			 
+			} else {
+			 
+			    update_post_meta( get_the_ID(), $option_name, $atts['start'] );
+			}
 		}
+
+
+		
 
 		if( $atts['style'] == 'html' ) {
 			$output .= '<div id="' . $atts['id'] . '" class="' . $atts['class'] . ' ' . $atts['theme'] . '">';
 		}
 
-		if( !empty( $atts['text'] ) ) {
-			$output .=  '<span class="message">' . $atts['text'] . '</span>';
-		}
+		if( !empty( $atts['style'] ) ) {
 
-		$output .=  '<span class="counter">' .get_option( $option_name ) . '</span>';
+			if( !empty( $atts['text'] ) ) {
+				$output .=  '<span class="message">' . $atts['text'] . '</span>';
+			}
+
+			if( $atts['table'] == 'options' ) {
+				$output .=  '<span class="counter">' . get_option( $option_name ) . '</span>';
+			} elseif( $atts['table'] == 'post_meta' ) {
+				$output .=  '<span class="counter">' . get_post_meta( get_the_ID(), $option_name, true ) . '</span>';
+			}
+
+		}
 
 		if( $atts['style'] == 'html' ) {
 			$output .= '</div>';

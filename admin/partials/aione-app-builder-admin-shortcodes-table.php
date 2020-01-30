@@ -232,6 +232,8 @@
 'post__in'      => '',// comma saperated ids of post ids to be included
 'meta_key'      => '',
 'meta_value'      => '',
+'meta_compare'		=> 'LIKE',
+'meta_query'		=> '',
 'posts_per_page'  => '-1',
 'tax_query'  	=> '', // tax_query="movie-year=2016" or tax_query="movie-genre=comedy,action"
 'offset'          => '',
@@ -239,7 +241,9 @@
 'orderby'		=> 'date',
 'template'       => '', // slug of aione template
 'pagination'     => 'yes', // no
-'id'             => '',
+'api'				=> 'no', // yes/no
+'style'				=> 'list', // div/list/''
+'id'             => '', 
 'class'          => ''	
 </pre></td>
 				</tr>
