@@ -3649,11 +3649,17 @@ class Aione_App_Builder_Public {
 				$output .= $featured_image_meta_alt;
 			}
 		} else {
-			if($atts['placeholder'] == 'true'){
+
+			if($atts['placeholder'] == 'true' && !empty( $atts['placeholder_image'] ) ) {
+
 				$output .= '<img class="'.$atts['class'].'" '.$id_attribute.' src="'.$atts['placeholder_image'].'" />';
+				
 			}
+
 		}
+
 		return $output;
+
 	}
 
 	function aione_app_builder_post_attached_media_shortcode($atts){
@@ -4341,7 +4347,9 @@ class Aione_App_Builder_Public {
 					}
 				} else {
 					foreach ($data as  $gallery) {
+						$output .= ' <div class="gallery-item">';
 						$output .= '<img src="'.$gallery['url'].'"/>';
+						$output .= '</div>';
 					}
 				}
 				
