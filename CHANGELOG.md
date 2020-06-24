@@ -89,3 +89,6 @@ UPDATED: updated posts shortcodes, added tax_query argument
 ## 1.6.0.3 25-12-2019
 ADDED: visit counter shortcode
 FIXED: Issue is posts shortcode
+
+## 1.6.0.4 24-06-2020
+ADDED: visit post_name shortcode

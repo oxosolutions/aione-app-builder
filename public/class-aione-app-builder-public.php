@@ -3475,6 +3475,15 @@ class Aione_App_Builder_Public {
 		return $output;
 	}
 
+	public function aione_app_builder_post_name_shortcode( $attr, $content = null ) {
+
+		global $post;
+
+		$output = $post->post_name;
+
+		return $output;
+	}
+
 	public function aione_app_builder_post_link_shortcode( $atts, $content = null ) {
 
 		global $post;

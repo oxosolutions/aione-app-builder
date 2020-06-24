@@ -302,6 +302,7 @@ class Aione_App_Builder {
 		// Post ID $post->ID
 		
 		$this->loader->add_shortcode( 'id', $plugin_public, 'aione_app_builder_post_id_shortcode' );
+		$this->loader->add_shortcode( 'post_name', $plugin_public, 'aione_app_builder_post_name_shortcode' );
 		$this->loader->add_shortcode( 'link', $plugin_public, 'aione_app_builder_post_link_shortcode' );
 
 		$this->loader->add_shortcode( 'title', $plugin_public, 'aione_app_builder_post_title_shortcode' );
