@@ -2719,6 +2719,25 @@ class Aione_App_Builder_Public {
 		return $output;
 	} // END aione_app_builder_list_comments_shortcode()
 
+	public function aione_app_builder_comment_count_shortcode( $atts ) {
+		global $theme_options, $post;
+		// Attributes
+		$atts = shortcode_atts(
+			array(
+				'post_id'	=> $post->ID,
+				'style'     => '',
+				'id'        => '',
+				'class'     => ''
+			), $atts,'comment_count' );
+		
+		$output = "";
+		
+		$output .= get_comments_number( $atts['post_id'] );
+
+		return $output;
+
+	} // END aione_app_builder_comment_count_shortcode()
+
 	public function aione_app_builder_faq_shortcode($atts) {
 
 		$atts = shortcode_atts(
@@ -3554,11 +3573,15 @@ class Aione_App_Builder_Public {
 			'excerpt_length'	=> '30',
 			'more_text'			=> '...',
 			'post_id'			=> $post->ID,
+			'style'				=> 'div', //div, p 
 			'class'				=> '',
 			'id'				=> '',
 		), $atts, 'content' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
+
+		$content = '';
+		$output = '';
 
 		$id_attribute ='';
 		if( !empty($atts['id']) ){
@@ -3575,8 +3598,19 @@ class Aione_App_Builder_Public {
 		} else {
 			$content = $post_content;
 		}
-		$content = '<div '.$id_attribute.' class="'.$atts['class'].'">'.do_shortcode($content).'</div>';
-		return $content;
+
+		if( $atts['style'] != "" ) {
+			$output .= '<'.$atts['style'].' '.$id_attribute.' class="'.$atts['class'].'">';
+		}
+
+		$output .= do_shortcode( $content );
+
+		if( $atts['style'] != "" ) {
+			$output .= '</'.$atts['style'].'>';
+		}
+
+		return $output;
+
 	}
 
 	function aione_app_builder_author_shortcode( $atts ) {

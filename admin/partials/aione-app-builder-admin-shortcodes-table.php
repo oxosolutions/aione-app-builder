@@ -310,6 +310,17 @@
 </pre></td>
 				</tr>
 
+				<tr>
+					<td>Count Comments</td>
+					<td>[comment_count]</td>
+					<td>
+<pre>
+'post_id'          => '',
+'id'             => '',
+'class'          => ''						
+</pre></td>
+				</tr>
+
 				
 				<tr>
 					<td>User Count</td>

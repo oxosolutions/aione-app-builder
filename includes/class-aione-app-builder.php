@@ -277,6 +277,8 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'pagination', $plugin_public, 'aione_app_builder_pagination_shortcode' );
 		
 		$this->loader->add_shortcode( 'list_comments', $plugin_public, 'aione_app_builder_list_comments_shortcode' );
+
+		$this->loader->add_shortcode( 'comment_count', $plugin_public, 'aione_app_builder_comment_count_shortcode' );
 		
 		$this->loader->add_shortcode( 'user_count', $plugin_public, 'aione_app_builder_count_users_shortcode' );
 		

@@ -92,3 +92,6 @@ FIXED: Issue is posts shortcode
 
 ## 1.6.0.4 24-06-2020
 ADDED: visit post_name shortcode
+
+## 1.6.0.5 08-07-2020
+ADDED: visit comment_count shortcode
