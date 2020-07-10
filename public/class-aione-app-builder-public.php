@@ -1976,7 +1976,7 @@ class Aione_App_Builder_Public {
 
 			$output .='<div id="' . $atts['id'] . '" class="' . $atts['class'] . '">';
 
-			$output .= '<ul class="aione-list theme-solid small" id="account_content_profile">
+			$output .= '<ul>
 			<li><div class="user-detail-label">ID</div>
 			<div class="user-detail-value">' . $user_id . '</div>
 			<div class="clear"></div></li>
