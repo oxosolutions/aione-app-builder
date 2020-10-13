@@ -3498,7 +3498,20 @@ class Aione_App_Builder_Public {
 
 		global $post;
 
-		$output = $post->post_name;
+		$atts = shortcode_atts( array(
+			'post_id'	=>	$post->ID,
+		), $atts, 'post_name' );
+
+		$output = "";
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+		$post_id = $atts['post_id'];
+
+		if( !empty( $post_id ) ) {
+
+			$post= get_post( $post_id ); 
+			$output .= $post->post_name;
+		}
 
 		return $output;
 	}
@@ -3511,9 +3524,16 @@ class Aione_App_Builder_Public {
 			'post_id'	=>	$post->ID,
 		), $atts, 'link' );
 
-		$atts = $this->clean_shortcode_parameters( $atts );
+		$output = "";
 
-		$output = get_permalink( $atts['post_id'] );
+		$atts = $this->clean_shortcode_parameters( $atts );
+		$post_id = $atts['post_id'];
+		
+		if( !empty( $post_id ) ) {
+
+			$output .= get_permalink( $post_id );
+
+		}
 
 		return $output; 
 	}
@@ -3540,25 +3560,28 @@ class Aione_App_Builder_Public {
 
 		$post_id = $atts['post_id'];
 
-		$post_object = get_post( $post_id ); 
-		$post_title = $post_object->post_title; 
+		if( !empty($post_id) ) {
 
-		if($atts['style'] != ""){
-			$title .= '<'.$atts['style'].' '.$id_attribute.' class="'.$atts['class'].'">';
-		}
-		if($atts['link'] == "true"){
+			$post_object = get_post( $post_id ); 
+			$post_title = $post_object->post_title; 
+
 			if($atts['style'] != ""){
-				$title .= '<a  href="'.get_permalink( $post_id ).'">'.$post_title.'</a>';
-			} else {
-				$title .= '<a '.$id_attribute.' class="'.$atts['class'].'" href="'.get_permalink( $post_id ).'">'.$post_title.'</a>';
+				$title .= '<'.$atts['style'].' '.$id_attribute.' class="'.$atts['class'].'">';
 			}
-			
-		} else {
-			$title .= $post_title;
-		}
+			if($atts['link'] == "true"){
+				if($atts['style'] != ""){
+					$title .= '<a  href="'.get_permalink( $post_id ).'">'.$post_title.'</a>';
+				} else {
+					$title .= '<a '.$id_attribute.' class="'.$atts['class'].'" href="'.get_permalink( $post_id ).'">'.$post_title.'</a>';
+				}
+				
+			} else {
+				$title .= $post_title;
+			}
 
-		if($atts['style'] != ""){
-			$title .= '</'.$atts['style'].'>';
+			if($atts['style'] != ""){
+				$title .= '</'.$atts['style'].'>';
+			}
 		}
 		
 		return $title;
@@ -3648,6 +3671,7 @@ class Aione_App_Builder_Public {
 		}
 		
 		if ( has_post_thumbnail( $post_id ) ) {
+
 			$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ),  $atts['size']);
 			$featured_image_url = $featured_image[0];
 			$featured_image_width = $featured_image[1];
@@ -3904,9 +3928,11 @@ class Aione_App_Builder_Public {
 	}
 
 	function aione_app_builder_post_meta_shortcode( $atts ) {
-		
+
+		global $post;
+
 		$atts = shortcode_atts( array(
-			'post_id'			=> '',
+			'post_id' 			=> $post->ID,
 			'field'				=> '', //field name(slug) or field_key
 			'subfields'			=> '',// field names(slugs) to be displayed
 			'check_conditions' 	=> 'no',
@@ -3915,235 +3941,233 @@ class Aione_App_Builder_Public {
 			'class'				=> ''
 		), $atts, 'post_meta' );
 
-		global $post;
-
-		if( empty( $atts['post_id'] ) ) {
-			$atts['post_id'] = $post->ID;
-		}
-
 		$atts = $this->clean_shortcode_parameters( $atts );
-
 		$output = '';
 
-		$field = get_field_object( $atts['field'], $atts['post_id'] );
+		if( !empty( $atts['post_id'] ) ) {
 
-		if( empty( $field)  ) {
-			$output .= get_post_meta( $atts['post_id'], $atts['field'], true );
-			return $output;	
-		} 
 
-		if( $atts['check_conditions'] == 'yes' ) {
-			// $output = '<br>Field Name : '.$field['name'];
+			$field = get_field_object( $atts['field'], $atts['post_id'] );
 
-			$skip_field = $this->check_field_conditions( $field, $atts['post_id'] );
-			if( $skip_field ) {
-				return $output;
+			if( empty( $field)  ) {
+				$output .= get_post_meta( $atts['post_id'], $atts['field'], true );
+				return $output;	
+			} 
+
+			if( $atts['check_conditions'] == 'yes' ) {
+				// $output = '<br>Field Name : '.$field['name'];
+
+				$skip_field = $this->check_field_conditions( $field, $atts['post_id'] );
+				if( $skip_field ) {
+					return $output;
+				}
 			}
-		}
 
-		$field_class = 'field_'.$field['name'];
+			$field_class = 'field_'.$field['name'];
 
-		if( empty( $field_class ) ) {
-			$field_class = $field['key'];
-		}
+			if( empty( $field_class ) ) {
+				$field_class = $field['key'];
+			}
 
-		$field_id = $field['wrapper']['id'];
+			$field_id = $field['wrapper']['id'];
 
-		if( empty( $field_id ) ){
-			$field_id = $field['key'];
-		}
+			if( empty( $field_id ) ){
+				$field_id = $field['key'];
+			}
 
-		$field_classes = array(
-			'field',
-			$atts['class'],
-			$field_class,
-			$field['wrapper']['class'],
-			'field_type_' . $field['type'],
-		);
+			$field_classes = array(
+				'field',
+				$atts['class'],
+				$field_class,
+				$field['wrapper']['class'],
+				'field_type_' . $field['type'],
+			);
 
-		$field_classes = implode( ' ', $field_classes );
+			$field_classes = implode( ' ', $field_classes );
 
-		if( $atts['style'] == "div" ) {
-			$output .= '<div id="' . $field_id . '" class="' . $field_classes . '">';
-		}
+			if( $atts['style'] == "div" ) {
+				$output .= '<div id="' . $field_id . '" class="' . $field_classes . '">';
+			}
 
-		if( $atts['show_label'] == "yes" ) {
-			$output .= '<label class="field-label">' . $field['label'] . '</label>';
-		}
+			if( $atts['show_label'] == "yes" ) {
+				$output .= '<label class="field-label">' . $field['label'] . '</label>';
+			}
 
-		if( $field['type'] == 'repeater' ) {
+			if( $field['type'] == 'repeater' ) {
 
-			$repeater 	= true;
-			$layout 	= $field['layout'];
-			$style 		= $atts['style'];
-			$sub_fields = $field['sub_fields'];
-			$subfields 	= $atts['subfields'];
-			$subfields 	= explode( ',', $subfields );
+				$repeater 	= true;
+				$layout 	= $field['layout'];
+				$style 		= $atts['style'];
+				$sub_fields = $field['sub_fields'];
+				$subfields 	= $atts['subfields'];
+				$subfields 	= explode( ',', $subfields );
 
-			$repeater_output 	= '';
-			$start_html 		= '';
-			$end_html 			= '';
-			$row_start_html 	= '';
-			$row_end_html 		= '';
-			$column_html_tag 	= '';
+				$repeater_output 	= '';
+				$start_html 		= '';
+				$end_html 			= '';
+				$row_start_html 	= '';
+				$row_end_html 		= '';
+				$column_html_tag 	= '';
 
-			$aione_data_table_headers 	= array();
-			$aione_data_table_data 		= array();
+				$aione_data_table_headers 	= array();
+				$aione_data_table_data 		= array();
 
 
-			if( have_rows( $field['key'], $atts['post_id'] ) ) {
+				if( have_rows( $field['key'], $atts['post_id'] ) ) {
 
-				
+					
 
-				if( $style == 'aione_data_table' ) {
-					foreach ( $sub_fields as $sub_field_key => $sub_field_value ) {
-						/*
-						if( !empty( $subfields ) ) {
-							if ( !in_array( $sub_field_value['name'], $subfields ) ) {
-								continue;
-							}
-						}
-						*/
-						$aione_data_table_headers[] = $sub_field_value['label'];
-					}
-				} elseif( $layout == 'table' ) {
-					if( !empty( $style ) ) {
-						$start_html 		.= '<div class="repeater-layout-'.$layout.' aione-table">';
-						$start_html 		.= '<table>';
-
-						if( $atts['show_label'] == "yes" ) {
-							$start_html 		.= '<thead>';
-							$start_html 		.= '<tr>';
-							foreach ( $sub_fields as $sub_field_key => $sub_field_value ) {
-								if( !empty( $subfields ) ) {
-									if ( !in_array( $sub_field_value['name'], $subfields ) ) {
-										continue;
-									}
+					if( $style == 'aione_data_table' ) {
+						foreach ( $sub_fields as $sub_field_key => $sub_field_value ) {
+							/*
+							if( !empty( $subfields ) ) {
+								if ( !in_array( $sub_field_value['name'], $subfields ) ) {
+									continue;
 								}
-								$start_html 		.= '<th>';
-								$start_html 		.= $sub_field_value['label'];
-								$start_html 		.= '</th>';
 							}
-							$start_html 		.= '<tr>';
-							$start_html 		.= '</thead>';
-							$atts['show_label'] = "no";
+							*/
+							$aione_data_table_headers[] = $sub_field_value['label'];
 						}
+					} elseif( $layout == 'table' ) {
+						if( !empty( $style ) ) {
+							$start_html 		.= '<div class="repeater-layout-'.$layout.' aione-table">';
+							$start_html 		.= '<table>';
 
-						$start_html 		.= '<tbody>';
-						$end_html 			.= '</tbody>';
-						$end_html 			.= '</table>';
-						$end_html 			.= '</div>';
-						$row_start_html 	.= '<tr>';
-						$row_end_html 		.= '</tr>';
-						$column_html_tag 	.= 'td';
-					}
-				} elseif( $layout == 'block' ) {
-					if( !empty( $style ) ) {
-						$start_html 		.= '<div class="repeater-layout-'.$layout.' field-rows">';
-						$end_html 			.= '</div>';
-						$row_start_html 	.= '<div class="field-row subfields">';
-						$row_end_html 		.= '</div>';
-						$column_html_tag 	.= 'div';
-					}
-				} elseif( $layout == 'row' ) {
-					if( !empty( $style ) ) {
-						$start_html 		.= '<ul class="repeater-layout-'.$layout.' field-rows">';
-						$end_html 			.= '</ul>';
-						$row_start_html 	.= '<li class="field-row">';
-						$row_start_html 	.= '<ul class="subfields">';
-						$row_end_html 		.= '</ul>';
-						$row_end_html 		.= '</li>';
-						$column_html_tag 	.= 'li';
-					}
-				}
-
-				$repeater_output .= $start_html;
-
-				while( have_rows($field['key'], $atts['post_id'] ) ) {
-
-					the_row();
-					$repeater_output .= $row_start_html;
-
-					foreach ( $field['sub_fields'] as $sub_fields_key => $sub_field_array ) {
-
-
-						$subfields = $atts['subfields'];
-						$subfield_operator = $atts['subfield_operator'];
-
-						/*
-						if( !empty( $subfields ) ) {
-							if ( !in_array( $sub_field_array['name'], $subfields ) ) {
-								continue;
+							if( $atts['show_label'] == "yes" ) {
+								$start_html 		.= '<thead>';
+								$start_html 		.= '<tr>';
+								foreach ( $sub_fields as $sub_field_key => $sub_field_value ) {
+									if( !empty( $subfields ) ) {
+										if ( !in_array( $sub_field_value['name'], $subfields ) ) {
+											continue;
+										}
+									}
+									$start_html 		.= '<th>';
+									$start_html 		.= $sub_field_value['label'];
+									$start_html 		.= '</th>';
+								}
+								$start_html 		.= '<tr>';
+								$start_html 		.= '</thead>';
+								$atts['show_label'] = "no";
 							}
+
+							$start_html 		.= '<tbody>';
+							$end_html 			.= '</tbody>';
+							$end_html 			.= '</table>';
+							$end_html 			.= '</div>';
+							$row_start_html 	.= '<tr>';
+							$row_end_html 		.= '</tr>';
+							$column_html_tag 	.= 'td';
 						}
-						*/
-
-						$field_class = 'subfield-' . $sub_field_array['name'];
-
-						if( empty( $field_class ) ){
-							$field_class = $sub_field_array['key'];
+					} elseif( $layout == 'block' ) {
+						if( !empty( $style ) ) {
+							$start_html 		.= '<div class="repeater-layout-'.$layout.' field-rows">';
+							$end_html 			.= '</div>';
+							$row_start_html 	.= '<div class="field-row subfields">';
+							$row_end_html 		.= '</div>';
+							$column_html_tag 	.= 'div';
 						}
-
-						$field_id = $sub_field_array['wrapper']['id'];
-
-						if( empty( $field_id ) ){
-							$field_id = $sub_field_array['key'];
+					} elseif( $layout == 'row' ) {
+						if( !empty( $style ) ) {
+							$start_html 		.= '<ul class="repeater-layout-'.$layout.' field-rows">';
+							$end_html 			.= '</ul>';
+							$row_start_html 	.= '<li class="field-row">';
+							$row_start_html 	.= '<ul class="subfields">';
+							$row_end_html 		.= '</ul>';
+							$row_end_html 		.= '</li>';
+							$column_html_tag 	.= 'li';
 						}
-
-						$sub_field_value = $this->get_data_callback( $sub_field_array, $atts['post_id'], $repeater, $atts );
-
-
-						$sub_field_value_class = str_replace( ' ', '-', $sub_field_value ); // Replaces all spaces with hyphens.
-						$sub_field_value_class = preg_replace( '/[^A-Za-z0-9\-]/', '', $sub_field_value_class ); // Removes special chars.
-						$sub_field_value_class = preg_replace( '/-+/', '-', $sub_field_value_class ); // Replaces multiple hyphens with single one.
-						$sub_field_value_class = trim( $sub_field_value_class, '-' ); // Remove first or last -
-						$sub_field_value_class = strtolower( $sub_field_value_class ); // lowercase
-
-						$sub_field_classes = array(
-							'subfield',
-							$field_class,
-							$sub_field_array['wrapper']['class'],
-							'subfield-type-' . $sub_field_array['type'],
-							'subfield-value-' . $sub_field_value_class,
-						);
-
-						$sub_field_classes = implode(' ', $sub_field_classes);
-
-						$repeater_output .= '<'.$column_html_tag.' class="'.$sub_field_classes.'">';
-						if( $atts['show_label'] == "yes" ) {
-							$repeater_output .= '<label class="sub-field-label">';
-							$repeater_output .= $sub_field_array['label'];
-							$repeater_output .= '</label>';
-						}
-						$repeater_output .= '<div class="sub-field-value">';
-						$repeater_output .= $sub_field_value;
-						$repeater_output .= '</div>';
-						$repeater_output .= '</'.$column_html_tag.'>';
-						// $repeater_output .=$subfield_operator;
-
-
-						if( $style == 'aione_data_table' ) {
-							$aione_data_table_data[$sub_fields_key][] = $sub_field_value;
-						} 
-
-
 					}
 
-					$repeater_output .= $row_end_html;
+					$repeater_output .= $start_html;
+
+					while( have_rows($field['key'], $atts['post_id'] ) ) {
+
+						the_row();
+						$repeater_output .= $row_start_html;
+
+						foreach ( $field['sub_fields'] as $sub_fields_key => $sub_field_array ) {
+
+
+							$subfields = $atts['subfields'];
+							$subfield_operator = $atts['subfield_operator'];
+
+							/*
+							if( !empty( $subfields ) ) {
+								if ( !in_array( $sub_field_array['name'], $subfields ) ) {
+									continue;
+								}
+							}
+							*/
+
+							$field_class = 'subfield-' . $sub_field_array['name'];
+
+							if( empty( $field_class ) ){
+								$field_class = $sub_field_array['key'];
+							}
+
+							$field_id = $sub_field_array['wrapper']['id'];
+
+							if( empty( $field_id ) ){
+								$field_id = $sub_field_array['key'];
+							}
+
+							$sub_field_value = $this->get_data_callback( $sub_field_array, $atts['post_id'], $repeater, $atts );
+
+
+							$sub_field_value_class = str_replace( ' ', '-', $sub_field_value ); // Replaces all spaces with hyphens.
+							$sub_field_value_class = preg_replace( '/[^A-Za-z0-9\-]/', '', $sub_field_value_class ); // Removes special chars.
+							$sub_field_value_class = preg_replace( '/-+/', '-', $sub_field_value_class ); // Replaces multiple hyphens with single one.
+							$sub_field_value_class = trim( $sub_field_value_class, '-' ); // Remove first or last -
+							$sub_field_value_class = strtolower( $sub_field_value_class ); // lowercase
+
+							$sub_field_classes = array(
+								'subfield',
+								$field_class,
+								$sub_field_array['wrapper']['class'],
+								'subfield-type-' . $sub_field_array['type'],
+								'subfield-value-' . $sub_field_value_class,
+							);
+
+							$sub_field_classes = implode(' ', $sub_field_classes);
+
+							$repeater_output .= '<'.$column_html_tag.' class="'.$sub_field_classes.'">';
+							if( $atts['show_label'] == "yes" ) {
+								$repeater_output .= '<label class="sub-field-label">';
+								$repeater_output .= $sub_field_array['label'];
+								$repeater_output .= '</label>';
+							}
+							$repeater_output .= '<div class="sub-field-value">';
+							$repeater_output .= $sub_field_value;
+							$repeater_output .= '</div>';
+							$repeater_output .= '</'.$column_html_tag.'>';
+							// $repeater_output .=$subfield_operator;
+
+
+							if( $style == 'aione_data_table' ) {
+								$aione_data_table_data[$sub_fields_key][] = $sub_field_value;
+							} 
+
+
+						}
+
+						$repeater_output .= $row_end_html;
+					}
+					$repeater_output .= $end_html;
 				}
-				$repeater_output .= $end_html;
+				if( $style == 'aione_data_table' ) {
+					$output .= aione_data_table( $aione_data_table_headers, $aione_data_table_data );
+				} else{
+					$output .= $repeater_output;
+				}
+			} else {
+				$repeater = false;
+				$output .= $this->get_data_callback( $field, $atts['post_id'], $repeater, $atts );
 			}
-			if( $style == 'aione_data_table' ) {
-				$output .= aione_data_table( $aione_data_table_headers, $aione_data_table_data );
-			} else{
-				$output .= $repeater_output;
+			if( $atts['style'] == "div" ){
+				$output .= '</div>';
 			}
-		} else {
-			$repeater = false;
-			$output .= $this->get_data_callback( $field, $atts['post_id'], $repeater, $atts );
-		}
-		if( $atts['style'] == "div" ){
-			$output .= '</div>';
+
 		}
 
 		return $output;	
