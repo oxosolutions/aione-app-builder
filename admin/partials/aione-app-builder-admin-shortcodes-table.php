@@ -30,6 +30,7 @@
 <pre>
 'class' => '', //CSS class for login link
 'text'  => 'Login' //Default Text to be shown 
+'return' => 'html', //html/link/url 
 </pre>
 				</td>
 				</tr>
@@ -39,7 +40,8 @@
 					<td>
 <pre>
 'class' => '', //CSS class for Register link
-'text'  => 'Sign up' //Default Text to be shown 
+'text'  => 'Sign up' //Default Text to be shown
+'return' => 'html', //html/link/url 
 </pre>
 				</td>
 				</tr>
@@ -50,6 +52,7 @@
 <pre>
 'class' => '', //CSS class for Register link
 'text'  => 'Reset Password' //Default Text to be shown 
+'return'	=> 'html', //html/link/url
 </pre>
 				</td>
 				</tr>
@@ -168,23 +171,40 @@
 				<tr>
 					<td>Reset Password</td>
 					<td>[reset_password]</td>
-					<td></td>
+					<td>
+<pre>
+'class'  => '', //CSS class for Dashboard link
+'text'   => 'Reset Password' //Default Text to be shown 
+</pre>						
+					</td>
 				</tr>
 				
 				<tr>
 					<td>View Profile</td>
 					<td>[view_profile]</td>
-					<td></td>
+					<td>
+<pre>
+'class'  => '', //CSS class for Dashboard link
+</pre>						
+					</td>
 				</tr>
 				<tr>
 					<td>Edit Profile</td>
 					<td>[edit_profile]</td>
-					<td></td>
+					<td>
+<pre>
+'class'  => '', //CSS class for Dashboard link
+</pre>						
+					</td>
 				</tr>
 				<tr>
 					<td>Change Password</td>
 					<td>[change_password]</td>
-					<td></td>
+					<td>
+<pre>
+'class'  => '', //CSS class for Dashboard link
+</pre>
+					</td>
 				</tr>
 				
 				<tr>
@@ -214,6 +234,12 @@
 'cat_id'         => '', // category ID 
 'author'         => '', // user nice_name
 'author_id'      => '', // user ID
+'meta_key'			=> '',
+'meta_value'		=> '',
+'meta_compare'		=> 'LIKE',
+'meta_query'		=> '',
+'posts_per_page'	=> '99999999999',
+'post_count'		=> '999999999',
 'order'			=> 'DESC',
 'orderby'		=> 'date'
 </pre></td>
@@ -268,7 +294,9 @@
 'field' => 'field_5bc5a7afa60b0', //acf field name(slug) or field_key
 'subfields'			=> '', // field names(slugs) to be displayed
 'subfield_operator'	=> '', // + or - etc
+'check_conditions' 	=> 'no',
 'show_label' => 'no', //yes
+'style' => 'div', // table/div/list/ Leave empty for no html
 'class'          => '' //CSS class
 </pre>
 					</td>
@@ -425,7 +453,8 @@
 						<td>[icon]</td>
 						<td>
 <pre>
-'class' => 'fa fa-facebook', //Fontawsome class
+'name' => 'logo-facebook', //ionicons name
+'size' => 'small'
 </pre>
 					</td>
 					</tr>
@@ -601,7 +630,6 @@ Return post author ID
 'facebook' => 'www.facebook.com'
 'twitter' => 'www.twitter.com'
 'youtube' => 'www.youtube.com'
-'googleplus' => ''
 'linkedin' => ''
 'instagram' => ''
 'flickr' => ''
@@ -631,7 +659,6 @@ Return post author ID
 			'labels' => "false" // true
 			'facebook' => "false" // true
 			'twitter' => "false" // true
-			'googleplus' => "false" // true
 			'linkedin' => "false" // true
 			'pinterest' => "false" // true
 			'reddit' => "false" // true

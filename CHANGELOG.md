@@ -95,3 +95,6 @@ ADDED: visit post_name shortcode
 
 ## 1.6.0.5 08-07-2020
 ADDED: visit comment_count shortcode
+
+## 1.6.0.6 06-11-2020
+ADDED: Archive Template Header and Footer

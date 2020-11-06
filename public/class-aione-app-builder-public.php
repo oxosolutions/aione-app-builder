@@ -3428,17 +3428,19 @@ class Aione_App_Builder_Public {
 	*/
 	function aione_app_builder_aione_icon_shortcode( $atts ) {
 		$atts =  shortcode_atts( array(
-			'class' => 'fa fa-facebook',
+			'name' => 'logo-facebook',
+			'size'	=> 'small'
 		), $atts, 'icon' );
 
 		$output = '';
-		$aione_icon = $atts['class'];
+		$aione_icon = $atts['name'];
+		$aione_icon_size = $atts['size'];
 
 		if($aione_icon){
-			$output = '<i class="'.$aione_icon.'"></i>';
+			$output = '<ion-icon name="'.$aione_icon.'" size="'.$aione_icon_size.'"></ion-icon>';
 		}
 		return $output;
-	}
+	} 
 	/**
 	* Shortcode [date]
 	* 
@@ -4000,7 +4002,10 @@ class Aione_App_Builder_Public {
 				$style 		= $atts['style'];
 				$sub_fields = $field['sub_fields'];
 				$subfields 	= $atts['subfields'];
-				$subfields 	= explode( ',', $subfields );
+
+				if( !empty( trim( $subfields ) ) ) {
+					$subfields 	= explode( ',', $subfields );
+				}
 
 				$repeater_output 	= '';
 				$start_html 		= '';
@@ -4785,7 +4790,6 @@ class Aione_App_Builder_Public {
 				'facebook'        => "",
 				'twitter'         => "",
 				'youtube'         => "",
-				'googleplus'      => "",
 				'linkedin'        => "",
 				'instagram'       => "",
 				'flickr'          => "",
@@ -4806,7 +4810,6 @@ class Aione_App_Builder_Public {
 		$facebook = $atts['facebook'];
 		$twitter = $atts['twitter'];
 		$youtube = $atts['youtube'];
-		$googleplus = $atts['googleplus'];
 		$linkedin = $atts['linkedin'];
 		$instagram = $atts['instagram'];
 		$flickr = $atts['flickr'];
@@ -4816,6 +4819,7 @@ class Aione_App_Builder_Public {
 		$tumblr = $atts['tumblr'];
 		$vimeo = $atts['vimeo'];
 		$wordpress = $atts['wordpress'];
+
 		$html .= '<ul class="aione-social-icons '.$size.' '.$theme.' '.$style.' '.$direction.' '.$labels.'">';
 		if($facebook != ""){
 			$html .= '<li class="facebook"><a href='.$facebook.' target="_blank"><span class="icon"></span><span class="label">Facebook</span></a></li>';
@@ -4826,9 +4830,7 @@ class Aione_App_Builder_Public {
 		if($youtube != ""){
 			$html .= '<li class="youtube"><a href='.$youtube.' target="_blank"><span class="icon"></span><span class="label">Youtube</span></a></li>';
 		}
-		if($googleplus != ""){
-			$html .= '<li class="googleplus"><a href='.$googleplus.' target="_blank"><span class="icon"></span><span class="label">GooglePlus</span></a></li>';
-		}
+		
 		if($linkedin != ""){
 			$html .= '<li class="linkedin"><a href='.$linkedin.' target="_blank"><span class="icon"></span><span class="label">Linkedin</span></a></li>';
 		}
@@ -4870,8 +4872,7 @@ class Aione_App_Builder_Public {
 				'direction'       => "horizontal",
 				'labels'          => "false",
 				'facebook'        => "",
-				'twitter'         => "",				
-				'googleplus'      => "",
+				'twitter'         => "",	
 				'linkedin'        => "",				
 				'pinterest'       => "",
 				'reddit'             => "",
@@ -4886,7 +4887,6 @@ class Aione_App_Builder_Public {
 		$labels = $atts['labels'];
 		$facebook = $atts['facebook'];
 		$twitter = $atts['twitter'];
-		$googleplus = $atts['googleplus'];
 		$linkedin = $atts['linkedin'];
 		$pinterest = $atts['pinterest'];
 		$reddit = $atts['reddit'];
@@ -4903,11 +4903,7 @@ class Aione_App_Builder_Public {
 			$html .= '<li class="twitter"><a href='.$twitter_url.' target="_blank"><span class="icon"></span><span class="label">Twitter</span></a></li>';
 		}
 		
-		if($googleplus != ""){
-			$googleplus_url = '
-			https://plus.google.com/share?url=' . rawurlencode( get_the_permalink() );
-			$html .= '<li class="googleplus"><a href='.$googleplus_url.' target="_blank"><span class="icon"></span><span class="label">GooglePlus</span></a></li>';
-		}
+		
 		if($linkedin == "true"){
 			$linkedin_url = '
 			https://www.linkedin.com/shareArticle?mini=true&url=' . rawurlencode( get_the_permalink() ) . '&title=' . get_the_title();

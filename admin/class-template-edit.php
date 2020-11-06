@@ -52,6 +52,18 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
                 'default' => 'advanced',
                 'post_types' => 'custom',
             ),
+            'types_archive_header' => array(
+                'callback' => array($this, 'box_archive_header'),
+                'title' => __('Header', 'aione-app-builder'),
+                'default' => 'advanced',
+                'post_types' => 'custom',
+            ),
+            'types_archive_footer' => array(
+                'callback' => array($this, 'box_archive_footer'),
+                'title' => __('Footer', 'aione-app-builder'),
+                'default' => 'advanced',
+                'post_types' => 'custom',
+            ),
             'types_applyto' => array(
                 'callback' => array($this, 'box_applyto'),
                 'title' => __('Applied to', 'aione-app-builder'),
@@ -369,6 +381,31 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
 
     }
 
+    public function box_archive_header()
+    {
+        $form = array();
+        $content = isset( $this->at['archive_header'] ) ? $this->at['archive_header']:'';
+        $editor_id = 'aione_template_archive_header';
+        $settings = array(
+            'textarea_name' => 'at[archive_header]',
+        );
+
+        echo wp_editor( $content, $editor_id, $settings );
+
+    }
+
+    public function box_archive_footer()
+    {
+        $form = array();
+        $content = isset( $this->at['archive_footer'] ) ? $this->at['archive_footer']:'';
+        $editor_id = 'aione_template_archive_footer';
+        $settings = array(
+            'textarea_name' => 'at[archive_footer]',
+        );
+
+        echo wp_editor( $content, $editor_id, $settings );
+
+    }
     
 
     /**
@@ -836,6 +873,8 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
 
         //$data['structured_data'] = wp_kses_post($data['structured_data']);
         $data['structured_data'] = html_entity_decode(stripcslashes($data['structured_data']));
+        $data['archive_header'] = html_entity_decode(stripcslashes($data['archive_header']));
+        $data['archive_footer'] = html_entity_decode(stripcslashes($data['archive_footer']));
 
         /******/
         foreach ($custom_templates as $key => $array) {
