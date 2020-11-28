@@ -58,6 +58,10 @@ class Aione_App_Builder_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
+		add_action('wp_head', array($this, 'getting_ajaxurl'));
+		add_action('wp_ajax_export', array($this, 'export'));
+		add_action('wp_ajax_nopriv_export', array($this, 'export'));
+
 	}
 
 	/**
@@ -105,6 +109,14 @@ class Aione_App_Builder_Public {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/aione-app-builder-public.js', array( 'jquery' ), $this->version, false );
 
 	}
+
+	function getting_ajaxurl() {
+
+	   	echo '<script type="text/javascript">
+	           	var ajaxurl = "' . admin_url('admin-ajax.php') . '";
+         	</script>';
+	}
+
 
 	function aione_app_builder_login_fail_redirect_filter( $username ) {
 	   $referrer = $_SERVER['HTTP_REFERER'];  // where did the post submission come from?
@@ -5355,8 +5367,227 @@ class Aione_App_Builder_Public {
 
 		return $output;
 
+	}
+
+	/**
+	* Export Shortcode
+	*/
+
+	function aione_app_builder_export_shortcode($atts, $content = null){
+		// Attributes
+		$atts = shortcode_atts( array(
+			'post_type' 	=> 'post',
+			'id' 			=> '',
+		), $atts, 'export' );
+
 		$atts = $this->clean_shortcode_parameters( $atts );
 
+		$export_id 	= $atts['id'];
+
+		if( empty( $export_id ) ) {
+			$export_id = 'export_'. $atts['post_type'];
+		}
+
+
+		$upload = wp_upload_dir();		
+	    $upload_dir = $upload['basedir'];
+	    if ( is_multisite() ) {
+	    	$blog_id = get_current_blog_id();
+	    	$upload_dir = $upload_dir.'/sites/'.$blog_id;
+	    }
+	    $upload_dir = $upload_dir . '/exports';
+	    if (! is_dir($upload_dir)) {
+	       wp_mkdir_p( $upload_dir,0777,true );
+	    }
+
+	    $url = $upload['baseurl']. '/exports/';
+	    $path = $upload['basedir']. '/exports/';
+
+	    if ( is_multisite() ) {
+	    	$url = $upload['baseurl'].'/sites/'.$blog_id. '/exports/';
+	    	$path = $upload['basedir'].'/sites/'.$blog_id. '/exports/';
+	    }
+
+		$filename 	= 'export_' . generate_filename() . '.csv';
+		$file_url 	= $url .''. $filename;
+		$file_path	= $path .''. $filename;
+
+
+		$output = '';
+
+		$output .= '<a id="' . $export_id . '" class="aione-button hover-white" href="#" data-post_type="' . $atts['post_type'] . '" data-offset="0" data-filename="' . $filename . '" data-filepath="'.$file_path.'" data-fileurl="'.$file_url.'" data-header="false">Export</a>';
+
+		$output .= "<script>
+
+			$( document ).ready( function() {
+				$(document).on('click', '#" . $export_id . "', function(e) {
+					e.preventDefault();
+					export_records();
+					$(this).text('Exporting...');
+				});
+			});
+
+			function export_records(){
+				var offset = $( '#" . $export_id . "' ).data('offset');
+				console.log('offset')
+				console.log(offset)
+				var filename = $( '#" . $export_id . "' ).data('filename');
+				var filepath = $( '#" . $export_id . "' ).data('filepath');
+				var fileurl = $( '#" . $export_id . "' ).data('fileurl');
+				var header = $( '#" . $export_id . "' ).data('header');
+				var post_type = $( '#" . $export_id . "' ).data('post_type');
+
+				jQuery.ajax({
+			        url: ajaxurl,
+			        type: 'POST', 
+			        data: {
+			        	'filename': filename,
+			        	'filepath': filepath,
+			        	'fileurl': fileurl,
+			        	'header': header,
+			        	'post_type': post_type,
+			        	'offset': offset,
+			        	'action': 'export',
+			        },
+			        success: function(response) {
+			        	var response = jQuery.parseJSON( response );
+						console.log(response);
+						if(response.result.complete == true){			            		
+		            		window.open(response.request.fileurl);
+		            		location.reload();
+		            	} else{
+		            		if(response.success == true){
+		            			var offset = $('#" . $export_id . "').data('offset') + 10;  
+		            			$('#" . $export_id . "').data('offset', offset);
+		            			var header = response.result.header;
+		            			$('#" . $export_id . "').data('header', header);
+				            	export_records();				            	
+				            }
+		            	}
+
+			        },
+
+					error: function(errorThrown){
+						
+						console.log(errorThrown);
+
+					}
+			    });
+
+
+			}
+		</script>"
+		;
+		
+
+		return $output;
+
+		
+	}
+
+	function export(){
+
+		$response =  array();
+
+		$response['result'] 	= array();
+		$response['success'] 	= false;
+		$response['errors'] 	= true;
+		$response['messages'] 	= array();
+		$response['request'] 	= array();
+
+		if ( isset( $_REQUEST) ) {
+
+			$filename 	= $_REQUEST['filename'];
+			$filepath 	= $_REQUEST['filepath'];
+			$fileurl 	= $_REQUEST['fileurl'];
+			$header 	= $_REQUEST['header'];
+			$post_type 	= $_REQUEST['post_type'];
+			$offset 	= $_REQUEST['offset'];
+			$action 	= $_REQUEST['action'];
+
+			$response['request']['filename'] 	= $filename;
+			$response['request']['filepath'] 	= $filepath;
+			$response['request']['fileurl'] 	= $fileurl;
+			$response['request']['header'] 	= $header;
+			$response['request']['post_type'] 	= $post_type;
+			$response['request']['offset'] 		= $offset;
+			$response['request']['action'] 		= $action;
+			$response['result']['complete']		= false;
+
+
+			
+
+
+			// WP_Query arguments
+			$args = array(
+				'post_type'              => array( $post_type ),
+				'nopaging'               => false,
+				'posts_per_page'         => '10',
+				'offset'         		 => $offset,
+			);
+
+			// The Query
+			$posts = new WP_Query( $args );
+			$data = array();
+			// The Loop
+			if ( $posts->have_posts() ) {
+				foreach($posts->posts as $post){
+					
+					/*ACF*/			
+					$custom_fields = get_fields( $post->ID );					
+					foreach ($custom_fields as $key => $value) {
+						if(is_array($value)){
+							$post->$key = implode(',', $value);
+						}else{							
+							$post->$key = $value;
+						}
+					}
+
+					$data[] = $post;
+				}
+			} else {
+				$response['result']['complete'] = true;
+				$response['success'] 	= true;
+				$response['errors'] 	= false;
+				$response = json_encode( $response );
+
+				echo $response;
+				die();
+			}
+
+			// Restore original Post Data
+			wp_reset_postdata();
+
+			$response['posts'] = $data;
+			//unset($data[0]->post_content);
+			$header_array= array_keys((array)$data[0]);
+
+			if( $action == 'export' ) {
+				
+				$csv_file = fopen( $filepath, 'a' );
+				if($header == 'false'){
+					fputcsv( $csv_file, $header_array );
+					$header = 'true';
+				}
+				foreach($data as $row) {
+					//unset($row->post_content);
+					fputcsv( $csv_file, (array)$row, "," );
+				}
+				
+				fclose( $csv_file );				
+				$response['result']['header'] 	= $header;
+				$response['result']['offset'] 	= $offset;
+				$response['result']['added_record'] = $posts->found_posts;
+				$response['success'] 	= true;
+				$response['errors'] 	= false;
+			}
+
+		}
+
+		$response = json_encode( $response );
+
+		echo $response;
+		die();
 	}
 
 

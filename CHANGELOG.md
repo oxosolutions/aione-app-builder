@@ -98,3 +98,6 @@ ADDED: visit comment_count shortcode
 
 ## 1.6.0.6 06-11-2020
 ADDED: Archive Template Header and Footer
+
+## 1.6.0.7 28-11-2020
+ADDED: Shortcode to export as CSV 
