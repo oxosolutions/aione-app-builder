@@ -101,3 +101,6 @@ ADDED: Archive Template Header and Footer
 
 ## 1.6.0.7 28-11-2020
 ADDED: Shortcode to export as CSV 
+
+## 1.6.0.8 29-11-2020
+UPDATED: Posts per page changed to 20 for componants, templates and texonomies 

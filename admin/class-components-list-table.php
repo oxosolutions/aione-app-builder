@@ -363,7 +363,7 @@ class Aione_App_Builder_Admin_Components_List_Table extends WP_List_Table{
         /**
          * First, lets decide how many records per page to show
          */
-        $per_page = $this->get_items_per_page('aione_component_per_page', 10);;
+        $per_page = $this->get_items_per_page('aione_component_per_page', 20);;
 
         /**
          * REQUIRED. Now we need to define our column headers. This includes a complete

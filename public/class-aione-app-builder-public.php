@@ -5389,24 +5389,16 @@ class Aione_App_Builder_Public {
 		}
 
 
-		$upload = wp_upload_dir();		
+		$upload = wp_upload_dir();			
 	    $upload_dir = $upload['basedir'];
-	    if ( is_multisite() ) {
-	    	$blog_id = get_current_blog_id();
-	    	$upload_dir = $upload_dir.'/sites/'.$blog_id;
-	    }
 	    $upload_dir = $upload_dir . '/exports';
-	    if (! is_dir($upload_dir)) {
+
+	    if ( !is_dir( $upload_dir ) ){
 	       wp_mkdir_p( $upload_dir,0777,true );
 	    }
 
 	    $url = $upload['baseurl']. '/exports/';
 	    $path = $upload['basedir']. '/exports/';
-
-	    if ( is_multisite() ) {
-	    	$url = $upload['baseurl'].'/sites/'.$blog_id. '/exports/';
-	    	$path = $upload['basedir'].'/sites/'.$blog_id. '/exports/';
-	    }
 
 		$filename 	= 'export_' . generate_filename() . '.csv';
 		$file_url 	= $url .''. $filename;
@@ -5415,7 +5407,7 @@ class Aione_App_Builder_Public {
 
 		$output = '';
 
-		$output .= '<a id="' . $export_id . '" class="aione-button hover-white" href="#" data-post_type="' . $atts['post_type'] . '" data-offset="0" data-filename="' . $filename . '" data-filepath="'.$file_path.'" data-fileurl="'.$file_url.'" data-header="false">Export</a>';
+		$output .= '<a id="' . $export_id . '" class="aione-button aione-export-button hover-white" href="#" data-post_type="' . $atts['post_type'] . '" data-offset="0" data-filename="' . $filename . '" data-filepath="'.$file_path.'" data-fileurl="'.$file_url.'" data-header="false">Export</a>';
 
 		$output .= "<script>
 
@@ -5478,11 +5470,9 @@ class Aione_App_Builder_Public {
 			}
 		</script>"
 		;
-		
 
 		return $output;
 
-		
 	}
 
 	function export(){
