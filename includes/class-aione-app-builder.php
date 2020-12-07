@@ -146,6 +146,10 @@ class Aione_App_Builder {
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'really-simple-captcha.php';
 		}
 
+		if ( ! class_exists( 'ReadCSV' ) ) {
+			require_once( plugin_dir_path(dirname( __FILE__ ) ) . 'public/class-readcsv.php' );
+		}
+
 		$this->loader = new Aione_App_Builder_Loader();
 
 	}
@@ -343,6 +347,8 @@ class Aione_App_Builder {
 		
 		$this->loader->add_shortcode( 'visit_counter', $plugin_public, 'aione_app_builder_visit_counter_shortcode' );
 		$this->loader->add_shortcode( 'export', $plugin_public, 'aione_app_builder_export_shortcode' );
+
+		$this->loader->add_shortcode( 'import', $plugin_public, 'aione_app_builder_import_shortcode' );
 		
 	}
 

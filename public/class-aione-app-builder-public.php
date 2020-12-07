@@ -2365,6 +2365,7 @@ class Aione_App_Builder_Public {
 			'post__in'			=> '',
 			'meta_key'			=> '',
 			'meta_value'		=> '',
+			'meta_value_num'	=> '',
 			'meta_compare'		=> 'LIKE',
 			'meta_query'		=> '',
 			'author'			=> '',
@@ -2382,15 +2383,14 @@ class Aione_App_Builder_Public {
 			'class'				=> ''	
 		), $atts, 'posts');
 
-		$atts = $this->clean_shortcode_parameters( $atts );
-		
 		global $theme_options, $post;
-
+		$backup = $post;
 		$output = "";
+
+		$atts = $this->clean_shortcode_parameters( $atts );
 
 		$status = explode(',',$atts['status']);
 
-		
 
 		if( !empty( $atts['post__in'] ) ){
 			$post__in = explode( ',', $atts['post__in'] );
@@ -2400,10 +2400,7 @@ class Aione_App_Builder_Public {
 			$atts['meta_query'] = json_decode( $atts['meta_query'] , TRUE);
 		}
 		
-
-		// $big = 999999999; // need an unlikely integer
 	    $current_page = get_query_var('paged');
-	    // $total_pages = $wp_query->max_num_pages;
 
 	    if( $current_page > 0 ){
 	    	$offset = $atts['posts_per_page'] * ( $current_page - 1);
@@ -2438,6 +2435,7 @@ class Aione_App_Builder_Public {
 			'author_name'			=> $atts['author'],
 			'meta_key'				=> $atts['meta_key'],
 			'meta_value'			=> $atts['meta_value'],
+			'meta_value_num'		=> $atts['meta_value_num'],
 			'meta_compare'			=> $atts['meta_compare'],
 			'meta_query'			=> $atts['meta_query'],
 			'posts_per_page'		=> $atts['posts_per_page'],
@@ -2453,9 +2451,7 @@ class Aione_App_Builder_Public {
 
 		if( !empty( $tax_query ) ) {
 			$args['tax_query'] = $tax_query_array;
-		}
-
-		
+		}	
 		
 		$posts = new WP_Query( $args );
 
@@ -2479,16 +2475,12 @@ class Aione_App_Builder_Public {
 
 				$fields['post_meta'] = $post_meta;
 				$api_array[$api_key] = $fields;
-				// $api_array[$api_key]['meta'] = "META";
 				
 			}
 			
-
-
 			$output .= json_encode( $api_array, JSON_PRETTY_PRINT );
 
 			return $output;
-
 
 		}
 
@@ -2504,6 +2496,7 @@ class Aione_App_Builder_Public {
 		$is_template = false;
 
 		$template = $atts['template'];
+
 
 		if( !empty( $template ) ) {
 			$aione_templates = @get_option( 'aione-templates' );
@@ -2522,16 +2515,24 @@ class Aione_App_Builder_Public {
 		if( $posts->have_posts() ){
 			if( $is_template ){
 				if( !empty( $atts['style'] ) ){
-				$output .= '<div class="aione-template type-archive '.$atts['template'].'">';
+					$output .= '<div class="aione-template type-archive '.$atts['template'].'">';
+					$output .= do_shortcode( $aione_templates[$template]['archive_header'] );
+				}
+			} else {
+				if( !empty( $atts['style'] ) ){
+					$output .= '<ul '.$id_attribute.' class="list-posts '.$atts['class'].'">';
 				}
 			}
-			if( !empty( $atts['style'] ) ){
-				$output .= '<ul '.$id_attribute.' class="list-posts '.$atts['class'].'">';
-			}
 			while( $posts->have_posts() ) {
+
 				$posts->the_post(); 
-				if( !empty( $atts['style'] ) ){
-				$output .= '<li>';
+				// $output .= '['.$post->post_type .' '. $post->ID. ' ' .$args['meta_value'].']';
+
+
+				if( !$is_template ){
+					if( !empty( $atts['style'] ) ){
+						$output .= '<li>';
+					}
 				}
 				if( $is_template ){
 					$output .= do_shortcode( $aione_template );
@@ -2552,29 +2553,38 @@ class Aione_App_Builder_Public {
 					$output .= '<div class="clear"></div>';
 				
 				}
-				if( !empty( $atts['style'] ) ){
-				$output .= '</li>';
+				if( !$is_template ){
+					if( !empty( $atts['style'] ) ){
+						$output .= '</li>';
+					}
 				}
 			}
-			if( !empty( $atts['style'] ) ){
-			$output .= '</ul>';
-			}
+
 
 			if( $is_template ){
 				if( !empty( $atts['style'] ) ){
-				$output .= '</div>';
+					$output .= do_shortcode( $aione_templates[$template]['archive_footer'] );
+					$output .= '</div>';
+				}
+			} else{
+				if( !empty( $atts['style'] ) ){
+					$output .= '</ul>';
 				}
 			}
-
-			wp_reset_postdata();
 
 			if( $atts['pagination'] == 'yes' ) {				
 				$output .= aione_pagination( $posts );
 			}
 
 		}  else {
-			$output .= '<h5 class="font-size-16 align-center">No Posts Available.</h5>';
+			if( !empty( $atts['style'] ) ){
+				$output .= '<h5 class="font-size-16 align-center">No Posts Available.</h5>';
+			}
 		}
+
+		$posts->reset_postdata();
+		$post = $backup;
+		
 		return $output;
 	} // END aione_app_builder_posts_shortcode()
 
@@ -5519,10 +5529,15 @@ class Aione_App_Builder_Public {
 			// The Query
 			$posts = new WP_Query( $args );
 			$data = array();
+			$header_array = array();
+			$header_default = false;
 			// The Loop
 			if ( $posts->have_posts() ) {
 				foreach($posts->posts as $post){
-					
+					if($header_default == false){						
+						$header_array = array_keys((array)$post);
+						$header_default = true;
+					}
 					/*ACF*/			
 					$custom_fields = get_fields( $post->ID );					
 					foreach ($custom_fields as $key => $value) {
@@ -5544,13 +5559,24 @@ class Aione_App_Builder_Public {
 				echo $response;
 				die();
 			}
-
+			
+			
 			// Restore original Post Data
 			wp_reset_postdata();
 
 			$response['posts'] = $data;
 			//unset($data[0]->post_content);
-			$header_array= array_keys((array)$data[0]);
+			$groups = acf_get_field_groups(array('post_type' =>  $post_type ));
+			foreach ($groups as  $group) {
+				$fields_array=acf_get_fields($group['key']);
+				$field[] = array_column($fields_array, 'name');
+			}
+			if(is_array($field) && !empty($field)){
+				foreach ($field as $value) {
+					$header_array = array_merge($header_array,array_values($value));
+				}				
+			}
+			//$header_array= array_keys((array)$data[0]);
 
 			if( $action == 'export' ) {
 				
@@ -5570,6 +5596,193 @@ class Aione_App_Builder_Public {
 				$response['result']['added_record'] = $posts->found_posts;
 				$response['success'] 	= true;
 				$response['errors'] 	= false;
+			}
+
+		}
+
+		$response = json_encode( $response );
+
+		echo $response;
+		die();
+	}
+
+	/**
+	* Import Shortcode
+	*/
+
+	function aione_app_builder_import_shortcode($atts, $content = null){
+		// Attributes
+		$atts = shortcode_atts( array(
+			'post_type' 	=> 'post',
+			'id' 			=> '',
+		), $atts, 'import' );
+
+		global $post;
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+		$import_id 	= $atts['id'];
+
+		if( empty( $import_id ) ) {
+			$import_id = 'import_'. $atts['post_type'];
+		}
+
+
+		$upload = wp_upload_dir();			
+	    $upload_dir = $upload['basedir'];
+	    $upload_dir = $upload_dir . '/imports';
+
+	    if ( !is_dir( $upload_dir ) ){
+	       wp_mkdir_p( $upload_dir,0777,true );
+	    }
+
+	    $url = $upload['baseurl']. '/imports/';
+	    $path = $upload['basedir']. '/imports/';
+
+	    $header_array = array_keys((array)$post);
+	    $groups = acf_get_field_groups(array('post_type' =>  $atts['post_type'] ));
+		foreach ($groups as  $group) {
+			$fields_array=acf_get_fields($group['key']);
+			$field[] = array_column($fields_array, 'name');
+		}
+		if(is_array($field) && !empty($field)){
+			foreach ($field as $value) {
+				$header_array = array_merge($header_array,array_values($value));
+			}				
+		}
+
+		$output = '';
+
+		$output .= '<input type="file" id="file_' . $import_id . '" name="aione_import" value="" class="" />
+		<input type="hidden" id="header_' . $import_id . '" name="aione_import_header" value="'.json_encode($header_array).'"  />
+		<a id="' . $import_id . '" class="aione-button aione-import-button hover-white" href="#" data-post_type="' . $atts['post_type'] . '" data-offset="0" data-filepath="'.$path.'" data-fileurl="'.$url.'" >Import</a>';
+
+		$output .= "<script>
+
+			$( document ).ready( function() {
+				$(document).on('click', '#" . $import_id . "', function(e) {
+					e.preventDefault();
+					import_records();
+					$(this).text('Importing...');
+				});
+			});
+
+			function import_records(){
+				var offset = $( '#" . $import_id . "' ).data('offset');
+				var filepath = $( '#" . $import_id . "' ).data('filepath');
+				var fileurl = $( '#" . $import_id . "' ).data('fileurl');
+				var post_type = $( '#" . $import_id . "' ).data('post_type');
+
+				jQuery.ajax({
+			        url: ajaxurl,
+			        type: 'POST', 
+			        data: {
+			        	'filepath': filepath,
+			        	'fileurl': fileurl,
+			        	'post_type': post_type,
+			        	'offset': offset,
+			        	'action': 'import',
+			        },
+			        success: function(response) {
+			        	var response = jQuery.parseJSON( response );
+						console.log(response);
+						/*if(response.result.complete == true){			            		
+		            		window.open(response.request.fileurl);
+		            		location.reload();
+		            	} else{
+		            		if(response.success == true){
+		            			var offset = $('#" . $import_id . "').data('offset') + 10;  
+		            			$('#" . $import_id . "').data('offset', offset);
+		            			var header = response.result.header;
+		            			$('#" . $import_id . "').data('header', header);
+				            	export_records();				            	
+				            }
+		            	}*/
+
+			        },
+
+					error: function(errorThrown){
+						
+						console.log(errorThrown);
+
+					}
+			    });
+
+
+			}
+		</script>"
+		;
+
+		return $output;
+
+	}
+
+	function import(){
+
+		$response =  array();
+		
+		$response['result'] 	= array();
+		$response['success'] 	= false;
+		$response['errors'] 	= true;
+		$response['messages'] 	= array();
+		$response['request'] 	= array();
+
+		if ( isset( $_REQUEST) ) {
+
+			$filepath 	= $_REQUEST['filepath'];
+			$fileurl 	= $_REQUEST['fileurl'];
+			$post_type 	= $_REQUEST['post_type'];
+			$offset 	= $_REQUEST['offset'];
+			$action 	= $_REQUEST['action'];
+
+			$response['request']['filepath'] 	= $filepath;
+			$response['request']['fileurl'] 	= $fileurl;
+			$response['request']['post_type'] 	= $post_type;
+			$response['request']['offset'] 		= $offset;
+			$response['request']['action'] 		= $action;
+			$response['result']['complete']		= false;
+
+
+			if( $action == 'import' ) {
+				$name = basename($_FILES['aione_import']['name']);
+				$extention = explode('.',$name);
+				if($extention[count($extention)-1]=='csv'){
+				        $target_location = $filepath . basename($_FILES['aione_import']['name']);
+				        $_SESSION['target_location'] = $target_location;
+				        move_uploaded_file($_FILES["aione_import"]["tmp_name"], $target_location);
+				}
+				$filename = sanitize_text_field( $_FILES['aione_import']['tmp_name'] );
+				
+				$errors = $post_ids = array();
+
+				$fp = file($filename, FILE_SKIP_EMPTY_LINES);
+				$total_rows = count($fp);
+				$response['total_rows'] = $total_rows;
+
+				$file = fopen($filename, 'r');
+				/*while (($line = fgetcsv($file)) !== FALSE) {
+				   $response['line'] = $line;
+				}
+				*/
+
+				/*while(!feof($file)){
+				    if(empty($headers)){
+				      $headers = fgetcsv($f);
+				      if($offset) fseek($f, $last_offset);
+				      continue; //skip to the next iteration on header row
+				    }
+				   $data = fgetcsv($f);
+
+				   //combine 2 equal length arrays, with array1 as the keys and array2 as the values
+				   $row = array_combine($headers, $data);
+				   //get the file pointer offset to save in the DB row
+				   $current_offset = ftell($f);
+
+				   //save in DB
+
+				}*/
+				fclose($file);
+
 			}
 
 		}
