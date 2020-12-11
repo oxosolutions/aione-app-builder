@@ -61,6 +61,8 @@ class Aione_App_Builder_Public {
 		add_action('wp_head', array($this, 'getting_ajaxurl'));
 		add_action('wp_ajax_export', array($this, 'export'));
 		add_action('wp_ajax_nopriv_export', array($this, 'export'));
+		add_action('wp_ajax_import', array($this, 'import'));
+		add_action('wp_ajax_nopriv_import', array($this, 'import'));
 
 	}
 
@@ -5653,18 +5655,32 @@ class Aione_App_Builder_Public {
 
 		$output = '';
 
-		$output .= '<input type="file" id="file_' . $import_id . '" name="aione_import" value="" class="" />
+		$output .= '<form id="form_' . $import_id . '" method="post" enctype="multipart/form-data">
+		<input type="file" id="file_' . $import_id . '" name="aione_import" value="" class="" />
 		<input type="hidden" id="header_' . $import_id . '" name="aione_import_header" value="'.json_encode($header_array).'"  />
-		<a id="' . $import_id . '" class="aione-button aione-import-button hover-white" href="#" data-post_type="' . $atts['post_type'] . '" data-offset="0" data-filepath="'.$path.'" data-fileurl="'.$url.'" >Import</a>';
+		<input type="submit" id="' . $import_id . '" class="aione-button aione-import-button hover-white" data-post_type="' . $atts['post_type'] . '" data-offset="0" data-filepath="'.$path.'" data-fileurl="'.$url.'" name="import" value="Import">
+		
+		</form>';
 
 		$output .= "<script>
 
-			$( document ).ready( function() {
+			/*$( document ).ready( function() {
 				$(document).on('click', '#" . $import_id . "', function(e) {
 					e.preventDefault();
-					import_records();
+					import_records();					
 					$(this).text('Importing...');
 				});
+			});*/
+
+			$('#form_" . $import_id . "').on('submit', function (event) {
+			    event.preventDefault();
+			    $('#" . $import_id . "').text('Importing...');
+			    // const formData = new FormData(this);
+			    // console.log(formData);
+			    // or like this
+			    // const myForm = document.getElementById('subscribeForm');
+			    // const formData = new FormData(myForm);
+			    import_records();
 			});
 
 			function import_records(){
@@ -5672,17 +5688,30 @@ class Aione_App_Builder_Public {
 				var filepath = $( '#" . $import_id . "' ).data('filepath');
 				var fileurl = $( '#" . $import_id . "' ).data('fileurl');
 				var post_type = $( '#" . $import_id . "' ).data('post_type');
+				var input = $('input:file');
+				console.log('input')
+				console.log(input)
+				var formData = {
+		            'file'              : $('input[name=aione_import]').val(),
+		        };
+				/*var myForm = new FormData();    
+				myForm.append( 'file', input[0].files[0] );
+				console.log('myForm')
+				console.log(myForm)*/
 
 				jQuery.ajax({
 			        url: ajaxurl,
 			        type: 'POST', 
 			        data: {
+			        	'formdata': formData,
 			        	'filepath': filepath,
 			        	'fileurl': fileurl,
 			        	'post_type': post_type,
 			        	'offset': offset,
-			        	'action': 'import',
+			        	action: 'import',
 			        },
+				  	processData: false,
+				  	contentType: false,
 			        success: function(response) {
 			        	var response = jQuery.parseJSON( response );
 						console.log(response);
@@ -5729,6 +5758,7 @@ class Aione_App_Builder_Public {
 
 		if ( isset( $_REQUEST) ) {
 
+			$file 		= $_REQUEST['file'];
 			$filepath 	= $_REQUEST['filepath'];
 			$fileurl 	= $_REQUEST['fileurl'];
 			$post_type 	= $_REQUEST['post_type'];
@@ -5744,44 +5774,26 @@ class Aione_App_Builder_Public {
 
 
 			if( $action == 'import' ) {
-				$name = basename($_FILES['aione_import']['name']);
+				$name = $_FILES['aione_import']['name'];
+				$tmp_name = $_FILES['aione_import']['tmp_name'];
+				move_uploaded_file($tmp_name, $filepath);
+				/*$name = basename($file);
 				$extention = explode('.',$name);
-				if($extention[count($extention)-1]=='csv'){
-				        $target_location = $filepath . basename($_FILES['aione_import']['name']);
+				// if($extention[count($extention)-1]=='csv'){
+				        $target_location = $filepath . $name;
 				        $_SESSION['target_location'] = $target_location;
-				        move_uploaded_file($_FILES["aione_import"]["tmp_name"], $target_location);
-				}
-				$filename = sanitize_text_field( $_FILES['aione_import']['tmp_name'] );
-				
-				$errors = $post_ids = array();
+				        $response['location'] = move_uploaded_file($name, $target_location);
+				// }
+				if($name != null) {
+					$errors = $post_ids = array();
 
-				$fp = file($filename, FILE_SKIP_EMPTY_LINES);
-				$total_rows = count($fp);
-				$response['total_rows'] = $total_rows;
-
-				$file = fopen($filename, 'r');
-				/*while (($line = fgetcsv($file)) !== FALSE) {
-				   $response['line'] = $line;
-				}
-				*/
-
-				/*while(!feof($file)){
-				    if(empty($headers)){
-				      $headers = fgetcsv($f);
-				      if($offset) fseek($f, $last_offset);
-				      continue; //skip to the next iteration on header row
-				    }
-				   $data = fgetcsv($f);
-
-				   //combine 2 equal length arrays, with array1 as the keys and array2 as the values
-				   $row = array_combine($headers, $data);
-				   //get the file pointer offset to save in the DB row
-				   $current_offset = ftell($f);
-
-				   //save in DB
-
+					$fp = file($name);
+					$total_rows = count($fp);
+					$file = fopen($name, 'r');
+					
+					fclose($file);
+					$response['total_rows'] = $fp;
 				}*/
-				fclose($file);
 
 			}
 
