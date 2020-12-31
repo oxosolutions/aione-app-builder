@@ -146,9 +146,11 @@ class Aione_App_Builder {
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'really-simple-captcha.php';
 		}
 
-		if ( ! class_exists( 'ReadCSV' ) ) {
+		/*if ( ! class_exists( 'ReadCSV' ) ) {
 			require_once( plugin_dir_path(dirname( __FILE__ ) ) . 'public/class-readcsv.php' );
-		}
+		}*/
+
+		require_once( plugin_dir_path(dirname( __FILE__ ) ) . 'public/library/parsecsv/parsecsv.lib.php' );
 
 		$this->loader = new Aione_App_Builder_Loader();
 
