@@ -104,3 +104,9 @@ ADDED: Shortcode to export as CSV
 
 ## 1.6.0.8 29-11-2020
 UPDATED: Posts per page changed to 20 for componants, templates and texonomies 
+
+## 1.6.0.9 31-12-2020
+REMOVED: Removed PWA functionality. Created a separate plugin for PWA
+
+## 1.7.0.0 29-01-2021
+UPDATED: PHP 7.4 compatibility 

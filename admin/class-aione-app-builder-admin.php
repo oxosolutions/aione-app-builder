@@ -689,11 +689,19 @@ class Aione_App_Builder_Admin {
 
 	public function aione_admin_reset_all() {
 		global $current_user;
+		global $wpdb;
 		if ( isset( $_POST['aione_reset_confirm'] ) && 'reset' !== $_POST['aione_reset_confirm'] ) {
 			echo '<div class="error fade"><p><strong>' . esc_html__( 'Invalid confirmation word. Please type the word "reset" in the confirmation field.', 'aione-app-builder' ) . '</strong></p></div>';
 		} elseif ( isset( $_POST['_wpnonce'] ) ) {
 			echo '<div class="error fade"><p><strong>' . esc_html__( 'Invalid nonce. Please try again.', 'aione-app-builder' ) . '</strong></p></div>';
 		}
+		/*$blogname    = get_option( 'blogname' );
+		$admin_email = get_option( 'admin_email' );
+		$blog_public = get_option( 'blog_public' );
+		$siteurl = get_option( 'siteurl' );
+		echo "<pre>";
+		print_r(admin_url());
+		echo "</pre>";*/
 		
 		?>
 		<div class="wrap">
@@ -739,6 +747,7 @@ class Aione_App_Builder_Admin {
 			$blogname    = get_option( 'blogname' );
 			$admin_email = get_option( 'admin_email' );
 			$blog_public = get_option( 'blog_public' );
+			$siteurl = get_option( 'siteurl' );
 
 			if ( 'admin' !== $current_user->user_login ) {
 				$user = get_user_by( 'login', 'admin' );
@@ -752,6 +761,8 @@ class Aione_App_Builder_Admin {
 
 			$prefix = str_replace( '_', '\_', $wpdb->prefix );
 			$tables = $wpdb->get_col( "SHOW TABLES LIKE '{$prefix}%'" );
+			$ignore = array($wpdb->prefix.'users',$wpdb->prefix.'usermeta');
+			$tables = array_diff($tables, $ignore);
 			foreach ( $tables as $table ) {
 				$wpdb->query( "DROP TABLE $table" );
 			}
@@ -777,7 +788,7 @@ class Aione_App_Builder_Admin {
 			wp_clear_auth_cookie();
 			wp_set_auth_cookie( $user_id );
 
-			wp_redirect( admin_url() . '?reset' );
+			wp_redirect( admin_url() . '/admin.php?page=aione-reset-all' );
 			exit();
 		}
 

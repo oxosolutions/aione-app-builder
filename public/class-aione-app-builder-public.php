@@ -3449,22 +3449,25 @@ class Aione_App_Builder_Public {
 	} //END aione_app_builder_blog_shortcode
 
 	/**
-	* Shortcode [aione-icon]
+	* Shortcode [icon]
 	* 
 	*/
 	function aione_app_builder_aione_icon_shortcode( $atts ) {
 		$atts =  shortcode_atts( array(
 			'name' => 'logo-facebook',
-			'size'	=> 'small'
+			'size'	=> 'small',
+			'class'	=> 'aione-icon',
 		), $atts, 'icon' );
 
 		$output = '';
 		$aione_icon = $atts['name'];
 		$aione_icon_size = $atts['size'];
+		$aione_icon_class = $atts['class'];
 
-		if($aione_icon){
-			$output = '<ion-icon name="'.$aione_icon.'" size="'.$aione_icon_size.'"></ion-icon>';
+		if( $aione_icon ) {
+			$output = '<span class="' . $aione_icon_class . '"><ion-icon name="'.$aione_icon.'" size="'.$aione_icon_size.'"></ion-icon></span>';
 		}
+
 		return $output;
 	} 
 	/**
