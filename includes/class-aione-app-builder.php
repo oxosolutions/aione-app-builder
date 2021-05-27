@@ -303,6 +303,8 @@ class Aione_App_Builder {
 
 
 		$this->loader->add_shortcode( 'variable', $plugin_public, 'aione_app_builder_variable_shortcode' );
+
+		$this->loader->add_shortcode( 'aione_map', $plugin_public, 'aione_app_builder_map_shortcode' );
 		// $this->loader->add_shortcode( 'if', $plugin_public, 'aione_app_builder_if_shortcode' );
 
 		// POST SHORTCODES
@@ -348,9 +350,12 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'fields', $plugin_public, 'aione_app_builder_fields_shortcode' );
 		
 		$this->loader->add_shortcode( 'visit_counter', $plugin_public, 'aione_app_builder_visit_counter_shortcode' );
+
 		$this->loader->add_shortcode( 'export', $plugin_public, 'aione_app_builder_export_shortcode' );
 
 		$this->loader->add_shortcode( 'import', $plugin_public, 'aione_app_builder_import_shortcode' );
+
+		$this->loader->add_shortcode( 'contact_info', $plugin_public, 'aione_app_builder_contact_info_shortcode' );
 		
 	}
 

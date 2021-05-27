@@ -724,6 +724,19 @@ Return post author ID
 </pre>
 	</td>
 </tr>
+<tr>
+	<td>Aione Map</td>
+	<td>[aione_map]</td>
+	<td>
+<pre>
+	'zoom' => '10', 
+	'height' => '300', 
+	'address' => 'OXO Solutions, Amritsar', 
+	'api_key' => '', 
+
+</pre>
+	</td>
+</tr>
 </tbody>
 </table>
 </div>

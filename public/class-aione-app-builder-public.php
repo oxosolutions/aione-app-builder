@@ -1,3 +1,4 @@
+
 <?php
 
 /**
@@ -842,7 +843,27 @@ class Aione_App_Builder_Public {
 
 	} // End aione_app_builder_reset_password_link_shortcode()
 
+	public function aione_app_builder_map_shortcode( $atts ) {
 
+		// Attributes
+		$atts = shortcode_atts(
+			array(
+				'zoom'		=> '10',
+				'height'	=> '300',
+				'address'	=> 'OXO Solutions, Amritsar',
+				'api_key'	=> AIONE_API_KEY,
+			), $atts, 'aione_map' );
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+		$output = "";
+
+		$output .= '<div class="aione-map">';
+		$output .= '<iframe loading="lazy" width="100%" height="' . $atts['height'] . '" src="https://www.google.com/maps/embed/v1/place?q=' . $atts['address'] . '&maptype=roadmap&zoom=' . $atts['zoom'] . '&key=' . $atts['api_key'] . '" frameborder="0"></iframe>';
+		$output .= '</div>';
+
+		return $output;
+	} // End aione_app_builder_map_shortcode()
 
 	public function aione_app_builder_account_link_shortcode( $atts ) {
 		$atts = shortcode_atts(
@@ -3508,13 +3529,119 @@ class Aione_App_Builder_Public {
 	*/
 	function aione_app_builder_info_shortcode( $atts ) {
 		$atts = shortcode_atts( array(
-			'show' => 'name',
+			'field' => 'name',
 		), $atts, 'info' );
 
+		$atts = $this->clean_shortcode_parameters( $atts );
+		$field = $atts['field'];
+
 		$output = '';
-		$output = get_bloginfo( $atts['show'], $filter );
+
+		$output = get_bloginfo( $field, $filter );
+
 		return $output;
 	}
+
+	/**
+	* Shortcode [contact_info]
+	* 
+	*/
+	function aione_app_builder_contact_info_shortcode( $atts ) {
+		$atts = shortcode_atts( array(
+			'field' => 'name',
+			'style' => '',
+			'class' => '',
+			'id' 	=> '',
+		), $atts, 'contact_info' );
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+		$field = $atts['field'];
+		$field_value = '';
+
+		$contact_data = get_option( 'content_form_data' );
+
+		$output = '';
+
+		switch ( $field ) {
+			case 'contact_number':
+				$contact_number = $contact_data['field_609bb50f73674'][0]['field_609bb53273675'];
+
+				$contact_number_formated = str_replace(" ","", $contact_number );
+				$contact_number_formated = str_replace("-","", $contact_number_formated );
+				$contact_number_formated = str_replace("(","", $contact_number_formated );
+				$contact_number_formated = str_replace(")","", $contact_number_formated );
+
+				$field_value = '<a href="tel:' . $contact_number_formated . '" target="_blank">' . $contact_number . '</a>';
+				
+			break;
+
+			case 'contact_email':
+				$contact_email = $contact_data['field_609bb50f73674'][0]['field_609bb57a73676'];
+
+				$contact_email_formated = str_replace(" ","", $contact_email );
+
+				$field_value = '<a rel="noreferrer noopener" href="mailto:' . $contact_email_formated . '" target="_blank">' . $contact_email . '</a>';
+				
+			break;
+
+			
+			case 'contact_address':
+				$contact_address = $contact_data['field_609bb50f73674'][0]['field_609bb59c73677'];
+
+				$contact_address_formated = str_replace(","," ", $contact_address );
+				$contact_address_formated = str_replace("  "," ", $contact_address_formated );
+				$contact_address_formated = str_replace(" ","+", $contact_address_formated );
+
+				$field_value = '<a rel="noreferrer noopener" href="https://www.google.com/maps/search/?api=1&query=' . $contact_address_formated . '" target="_blank">' . $contact_address . '</a>';
+			break; 
+
+			case 'contact_website':
+				$contact_website = $contact_data['field_609bb50f73674'][0]['field_609bb59c73677'];
+
+				$contact_website_formated = str_replace("http://","", $contact_website );
+				$contact_website_formated = str_replace("https://","", $contact_website_formated );
+				$contact_website_formated = str_replace("/","", $contact_website_formated );
+				$contact_website_formated = str_replace("www","", $contact_website_formated );
+
+				$field_value = '<a href="https://' . $contact_address_formated . '">www.' . $contact_website_formated . '</a>';
+			break;
+
+			case 'contact_social':
+
+				$field_value = '';
+			break;
+			
+
+			default:
+				$field_value = '';
+		}
+
+		if( !empty( $atts['class'] ) ) {
+			$class_attribute = 'class="' . $atts['class'] . '"';
+		}
+
+		if( !empty( $atts['id'] ) ) {
+			$id_attribute = 'id="' . $atts['id'] . '"';
+		}
+
+
+		if( !empty( $atts['style'] ) ) {
+			
+			$output = '<' . $atts['style'] . ' ' . $id_attribute . ' '. $class_attribute . '>';
+			$output = $field_value;
+			$output = '</' . $atts['style'] . '>';
+
+		} else{
+
+			$output = $field_value;
+
+		}
+
+		return $output;
+	}
+
+
+	
 
 	public function aione_app_builder_post_id_shortcode( $attr, $content = null ) {
 
@@ -3672,11 +3799,22 @@ class Aione_App_Builder_Public {
 		$atts = shortcode_atts( array(
 			'class' => '',
 			'id' => '',
+			'style'	=> 'div', //div, p 
 		), $atts, 'author' );
 
 		$author_id =  get_the_author_meta( 'ID' );
 
-		return $author_id;
+		if( $atts['style'] != "" ) {
+
+			$output .= '<'.$atts['style'].' '.$atts['id'].' class="'.$atts['class'].'">'.$author_id.'</'.$atts['style'].'>';
+
+		} else{
+
+			$output .= $author_id;
+
+		}
+
+		return $output;
 	}
 
 	function aione_app_builder_post_featured_image_shortcode($atts){
@@ -5107,7 +5245,7 @@ class Aione_App_Builder_Public {
 			'instruction_placement' => $atts['instruction_placement'], // label/field
 			'field_el' 				=> 'div',
 			'uploader' 				=> $atts['uploader'],
-			'html_updated_message'	=> '<div id="message" class="updated aione-message message-success align-center">%s</div>',
+			'html_updated_message'	=> '<div id="message" class="post-added aione-message success">%s</div>',
 			'html_submit_button'	=> '<input type="submit" class="acf-button button button-primary button-large" value="%s" />',
 			'html_submit_spinner'	=> '<span class="acf-spinner"></span>',
 			'honeypot' 				=> true,

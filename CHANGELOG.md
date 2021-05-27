@@ -110,3 +110,6 @@ REMOVED: Removed PWA functionality. Created a separate plugin for PWA
 
 ## 1.7.0.0 29-01-2021
 UPDATED: PHP 7.4 compatibility 
+
+## 1.8.0.0 27-05-2021
+ADDED: contact_info shortcode 
