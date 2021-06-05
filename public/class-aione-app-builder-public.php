@@ -850,7 +850,7 @@ class Aione_App_Builder_Public {
 			array(
 				'zoom'		=> '10',
 				'height'	=> '300',
-				'address'	=> 'OXO Solutions, Amritsar',
+				'address'	=> 'California, USA',
 				'api_key'	=> AIONE_API_KEY,
 			), $atts, 'aione_map' );
 
@@ -3596,24 +3596,161 @@ class Aione_App_Builder_Public {
 			break; 
 
 			case 'contact_website':
-				$contact_website = $contact_data['field_609bb50f73674'][0]['field_609bb59c73677'];
+				$contact_website = home_url();
 
 				$contact_website_formated = str_replace("http://","", $contact_website );
 				$contact_website_formated = str_replace("https://","", $contact_website_formated );
 				$contact_website_formated = str_replace("/","", $contact_website_formated );
 				$contact_website_formated = str_replace("www","", $contact_website_formated );
 
-				$field_value = '<a href="https://' . $contact_address_formated . '">www.' . $contact_website_formated . '</a>';
+				$field_value = '<a href="https://' . $contact_website_formated . '">www.' . $contact_website_formated . '</a>';
 			break;
 
 			case 'contact_social':
 
-				$field_value = '';
+				if( empty( $atts['class'] ) ) {
+
+					$atts['class'] = 'aione-social-icons small colored circle';
+
+				} else{
+
+					$atts['class'] = 'aione-social-icons ' . $atts['class'];
+
+				}
+
+				if( empty( $atts['style'] ) ) {
+
+					$atts['style'] = 'ul';
+
+				}
+
+				$array_count = count($contact_data['field_609a075a71842']);
+
+				for($i = 0; $i < $array_count; $i++) {
+					$field_value .= '<li class="'.$contact_data['field_609a075a71842'][$i]['field_609a077271843'].'">';
+
+					$field_value .= '<a href="'.$contact_data['field_609a075a71842'][$i]['field_609a07a771844'].'" target="_blank">';
+
+					$field_value .= '<span class="icon"></span>';
+
+					$field_value .= '<span class="label" >'.$contact_data['field_609a075a71842'][$i]['field_609a077271843'].'</span>';
+
+					$field_value .= '</a>';
+
+					$field_value .= '</li>';
+
+				}
+
+			break;
+
+			case 'contact_offices':
+
+				if( $contact_data['field_609bb60e73678'] == 'yes' ) {
+
+					if( empty( $atts['class'] ) ) {
+
+						$wrapper_class = 'bg-white p-20 border-radius-10 shadow';
+
+					} else{
+
+						$wrapper_class = $atts['class'];
+						$atts['class'] = '';
+
+					}
+
+					/*
+					if( empty( $atts['style'] ) ) {
+
+						$atts['style'] = ' div';
+
+					}
+					*/
+
+					$office_count = count( $contact_data['field_609a011c7183e'] );
+
+					if( $office_count == 1 ) { $column_class = 'l100'; }
+					if( $office_count == 2 ) { $column_class = 'l50'; }
+					if( $office_count == 3 ) { $column_class = 'l33'; }
+					if( $office_count == 4 ) { $column_class = 'l25'; }
+					if( $office_count == 5 ) { $column_class = 'l33'; }
+					if( $office_count == 6 ) { $column_class = 'l33'; }
+					if( $office_count == 7 ) { $column_class = 'l25'; }
+					if( $office_count == 8 ) { $column_class = 'l25'; }
+					if( $office_count == 9 ) { $column_class = 'l33'; }
+					if( $office_count == 10 ) { $column_class = 'l25'; }
+					if( $office_count == 11 ) { $column_class = 'l33'; }
+					if( $office_count == 12 ) { $column_class = 'l25'; }
+					if( $office_count == 13 ) { $column_class = 'l33'; }
+					if( $office_count == 14 ) { $column_class = 'l33'; }
+					if( $office_count == 15 ) { $column_class = 'l33'; }
+					if( $office_count == 16 ) { $column_class = 'l25'; }
+
+					
+
+
+					$field_value .= '<div class="ar">';
+
+					for( $i = 0; $i < $office_count; $i++ ) {
+
+						$field_value .= '<div class="ac ' . $column_class . ' m100 s100 mb-26">';
+						$field_value .= '<div class="wrapper ' . $wrapper_class . '">';
+
+						if( !empty( $contact_data['field_609a011c7183e'][$i]['field_609a014e7183f'] ) ) {
+
+							$contact_number = $contact_data['field_609a011c7183e'][$i]['field_609a014e7183f'];
+
+							$contact_number_formated = str_replace(" ","", $contact_number );
+							$contact_number_formated = str_replace("-","", $contact_number_formated );
+							$contact_number_formated = str_replace("(","", $contact_number_formated );
+							$contact_number_formated = str_replace(")","", $contact_number_formated );
+
+							$field_value .= '<span class="primary float-left font-size-24 line-height-30"><ion-icon name="call-sharp"></ion-icon></span>';
+							// $field_value .= '<p class="pl-50 mb-0"><strong>Contact Number</strong></p>';
+							$field_value .= '<p class="pl-32 mb-10"><a href="tel:' . $contact_number_formated . '" target="_blank">'.$contact_data['field_609a011c7183e'][$i]['field_609a014e7183f'].'</a></p>';
+
+						}
+
+						if( !empty( $contact_data['field_609a011c7183e'][$i]['field_609a017f71840'] ) ) {
+
+
+							$contact_email = $contact_data['field_609a011c7183e'][$i]['field_609a017f71840'];
+
+							$contact_email_formated = str_replace(" ","", $contact_email );
+
+							$field_value .= '<span class="primary float-left font-size-24 line-height-30"><ion-icon name="mail-sharp"></ion-icon></span>';
+							// $field_value .= '<p class="pl-50 mb-0"><strong>Email Address</strong></p>';
+							$field_value .= '<p class="pl-32 mb-10"><a rel="noreferrer noopener" href="mailto:' . $contact_email_formated . '" target="_blank">'.$contact_email.'</a></p>'; 
+
+						}
+
+						if( !empty( $contact_data['field_609a011c7183e'][$i]['field_609a024071841'] ) ) {
+
+							$contact_address = $contact_data['field_609bb50f73674'][0]['field_609bb59c73677'];
+
+							$contact_address_formated = str_replace(","," ", $contact_address );
+							$contact_address_formated = str_replace("  "," ", $contact_address_formated );
+							$contact_address_formated = str_replace(" ","+", $contact_address_formated );
+
+							$field_value .= '<span class="primary float-left font-size-24 line-height-30"><ion-icon name="location-sharp"></ion-icon></span>';
+							// $field_value .= '<p class="pl-50 mb-0"><strong>Address</strong></p>';
+							$field_value .= '<p class="pl-32 mb-10"><a rel="noreferrer noopener" href="https://www.google.com/maps/search/?api=1&query=' . $contact_address_formated . '" target="_blank">'.$contact_address.'</a></p>'; 
+
+						}
+
+						$field_value .= '</div>';
+						$field_value .= '</div>';
+
+					}
+
+					$field_value .= '</div>';
+
+				}
+
 			break;
 			
 
 			default:
-				$field_value = '';
+				$field_value .= 'Sorry';
 		}
 
 		if( !empty( $atts['class'] ) ) {
