@@ -3650,50 +3650,46 @@ class Aione_App_Builder_Public {
 					if( empty( $atts['class'] ) ) {
 
 						$wrapper_class = 'bg-white p-20 border-radius-10 shadow';
+						$atts['class'] = 'ar';
 
 					} else{
 
 						$wrapper_class = $atts['class'];
-						$atts['class'] = '';
+						$atts['class'] = 'ar';
 
 					}
-
-					/*
+					
 					if( empty( $atts['style'] ) ) {
 
-						$atts['style'] = ' div';
+						$atts['style'] = 'div';
 
 					}
-					*/
 
 					$office_count = count( $contact_data['field_609a011c7183e'] );
 
 					if( $office_count == 1 ) { $column_class = 'l100'; }
 					if( $office_count == 2 ) { $column_class = 'l50'; }
-					if( $office_count == 3 ) { $column_class = 'l33'; }
-					if( $office_count == 4 ) { $column_class = 'l25'; }
+					if( $office_count % 3 == 0 ) { $column_class = 'l33'; }
+					if( $office_count % 4 == 0 ) { $column_class = 'l25'; }
 					if( $office_count == 5 ) { $column_class = 'l33'; }
-					if( $office_count == 6 ) { $column_class = 'l33'; }
 					if( $office_count == 7 ) { $column_class = 'l25'; }
-					if( $office_count == 8 ) { $column_class = 'l25'; }
-					if( $office_count == 9 ) { $column_class = 'l33'; }
 					if( $office_count == 10 ) { $column_class = 'l25'; }
 					if( $office_count == 11 ) { $column_class = 'l33'; }
-					if( $office_count == 12 ) { $column_class = 'l25'; }
 					if( $office_count == 13 ) { $column_class = 'l33'; }
 					if( $office_count == 14 ) { $column_class = 'l33'; }
-					if( $office_count == 15 ) { $column_class = 'l33'; }
-					if( $office_count == 16 ) { $column_class = 'l25'; }
+					if( $office_count > 16 ) { $column_class = 'l25'; }
 
-					
-
-
-					$field_value .= '<div class="ar">';
 
 					for( $i = 0; $i < $office_count; $i++ ) {
 
 						$field_value .= '<div class="ac ' . $column_class . ' m100 s100 mb-26">';
 						$field_value .= '<div class="wrapper ' . $wrapper_class . '">';
+
+						if( !empty( $contact_data['field_609a011c7183e'][$i]['field_60c067d54e995'] ) ) {
+
+							$field_value .= '<h3 class="mb-0">' . $contact_data['field_609a011c7183e'][$i]['field_60c067d54e995'] . '</p>';
+
+						}
 
 						if( !empty( $contact_data['field_609a011c7183e'][$i]['field_609a014e7183f'] ) ) {
 
@@ -3742,15 +3738,13 @@ class Aione_App_Builder_Public {
 
 					}
 
-					$field_value .= '</div>';
-
 				}
 
 			break;
 			
 
 			default:
-				$field_value .= 'Sorry';
+				$field_value .= '';
 		}
 
 		if( !empty( $atts['class'] ) ) {
@@ -3764,13 +3758,13 @@ class Aione_App_Builder_Public {
 
 		if( !empty( $atts['style'] ) ) {
 			
-			$output = '<' . $atts['style'] . ' ' . $id_attribute . ' '. $class_attribute . '>';
-			$output = $field_value;
-			$output = '</' . $atts['style'] . '>';
+			$output .= '<' . $atts['style'] . ' ' . $id_attribute . ' '. $class_attribute . '>';
+			$output .= $field_value;
+			$output .= '</' . $atts['style'] . '>';
 
 		} else{
 
-			$output = $field_value;
+			$output .= $field_value;
 
 		}
 
