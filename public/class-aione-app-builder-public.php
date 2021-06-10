@@ -3687,7 +3687,7 @@ class Aione_App_Builder_Public {
 
 						if( !empty( $contact_data['field_609a011c7183e'][$i]['field_60c067d54e995'] ) ) {
 
-							$field_value .= '<h3 class="mb-0">' . $contact_data['field_609a011c7183e'][$i]['field_60c067d54e995'] . '</p>';
+							$field_value .= '<h3 class="font-size-18 mb-12">' . $contact_data['field_609a011c7183e'][$i]['field_60c067d54e995'] . '</h3>';
 
 						}
 
