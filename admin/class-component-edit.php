@@ -99,6 +99,14 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
                     'default' => 'side',
                     'post_types' => 'custom',
                 );
+
+            $this->boxes['types_filter'] = array(
+                    'callback' => array($this, 'filters'),
+                    'title' => __('Filters', 'aione-app-builder'),
+                    'default' => 'side',
+                    'post_types' => 'custom',
+                );
+
             $this->boxes['types_admin_columns_order'] = array(
                     'callback' => array($this, 'box_admin_columns_order'),
                     'title' => __('Admin Columns Order', 'aione-app-builder'),
@@ -885,6 +893,52 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
                         '#name' => 'ct[admin_custom_columns]',
                         '#inline' => true,
                         '#before' => '<h4>'.$group['title'].'</h4> <ul class="aione-list">',
+                        '#after' => '</ul>',
+                        
+                    );                    
+                } // if fields
+            }
+           
+            //echo "<pre>";print_r($form);echo "</pre>";
+            $form = aione_form(__FUNCTION__, $form);
+            echo $form->renderForm();
+        } else {
+            echo "No ACF group is applied to this component";
+        }
+    }
+
+    public function filters(){ 
+        global $aione; 
+        $form = array();
+        
+        $component_slug = sanitize_text_field( $_GET['aione-component-slug'] );      
+        $groups = acf_get_field_groups(array('post_type' => $component_slug));
+        
+        if(!empty($groups)){
+            foreach ($groups as $key => $group) {
+                $options = array();                
+                $fields = acf_get_fields($group['key']);
+                
+                if(!empty($fields)){
+                    foreach ( $fields as $field_key => $field ) {
+                        $options[$field['key']] = array(
+                            '#name' => 'ct[filters][' . $field['key'] . ']',
+                            '#title' => $field['label'],
+                            '#default_value' => ( ! empty( $this->ct['filters'][ $field['key'] ] ) ),
+                            '#inline' => true,
+                            '#before' => '<li>',
+                            '#after' => '</li>',
+                            '#attributes' => array(                
+                                //'disabled' => 'disabled',
+                            ),
+                        );
+                    }
+                    $form['filters_'.$group['ID']] = array(
+                        '#type' => 'checkboxes',
+                        '#options' => $options,
+                        '#name' => 'ct[filters]',
+                        '#inline' => true,
+                        '#before' => '<ul class="aione-list">',
                         '#after' => '</ul>',
                         
                     );                    

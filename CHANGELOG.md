@@ -113,3 +113,6 @@ UPDATED: PHP 7.4 compatibility
 
 ## 1.8.0.0 27-05-2021
 ADDED: contact_info shortcode 
+
+## 1.9.0.0 06-07-2021
+ADDED: Structured data header and footer 

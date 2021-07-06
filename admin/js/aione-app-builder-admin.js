@@ -1351,6 +1351,18 @@
 		} );
     });
 
+	jQuery( document ).ready( function() {
+    	jQuery('input[type="radio"]').click(function(){
+    		if($(this).attr("value") == 'single') {
+				jQuery('#types_structured_data_header').css('display', 'none');
+				jQuery('#types_structured_data_footer').css('display', 'none');
+			}
+			else {
+				jQuery('#types_structured_data_header').css('display', 'block');
+				jQuery('#types_structured_data_footer').css('display', 'block');
+			}
+		} );
+    });
 
     
 

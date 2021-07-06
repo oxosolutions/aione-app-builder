@@ -356,6 +356,8 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'import', $plugin_public, 'aione_app_builder_import_shortcode' );
 
 		$this->loader->add_shortcode( 'contact_info', $plugin_public, 'aione_app_builder_contact_info_shortcode' );
+
+		$this->loader->add_shortcode( 'filters', $plugin_public, 'aione_app_builder_filters_shortcode' );
 		
 	}
 

@@ -3629,7 +3629,7 @@ class Aione_App_Builder_Public {
 				for($i = 0; $i < $array_count; $i++) {
 					$field_value .= '<li class="'.$contact_data['field_609a075a71842'][$i]['field_609a077271843'].'">';
 
-					$field_value .= '<a href="'.$contact_data['field_609a075a71842'][$i]['field_609a07a771844'].'" target="_blank">';
+					$field_value .= '<a href="'.$contact_data['field_609a075a71842'][$i]['field_609a07a771844'].'"  aria-label="'.$contact_data['field_609a075a71842'][$i]['field_609a077271843'].'" target="_blank" rel="noopener noreferrer">'; 
 
 					$field_value .= '<span class="icon"></span>';
 
@@ -3767,6 +3767,88 @@ class Aione_App_Builder_Public {
 			$output .= $field_value;
 
 		}
+
+		return $output;
+	}
+
+
+		/**
+	* Shortcode [contact_info]
+	* 
+	*/
+	function aione_app_builder_filters_shortcode( $atts ) {
+		$atts = shortcode_atts( array(
+			'field' => 'name',
+			'style' => '',
+			'class' => '',
+			'id' 	=> '',
+		), $atts, 'filters' );
+
+		
+		$output = '';
+
+		global $theme_options;
+		global $post;
+		global $wp_query;
+
+
+		// _to_be_deleted
+		// echo "<br>ID = ".$post->ID;
+		/*$posts_page_id = get_option( 'page_for_posts' );
+
+
+		echo "*****************".$posts_page_id;*/
+
+		$post_id 				= $post->ID;
+		$post_type 				= get_post_type( $post_id );
+		
+		$aione_components 		= get_option( 'aione-components' );
+		$aione_component 		= $aione_components[$post_type];
+		$archive_template_slug 	= $aione_component['archive_template'];
+		$filter_columns 		= $aione_component['filters'];
+
+		if($_POST['submit']) { 
+			$data = json_encode($_POST['acf']); ?>
+			<script>
+				// var filters = [];
+				var filters = <?php echo $data; ?>;
+				var post_id = <?php echo json_encode($post_id); ?>;
+				var query = <?php echo json_encode($wp_query ); ?>;
+				console.log('filters')
+				console.log(filters)
+				console.log('post_id')
+				console.log(post_id)
+
+				$.ajax({
+			        type: 'POST',
+			        url: '<?php echo admin_url('admin-ajax.php');?>',
+			        data: { action : 'get_ajax_filters', post_id : post_id, filters : filters, query:query.query },
+			        success: function( response ) {
+			        	//console.log('response')
+			        	//console.log(response)
+			        	// response = JSON.parse(response);
+			        	//console.log(JSON.parse(response))
+			            // $( '.aione-page-content > .wrapper' ).html( response ); 
+			            $( '.content' ).html( response ); 
+			        }
+			    });
+			</script>
+		<?php }
+		// $aione_templates 		= get_option( 'aione-templates' );
+		// $aione_template_archive = $aione_templates[$archive_template_slug]['content'];
+
+		// $output .= 'post_id = '.$post_id.'<br>';
+		// $output .= 'post_type = '.$post_type;
+		// $output .= '<br>archive_template_slug = '.$archive_template_slug;
+		/*$output .= '<pre>';
+		$output .= print_r( $filter_columns , true);
+		$output .= '</pre>';*/
+		// $output .= 'aione_template_archive = '.$aione_template_archive;
+
+		$fields = implode(',', array_keys( $filter_columns ) );
+		$output .= do_shortcode('[form form="false" fields='.$fields.']');
+
+
 
 		return $output;
 	}
@@ -5120,41 +5202,41 @@ class Aione_App_Builder_Public {
 
 		$html .= '<ul class="aione-social-icons '.$size.' '.$theme.' '.$style.' '.$direction.' '.$labels.'">';
 		if($facebook != ""){
-			$html .= '<li class="facebook"><a href='.$facebook.' target="_blank"><span class="icon"></span><span class="label">Facebook</span></a></li>';
+			$html .= '<li class="facebook"><a href='.$facebook.' aria-label="Facebook" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">Facebook</span></a></li>';
 		}
 		if($twitter != ""){
-			$html .= '<li class="twitter"><a href='.$twitter.' target="_blank"><span class="icon"></span><span class="label">Twitter</span></a></li>';
+			$html .= '<li class="twitter"><a href='.$twitter.' aria-label="Twitter" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">Twitter</span></a></li>';
 		}
 		if($youtube != ""){
-			$html .= '<li class="youtube"><a href='.$youtube.' target="_blank"><span class="icon"></span><span class="label">Youtube</span></a></li>';
+			$html .= '<li class="youtube"><a href='.$youtube.' aria-label="Youtube" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">Youtube</span></a></li>';
 		}
 		
 		if($linkedin != ""){
-			$html .= '<li class="linkedin"><a href='.$linkedin.' target="_blank"><span class="icon"></span><span class="label">Linkedin</span></a></li>';
+			$html .= '<li class="linkedin"><a href='.$linkedin.' aria-label="Linkedin" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">Linkedin</span></a></li>';
 		}
 		if($instagram != ""){
-			$html .= '<li class="instagram"><a href='.$instagram.' target="_blank"><span class="icon"></span><span class="label">Instagram</span></a></li>';
+			$html .= '<li class="instagram"><a href='.$instagram.' aria-label="Instagram" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">Instagram</span></a></li>';
 		}
 		if($flickr != ""){
-			$html .= '<li class="flickr"><a href='.$flickr.' target="_blank"><span class="icon"></span><span class="label">Flickr</span></a></li>';
+			$html .= '<li class="flickr"><a href='.$flickr.' aria-label="Flickr" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">Flickr</span></a></li>';
 		}
 		if($github != ""){
-			$html .= '<li class="github"><a href='.$github.' target="_blank"><span class="icon"></span><span class="label">Github</span></a></li>';
+			$html .= '<li class="github"><a href='.$github.' aria-label="Github" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">Github</span></a></li>';
 		}
 		if($pinterest != ""){
-			$html .= '<li class="pinterest"><a href='.$pinterest.' target="_blank"><span class="icon"></span><span class="label">Pinterest</span></a></li>';
+			$html .= '<li class="pinterest"><a href='.$pinterest.' aria-label="Pinterest" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">Pinterest</span></a></li>';
 		}
 		if($rss != ""){
-			$html .= '<li class="rss"><a href='.$rss.' target="_blank"><span class="icon"></span><span class="label">RSS</span></a></li>';
+			$html .= '<li class="rss"><a href='.$rss.' aria-label="RSS" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">RSS</span></a></li>';
 		}
 		if($tumblr != ""){
-			$html .= '<li class="tumblr"><a href='.$tumblr.' target="_blank"><span class="icon"></span><span class="label">Tumblr</span></a></li>';
+			$html .= '<li class="tumblr"><a href='.$tumblr.' aria-label="Tumblr" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">Tumblr</span></a></li>';
 		}
 		if($vimeo != ""){
-			$html .= '<li class="vimeo"><a href='.$vimeo.' target="_blank"><span class="icon"></span><span class="label">Vimeo</span></a></li>';
+			$html .= '<li class="vimeo"><a href='.$vimeo.' aria-label="Vimeo" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">Vimeo</span></a></li>';
 		}
 		if($wordpress != ""){
-			$html .= '<li class="wordpress"><a href='.$wordpress.' target="_blank"><span class="icon"></span><span class="label">Wordpress</span></a></li>';
+			$html .= '<li class="wordpress"><a href='.$wordpress.' aria-label="WordPress" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">WordPress</span></a></li>';
 		}
 		
 		$html .= '</ul>';
@@ -5193,19 +5275,19 @@ class Aione_App_Builder_Public {
 		if($facebook == "true"){
 			$facebook_url = '
 			https://www.facebook.com/sharer/sharer.php?u='.rawurlencode( get_the_permalink() ).'&title='.get_the_title();
-			$html .= '<li class="facebook"><a href='.$facebook_url.' target="_blank"><span class="icon"></span><span class="label">Facebook</span></a></li>';
+			$html .= '<li class="facebook"><a href='.$facebook_url.' aria-label="Facebook" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">Facebook</span></a></li>';
 		}
 		if($twitter == "true"){
 			$twitter_url = '
 			http://twitter.com/share?text=' . get_the_title() . '&url=' . rawurlencode( get_the_permalink() );
-			$html .= '<li class="twitter"><a href='.$twitter_url.' target="_blank"><span class="icon"></span><span class="label">Twitter</span></a></li>';
+			$html .= '<li class="twitter"><a href='.$twitter_url.' aria-label="Twitter" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">Twitter</span></a></li>';
 		}
 		
 		
 		if($linkedin == "true"){
 			$linkedin_url = '
 			https://www.linkedin.com/shareArticle?mini=true&url=' . rawurlencode( get_the_permalink() ) . '&title=' . get_the_title();
-			$html .= '<li class="linkedin"><a href='.$linkedin_url.' target="_blank"><span class="icon"></span><span class="label">Linkedin</span></a></li>';
+			$html .= '<li class="linkedin"><a href='.$linkedin_url.' aria-label="Linkedin" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">Linkedin</span></a></li>';
 		}
 		
 		if($pinterest == "true"){
@@ -5219,17 +5301,17 @@ class Aione_App_Builder_Public {
 				// Generate the Pinterest URL.
 			$pinterest_url = '
 			https://pinterest.com/pin/create/button/?&url=' . rawurlencode( get_the_permalink() ) . '&description=' . get_the_title() . '&media=' . esc_url( $thumbnail );
-			$html .= '<li class="pinterest"><a href='.$pinterest_url.' target="_blank"><span class="icon"></span><span class="label">Pinterest</span></a></li>';
+			$html .= '<li class="pinterest"><a href='.$pinterest_url.' aria-label="Pinterest" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">Pinterest</span></a></li>';
 		}
 		if($reddit == "true"){
 			$reddit_url = '
 			http://www.reddit.com/submit?url=' . rawurlencode( get_the_permalink() ) . '&title=' . get_the_title();
-			$html .= '<li class="reddit"><a href='.$reddit_url.' target="_blank"><span class="icon"></span><span class="label">Reddit</span></a></li>';
+			$html .= '<li class="reddit"><a href='.$reddit_url.' aria-label="Reddit" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">Reddit</span></a></li>';
 		}
 		if($tumblr == "true"){
 			$tumblr_url = '
 			https://www.tumblr.com/widgets/share/tool?canonicalUrl=' . rawurlencode( get_the_permalink() ) . '&title=' . get_the_title();
-			$html .= '<li class="tumblr"><a href='.$tumblr_url.' target="_blank"><span class="icon"></span><span class="label">Tumblr</span></a></li>';
+			$html .= '<li class="tumblr"><a href='.$tumblr_url.' aria-label="Tumblr" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">Tumblr</span></a></li>';
 		}
 		
 		

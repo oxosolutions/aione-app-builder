@@ -64,6 +64,18 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
                 'default' => 'advanced',
                 'post_types' => 'custom',
             ),
+            'types_structured_data_header' => array(
+                'callback' => array($this, 'box_structured_data_header'),
+                'title' => __('Structured Data Header', 'aione-app-builder'),
+                'default' => 'advanced',
+                'post_types' => 'custom',
+            ),
+            'types_structured_data_footer' => array(
+                'callback' => array($this, 'box_structured_data_footer'),
+                'title' => __('Structured Data Footer', 'aione-app-builder'),
+                'default' => 'advanced',
+                'post_types' => 'custom',
+            ),
             'types_applyto' => array(
                 'callback' => array($this, 'box_applyto'),
                 'title' => __('Applied to', 'aione-app-builder'),
@@ -377,7 +389,80 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
             'textarea_name' => 'at[structured_data]',
         );
 
+        /*echo "
+                <div id='structured_data_content' style='height: 300px;'></div>
+                <script src='https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/ace.js?ver=7.7.0.0' id='ace-editor-js-js'></script>
+                <script>
+                var cssEditor = ace.edit('structured_data_content');
+                cssEditor.setTheme('ace/theme/twilight');
+                cssEditor.session.setMode('ace/mode/json');
+                cssEditor.session.setValue(JSON.stringify(jsonDoc, null, '\t'));
+                cssEditor.session.setValue('');
+                cssEditor.setOptions({
+                   autoScrollEditorIntoView: true,
+                   fontSize: '14px',
+                });
+            </script>
+        ";*/
+
         echo wp_editor( $content, $editor_id, $settings );
+
+    }
+
+    public function box_structured_data_header()
+    {
+        $form = array();
+        $content = isset( $this->at['structured_data_header'] ) ? $this->at['structured_data_header']:'';
+        $editor_id = 'aione_template_structured_data_header';
+        $settings = array(
+            'textarea_name' => 'at[structured_data_header]',
+        );
+
+        echo wp_editor( $content, $editor_id, $settings );
+
+        /*echo "
+                <div id='structured_data_header_content' style='height: 300px;'></div>
+                <script src='https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/ace.js?ver=7.7.0.0' id='ace-editor-js-js'></script>
+                <script>
+                var cssEditor = ace.edit('structured_data_header_content');
+                cssEditor.setTheme('ace/theme/twilight');
+                cssEditor.session.setMode('ace/mode/json');
+                cssEditor.session.setValue(JSON.stringify(jsonDoc, null, '\t'));
+                cssEditor.session.setValue('');
+                cssEditor.setOptions({
+                   autoScrollEditorIntoView: true,
+                   fontSize: '14px',
+                });
+            </script>
+        ";*/
+
+    }
+
+    public function box_structured_data_footer()
+    {
+        $form = array();
+        $content = isset( $this->at['structured_data_footer'] ) ? $this->at['structured_data_footer']:'';
+        $editor_id = 'aione_template_structured_data_footer';
+        $settings = array(
+            'textarea_name' => 'at[structured_data_footer]',
+        );
+
+        echo wp_editor( $content, $editor_id, $settings );
+
+        /*echo "
+                <div id='structured_data_footer_content' style='height: 300px;'></div>
+                <script src='https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/ace.js?ver=7.7.0.0' id='ace-editor-js-js'></script>
+                <script>
+                var cssEditor = ace.edit('structured_data_footer_content');
+                cssEditor.setTheme('ace/theme/twilight');
+                cssEditor.session.setMode('ace/mode/json');
+                cssEditor.session.setValue(JSON.stringify(jsonDoc, null, '\t'));
+                cssEditor.setOptions({
+                   autoScrollEditorIntoView: true,
+                   fontSize: '14px',
+                });
+            </script>
+        ";*/
 
     }
 
@@ -854,7 +939,7 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
 
         // Check overwriting
         if ( ( !array_key_exists( $this->get_id, $data ) || $data[$this->get_id] != $data['slug'] ) && array_key_exists( $data['slug'], $custom_templates ) ) {
-            aione_admin_message( __( 'Template with name "'.$data['name'].'" is already exists. Please choose a different name.', 'aione-app-builder' ), 'error' );
+            aione_admin_message( __( 'Template with name "'.$data['name'].'" already exists. Please choose a different name.', 'aione-app-builder' ), 'error' );
             return false;
         }
 
@@ -873,6 +958,8 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
 
         //$data['structured_data'] = wp_kses_post($data['structured_data']);
         $data['structured_data'] = html_entity_decode(stripcslashes($data['structured_data']));
+        $data['structured_data_header'] = html_entity_decode(stripcslashes($data['structured_data_header']));
+        $data['structured_data_footer'] = html_entity_decode(stripcslashes($data['structured_data_footer']));
         $data['archive_header'] = html_entity_decode(stripcslashes($data['archive_header']));
         $data['archive_footer'] = html_entity_decode(stripcslashes($data['archive_footer']));
 
