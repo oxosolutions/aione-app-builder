@@ -3562,6 +3562,13 @@ class Aione_App_Builder_Public {
 		$output = '';
 
 		switch ( $field ) {
+			case 'contact_about':
+				$contact_about = $contact_data['field_609a09ec7184c'];
+
+				$field_value = $contact_about;
+				
+			break;
+
 			case 'contact_number':
 				$contact_number = $contact_data['field_609bb50f73674'][0]['field_609bb53273675'];
 

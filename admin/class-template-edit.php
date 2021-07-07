@@ -517,7 +517,8 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
             '#type' => 'radios',
             '#name' => 'at[template-type]',
             '#default_value' => (empty( $this->at['template-type'] ) || $this->at['template-type'] == 'single') ? 'single' : 'archive',
-            '#inline' => true,
+            '#id' => 'template-type',
+            '#inline' => false,
             '#options' => array(
                 sprintf(
                     '<b>%s</b> - %s',
