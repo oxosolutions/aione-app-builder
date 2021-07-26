@@ -305,6 +305,7 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'variable', $plugin_public, 'aione_app_builder_variable_shortcode' );
 
 		$this->loader->add_shortcode( 'aione_map', $plugin_public, 'aione_app_builder_map_shortcode' );
+		$this->loader->add_shortcode( 'structured_data', $plugin_public, 'aione_app_builder_structured_data_shortcode' );
 		// $this->loader->add_shortcode( 'if', $plugin_public, 'aione_app_builder_if_shortcode' );
 
 		// POST SHORTCODES

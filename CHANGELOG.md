@@ -116,3 +116,6 @@ ADDED: contact_info shortcode
 
 ## 1.9.0.0 06-07-2021
 ADDED: Structured data header and footer 
+
+## 2.0.0.0 26-07-2021
+ADDED: Structured data shortcode

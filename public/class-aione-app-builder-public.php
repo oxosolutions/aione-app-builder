@@ -1849,61 +1849,107 @@ class Aione_App_Builder_Public {
 
 
 
-/*		public function aione_app_builder_account_shortcode ($attr, $content = null){
-			extract( shortcode_atts(
-				array(
-				'pages'    => 'yes', // yes/no
-				'sub_pages'    => 'no', // yes/no
-				'layout_menu'    => 'vertical',// horizontal/vertical
-				'layout_content'    => 'box',// box/table/list
-				), $attr )
-			);
-
-			
-			$attr_menu = array(
-				'pages'    => $pages, // yes/no
-				'sub_pages'    => $sub_pages, // yes/no
-				'layout'    => $layout_menu,// horizontal/vertical
-			);
-
-			$attr_content = array(
-				'pages'    => $pages, // yes/no
-				'sub_pages'    => $sub_pages, // yes/no
-				'layout'    => $layout_content,// horizontal/vertical
-			);
-			$output = "";
-			if(is_user_logged_in() ){
-				$output .= $this->aione_app_builder_account_menu_shortcode($attr_menu);	
-				$output .= $this->aione_app_builder_account_content_shortcode($attr_content);
-			} else {
-				$output .="";
-			}
-			
-			return $output;
-		}
-
-		public function aione_app_builder_account_menu_shortcode ($attr, $content = null){
-		// Attributes
-			extract( shortcode_atts(
-				array(
-				'pages'    => 'yes', // yes/no
-				'sub_pages'    => 'no', // yes/no
-				'layout'    => 'vertical',// horizontal/vertical
+	/*public function aione_app_builder_account_shortcode ($attr, $content = null){
+		extract( shortcode_atts(
+			array(
+			'pages'    => 'yes', // yes/no
+			'sub_pages'    => 'no', // yes/no
+			'layout_menu'    => 'vertical',// horizontal/vertical
+			'layout_content'    => 'box',// box/table/list
 			), $attr )
-			);
+		);
 
-			$output = "";
-			if(is_user_logged_in() ) {
-				$output .= '<div id="account_menu" class="account-menu '.$layout.'" >';
-				$output .= '<ul class="account-menu-list" id="account_menu_list">';
+		
+		$attr_menu = array(
+			'pages'    => $pages, // yes/no
+			'sub_pages'    => $sub_pages, // yes/no
+			'layout'    => $layout_menu,// horizontal/vertical
+		);
 
-				if($pages == 'yes'){
-					$output .= '<li><a href="?action=account">Account</a></li>';
-					$output .= '<li><a href="?action=profile">View Profile</a></li>';
-					$output .= '<li><a href="?action=edit-profile">Edit Profile</a></li>';
-					$output .= '<li><a href="?action=change-password">Change Password</a></li>';
+		$attr_content = array(
+			'pages'    => $pages, // yes/no
+			'sub_pages'    => $sub_pages, // yes/no
+			'layout'    => $layout_content,// horizontal/vertical
+		);
+		$output = "";
+		if(is_user_logged_in() ){
+			$output .= $this->aione_app_builder_account_menu_shortcode($attr_menu);	
+			$output .= $this->aione_app_builder_account_content_shortcode($attr_content);
+		} else {
+			$output .="";
+		}
+		
+		return $output;
+	}
+
+	public function aione_app_builder_account_menu_shortcode ($attr, $content = null){
+	// Attributes
+		extract( shortcode_atts(
+			array(
+			'pages'    => 'yes', // yes/no
+			'sub_pages'    => 'no', // yes/no
+			'layout'    => 'vertical',// horizontal/vertical
+		), $attr )
+		);
+
+		$output = "";
+		if(is_user_logged_in() ) {
+			$output .= '<div id="account_menu" class="account-menu '.$layout.'" >';
+			$output .= '<ul class="account-menu-list" id="account_menu_list">';
+
+			if($pages == 'yes'){
+				$output .= '<li><a href="?action=account">Account</a></li>';
+				$output .= '<li><a href="?action=profile">View Profile</a></li>';
+				$output .= '<li><a href="?action=edit-profile">Edit Profile</a></li>';
+				$output .= '<li><a href="?action=change-password">Change Password</a></li>';
+			}
+
+			if($sub_pages == 'yes'){
+				$post_id = get_the_ID();
+				$post_ancestors = get_ancestors( $post_id, 'page' );
+				$post_parent    = end( $post_ancestors );
+				if ( $post_parent ) {
+					$children = wp_list_pages( sprintf( 'title_li=&child_of=%s&echo=0', $post_parent ) );
+				} else {
+					$children = wp_list_pages( sprintf( 'title_li=&child_of=%s&echo=0', $post_id ) );
 				}
+				if ( $children ) {
+					$output .= $children;
+				}
+			}
 
+			$output .= '</ul>';
+			$output .= '</div>';
+		} else {
+			$output .= "";
+		}
+		return $output;
+	}
+
+	public function aione_app_builder_account_content_shortcode ($attr, $content = null){
+		extract( shortcode_atts(
+			array(
+			'pages'    => 'yes', // yes/no
+			'sub_pages'    => 'no', // yes/no
+			'layout'    => 'box',// box/table/list
+		), $attr )
+		);
+
+		$output = "";
+		if(is_user_logged_in()) {
+			$action = $_GET['action'];
+			if(!isset($action)){
+				$action = "account";
+			}
+			if($action == "account"){
+				$output .='<div class="account-content-outer" id="account_content_outer">';
+				$output .='<div class="account-content" id="account_content">';
+				$output .='<ul class="account-items '.$layout.'">';
+				if($pages == 'yes'){
+					$output .='<li><a class="account-item" href="?action=profile">View Profile</a></li>';
+					$output .='<li><a class="account-item" href="?action=edit-profile">Edit Profile</a></li>';
+					$output .='<li><a class="account-item" href="?action=change-password">Change Password</a></li>';
+				}
 				if($sub_pages == 'yes'){
 					$post_id = get_the_ID();
 					$post_ancestors = get_ancestors( $post_id, 'page' );
@@ -1916,77 +1962,31 @@ class Aione_App_Builder_Public {
 					if ( $children ) {
 						$output .= $children;
 					}
+
 				}
 
-				$output .= '</ul>';
-				$output .= '</div>';
-			} else {
-				$output .= "";
-			}
-			return $output;
-		}
-
-		public function aione_app_builder_account_content_shortcode ($attr, $content = null){
-			extract( shortcode_atts(
-				array(
-				'pages'    => 'yes', // yes/no
-				'sub_pages'    => 'no', // yes/no
-				'layout'    => 'box',// box/table/list
-			), $attr )
-			);
-
-			$output = "";
-			if(is_user_logged_in()) {
-				$action = $_GET['action'];
-				if(!isset($action)){
-					$action = "account";
-				}
-				if($action == "account"){
-					$output .='<div class="account-content-outer" id="account_content_outer">';
-					$output .='<div class="account-content" id="account_content">';
-					$output .='<ul class="account-items '.$layout.'">';
-					if($pages == 'yes'){
-						$output .='<li><a class="account-item" href="?action=profile">View Profile</a></li>';
-						$output .='<li><a class="account-item" href="?action=edit-profile">Edit Profile</a></li>';
-						$output .='<li><a class="account-item" href="?action=change-password">Change Password</a></li>';
-					}
-					if($sub_pages == 'yes'){
-						$post_id = get_the_ID();
-						$post_ancestors = get_ancestors( $post_id, 'page' );
-						$post_parent    = end( $post_ancestors );
-						if ( $post_parent ) {
-							$children = wp_list_pages( sprintf( 'title_li=&child_of=%s&echo=0', $post_parent ) );
-						} else {
-							$children = wp_list_pages( sprintf( 'title_li=&child_of=%s&echo=0', $post_id ) );
-						}
-						if ( $children ) {
-							$output .= $children;
-						}
-
-					}
-
-					$output .='<div style="clear:both;"></div>';
-					$output .='</ul>';
-					$output .='	</div>';
-					$output .='</div>';
-			}	// Action = Account
-			
-			if($action == "profile"){
-				$output .= $this->aione_app_builder_profile_shortcode();	
-			} // Action = Profile
-			
-			if($action == "edit-profile"){
-				$output .= $this->aione_app_builder_edit_profile_shortcode();	
-			} // Action = Edit Profile
-			
-			if($action == "change-password"){
-				$output .= $this->aione_app_builder_change_password_shortcode();	
-			} // Action = change-password
-		} else {
-			$output .= "";
-		}
-		return $output;
-		}*/
+				$output .='<div style="clear:both;"></div>';
+				$output .='</ul>';
+				$output .='	</div>';
+				$output .='</div>';
+		}	// Action = Account
+		
+		if($action == "profile"){
+			$output .= $this->aione_app_builder_profile_shortcode();	
+		} // Action = Profile
+		
+		if($action == "edit-profile"){
+			$output .= $this->aione_app_builder_edit_profile_shortcode();	
+		} // Action = Edit Profile
+		
+		if($action == "change-password"){
+			$output .= $this->aione_app_builder_change_password_shortcode();	
+		} // Action = change-password
+	} else {
+		$output .= "";
+	}
+	return $output;
+	}*/
 
 	public function aione_app_builder_view_profile_shortcode( $atts, $content = null ) {
 
@@ -2611,6 +2611,148 @@ class Aione_App_Builder_Public {
 		
 		return $output;
 	} // END aione_app_builder_posts_shortcode()
+
+	public function aione_app_builder_structured_data_shortcode( $atts ) {
+
+		// Attributes
+		$atts = shortcode_atts( array(
+			'post_type'			=> 'post',
+			'status'			=> 'publish',
+			'cat'				=> '',
+			'cat_id'			=> '',
+			'post__in'			=> '',
+			'meta_key'			=> '',
+			'meta_value'		=> '',
+			'meta_value_num'	=> '',
+			'meta_compare'		=> 'LIKE',
+			'meta_query'		=> '',
+			'author'			=> '',
+			'author_id'			=> '',
+			'tax_query'			=> '',
+			'offset'			=> '',
+			'posts_per_page'	=> -1,
+			'order'				=> 'DESC',
+			'orderby'			=> 'date',
+			'template'			=> '',
+		), $atts, 'structured_data');
+
+		global $theme_options, $post;
+		$backup = $post;
+		$output = "";
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+		$status = explode(',',$atts['status']);
+
+		if( !empty( $atts['post__in'] ) ){
+			$post__in = explode( ',', $atts['post__in'] );
+		}
+
+		if( !empty( $atts['meta_query'] ) ){
+			$atts['meta_query'] = json_decode( $atts['meta_query'] , TRUE);
+		}
+		
+	    $current_page = get_query_var('paged');
+
+	    if( $current_page > 0 ){
+	    	$offset = $atts['posts_per_page'] * ( $current_page - 1);
+	    } else{
+	    	$offset = 0;
+	    }
+
+	    $tax_query = $atts['tax_query'];
+	    if( !empty( $tax_query ) ) {
+
+	        $tax_query = explode("=",$tax_query);
+
+			$tax_query_array = array(
+				'relation' => 'AND',
+				array(
+					'taxonomy'         => $tax_query[0],
+					'terms'            => $tax_query[1],
+					'field'            => 'slug',
+					'operator'         => 'IN',
+					'include_children' => false,
+				),
+			);
+	    }
+
+		// WP_Query arguments
+		$args = array (
+			'post_type'				=> $atts['post_type'],
+			'post_status'			=> $status,
+			'cat'					=> $atts['cat_id'],
+			'category_name'			=> $atts['cat'],
+			'author'				=> $atts['author_id'],
+			'author_name'			=> $atts['author'],
+			'meta_key'				=> $atts['meta_key'],
+			'meta_value'			=> $atts['meta_value'],
+			'meta_value_num'		=> $atts['meta_value_num'],
+			'meta_compare'			=> $atts['meta_compare'],
+			'meta_query'			=> $atts['meta_query'],
+			'posts_per_page'		=> $atts['posts_per_page'],
+			'post__in'				=> $post__in,
+			'offset'				=> $offset,
+			'ignore_sticky_posts'	=> false,
+			'order'					=> $atts['order'],
+			'orderby'				=> $atts['orderby'],
+			'cache_results'			=> true,
+			'update_post_meta_cache'=> true,
+			'update_post_term_cache'=> true,
+		);
+
+		if( !empty( $tax_query ) ) {
+			$args['tax_query'] = $tax_query_array;
+		}	
+		
+		$posts = new WP_Query( $args );
+
+		$total_posts = $posts->found_posts;
+		$total_pages = $posts->max_num_pages;
+
+		$is_template = false;
+
+		$template = $atts['template'];
+
+		$structured_data_array = array();
+
+
+		if( !empty( $template ) ) {
+			$aione_templates = @get_option( 'aione-templates' );
+			$aione_template = @$aione_templates[$template]['structured_data'];
+			if( !empty( $aione_template ) ){
+				$is_template = true;
+			}
+		}
+
+		
+		if( $posts->have_posts() ){
+			while( $posts->have_posts() ) {
+
+				$posts->the_post(); 
+
+				$structured_data_string = do_shortcode( $aione_template );
+				$structured_data_text = strip_tags( $structured_data_string );
+				$structured_data_array[] = $structured_data_text;
+			}
+		}
+
+		if( $is_template ){
+			$output .= do_shortcode( $aione_templates[$template]['structured_data_header'] );
+
+			$output .= implode(',', $structured_data_array );
+
+			$output .= do_shortcode( $aione_templates[$template]['structured_data_footer'] );
+		} 
+
+		$posts->reset_postdata();
+		$post = $backup;
+		
+		return $output;
+	} // END aione_app_builder_structured_data_shortcode()
+
+	
+
 
 	public function aione_app_builder_pagination_shortcode( $atts, $content = null ) {
 		// Attributes
@@ -4264,7 +4406,6 @@ class Aione_App_Builder_Public {
 		}
 
 	}
-
 
 
 

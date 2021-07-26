@@ -274,6 +274,30 @@
 </pre></td>
 				</tr>
 				<tr>
+					<td>Structured data for header</td>
+					<td>[structured_data]</td>
+					<td>
+<pre>
+'post_type'      => 'post',
+'status'		=> 'publish',
+'cat'            => '',
+'cat_id'         => '',
+'author'         => '',
+'author_id'      => '',
+'post__in'      => '',// comma saperated ids of post ids to be included
+'meta_key'      => '',
+'meta_value'      => '',
+'meta_compare'		=> 'LIKE',
+'meta_query'		=> '',
+'posts_per_page'  => '-1',
+'tax_query'  	=> '', // tax_query="movie-year=2016" or tax_query="movie-genre=comedy,action"
+'offset'          => '',
+'order'			=> 'DESC',
+'orderby'		=> 'date',
+'template'       => '', // slug of aione template
+</pre></td>
+				</tr>
+				<tr>
 					<td>Post</td>
 					<td>[post]</td>
 					<td>
