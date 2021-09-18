@@ -119,3 +119,10 @@ ADDED: Structured data header and footer
 
 ## 2.0.0.0 26-07-2021
 ADDED: Structured data shortcode
+
+## 2.0.0.1 06-08-2021
+ADDED: Custom Taxanomy Permission
+FIXED: Braces in admin/form/forms.php Line 1119
+
+## 2.0.0.2 08-09-2021
+FIXED: After Reset all, added user capabilities

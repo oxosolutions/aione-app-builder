@@ -202,10 +202,10 @@ function aione_admin_screen( $post_type, $form_output = ''){
 <div id="poststuff">
     <div id="post-body" class="metabox-holder columns-<?php echo 1 == get_current_screen()->get_columns() ? '1' : '2'; ?>">
 <?php echo $form_output; ?>
-        <div id="postbox-container-1" class="postbox-container">
+        <div id="postbox-container-1" class="postbox-container <?php echo $post_type;?>">
             <?php do_meta_boxes($post_type, 'side', null); ?>
         </div>
-        <div id="postbox-container-2" class="postbox-container">
+        <div id="postbox-container-2" class="postbox-container <?php echo $post_type;?>">
 <?php
     do_meta_boxes($post_type, 'normal', null);
     do_meta_boxes($post_type, 'advanced', null);
@@ -552,8 +552,10 @@ function aione_admin_message_sanitize( $message )
  * @param string $mode 'action'|'echo'
  */
 function aione_admin_message( $message, $class = 'updated', $mode = 'action' )
-{
+{ 
+   
     if ( 'action' == $mode ) {
+        
         // 5.2 support for Types pre m2m.
         // TODO: remove this after PHP5.2 support dropping.
         if (version_compare(phpversion(), '5.3', '<')) {
@@ -561,7 +563,7 @@ function aione_admin_message( $message, $class = 'updated', $mode = 'action' )
                 create_function( '$a=1, $class=\'' . $class . '\', $message=\''
                         . htmlentities( $message, ENT_QUOTES ) . '\'',
                             '$screen = get_current_screen(); if (!$screen->is_network) echo "<div class=\"message $class\"><p>" . aione_admin_message_sanitize ($message) . "</p></div>";' ) );
-        } else {
+        } else { 
             add_action( 'admin_notices', function() use ($class, $message) {
                 $message = htmlentities( $message, ENT_QUOTES );
                 $screen = get_current_screen();
@@ -938,4 +940,97 @@ function aione_admin_validation_messages( $method = false, $sprintf = '' ) {
         return isset( $messages[$method] ) ? $messages[$method] : '';
     }
     return $messages;
+}
+
+
+
+function aione_admin_import_export_components_boxes(){
+    $components = '<div class="aione-app-builder-import-export-components ar s-columns-1 m-columns-1 l-columns-2">';
+    $components .= aione_admin_export_component_box();
+    $components .= aione_admin_import_component_box();
+    $components .= '</div>';
+    echo $components;
+
+}
+
+function aione_admin_export_component_box(){
+    $output = '';
+    $output .= '
+        <div class="ac">
+            <div class="wrapper aione-border bg-white">
+                <div class="aione-title aione-border-bottom p-5">
+                    <h6 class="aione-float-left pl-5 aione-float-left">Export Components, Taxonomies and Templates</h6>
+                      ';
+                        $output .= sprintf(' 
+                            <button type="submit" name="action" class="button button-primary" value="download">Export File</button>'
+                        );
+                        $output .= '
+                    <div class="aione-clear"></div>
+                </div>
+            </div>
+        </div>';
+
+    return $output;
+}
+
+function aione_admin_import_component_box(){
+    $output = '';
+    $output .= '
+        <div class="ac">
+            <div class="wrapper aione-border bg-white">
+                <div class="aione-title aione-border-bottom p-5">
+                    <h6 class="aione-float-left pl-5 aione-float-left">Import Components, Taxonomies and Templates</h6>
+                      ';
+                        $output .= '<form method="post" enctype="multipart/form-data">
+                                        <p>Select the Advanced Custom Fields JSON file you would like to import. When you click the import button below, ACF will import the field groups.</p>
+                                        <div class="acf-fields">
+                                            <div class="acf-field acf-field-file" data-name="acf_import_file" data-type="file">
+                                                <div class="acf-label">
+                                                    <label for="acf_import_file">Select File</label>
+                                                </div>
+                                                <div class="acf-input">
+                                                    <div class="acf-file-uploader" data-library="all" data-mime_types="" data-uploader="basic">
+                                                        <input type="hidden" name="acf_import_file" value="0" data-name="id">   
+                                                        <div class="show-if-value file-wrap">
+                                                            <div class="file-icon">
+                                                                <img data-name="icon" src="" alt="">
+                                                            </div>
+                                                            <div class="file-info">
+                                                                <p>
+                                                                    <strong data-name="title"></strong>
+                                                                </p>
+                                                                <p>
+                                                                    <strong>File name:</strong>
+                                                                    <a data-name="filename" href="" target="_blank"></a>
+                                                                </p>
+                                                                <p>
+                                                                    <strong>File size:</strong>
+                                                                    <span data-name="filesize"></span>
+                                                                </p>
+                                                            </div>
+                                                            <div class="acf-actions -hover">
+                                                                <a class="acf-icon -cancel dark" data-name="remove" href="#" title="Remove"></a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="hide-if-value">
+                                                            <label class="acf-basic-uploader">
+                                                                <input type="file" name="acf_import_file" id="acf_import_file">         
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p class="acf-submit">
+                                            <input type="submit" class="button button-primary" value="Import File">
+                                        </p>
+                                        <input type="hidden" name="_acf_nonce" value="5d56778e7f">      
+                                    </form>';
+                        $output .= '
+                    <div class="aione-clear"></div>
+                </div>
+            </div>
+        </div>';
+
+    return $output;
 }

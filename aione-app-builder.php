@@ -10,7 +10,7 @@
  * Plugin Name:       Aione App Builder
  * Plugin URI:        http://oxosolutions.com/products/wordpress-plugins/aione-app-builder/
  * Description:       Easily create custom post types and taxonomy and connect everything together.
- * Version:           2.0.0.0
+ * Version:           2.0.0.2
  * Author:            OXO Solutions®
  * Author URI:        https://oxosolutions.com/
  * License:           GPL-2.0+
@@ -124,6 +124,5 @@ function run_aione_app_builder() {
 
 }
 run_aione_app_builder();
-
 
 

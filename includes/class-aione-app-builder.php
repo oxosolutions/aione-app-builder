@@ -131,6 +131,9 @@ class Aione_App_Builder {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-template-edit.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-templates-list-table.php';
 
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-admin-tools.php';
+		
+
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
@@ -305,7 +308,9 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'variable', $plugin_public, 'aione_app_builder_variable_shortcode' );
 
 		$this->loader->add_shortcode( 'aione_map', $plugin_public, 'aione_app_builder_map_shortcode' );
+
 		$this->loader->add_shortcode( 'structured_data', $plugin_public, 'aione_app_builder_structured_data_shortcode' );
+		
 		// $this->loader->add_shortcode( 'if', $plugin_public, 'aione_app_builder_if_shortcode' );
 
 		// POST SHORTCODES
@@ -359,6 +364,8 @@ class Aione_App_Builder {
 		$this->loader->add_shortcode( 'contact_info', $plugin_public, 'aione_app_builder_contact_info_shortcode' );
 
 		$this->loader->add_shortcode( 'filters', $plugin_public, 'aione_app_builder_filters_shortcode' );
+
+		$this->loader->add_shortcode( 'youtube', $plugin_public, 'aione_app_builder_youtube_shortcode' );
 		
 	}
 

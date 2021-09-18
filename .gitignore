@@ -1,2 +1,3 @@
 #Ignore Directories
 tmp/
+public/twilio-php/vendor

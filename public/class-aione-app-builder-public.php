@@ -3100,7 +3100,6 @@ class Aione_App_Builder_Public {
 		$users = get_users( $args );
 
 
-
 		if( $atts['api'] == 'yes' ){
 
 			$api_array = array();
@@ -3142,6 +3141,8 @@ class Aione_App_Builder_Public {
 			$aione_template_array 	= $aione_templates[$template];
 			$aione_template_content = $aione_template_array['content'];
 		}
+
+
 		
 		if( !empty( $aione_template_content ) ) {
 			if( !empty( $atts['style'] ) ){
@@ -3618,17 +3619,26 @@ class Aione_App_Builder_Public {
 		$atts =  shortcode_atts( array(
 			'name' => 'logo-facebook',
 			'size'	=> 'small',
+			'src'	=> '',
 			'class'	=> 'aione-icon',
 		), $atts, 'icon' );
 
-		$output = '';
+		$output = ''; 
+
+		$aione_src = $atts['src'];
 		$aione_icon = $atts['name'];
 		$aione_icon_size = $atts['size'];
 		$aione_icon_class = $atts['class'];
 
-		if( $aione_icon ) {
-			$output = '<span class="' . $aione_icon_class . '"><ion-icon name="'.$aione_icon.'" size="'.$aione_icon_size.'"></ion-icon></span>';
+		if( $aione_src ) {
+			$output .= '<span class="' . $aione_icon_class . '"><ion-icon src="'.$aione_src.'" size="'.$aione_icon_size.'"></ion-icon></span>';
+		} else {
+			if( $aione_icon ) {
+				$output .= '<span class="' . $aione_icon_class . '"><ion-icon name="'.$aione_icon.'" size="'.$aione_icon_size.'"></ion-icon></span>';
+			}
 		}
+
+		
 
 		return $output;
 	} 
@@ -4068,6 +4078,7 @@ class Aione_App_Builder_Public {
 			'class'		=>	'',
 			'id'		=>	'',
 			'style'		=>	'div', //h1,h2,h3,h4,h5,h6,span
+			'stripslashes' => 'no', //yes,no
 		), $atts, 'title' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
@@ -4083,6 +4094,10 @@ class Aione_App_Builder_Public {
 
 			$post_object = get_post( $post_id ); 
 			$post_title = $post_object->post_title; 
+			if($atts['stripslashes'] == 'yes') {
+				// $post_title = addslashes($post_title);
+				$post_title = htmlspecialchars($post_title, ENT_QUOTES, 'UTF-8');
+			}
 
 			if($atts['style'] != ""){
 				$title .= '<'.$atts['style'].' '.$id_attribute.' class="'.$atts['class'].'">';
@@ -4118,6 +4133,7 @@ class Aione_App_Builder_Public {
 			'style'				=> 'div', //div, p 
 			'class'				=> '',
 			'id'				=> '',
+			'stripslashes' 		=> 'no', //yes,no
 		), $atts, 'content' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
@@ -4134,6 +4150,10 @@ class Aione_App_Builder_Public {
 
 		$post_object = get_post( $post_id ); 
 		$post_content = $post_object->post_content; 
+		if($atts['stripslashes'] == 'yes') {
+			// $post_content = addslashes($post_content);
+			$post_content = htmlspecialchars($post_content, ENT_QUOTES, 'UTF-8');
+		}
 
 		if($atts['excerpt'] == "true"){
 			$content = wp_trim_words( $post_content, $atts['excerpt_length'], $atts['more_text'] );
@@ -4467,7 +4487,8 @@ class Aione_App_Builder_Public {
 			'check_conditions' 	=> 'no',
 			'show_label'		=> 'no',
 			'style'				=> 'div', // table/div/list/ Leave empty for no html
-			'class'				=> ''
+			'class'				=> '',
+			'stripslashes'		=> 'no' //yes,no
 		), $atts, 'post_meta' );
 
 		$atts = $this->clean_shortcode_parameters( $atts );
@@ -4477,6 +4498,10 @@ class Aione_App_Builder_Public {
 
 
 			$field = get_field_object( $atts['field'], $atts['post_id'] );
+			if($atts['stripslashes'] == 'yes') {
+				// $field = addslashes($field);
+				$field = htmlspecialchars($field, ENT_QUOTES, 'UTF-8');
+			}
 
 			if( empty( $field)  ) {
 				$output .= get_post_meta( $atts['post_id'], $atts['field'], true );
@@ -6443,5 +6468,26 @@ class Aione_App_Builder_Public {
 		return $output;
 	}
 	*/
+
+	function aione_app_builder_youtube_shortcode( $atts, $content = null ) {
+		// Attributes
+		$atts = shortcode_atts( array(
+			'url'				=> '',
+			'width'				=> '',
+			'height'			=> '',
+		), $atts, 'youtube' );
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+		$url = $atts['url'];
+		$width = $atts['width'];
+		$height = $atts['height'];
+
+		$output 	= '';
+
+		$output .= '<iframe loading="lazy" width="'.$width.'" height="'.$height.'" src="'.$url.'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+
+		return $output;
+	}
 
 }

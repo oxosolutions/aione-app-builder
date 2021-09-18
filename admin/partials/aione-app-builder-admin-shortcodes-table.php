@@ -761,6 +761,18 @@ Return post author ID
 </pre>
 	</td>
 </tr>
+<tr>
+	<td>Youtube</td>
+	<td>[youtube]</td>
+	<td>
+<pre>
+	'url' => '', 
+	'width' => '', 
+	'height' => '', 
+
+</pre>
+	</td>
+</tr>
 </tbody>
 </table>
 </div>

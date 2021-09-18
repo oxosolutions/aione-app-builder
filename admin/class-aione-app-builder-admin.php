@@ -88,12 +88,19 @@ class Aione_App_Builder_Admin {
 		//add_action('wp_head', array( $this, 'aione_ajaxurl'));
 		add_action( 'init', array($this,'aione_init_components_taxonomies'), apply_filters('aione_init_components_taxonomies', 10));
 
+		if(!class_exists('acf')){ 
+            add_action( 'admin_notices', array( $this, 'aione_acf_admin_notice' ));
+        }
+
 		
 
 	}
 
 	function aione_init(){
 		global $aione;
+
+		aione_show_admin_messages();
+
 		// Set post object
 	    $aione->post = new stdClass();
 
@@ -221,6 +228,14 @@ class Aione_App_Builder_Admin {
 			}
 		}
 	}
+
+	public function aione_acf_admin_notice() {
+        ?>
+        <div class="notice error my-acf-notice is-dismissible" >
+            <p><?php _e( 'ACF Plugin is necessary for Aione App Builder to work properly, install it now! <a href="https://wordpress.org/plugins/advanced-custom-fields/" target="_blank">Click Here!</a>', 'aione' ); ?></p>
+        </div>
+        <?php
+    }
 
 	public function admin_menu(){ 
 		$registered_pages = apply_filters( 'aione_filter_register_menu_pages', array() );
@@ -379,6 +394,17 @@ class Aione_App_Builder_Admin {
 	        'callback'  		=> 'aione_admin_reset_all',
 	        'capability'		=> 'manage_options',
 	    );
+
+	    $pages['aione-tools'] = array(
+			'slug'				=> 'aione-tools',
+	        'menu_title'		=> __( 'Import/Export', 'aione-app-builder' ),
+	        'page_title'		=> __( 'Import/Export', 'aione-app-builder' ),
+	        'callback'  		=> 'aione_tools',
+	        'capability'		=> 'manage_options',
+	        'load_hook'			=> 'aione_tools_hook'
+	    );
+		$pages['aione-tools']['load_hook'] = aione_admin_calculate_menu_page_load_hook( $pages['aione-tools'] );
+		//add_action('load-' . $page, array($this, 'load'));
 		//echo "<pre>";print_r($pages);echo "</pre>";
 		return $pages;
 		
@@ -476,6 +502,24 @@ class Aione_App_Builder_Admin {
 
 	function aione_admin_menu_summary_shortcodes(){
 		include( plugin_dir_path( __FILE__ ) . 'partials/aione-app-builder-admin-shortcodes-table.php' );
+	}
+
+	function aione_tools(){
+		/*aione_add_admin_header(
+	        __( 'Import/Export', 'aione-app-builder' )
+	    );
+	    aione_admin_import_export_components_boxes();
+	    aione_add_admin_footer();*/
+
+	    $post_type = current_filter();
+        aione_add_admin_header(
+	        __( 'Import/Export', 'aione-app-builder' )
+	    );
+        $form = aione_form( 'aione_form_tools' );
+        echo '<form method="post" action="" class="aione-fields-form aione-form-validate js-types-show-modal" enctype="multipart/form-data">';
+        aione_admin_screen($post_type, $form->renderForm());
+        echo '</form>';
+        aione_add_admin_footer();
 	}
 
 	function aione_admin_menu_summary_settings(){
@@ -638,6 +682,14 @@ class Aione_App_Builder_Admin {
 	    aione_form( 'aione_form_templates', $form );
 	}
 
+	function aione_tools_hook(){
+		//require_once dirname( __FILE__ ).'/class-component-edit.php';
+	    $aione_admin = new Aione_Admin_Tools();
+	    $aione_admin->init_admin();
+	    $form = $aione_admin->form();
+	    aione_form( 'aione_form_tools', $form );
+	}
+
 	function aione_init_components_taxonomies(){ 
 		$custom_taxonomies = get_option( AIONE_OPTION_NAME_TAXONOMIES, array() );
 	    if ( !empty( $custom_taxonomies ) ) {
@@ -744,20 +796,45 @@ class Aione_App_Builder_Admin {
 		if ( $wordpress_reset && $wordpress_reset_confirm && $valid_nonce ) {
 			require_once ABSPATH . '/wp-admin/includes/upgrade.php';
 
+			global $wpdb, $reactivate_wp_reset_additional;
+
+			$get_user_meta    = function_exists( 'get_user_meta' ) ? 'get_user_meta' : 'get_usermeta';
+			$update_user_meta = function_exists( 'update_user_meta' ) ? 'update_user_meta' : 'update_usermeta';
+
 			$blogname    = get_option( 'blogname' );
 			$admin_email = get_option( 'admin_email' );
 			$blog_public = get_option( 'blog_public' );
 			$siteurl = get_option( 'siteurl' );
+			$users_list = get_users();
+			$usermetadata = array();
+
+			foreach ( $users_list as $user ) {
+				$user_level = $get_user_meta( $user->ID, $wpdb->prefix . 'user_level',true );
+				$capabilities = $get_user_meta( $user->ID, $wpdb->prefix . 'capabilities' ,true);
+				$usermetadata[$user->ID] = array(
+					"ID" => $user->ID,
+					"user_email" => $user->user_email,
+					$wpdb->prefix . 'user_level'=>$user_level,
+					$wpdb->prefix . 'capabilities'=>$capabilities
+				) ;
+			}
+
+			/*echo "<div class='width:70%;float:right;'><pre>";
+			print_r($usermetadata);
+			echo "</pre></div>";
+			exit;*/
 
 			if ( 'admin' !== $current_user->user_login ) {
 				$user = get_user_by( 'login', 'admin' );
+				$user_id = $user->ID;
 			}
 
 			if ( empty( $user->user_level ) || $user->user_level < 10 ) {
 				$user = $current_user;
+				$user_id = $user->ID;
 			}
 
-			global $wpdb, $reactivate_wp_reset_additional;
+			
 
 			$prefix = str_replace( '_', '\_', $wpdb->prefix );
 			$tables = $wpdb->get_col( "SHOW TABLES LIKE '{$prefix}%'" );
@@ -773,9 +850,6 @@ class Aione_App_Builder_Admin {
 			$query = $wpdb->prepare( "UPDATE $wpdb->users SET user_pass = %s, user_activation_key = '' WHERE ID = %d", $user->user_pass, $user_id );
 			$wpdb->query( $query );
 
-			$get_user_meta    = function_exists( 'get_user_meta' ) ? 'get_user_meta' : 'get_usermeta';
-			$update_user_meta = function_exists( 'update_user_meta' ) ? 'update_user_meta' : 'update_usermeta';
-
 			if ( $get_user_meta( $user_id, 'default_password_nag' ) ) {
 				$update_user_meta( $user_id, 'default_password_nag', false );
 			}
@@ -784,11 +858,17 @@ class Aione_App_Builder_Admin {
 				$update_user_meta( $user_id, $wpdb->prefix . 'default_password_nag', false );
 			}
 
+			if ( is_multisite() ) {
+				foreach ( $users_list as $user ) {
+					$update_user_meta( $user->ID, $wpdb->prefix.'user_level', $usermetadata[$user->ID][$wpdb->prefix .'user_level'] );
+					$update_user_meta( $user->ID, $wpdb->prefix.'capabilities', $usermetadata[$user->ID][$wpdb->prefix .'capabilities'] );
+				}
+			}
 
 			wp_clear_auth_cookie();
 			wp_set_auth_cookie( $user_id );
 
-			wp_redirect( admin_url() . '/admin.php?page=aione-reset-all' );
+			wp_redirect( admin_url() );
 			exit();
 		}
 

@@ -122,7 +122,7 @@ class Aione_Admin_Edit_Taxonomy extends Aione_Admin_Page
                 $this->ct = $taxonomies[$id];
                 $update = true;
             } else {
-                aione_admin_message( __( 'Wrong Taxonomy specified.', 'aione-app-builder' ), 'error' );
+                aione_admin_message_store( __( 'Wrong Taxonomy specified.', 'aione-app-builder' ), 'error' );
                 return false;
             }
         } else {
@@ -820,7 +820,7 @@ class Aione_Admin_Edit_Taxonomy extends Aione_Admin_Page
             empty( $data['labels']['name'] )
             || empty( $data['labels']['singular_name'] )
         ) {
-            aione_admin_message( __( 'Please set taxonomy name', 'aione-app-builder' ), 'error' );
+            aione_admin_message_store( __( 'Please set taxonomy name', 'aione-app-builder' ), 'error' );
             return false;
         }
 
@@ -848,7 +848,7 @@ class Aione_Admin_Edit_Taxonomy extends Aione_Admin_Page
         }
 
         if ( empty( $tax ) ) {
-            aione_admin_message( __( 'Please set taxonomy name', 'aione-app-builder' ), 'error' );
+            aione_admin_message_store( __( 'Please set taxonomy name', 'aione-app-builder' ), 'error' );
             return false;
         }
 
@@ -867,13 +867,13 @@ class Aione_Admin_Edit_Taxonomy extends Aione_Admin_Page
         // Check reserved name
         $reserved = $this->aione_is_reserved_name( $tax, 'taxonomy' ) && !$tax_is_built_in;
         if ( is_wp_error( $reserved ) ) {
-            aione_admin_message( $reserved->get_error_message(), 'error' );
+            aione_admin_message_store( $reserved->get_error_message(), 'error' );
             return false;
         }
 
         // Check if exists
         if ( $update && !array_key_exists( $data[$this->get_id], $taxonomies ) ) {
-            aione_admin_message( __( "Taxonomy do not exist", 'aione-app-builder' ), 'error' );
+            aione_admin_message_store( __( "Taxonomy do not exist", 'aione-app-builder' ), 'error' );
             return false;
         }
 
@@ -885,14 +885,14 @@ class Aione_Admin_Edit_Taxonomy extends Aione_Admin_Page
 
             $data[AIONE_AUTHOR] = get_current_user_id();
 
-            aione_admin_message( __( 'Taxonomy already exists', 'aione-app-builder' ), 'error' );
+            aione_admin_message_store( __( 'Taxonomy already exists', 'aione-app-builder' ), 'error' );
             return false;
         }
 
         // Check if our tax overwrites some tax outside
         $tax_exists = get_taxonomy( $tax );
         if ( !$update && !empty( $tax_exists ) ) {
-            aione_admin_message( __( 'Taxonomy already exists', 'aione-app-builder' ), 'error' );
+            aione_admin_message_store( __( 'Taxonomy already exists', 'aione-app-builder' ), 'error' );
             return false;
         }
 

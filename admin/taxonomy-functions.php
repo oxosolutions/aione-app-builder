@@ -244,6 +244,14 @@ function aione_custom_taxonomies_register( $taxonomy, $data ) {
         'assign_terms' => 'assign_'.$taxonomy,
     );
 
+    $role = get_role('administrator');
+    if($role){             
+        $role->add_cap( 'manage_'.$taxonomy );
+        $role->add_cap( 'edit_'.$taxonomy );
+        $role->add_cap( 'delete_'.$taxonomy );
+        $role->add_cap( 'assign_'.$taxonomy );
+    }
+
     $object_types_filtered = apply_filters( 'aione_taxonomy_objects', $object_types, $taxonomy );
     $taxonomy_args = apply_filters( 'aione_taxonomy_data', $data, $taxonomy, $object_types );
 

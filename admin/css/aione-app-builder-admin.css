@@ -1610,4 +1610,22 @@ body.settings_page_duplicatepost #icon-options-general > div{
 }
 
 
+.aione-app-builder_page_aione-tools .postbox {
+    float: left;
+    clear: left;
+    width: 50%;
+    margin: 0 0 16px;
+}
 
+.aione-app-builder_page_aione-tools .postbox:nth-child(odd){
+    margin-left : -8px;
+}
+.aione-app-builder_page_aione-tools .postbox:nth-child(even){
+    float: right;
+    clear: right;
+    margin-right: -8px;
+}
+.aione-submit {
+    margin-bottom: 0;
+    line-height: 28px;
+}

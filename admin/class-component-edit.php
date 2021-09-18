@@ -92,7 +92,7 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
             
         );
 
-        if(sanitize_text_field( $_GET['aione-component-slug'] )){
+        if(sanitize_text_field( $_GET['aione-component-slug'] ) and class_exists('ACF')){
             $this->boxes['types_admin_custom_columns'] = array(
                     'callback' => array($this, 'box_admin_custom_columns'),
                     'title' => __('Admin Columns', 'aione-app-builder'),
@@ -161,7 +161,7 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
         $aione_post_type = new Aione_Admin_Component();
         $custom_post_type = $aione_post_type->get_post_type($id);
         if (empty($custom_post_type)) {
-            aione_admin_message( __( 'Please save new Component first.', 'aione-app-builder' ), 'error' );
+            aione_admin_message_store( __( 'Please save new Component first.', 'aione-app-builder' ), 'error' );
             die;
         }
         $this->ct = $custom_post_type;
@@ -1234,7 +1234,7 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
             empty( $data['labels']['name'] )
             || empty( $data['labels']['singular_name'] )
         ) {
-            aione_admin_message( __( 'Please set post type name', 'aione-app-builder' ), 'error' );
+            aione_admin_message_store( __( 'Please set post type name', 'aione-app-builder' ), 'error' );
             return false;
         }
 
@@ -1273,7 +1273,7 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
         }
 
         if ( empty( $post_type ) ) {
-            aione_admin_message( __( 'Please set post type name', 'aione-app-builder' ), 'error' );
+            aione_admin_message_store( __( 'Please set post type name', 'aione-app-builder' ), 'error' );
             return false;
         }
 
@@ -1289,13 +1289,13 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
             // Check reserved name
             $reserved = $this->aione_is_reserved_name( $post_type, 'post_type' );
             if ( is_wp_error( $reserved ) ) {
-                aione_admin_message( $reserved->get_error_message(), 'error' );
+                aione_admin_message_store( $reserved->get_error_message(), 'error' );
                 return false;
             }
 
             // Check overwriting
             if ( ( !array_key_exists( $this->get_id, $data ) || $data[$this->get_id] != $post_type ) && array_key_exists( $post_type, $custom_types ) ) {
-                aione_admin_message( __( 'Post Type already exists', 'aione-app-builder' ), 'error' );
+                aione_admin_message_store( __( 'Post Type already exists', 'aione-app-builder' ), 'error' );
                 return false;
             }
 
@@ -1304,7 +1304,7 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
              * We do not allow plural and singular names to be same.
              */
             /*if ( $aione->post_types->check_singular_plural_match( $data ) ) {
-                aione_admin_message( $aione->post_types->message( 'warning_singular_plural_match' ), 'error' );
+                aione_admin_message_store( $aione->post_types->message( 'warning_singular_plural_match' ), 'error' );
                 return false;
             }*/
 
@@ -1501,7 +1501,7 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
             'updated notice notice-success is-dismissible'
         );
 
-	    flush_rewrite_rules();
+	    //flush_rewrite_rules();
 
         if ( !$data['_builtin'] ) {
             do_action( 'aione_custom_types_save', $data );
@@ -1516,7 +1516,7 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
                         $this->get_id => $post_type,
                         'aione-message' => 'view',
 	                    // Flush rewrite rules after reload
-	                    'flush' => '1'
+	                    //'flush' => '1'
                     ),
                     admin_url( 'admin.php' )
                 )
@@ -2117,6 +2117,7 @@ class Aione_Admin_Edit_Component extends Aione_Admin_Page
         echo '</ul>';
         die;
     }
+
 
 
     /**

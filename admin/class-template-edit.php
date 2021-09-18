@@ -917,7 +917,7 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
         // Sanitize data
         $data['name'] = sanitize_text_field( $data['name'] );
         if (empty($data['name']) || empty($data['slug']) ) {
-            aione_admin_message( __( 'Please set template name', 'aione-app-builder' ), 'error' );
+            aione_admin_message_store( __( 'Please set template name', 'aione-app-builder' ), 'error' );
             return false;
         }
 
@@ -940,7 +940,7 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
 
         // Check overwriting
         if ( ( !array_key_exists( $this->get_id, $data ) || $data[$this->get_id] != $data['slug'] ) && array_key_exists( $data['slug'], $custom_templates ) ) {
-            aione_admin_message( __( 'Template with name "'.$data['name'].'" already exists. Please choose a different name.', 'aione-app-builder' ), 'error' );
+            aione_admin_message_store( __( 'Template with name "'.$data['name'].'" already exists. Please choose a different name.', 'aione-app-builder' ), 'error' );
             return false;
         }
 
