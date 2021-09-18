@@ -126,3 +126,6 @@ FIXED: Braces in admin/form/forms.php Line 1119
 
 ## 2.0.0.2 08-09-2021
 FIXED: After Reset all, added user capabilities
+
+## 2.0.0.3 18-09-2021
+ADDED: Components and templates import and export functionality
