@@ -66,6 +66,8 @@ class Aione_App_Builder_Public {
 		add_action('wp_ajax_import', array($this, 'import'));
 		add_action('wp_ajax_nopriv_import', array($this, 'import'));
 
+		add_filter('acf/update_value/name=featured_image', array($this, 'acf_set_featured_image'), 10, 3);
+
 	}
 
 	/**
@@ -119,6 +121,26 @@ class Aione_App_Builder_Public {
 	   	echo '<script type="text/javascript">
 	           	var ajaxurl = "' . admin_url('admin-ajax.php') . '";
          	</script>';
+	}
+
+
+	function acf_set_featured_image( $value, $post_id, $field  ) {
+
+		echo "<pre>";
+		echo "<br>value= ";
+		print_r( $value );
+		echo "<br>post_id= ";
+		print_r( $post_id );
+		echo "<br>field= ";
+		print_r( $field );
+		echo "</pre>";
+
+	    if($value != ''){
+	        //Add the value which is the image ID to the _thumbnail_id meta data for the current post
+	        add_post_meta( $post_id, '_thumbnail_id', $value );
+	    }
+
+	    return $value;
 	}
 
 
@@ -5649,7 +5671,6 @@ class Aione_App_Builder_Public {
 		return $output;
 
 	}
-
 
 
 	/**

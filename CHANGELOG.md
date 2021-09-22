@@ -129,3 +129,6 @@ FIXED: After Reset all, added user capabilities
 
 ## 2.0.0.3 18-09-2021
 ADDED: Components and templates import and export functionality
+
+## 2.0.0.4 22-09-2021
+ADDED: Featured Image functionality to Add New Shortcode
