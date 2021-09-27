@@ -132,3 +132,7 @@ ADDED: Components and templates import and export functionality
 
 ## 2.0.0.4 22-09-2021
 ADDED: Featured Image functionality to Add New Shortcode
+
+## 2.0.0.5 27-09-2021
+ADDED: Custom Filter in registration
+FIXED: Change Password success messages classes
