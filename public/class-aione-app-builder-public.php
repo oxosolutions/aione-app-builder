@@ -2101,16 +2101,16 @@ class Aione_App_Builder_Public {
 			$output .='<div id="' . $atts['id'] . '" class="' . $atts['class'] . '">';
 
 			$output .= '<ul>
-			<li><div class="user-detail-label">ID</div>
+			<li class="user_id"><div class="user-detail-label">ID</div>
 			<div class="user-detail-value">' . $user_id . '</div>
 			<div class="clear"></div></li>
-			<li><div class="user-detail-label">First Name</div>
+			<li class="user_first_name"><div class="user-detail-label">First Name</div>
 			<div class="user-detail-value">' . $user_meta['first_name'][0] . '</div>
 			<div class="clear"></div></li>
-			<li><div class="user-detail-label">Last name</div>
+			<li class="user_last_name"><div class="user-detail-label">Last name</div>
 			<div class="user-detail-value">' . $user_meta['last_name'][0] . '</div>
 			<div class="clear"></div></li>
-			<li><div class="user-detail-label">Email</div>
+			<li class="user_email"><div class="user-detail-label">Email</div>
 			<div class="user-detail-value">' . $user->user_email . '</div>
 			<div class="clear"></div></li>
 			';
@@ -2134,7 +2134,7 @@ class Aione_App_Builder_Public {
 					$field_data_shortcode = '[user_meta field="' . $field_key . '" user_id="' . $user_id . '" style="" show_label="no"]';;
 					$field_data = do_shortcode( $field_data_shortcode );
 
-					$output .= '<li><div class="user-detail-label">' . $field['label'] . '</div>';
+					$output .= '<li class="'.$field_key.'"><div class="user-detail-label">' . $field['label'] . '</div>';
 					$output .= '<div class="user-detail-value">' . $field_data . '</div>
 					<div class="clear"></div></li>';
 				}
