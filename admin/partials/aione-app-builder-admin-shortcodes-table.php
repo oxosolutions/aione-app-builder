@@ -435,6 +435,16 @@
 						</td>
 					</tr>
 					<tr>
+						<td>User ID</td>
+						<td>[user_id]</td>
+						<td>
+<pre>
+'field'          	=> '', // login/email field to search user
+'value'				=> '', // Value of field
+</pre>
+						</td>
+					</tr>
+					<tr>
 						<td>Welcome User</td>
 						<td>[welcome]</td>
 						<td>
@@ -489,6 +499,7 @@
 <pre>
 'format' => 'jS F Y H:i A',human //DateTime format 
 'time-zone' => 'Asia/Kolkata', // TimeZone 
+'style' => '' //div/ul/span/ (This will not work with human format)
 </pre> 
 						<a href="http://php.net/manual/en/timezones.php" target="_blank">Supported TimeZone</a></td>
 					</tr>

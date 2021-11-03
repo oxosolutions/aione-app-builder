@@ -3329,6 +3329,11 @@ class Aione_App_Builder_Public {
 		$field 		= $atts['field'];
 		$user_id 	= $atts['user_id'];
 
+		if( strtolower( $field ) == 'id' ) {
+				//$output .= "===".$atts['user_id'];
+				$output .= $user->ID;
+		}
+
 		$output = "";
 
 		$user = get_user_by( 'id', $user_id );
@@ -3353,6 +3358,31 @@ class Aione_App_Builder_Public {
 		return $output;
 		
 	} // END aione_app_builder_user_shortcode
+
+	public function aione_app_builder_user_id_shortcode( $atts ) {
+		
+		$atts = shortcode_atts( array(
+			'field'			=> '', //key of field and custom field to be dispayed
+			'value'			=> '', //key of field and custom field to be dispayed
+		), $atts, 'user_id' );
+
+
+		$atts = $this->clean_shortcode_parameters( $atts );
+
+		$field 		= $atts['field'];
+		$value 		= $atts['value'];
+		$user_id 	= get_current_user_id();
+
+
+		if( !empty( $field ) && !empty( $field ) ) {
+
+			$user = get_user_by( $field, $value );
+			$user_id = $user->ID;
+		}
+
+		return $user_id;
+		
+	} // END aione_app_builder_user_id_shortcode
 
 	public function aione_app_builder_user_meta_shortcode( $atts ) {
 		
@@ -3749,17 +3779,32 @@ class Aione_App_Builder_Public {
 
 		$atts = shortcode_atts( array(
 			'format' => 'jS F Y h:i:s',
-			'time-zone' => 'Asia/Kolkata',
+			'time-zone' => 'Asia/Kolkata',			
+			'style' => '' //div/ul/span/
 		), $atts, 'date' );
 
 		$output = '';
 		global $post;
 
 		if ( in_the_loop() ) {
-			if( $atts['format'] == 'human' ) {
+			if( $atts['format'] == 'human' ) {				
 				$output .=  $this->human_readable_date( get_the_date() );
 			} else{
-				$output .= get_the_date( $atts['format'] );
+				if(!empty( $atts['style'] )){
+						$arr = str_split($atts['format']);
+						if(!empty($arr)){
+							foreach($arr as $val){
+								$output .= '<' . $atts['style'] . '>';
+									$output .= get_the_date( $val );
+								$output .= '</' . $atts['style'] . '>';
+							}
+						} else{
+							$output .= get_the_date( $atts['format'] );
+						}
+				}else{
+					$output .= get_the_date( $atts['format'] );
+				}
+				
 			}
 		} else{
 			//$output = date($atts['format'] );

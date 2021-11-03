@@ -823,11 +823,22 @@ function aione_admin_dashboard_component_box(){
 
     return $output;
 }
-function aione_admin_dashboard_taxonomy_box(){
+function aione_admin_dashboard_taxonomy_box() { 
+
     $custom_taxonomies = get_option(AIONE_OPTION_NAME_TAXONOMIES, array());
     $builtin_taxonomies = aione_get_builtin_in_taxonomies();
-    foreach ($builtin_taxonomies as $key => $value) {
-        unset($custom_taxonomies[$key]);
+    
+    if( is_array( $builtin_taxonomies ) ) {
+        
+        foreach ( $builtin_taxonomies as $key => $value ) {
+            
+            if( isset( $custom_taxonomies[$key] ) ) {
+                
+                unset( $custom_taxonomies[$key] );
+                
+            }
+            
+        }
     }
 
     $output = '';
@@ -872,7 +883,8 @@ function aione_admin_dashboard_taxonomy_box(){
         
     return $output;
 }
-function aione_admin_dashboard_template_box(){
+function aione_admin_dashboard_template_box() {
+    
     $custom_templates = get_option(AIONE_OPTION_NAME_TEMPLATES, array());
 
     $output = '';
