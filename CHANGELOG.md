@@ -1,6 +1,12 @@
 # CHANGELOG
 Changelog for Aione App Builder Plugin
 
+## 2.0.1.2 17-03-2022
+ADDED: post_data shortcode 
+
+## 2.0.1.1 15-11-2021
+FIXED: Issue in add_new shortcode 
+
 ## 2.0.1.0 03-11-2021
 ADDED: user_id shortcode
 
@@ -142,3 +148,12 @@ UPDATED: Added capabilities to Custom Post types
 
 ## 1.3.0.1 23-10-2018
 UPDATED: Updated shortcode table section
+
+## 2.0.1.2 4-12-2020
+UPDATED: Updated shortcode Social Share for Twitter
+
+## 2.0.1.3 11-03-2022
+UPDATED: Remove bug in Import/Export
+
+## 2.0.1.4 21-05-2022
+FIX: CSS Fixes

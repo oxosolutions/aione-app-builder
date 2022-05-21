@@ -368,6 +368,10 @@ class Aione_App_Builder {
 
 		$this->loader->add_shortcode( 'youtube', $plugin_public, 'aione_app_builder_youtube_shortcode' );
 		
+		$this->loader->add_shortcode( 'copyright', $plugin_public, 'aione_app_builder_copyright_shortcode' );
+
+		$this->loader->add_shortcode( 'post_data', $plugin_public, 'aione_app_builder_post_data_shortcode' );
+		
 	}
 
 	/**

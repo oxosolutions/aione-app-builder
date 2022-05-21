@@ -126,14 +126,7 @@ class Aione_App_Builder_Public {
 
 	function acf_set_featured_image( $value, $post_id, $field ) {
 
-		echo "<pre>";
-		echo "<br>value= ";
-		print_r( $value );
-		echo "<br>post_id= ";
-		print_r( $post_id );
-		echo "<br>field= ";
-		print_r( $field );
-		echo "</pre>";
+		
 
 	    if( $value != '' ) {
 	        //Add the value which is the image ID to the _thumbnail_id meta data for the current post
@@ -145,15 +138,24 @@ class Aione_App_Builder_Public {
 
 
 	function aione_app_builder_login_fail_redirect_filter( $username ) {
-	   $referrer = $_SERVER['HTTP_REFERER'];  // where did the post submission come from?
-	   $referrer = str_replace("?login=failed","",$referrer ); //Resolves the problem of duplication of ?login=failed for each failed attempt
+	   	$referrer = $_SERVER['HTTP_REFERER'];  // where did the post submission come from?
+	   	$referrer = str_replace("?login=failed","",$referrer ); //Resolves the problem of duplication of ?login=failed for each failed attempt
 
-	   //$post = serialize($_POST );
-	   // if there's a valid referrer, and it's not the default log-in screen
-	   if ( !empty($referrer) && !strstr($referrer,'wp-login') && !strstr($referrer,'wp-admin') ) {
-	      wp_redirect( $referrer . '?login=failed' );  // let's append some information (login=failed) to the URL for the theme to use
-	      exit;
-	  }
+	   	//$post = serialize($_POST );
+	   	// if there's a valid referrer, and it's not the default log-in screen
+	   	if ( !empty($referrer) && !strstr($referrer,'wp-login') && !strstr($referrer,'wp-admin') ) {
+	   		$referrer = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+            $query = parse_url($referrer, PHP_URL_QUERY);
+
+            // Returns a string if the URL has parameters or NULL if not
+            if ($query) {
+                $referrer .= '&';
+            } else {
+                $referrer .= '?';
+            } 
+	      	wp_redirect( $referrer . 'login=failed' );  // let's append some information (login=failed) to the URL for the theme to use
+	      	exit;
+	  	}
 	}
 
 	//change default Login url 
@@ -1109,7 +1111,7 @@ class Aione_App_Builder_Public {
 		$login = (isset($_GET['login']) ? $_GET['login'] : null );
 		$errors = array( );
 		if( isset($login) && $login == 'failed' ) {
-			$output .=  '<div style="color:#cc0000;text-align:center;padding:10px">Something went wrong.Please try again.</div>';
+			$output .=  '<div style="color:#cc0000;text-align:center;margin-bottom:-30px;">Email or password is incorrect. Please try again.</div>';
 		}
 
 		$args = array(
@@ -2908,7 +2910,28 @@ class Aione_App_Builder_Public {
 		return $output;
 	} // END aione_app_builder_post_shortcode()
 
+	public function aione_app_builder_post_data_shortcode( $atts, $content = null ) {
+		global $post;
+		
+		// Attributes
+		$atts = shortcode_atts( array(
+			'post_id'	=> $post->ID,
+			'field' 	=> '',	
+		), $atts, 'post_data' );
 
+		
+		$atts = $this->clean_shortcode_parameters( $atts );
+		
+		$output = "";
+
+		$post =  get_post( $atts['post_id'] );
+		
+		$field = $atts['field'];
+
+		$output .= $post->$field;
+		
+		return $output;
+	} // END aione_app_builder_post_shortcode()
 
 	public function aione_app_builder_list_comments_shortcode( $atts ) {
 		global $theme_options, $post;
@@ -5113,6 +5136,12 @@ class Aione_App_Builder_Public {
 							// $output .= $gallery['caption'];
 							// $output .= $gallery['description'];
 					}
+				} if( is_array(  $field_classes ) && in_array( 'show-lightbox' , $field_classes ) ) {
+					foreach ($data as  $gallery) {
+						$output .= '<a data-lightbox="image" href="'.$gallery['url'].'">';
+						$output .= '<img src="'.$gallery['url'].'"/>';
+						$output .= '</a>';
+					}
 				} else {
 					foreach ($data as  $gallery) {
 						$output .= ' <div class="gallery-item">';
@@ -5596,7 +5625,7 @@ class Aione_App_Builder_Public {
 		if( $twitter == "true" ) {
 			$twitter_url = '
 			http://twitter.com/share?text=' . get_the_title() . '&url=' . rawurlencode( get_the_permalink() );
-			$html .= '<li class="twitter"><a href='.$twitter_url.' aria-label="Twitter" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">Twitter</span></a></li>';
+			$html .= '<li class="twitter"><a href="'.$twitter_url.'" aria-label="Twitter" target="_blank" rel="noopener noreferrer"><span class="icon"></span><span class="label">Twitter</span></a></li>';
 		}
 		
 		
@@ -5785,6 +5814,8 @@ class Aione_App_Builder_Public {
 			$options['return'] = $atts['return'];
 		}
 
+		acf_form_head( ); 
+
 		ob_start( );
 		acf_form( $options );
 		$output .= ob_get_contents( );
@@ -5809,6 +5840,7 @@ class Aione_App_Builder_Public {
 			'field_groups'		=> false,
 			'fields'			=> false,
 			'uploader'			=> 'basic',
+			'return' 			=> '',
 			'label_placement' 		=> 'top', // top/left
 			'instruction_placement' => 'label', // label/field
 			'class'				=> 'edit-post-form',
@@ -5858,7 +5890,7 @@ class Aione_App_Builder_Public {
 			'fields'				=> $fields,
 			'form'					=> true,
 			'form_attributes' 		=> array(),
-			'return' 				=> '',
+			'return' 				=> $atts['return'],
 			'html_before_fields' 	=> '',
 			'html_after_fields' 	=> '',
 			'submit_value' 			=> __("Submit", 'aione-app-builder'),
@@ -6629,6 +6661,13 @@ class Aione_App_Builder_Public {
 		$output 	= '';
 
 		$output .= '<iframe loading="lazy" width="'.$width.'" height="'.$height.'" src="'.$url.'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+
+		return $output;
+	}
+
+	function aione_app_builder_copyright_shortcode( $atts, $content = null ) {
+		$output = '';
+		$output .= '<p>© ' . date('Y') . ' <a href="' . home_url() . '">' . get_bloginfo( 'name' ) . '</a>. All rights reserved.</p>';
 
 		return $output;
 	}

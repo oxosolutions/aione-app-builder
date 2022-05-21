@@ -234,7 +234,14 @@ class Aione_Admin_Tools extends Aione_Admin_Page
             foreach ($export_items as $option) {
                 $option_value[$option] = get_option($option);
             }
-            
+
+            /*$custom_taxonomies = get_option(AIONE_OPTION_NAME_TAXONOMIES, array());
+            if( is_array( $custom_taxonomies ) ) {
+                foreach ($custom_taxonomies as $slug => $data ) {
+                    $custom_terms[] = (array) get_terms( array('taxonomy' => $slug, 'hide_empty' => false ));
+                }
+            }
+            $option_value['terms'] = $custom_terms;*/
 
             $file_name = 'aione-export-' . date('Y-m-d') . '.json';
             header( "Content-Description: File Transfer" );
@@ -322,23 +329,29 @@ class Aione_Admin_Tools extends Aione_Admin_Page
 
     function aione_import($data){
         if(array_key_exists(AIONE_OPTION_NAME_TEMPLATES,$data)){
-            $aione_existing_templates = get_option( AIONE_OPTION_NAME_TEMPLATES, true );
+            $aione_existing_templates = get_option( AIONE_OPTION_NAME_TEMPLATES, array() );
             $aione_new_templates = $data[AIONE_OPTION_NAME_TEMPLATES];
             $updated_templates_array = array_merge($aione_existing_templates,$aione_new_templates);
             update_option( AIONE_OPTION_NAME_TEMPLATES, $updated_templates_array);
         }
         if(array_key_exists(AIONE_OPTION_NAME_TAXONOMIES,$data)){
-            $aione_existing_taxonomies = get_option( AIONE_OPTION_NAME_TAXONOMIES, true );
+            $aione_existing_taxonomies = get_option( AIONE_OPTION_NAME_TAXONOMIES, array() );
             $aione_new_taxonomies = $data[AIONE_OPTION_NAME_TAXONOMIES];
             $updated_taxonomies_array = array_merge($aione_existing_taxonomies,$aione_new_taxonomies);
             update_option( AIONE_OPTION_NAME_TAXONOMIES, $updated_taxonomies_array);
         }
         if(array_key_exists(AIONE_OPTION_NAME_COMPONENTS,$data)){
-            $aione_existing_components = get_option( AIONE_OPTION_NAME_COMPONENTS, true );
+            $aione_existing_components = get_option( AIONE_OPTION_NAME_COMPONENTS, array() );
             $aione_new_components = $data[AIONE_OPTION_NAME_COMPONENTS];
             $updated_components_array = array_merge($aione_existing_components,$aione_new_components);
             update_option( AIONE_OPTION_NAME_COMPONENTS, $updated_components_array);
         }
+        /*if(array_key_exists('terms',$data) && !empty($data['terms'])){
+            foreach($data['terms'] as $key => $term){                
+                wp_update_term( $term->term_id, $term->taxonomy );
+            }
+
+        }*/
         
         
         return $data;

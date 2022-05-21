@@ -1,6 +1,6 @@
 <div id='aione_app_builder_page_target'>
 
-		<div class='wrap welcome-panel'>
+		<div class='wrap'>
 		
 			<h1>Register Page Settings</h1>
 			
