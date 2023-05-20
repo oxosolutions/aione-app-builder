@@ -157,3 +157,10 @@ UPDATED: Remove bug in Import/Export
 
 ## 2.0.1.4 21-05-2022
 FIX: CSS Fixes
+
+## 2.0.1.5 07-10-2022
+FIX: Bug in Tempate Edit
+
+
+## 2.1.0.0 20-05-2023
+FIX: Security FIX

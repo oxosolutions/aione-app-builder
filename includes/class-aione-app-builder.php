@@ -139,10 +139,6 @@ class Aione_App_Builder {
 		 * side of the site.
 		 */
 
-		// Require the bundled autoload file - the path may need to change
-		// based on where you downloaded and unzipped the SDK
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/twilio-php/Twilio/autoload.php';
-
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-aione-app-builder-public.php';
 
 		if (!class_exists('ReallySimpleCaptcha')) {

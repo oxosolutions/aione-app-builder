@@ -967,8 +967,10 @@ class Aione_Admin_Edit_Template extends Aione_Admin_Page
         /******/
         foreach ($custom_templates as $key => $array) {
             foreach ($array['component'] as $k => $v) { 
-                if(array_key_exists($k, $data['component'])){ 
-                    unset($custom_templates[$key]['component'][$k]);
+                if(array_key_exists('component', $data)){ 
+                    if(array_key_exists($k, $data['component'])){ 
+                        unset($custom_templates[$key]['component'][$k]);
+                    }
                 }
             }
         }
